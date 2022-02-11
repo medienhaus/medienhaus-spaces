@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useState } from 'react';
 
 import { useAuth } from '../lib/Auth';
@@ -8,8 +7,12 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const auth = useAuth();
 
-    const onSubmit = () => {
+    const onSubmitLoginForm = () => {
         auth.signin(name, password);
+    };
+
+    const onLogout = () => {
+        auth.signout();
     };
 
     const logAuthenticationStatus = () => {
@@ -22,20 +25,31 @@ export default function Login() {
     };
 
     const logGetProfileCall = async () => {
-        console.log(await auth.getAuthenticationProvider('matrix').getMatrixClient().getProfileInfo(auth.getAuthenticationProvider('matrix').getMatrixClient().getUserId()));
+        console.log(
+            await auth.getAuthenticationProvider('matrix').getMatrixClient().getProfileInfo(auth.getAuthenticationProvider('matrix').getMatrixClient().getUserId()),
+        );
     };
 
     return (
         <>
             <h1>Login</h1>
-            <Link href="/">Home</Link>
-            <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.currentTarget.value)} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
-            <button type="button" onClick={onSubmit}>Login</button>
-            <br />
-            <a href="#" onClick={logAuthenticationStatus}>Log Authentication Provider Statuses</a>
-            <br />
-            <a href="#" onClick={logGetProfileCall}>Log GetProfile Call</a>
+            { auth.user ? (
+                <>
+                    <button type="button" onClick={onLogout}>Logout</button>
+                    <br />
+                    <a href="#" onClick={logAuthenticationStatus}>Log Authentication Provider Statuses</a>
+                    <br />
+                    <a href="#" onClick={logGetProfileCall}>Log GetProfile Call</a>
+                    <p>{ JSON.stringify(auth.user) }</p>
+                    <br />
+                </>
+            ) : (
+                <>
+                    <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.currentTarget.value)} />
+                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+                    <button type="button" onClick={onSubmitLoginForm}>Login</button>
+                </>
+            ) }
         </>
     );
 }
