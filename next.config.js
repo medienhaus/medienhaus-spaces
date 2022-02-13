@@ -1,5 +1,6 @@
 module.exports = {
     publicRuntimeConfig: {
+        name: 'udk/spaces',
         authProviders: {
             matrix: {
                 baseUrl: 'https://dev.medienhaus.udk-berlin.de',

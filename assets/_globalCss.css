@@ -1,0 +1,119 @@
+@font-face {
+  font-family: 'Inter';
+  font-style:  normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/Inter-Medium.woff2?v=3.19") format("woff2"),
+  url("/assets/fonts/Inter-Medium.woff?v=3.19") format("woff");
+}
+@font-face {
+  font-family: 'Inter';
+  font-style:  italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/Inter-MediumItalic.woff2?v=3.19") format("woff2"),
+  url("/assets/fonts/Inter-MediumItalic.woff?v=3.19") format("woff");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style:  normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/Inter-Bold.woff2?v=3.19") format("woff2"),
+  url("/assets/fonts/Inter-Bold.woff?v=3.19") format("woff");
+}
+@font-face {
+  font-family: 'Inter';
+  font-style:  italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/fonts/Inter-BoldItalic.woff2?v=3.19") format("woff2"),
+  url("/assets/fonts/Inter-BoldItalic.woff?v=3.19") format("woff");
+}
+
+@font-face {
+  font-family: 'Inter var';
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+  font-named-instance: 'Regular';
+  src: url("/assets/fonts/Inter-roman.var.woff2?v=3.19") format("woff2");
+}
+@font-face {
+  font-family: 'Inter var';
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: italic;
+  font-named-instance: 'Italic';
+  src: url("/assets/fonts/Inter-italic.var.woff2?v=3.19") format("woff2");
+}
+
+:root {
+  --color-fg: rgb(0,0,0);
+  --color-bg: rgb(255,255,255);
+  --color-hi: rgb(255,240,170);
+  --color-no: rgb(255,96,96);
+  --color-me: rgb(128,128,128);
+  --color-lo: rgb(240,240,240);
+  --margin: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fg: rgb(255,255,255);
+    --color-bg: rgb(20,20,20);
+    --color-hi: rgb(228,9,59);
+    --color-no: rgb(255,96,96);
+    --color-me: rgb(128,128,128);
+    --color-lo: rgb(40,40,40);
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: unset;
+  padding: unset;
+}
+
+*::selection {
+  background-color: var(--color-hi);
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: calc(1em + 0.5vmin);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+@supports (font-variation-settings: normal) {
+  body {
+    font-family: "Inter var", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+}
+
+a:link {
+  color: var(--color-fg);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--color-fg);
+}
+
+a:hover {
+  color: var(--color-fg);
+  text-decoration: underline;
+}
+
+a:focus {
+  color: var(--color-fg);
+}
+
+a:active {
+  color: var(--color-fg);
+}

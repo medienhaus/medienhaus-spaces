@@ -1,10 +1,10 @@
-import Link from 'next/link';
-
-export default function Home() {
+export default function Dashboard() {
     return (
         <>
-            <h1>My page</h1>
-            <Link href="/login">Login</Link>
+            <h1>/dashboard</h1>
+            <pre style={{ width: '100%', overflow: 'scroll', background: 'lightgrey', padding: '1rem' }}>
+                { JSON.stringify({}) }
+            </pre>
         </>
     );
 }
