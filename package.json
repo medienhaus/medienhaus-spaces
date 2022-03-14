@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "matrix-js-sdk": "^15.4.0",
+    "matrix-js-sdk": "^15.6.0",
     "next": "latest",
     "normalize.css": "^8.0.1",
     "react": "^17.0.2",

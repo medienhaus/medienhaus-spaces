@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 
 import { useAuth } from '../../../lib/Auth';
@@ -12,8 +12,14 @@ const List = styled.ul`
     }
 `;
 
-export default function Navigation() {
+export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
+
+    const Link = ({ href, children }) => (
+        <NextLink href={href} passHref>
+            <a onClick={closeNavigation}>{ children }</a>
+        </NextLink>
+    );
 
     // Guests should only see the /login entry
     if (!auth?.user) {
@@ -32,7 +38,7 @@ export default function Navigation() {
             <List>
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/">/account</Link></li>
-                <li><Link href="/">/explore</Link></li>
+                <li><Link href="/explore">/explore</Link></li>
             </List>
             <List>
                 <li><Link href="/">/chat</Link></li>
