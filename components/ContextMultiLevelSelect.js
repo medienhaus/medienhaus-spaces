@@ -4,9 +4,13 @@ import getConfig from 'next/config';
 
 import { useAuth } from '../lib/Auth';
 
+const ContextSelect = styled.select`
+  margin-bottom: 5px;
+`;
+
 const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
     const auth = useAuth();
-    const [selectedContext, setSelectedContext] = useState(null);
+    const [selectedContext, setSelectedContext] = useState('');
     const [childContexts, setChildContexts] = useState({});
 
     // Fetch all child contexts
@@ -27,12 +31,8 @@ const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
         return null;
     }
 
-    const Select = styled.select`
-        margin-bottom: 5px;
-    `;
-
     return (
-        <Select
+        <ContextSelect
             value={selectedContext}
             onChange={(e) => {
                 setSelectedContext(e.target.value);
@@ -46,7 +46,7 @@ const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
                     { room.name }
                 </option>
             )) }
-        </Select>
+        </ContextSelect>
     );
 };
 
