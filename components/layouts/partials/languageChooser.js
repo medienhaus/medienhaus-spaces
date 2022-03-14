@@ -1,7 +1,10 @@
 export default function LanguageChooser() {
     return (
         <>
-            EN/DE
+            <select style={{ width: '5ch' }}>
+                <option>EN</option>
+                <option>DE</option>
+            </select>
         </>
     );
 }

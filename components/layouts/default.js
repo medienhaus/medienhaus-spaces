@@ -7,7 +7,7 @@ import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 
 const Wrapper = styled.div`
-  min-height: 100%;
+  min-height: 100vh;
 
   padding-left: var(--margin);
   padding-right: var(--margin);
@@ -32,7 +32,7 @@ const Header = styled.header`
   padding: calc(var(--margin) * 1.4) 0;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 3;
 
   h1 {
     cursor: pointer;
@@ -82,6 +82,7 @@ const Nav = styled.nav`
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 2;
 
   @media (min-width: 29em) {
     position: unset;
@@ -89,6 +90,13 @@ const Nav = styled.nav`
     
     grid-row: 1/3;
     grid-column: 2;
+  }
+`;
+
+const LanguageChooserWrapper = styled.div`
+  @media (min-width: 29em) {
+    position: fixed;
+    bottom: calc(var(--margin) * 1.4);
   }
 `;
 
@@ -102,10 +110,12 @@ const Main = styled.main`
 `;
 
 const Footer = styled.footer`
+  display: none;
   margin-top: calc(var(--margin) * 4);
   margin-bottom: calc(var(--margin) * 1.4);
 
   @media (min-width: 29em) {
+    display: block;
     grid-row: 3;
     grid-column: 1/2;
   }
@@ -124,13 +134,12 @@ export default function Default({ children }) {
                     </HeaderButton>
                 </Header>
                 <Nav open={navigationOpen}>
-                    <NavigationMenu />
-                    <LanguageChooser />
+                    <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
+                    <LanguageChooserWrapper><LanguageChooser /></LanguageChooserWrapper>
                 </Nav>
                 <Main>{ children }</Main>
                 <Footer>
-                    🄯 { new Date().getFullYear() }
-                    <LanguageChooser />
+                    🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
                 </Footer>
             </Wrapper>
         </>
