@@ -1,4 +1,5 @@
 {
+  "name": "medienhaus-frontend",
   "private": true,
   "scripts": {
     "dev": "next",
