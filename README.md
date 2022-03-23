@@ -1,36 +1,46 @@
-# Example app with styled-components
+<img src="https://medienhaus.dev/favicon.svg" width="70" />
 
-This example features how you use a different styling solution than [styled-jsx](https://github.com/vercel/styled-jsx) that also supports universal styles. That means we can serve the required styles for the first render within the HTML and then load the rest in the client. In this case we are using [styled-components](https://github.com/styled-components/styled-components).
+### medienhaus/
 
-For this purpose we are extending the `<Document />` and injecting the server side rendered styles into the `<head>`, and also adding the `babel-plugin-styled-components` (which is required for server side rendering). Additionally we set up a global [theme](https://www.styled-components.com/docs/advanced#theming) for styled-components using NextJS custom [`<App>`](https://nextjs.org/docs/advanced-features/custom-app) component.
+Customizable modular free and open-source environment for decentralized, distributed communication and collaboration.
 
-## Preview
+[Website](https://medienhaus.dev/) — [Twitter](https://twitter.com/medienhaus_)
 
-Preview the example live on [StackBlitz](http://stackblitz.com/):
+<br>
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-styled-components)
+# medienhaus-frontend
 
-## Deploy your own
+This repository contains the code for the **medienhaus/** React application, which is designed to intuitively introduce all participants to the paradigm of federated communication through the modern technology our platform is built around.
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+The application itself is written in JavaScript, we're using the Next.js framework. Documentation can be found at [https://nextjs.org/docs](https://nextjs.org/docs).
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-styled-components&project-name=with-styled-components&repository-name=with-styled-components)
+## Development
 
-## How to use
+### Installation
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+#### `npm install`
 
-```bash
-npx create-next-app --example with-styled-components with-styled-components-app
-# or
-yarn create next-app --example with-styled-components with-styled-components-app
-```
+Installs all of the application's dependencies.
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+### Configuration
 
-### Try it on CodeSandbox
+Configuration happens in the `next.config.js` file.
 
-[Open this example on CodeSandbox](https://codesandbox.io/s/github/vercel/next.js/tree/canary/examples/with-styled-components)
+### Available Scripts
+
+In the project directory, you can run:
+
+#### `npm run dev`
+
+Runs the application in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
+
+#### `npm run export`
+
+Builds a production-ready version of the application and exports it to the `out` directory. The build is minified and the filenames include the hashes.
 
 ### Notes
 
