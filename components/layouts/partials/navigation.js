@@ -21,8 +21,13 @@ export default function Navigation({ closeNavigation }) {
         </NextLink>
     );
 
+    // Render an empty navigation when we're still determining if we're logged in or not
+    if (auth.user === null) {
+        return null;
+    }
+
     // Guests should only see the /login entry
-    if (!auth?.user) {
+    if (auth.user === false) {
         return (
             <List>
                 <li><Link href="/login">/login</Link></li>

@@ -113,6 +113,7 @@ const Footer = styled.footer`
   display: none;
   margin-top: calc(var(--margin) * 4);
   margin-bottom: calc(var(--margin) * 1.4);
+  line-height: calc(var(--margin) * 3);
 
   @media (min-width: 29em) {
     display: block;

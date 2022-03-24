@@ -32,7 +32,7 @@ export default function Login() {
 
     return (
         <>
-            <h1>Login</h1>
+            <h1>/login</h1>
             { auth.user ? (
                 <>
                     <button type="button" onClick={onLogout}>Logout</button>
@@ -45,11 +45,14 @@ export default function Login() {
                 </>
             ) : (
                 <>
-                    <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.currentTarget.value)} />
-                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
-                    <button type="button" onClick={onSubmitLoginForm}>Login</button>
+                    <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                        <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.currentTarget.value)} />
+                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+                        <button type="submit">Login</button>
+                    </form>
                 </>
             ) }
         </>
     );
 }
+
