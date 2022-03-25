@@ -6,8 +6,6 @@ import '../lib/Internationalization';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import DefaultLayout from '../components/layouts/default';
-
-import 'normalize.css/normalize.css';
 import '/assets/_globalCss.css';
 
 const guestRoutes = ['/', '/login'];

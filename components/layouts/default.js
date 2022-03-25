@@ -88,7 +88,6 @@ const Nav = styled.nav`
     display: block;
     min-width: 12ch;
     position: unset;
-    display: block;
     
     grid-row: 1/3;
     grid-column: 2;
