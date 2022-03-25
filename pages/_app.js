@@ -10,7 +10,7 @@ import DefaultLayout from '../components/layouts/default';
 import 'normalize.css/normalize.css';
 import '/assets/_globalCss.css';
 
-const guestRoutes = ['Dashboard', 'Login'];
+const guestRoutes = ['/', '/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
     const matrixData = useMatrixProvider(authData.getActiveMatrixAuthentications());
 
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
-    if (authData.user === false && !guestRoutes.includes(Component.name)) {
+    if (authData.user === false && !guestRoutes.includes(router.route)) {
         router.push('/login');
         return null;
     }
@@ -28,7 +28,7 @@ export default function App({ Component, pageProps }) {
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     <DefaultLayout>
-                        { (authData.user || ['Dashboard', 'Login'].includes(Component.name)) && (
+                        { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
                         ) }
                     </DefaultLayout>

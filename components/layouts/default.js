@@ -85,6 +85,8 @@ const Nav = styled.nav`
   z-index: 2;
 
   @media (min-width: 29em) {
+    display: block;
+    min-width: 12ch;
     position: unset;
     display: block;
     
