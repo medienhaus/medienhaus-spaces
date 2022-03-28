@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
 import styled from 'styled-components';
@@ -35,18 +37,27 @@ export default function Account() {
     const matrixClient = matrix.getMatrixClient();
 
     const { t } = useTranslation('account');
+    const router = useRouter();
 
-    const [isLoading, setIsLoading] = useState(true);
     const [profileInfo, setProfileInfo] = useState({});
     const [emails, setEmails] = useState([]);
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasToConfirmNewEmail, setHasToConfirmNewEmail] = useState(false);
     const [isSavingChanges, setIsSavingChanges] = useState(false);
     const [isChangingAvatar, setIsChangingAvatar] = useState(false);
 
     const [inputDisplayname, setInputDisplayname] = useState('');
     const [inputNewEmail, setInputNewEmail] = useState('');
+    const [inputPassword, setInputPassword] = useState('');
+
+    const [feedbackMessage, setFeedbackMessage] = useState(null);
 
     const avatarFileUploadInput = useRef(null);
+
+    const fetchEmails = useCallback(async () => {
+        setEmails(map(filter((await matrixClient.getThreePids()).threepids, { medium: 'email' }), 'address'));
+    }, [matrixClient]);
 
     const fetchProfileInfo = useCallback(async () => {
         const profileInfo = await matrixClient.getProfileInfo(matrixClient.getUserId());
@@ -73,6 +84,7 @@ export default function Account() {
     const saveChanges = async () => {
         if (isSavingChanges) return;
 
+        setFeedbackMessage(null);
         setIsSavingChanges(true);
         // Save display name if changed
         if (profileInfo.displayname !== inputDisplayname) {
@@ -81,20 +93,74 @@ export default function Account() {
         }
         // Add new email if provided
         if (inputNewEmail) {
-            // @TODO
+            const secretResponse = await matrixClient.generateClientSecret();
+            await matrixClient.requestAdd3pidEmailToken(inputNewEmail, secretResponse, 1, `${window.location}?secret=${secretResponse}`);
+            // Now an email will be sent to the user, in which they have to click on a validation link
+            setInputNewEmail('');
+            setFeedbackMessage(t('We have sent an email to the provided address. Please click the link in it in order to verify that you really own the given address.'));
         }
         setIsSavingChanges(false);
     };
 
+    const confirmNewEmail = async () => {
+        if (isSavingChanges) return;
+
+        setIsSavingChanges(true);
+
+        // see https://spec.matrix.org/v1.2/client-server-api/#post_matrixclientv3account3pidadd
+        const threePidConfirmObject = {
+            sid: router.query.sid,
+            client_secret: router.query.secret,
+            auth: {
+                type: 'm.login.password',
+                user: matrixClient.getUserId(),
+                identifier: {
+                    type: 'm.id.user',
+                    user: matrixClient.getUserId(),
+                },
+                password: inputPassword,
+            },
+        };
+
+        await matrixClient.addThreePidOnly(threePidConfirmObject)
+            .then(() => {
+                router.push('/account');
+            })
+            .catch(/** @param {MatrixError} error */(error) => {
+                setFeedbackMessage(error.message);
+            })
+            .finally(() => {
+                setIsSavingChanges(false);
+            });
+    };
+
     useEffect(() => {
         (async () => {
-            setEmails(map(filter((await matrixClient.getThreePids()).threepids, { medium: 'email' }), 'address'));
+            await fetchEmails();
             await fetchProfileInfo();
             setIsLoading(false);
+
+            // Check if the user clicked an email validation link (see saveChanges()), which we now might need to handle
+            setHasToConfirmNewEmail(router.query?.sid && router.query?.secret);
         })();
-    }, [fetchProfileInfo, matrixClient]);
+    }, [fetchEmails, fetchProfileInfo, router.query?.secret, router.query?.sid]);
 
     if (isLoading) return null;
+
+    if (hasToConfirmNewEmail) {
+        return (
+            <>
+                <h1>/account</h1>
+                <p>{ t('Please enter your account password to confirm adding the given email address to your account:') }</p>
+                <br />
+                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
+                    <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <button type="submit" disabled={isSavingChanges}>{ t('Confirm') }</button>
+                </form>
+                { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+            </>
+        );
+    }
 
     return (
         <>
@@ -114,18 +180,18 @@ export default function Account() {
                     type="text"
                     value={inputDisplayname}
                     disabled={isSavingChanges}
+                    placeholder={matrixClient.getUserId()}
                     onChange={(event) => { setInputDisplayname(event.target.value); }}
                 />
-                { emails.length ? (
-                    emails.map((email, index) => (
-                        <input type="email" value={email} disabled />
-                    ))
-                ) : (
+                { emails.map((email, index) => (
+                    <input key={email} type="email" value={email} disabled />
+                )) }
+                { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
                     <input
                         type="email"
                         value={inputNewEmail}
                         disabled={isSavingChanges}
-                        placeholder={`${t('Add your email address')}...`}
+                        placeholder={`${t('add ' + (emails.length ? 'another' : 'your') + ' email address')}...`}
                         onChange={(event) => { setInputNewEmail(event.target.value); }}
                     />
                 ) }
@@ -135,6 +201,7 @@ export default function Account() {
                 ) && (
                     <button type="submit" disabled={isSavingChanges}>{ t('Save changes') }</button>
                 ) }
+                { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
             </form>
         </>
     );

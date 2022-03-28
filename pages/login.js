@@ -56,8 +56,8 @@ export default function Login() {
             ) : (
                 <>
                     <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.currentTarget.value)} />
-                        <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
                         { errorMessage && (<p>❗️ { errorMessage }</p>) }
                     </form>

@@ -10,5 +10,8 @@ module.exports = {
             },
         },
         contextRootSpaceRoomId: '!pwCcubmjqBIdIMqLRd:dev.medienhaus.udk-berlin.de',
+        account: {
+            allowAddingNewEmails: true,
+        },
     },
 };
