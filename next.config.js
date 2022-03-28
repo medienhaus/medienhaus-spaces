@@ -4,6 +4,7 @@ module.exports = {
         authProviders: {
             matrix: {
                 baseUrl: 'https://dev.medienhaus.udk-berlin.de',
+                allowCustomHomeserver: true,
             },
             matrixContentStorage: {
                 baseUrl: 'https://content.udk-berlin.de',
