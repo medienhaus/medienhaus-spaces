@@ -1,14 +1,24 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../lib/Auth';
 
 export default function Login() {
+    const [isTryingToSignIn, setIsTryingToSignIn] = useState(false);
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const auth = useAuth();
+    const [errorMessage, setErrorMessage] = useState(null);
 
-    const onSubmitLoginForm = () => {
-        auth.signin(name, password);
+    const auth = useAuth();
+    const { t } = useTranslation('login');
+
+    const onSubmitLoginForm = async () => {
+        setIsTryingToSignIn(true);
+        setErrorMessage(null);
+        await auth.signin(name, password).catch(/** @param {MatrixError} error */(error) => {
+            setErrorMessage(error.message);
+        });
+        setIsTryingToSignIn(false);
     };
 
     const onLogout = () => {
@@ -46,9 +56,10 @@ export default function Login() {
             ) : (
                 <>
                     <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                        <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.currentTarget.value)} />
-                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
-                        <button type="submit">Login</button>
+                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.currentTarget.value)} />
+                        <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
+                        <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                        { errorMessage && (<p>❗️ { errorMessage }</p>) }
                     </form>
                 </>
             ) }
