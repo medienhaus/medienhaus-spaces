@@ -35,7 +35,6 @@ export default function Write() {
     // }
     const lookForServiceFolder = async (applicationsSpaceId) => {
         const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
-        console.log(matrix.spaces);
         if (findServiceSpace) return findServiceSpace.roomId;
         else {
             console.info('creating service space');
@@ -141,7 +140,6 @@ export default function Write() {
         }
     };
 
-    console.log(matrix.spaces.get(serviceSpaceId));
     return (<WriteView>
         <h1>/write</h1>
         <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
