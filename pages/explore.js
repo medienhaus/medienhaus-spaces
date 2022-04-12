@@ -11,7 +11,7 @@ export default function Explore() {
         <>
             <h1>/explore</h1>
             <ContextMultiLevelSelect onChange={setActiveContext} />
-            { t('Selected context') }: { activeContext }
+            {t('Selected context')}: {activeContext}
         </>
     );
 }
