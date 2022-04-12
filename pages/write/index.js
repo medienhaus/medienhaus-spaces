@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import getConfig from 'next/config';
-import { debounce } from 'lodash';
 
 import { Loading } from '../../components/UI/loading';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import { useServices } from '../../lib/Services';
 import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 
@@ -15,7 +13,6 @@ const WriteView = styled.div`
 `;
 
 export default function Write() {
-    const [edit, setEdit] = useState(false);
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
@@ -157,7 +154,6 @@ export default function Write() {
                 key={roomId}
                 roomId={roomId}
                 parent={serviceSpaceId}
-                edit={edit}
             />;
         }) }
     </WriteView>
