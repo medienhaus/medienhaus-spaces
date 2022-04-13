@@ -6,6 +6,7 @@ import getConfig from 'next/config';
 import { Loading } from '../../components/UI/loading';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import { WriteAuthProvider } from '../../lib/auth/WriteAuthProvider';
 import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 
@@ -17,6 +18,8 @@ export default function Write() {
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
+    const [password, setPassword] = useState('');
+    const [validatePassword, setValidatePassword] = useState('');
     const [dropdownSelection, setDropdownSelection] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const auth = useAuth();
@@ -24,6 +27,8 @@ export default function Write() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrixSpaces = matrix.spaces.values();
     const application = 'write';
+
+    const write = new WriteAuthProvider('https://pad.klasseklima.dev/mypads/api', 'rschnuell', '1234');
     // const writeService = useServices('write', auth.getAuthenticationProvider('matrix'), matrix);
 
     // const writeFolder = useServices('write');
@@ -121,6 +126,28 @@ export default function Write() {
         else setValidLink(false);
         setNewPadLink(e.target.value);
     };
+
+    const createPasswordPad = async () => {
+        await write.init();
+        console.log(write.getAllPads());
+        const padId = await write.createPad(newPadName, 'private', password);
+        console.log(padId);
+
+        const link = 'https://pad.klasseklima.dev/p/' + padId;
+
+        console.log('creating room for ' + newPadName);
+        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
+        await matrixClient.sendMessage(room, {
+            msgtype: 'm.text',
+            body: link,
+        }).catch(console.log);
+        setDropdownSelection('');
+        setNewPadName('');
+        setPassword('');
+        setValidatePassword('');
+    };
+
     const renderSelectedOption = () => {
         switch (dropdownSelection) {
             case 'anonymousPad':
@@ -135,6 +162,13 @@ export default function Write() {
                     { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.writeUrl }</span> }
                     <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={addExistingPad}>Add existing pad</LoadingSpinnerButton>
                 </>);
+            case 'passwordPad':
+                return (<>
+                    <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+                    <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createPasswordPad}>Add pad</LoadingSpinnerButton>
+                </>);
             default:
                 return (null);
         }
@@ -146,6 +180,8 @@ export default function Write() {
             <option disabled value="">-- select option --</option>
             <option value="anonymousPad">Create new anonymous pad</option>
             <option value="existingPad">Add an existing pad</option>
+            <option value="passwordPad">Create password protected pad</option>
+
         </select>
         { renderSelectedOption() }
         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
