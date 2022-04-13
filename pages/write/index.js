@@ -9,19 +9,29 @@ import { useMatrix } from '../../lib/Matrix';
 // import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
 import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
+import Close from '../../assets/icons/close.svg';
 
 const WriteView = styled.div`
 
 `;
 
+const Header = styled.div`
+    display:flex;
+    justify-content: space-between;
+`;
+const CloseButton = styled.a`
+    display: flex;
+    align-items: center;
+`;
 export default function Write() {
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
     const [password, setPassword] = useState('');
     const [validatePassword, setValidatePassword] = useState('');
-    const [dropdownSelection, setDropdownSelection] = useState('');
+    const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
+    const [openActions, setOpenActions] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -107,7 +117,7 @@ export default function Write() {
             msgtype: 'm.text',
             body: link,
         }).catch(console.log);
-        setDropdownSelection('');
+        setActionSelect('');
     };
 
     const addExistingPad = async () => {
@@ -128,7 +138,6 @@ export default function Write() {
     };
 
     const createPasswordPad = async () => {
-        await write.init();
         console.log(write.getAllPads());
         const padId = await write.createPad(newPadName, 'private', password);
         console.log(padId);
@@ -142,14 +151,14 @@ export default function Write() {
             msgtype: 'm.text',
             body: link,
         }).catch(console.log);
-        setDropdownSelection('');
+        setActionSelect('');
         setNewPadName('');
         setPassword('');
         setValidatePassword('');
     };
 
     const renderSelectedOption = () => {
-        switch (dropdownSelection) {
+        switch (actionSelect) {
             case 'anonymousPad':
                 return (<>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
@@ -173,19 +182,30 @@ export default function Write() {
                 return (null);
         }
     };
-    const initWrite = () => {
-        console.log(write.getAllPads());
-    };
-    return (<WriteView>
-        <h1>/write</h1>
-        <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
-            <option disabled value="">-- select option --</option>
-            <option value="anonymousPad">Create new anonymous pad</option>
-            <option value="existingPad">Add an existing pad</option>
-            <option value="passwordPad">Create password protected pad</option>
 
-        </select>
-        { renderSelectedOption() }
+    const handleCloseButtonClick = () => {
+        setOpenActions(openActions => !openActions);
+        if (openActions) setActionSelect('');
+    };
+
+    return (<WriteView>
+        <Header>
+            <h1>/write</h1>
+            <CloseButton onClick={handleCloseButtonClick}>
+                <Close fill="var(--color-fg)" style={{ transform: openActions && 'rotate(45deg)' }} />
+            </CloseButton>
+        </Header>
+        { openActions && <>
+            <nav>
+                <ul>
+                    <li><a value="anonymousPad" onClick={() => setActionSelect('anonymousPad')}>Create new anonymous pad</a></li>
+                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>Add an existing pad</a></li>
+                    <li><a value="passwordPad" onClick={() => setActionSelect('passwordPad')}>Create password protected pad</a></li>
+                </ul>
+            </nav>
+            { renderSelectedOption() }
+        </>
+        }
         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
             return <DisplayLinks
                 key={roomId}
@@ -193,7 +213,6 @@ export default function Write() {
                 parent={serviceSpaceId}
             />;
         }) }
-        <button onClick={initWrite}>init</button>
     </WriteView>
     );
 }
