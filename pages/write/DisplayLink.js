@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import useFetchCms from '../../components/matrixFetchCms';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
@@ -34,12 +33,10 @@ const DisplayLinks = ({ parent, roomId }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const link = matrix.rooms.get(roomId);
+    const content = matrix.roomContent.get(roomId);
     const { t } = useTranslation('explore');
 
-    let { cms, error, fetching } = useFetchCms(roomId);
-    cms = cms[0];
-
-    const copyToClipboard = () => navigator.clipboard.writeText(cms.body);
+    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
         setRemovingLink(true);
@@ -48,13 +45,12 @@ const DisplayLinks = ({ parent, roomId }) => {
         setRemovingLink(false);
     };
 
-    if (fetching) return <LoadingSpinner />;
-    if (error) return <p>{ t('Something went wrong') }</p>;
-    if (!cms) return <p>{ t('This room looks empty') }</p>;
+    if (!matrix) return <LoadingSpinner />;
+    if (!content) return <p>{ t('Something went wrong') }</p>;
 
     return (
         <LinkELement>
-            <a href={cms.body} target="_blank" rel="noopener noreferrer">{ link.name }</a>
+            <a href={content.body} target="_blank" rel="noopener noreferrer">{ link.name }</a>
             <div className="group">
                 <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
                 <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
