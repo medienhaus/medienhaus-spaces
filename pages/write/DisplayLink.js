@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import useFetchCms from '../../components/matrixFetchCms';
-import { Loading } from '../../components/UI/loading';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 
@@ -46,7 +46,7 @@ const DisplayLinks = ({ parent, roomId }) => {
         setRemovingLink(false);
     };
 
-    if (fetching) return <Loading />;
+    if (fetching) return <LoadingSpinner />;
     if (error) return <p>Something went wrong trying to get</p>;
     if (!cms) return <p>there's no content in this room</p>;
 
@@ -55,7 +55,7 @@ const DisplayLinks = ({ parent, roomId }) => {
             <a href={cms.body} target="_blank" rel="noopener noreferrer">{ link.name }</a>
             <div className="group">
                 <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
-                <a onClick={removeLink}>{ removingLink ? <Loading /> : <Bin fill="var(--color-fg)" /> }</a>
+                <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
             </div>
         </LinkELement>
     );

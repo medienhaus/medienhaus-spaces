@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Loading } from './loading';
+import LoadingSpinner from './LoadingSpinner';
 
 const LoadingSpinnerButton = ({ className, disabled, onClick: callback, style, children, stopPropagationOnClick }) => {
     const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const LoadingSpinnerButton = ({ className, disabled, onClick: callback, style, c
         }
     };
 
-    return <button className={className} disabled={loading || disabled} onClick={onClick} style={style}>{ loading ? <Loading /> : children }</button>;
+    return <button className={className} disabled={loading || disabled} onClick={onClick} style={style}>{ loading ? <LoadingSpinner /> : children }</button>;
 };
 
 export default LoadingSpinnerButton;

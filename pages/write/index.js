@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import getConfig from 'next/config';
 
-import { Loading } from '../../components/UI/loading';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 // import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
@@ -88,7 +88,7 @@ export default function Write() {
         startLookingForFolders();
     }, [matrix.initialSyncDone]);
 
-    if (!serviceSpaceId) return <Loading />;
+    if (!serviceSpaceId) return <LoadingSpinner />;
 
     const createAnonymousPad = async () => {
         let string = '';
