@@ -7,7 +7,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 // import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
-import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
+import LoadingSpinnerButton from '../../components/UI/LoadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 
 const WriteView = styled.div`
@@ -133,7 +133,7 @@ export default function Write() {
         const padId = await write.createPad(newPadName, 'private', password);
         console.log(padId);
 
-        const link = 'https://pad.klasseklima.dev/p/' + padId;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
 
         console.log('creating room for ' + newPadName);
         const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
@@ -173,9 +173,7 @@ export default function Write() {
                 return (null);
         }
     };
-    const initWrite = () => {
-        console.log(write.getAllPads());
-    };
+
     return (<WriteView>
         <h1>/write</h1>
         <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
@@ -193,7 +191,6 @@ export default function Write() {
                 parent={serviceSpaceId}
             />;
         }) }
-        <button onClick={initWrite}>init</button>
     </WriteView>
     );
 }
