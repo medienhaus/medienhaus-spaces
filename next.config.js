@@ -9,6 +9,9 @@ module.exports = {
             matrixContentStorage: {
                 baseUrl: 'https://content.udk-berlin.de',
             },
+            write: {
+                baseUrl: 'https://pad.klasseklima.dev/mypads/api',
+            },
         },
         contextRootSpaceRoomId: '!pwCcubmjqBIdIMqLRd:dev.medienhaus.udk-berlin.de',
         account: {

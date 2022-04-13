@@ -6,7 +6,7 @@ import getConfig from 'next/config';
 import { Loading } from '../../components/UI/loading';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import { WriteAuthProvider } from '../../lib/auth/WriteAuthProvider';
+// import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
 import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 
@@ -28,7 +28,7 @@ export default function Write() {
     const matrixSpaces = matrix.spaces.values();
     const application = 'write';
 
-    const write = new WriteAuthProvider('https://pad.klasseklima.dev/mypads/api', 'rschnuell', '1234');
+    const write = auth.getAuthenticationProvider('write');
     // const writeService = useServices('write', auth.getAuthenticationProvider('matrix'), matrix);
 
     // const writeFolder = useServices('write');
@@ -173,7 +173,9 @@ export default function Write() {
                 return (null);
         }
     };
-
+    const initWrite = () => {
+        console.log(write.getAllPads());
+    };
     return (<WriteView>
         <h1>/write</h1>
         <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
@@ -191,6 +193,7 @@ export default function Write() {
                 parent={serviceSpaceId}
             />;
         }) }
+        <button onClick={initWrite}>init</button>
     </WriteView>
     );
 }
