@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -33,6 +34,7 @@ const DisplayLinks = ({ parent, roomId }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const link = matrix.rooms.get(roomId);
+    const { t } = useTranslation('explore');
 
     let { cms, error, fetching } = useFetchCms(roomId);
     cms = cms[0];
@@ -47,8 +49,8 @@ const DisplayLinks = ({ parent, roomId }) => {
     };
 
     if (fetching) return <LoadingSpinner />;
-    if (error) return <p>Something went wrong trying to get</p>;
-    if (!cms) return <p>there's no content in this room</p>;
+    if (error) return <p>{ t('Something went wrong') }</p>;
+    if (!cms) return <p>{ t('This room looks empty') }</p>;
 
     return (
         <LinkELement>

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -27,6 +28,7 @@ export default function Write() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrixSpaces = matrix.spaces.values();
     const application = 'write';
+    const { t } = useTranslation('write');
 
     const write = auth.getAuthenticationProvider('write');
     // const writeService = useServices('write', auth.getAuthenticationProvider('matrix'), matrix);
@@ -178,9 +180,9 @@ export default function Write() {
         <h1>/write</h1>
         <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
             <option disabled value="">-- select option --</option>
-            <option value="anonymousPad">Create new anonymous pad</option>
-            <option value="existingPad">Add an existing pad</option>
-            <option value="passwordPad">Create password protected pad</option>
+            <option value="anonymousPad">{ t('Create new anonymous pad') }</option>
+            <option value="existingPad">{ t('Add an existing pad') }</option>
+            <option value="passwordPad">{ t('Create password protected pad') }</option>
 
         </select>
         { renderSelectedOption() }
