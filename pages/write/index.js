@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 
-import { Loading } from '../../components/UI/loading';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 // import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
-import LoadingSpinnerButton from '../../components/UI/loadingSpinnerButton';
+import LoadingSpinnerButton from '../../components/UI/LoadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 import Close from '../../assets/icons/close.svg';
 
@@ -37,6 +38,7 @@ export default function Write() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrixSpaces = matrix.spaces.values();
     const application = 'write';
+    const { t } = useTranslation('write');
 
     const write = auth.getAuthenticationProvider('write');
     // const writeService = useServices('write', auth.getAuthenticationProvider('matrix'), matrix);
@@ -98,7 +100,7 @@ export default function Write() {
         startLookingForFolders();
     }, [matrix.initialSyncDone]);
 
-    if (!serviceSpaceId) return <Loading />;
+    if (!serviceSpaceId) return <LoadingSpinner />;
 
     const createAnonymousPad = async () => {
         let string = '';
@@ -138,11 +140,8 @@ export default function Write() {
     };
 
     const createPasswordPad = async () => {
-        console.log(write.getAllPads());
         const padId = await write.createPad(newPadName, 'private', password);
-        console.log(padId);
-
-        const link = 'https://pad.klasseklima.dev/p/' + padId;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
 
         console.log('creating room for ' + newPadName);
         const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
@@ -157,6 +156,20 @@ export default function Write() {
         setValidatePassword('');
     };
 
+    const createAuthoredPad = async (params) => {
+        const padId = await write.createPad(newPadName, 'public');
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
+
+        console.log('creating room for ' + newPadName);
+        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
+        await matrixClient.sendMessage(room, {
+            msgtype: 'm.text',
+            body: link,
+        }).catch(console.log);
+        setActionSelect('');
+        setNewPadName('');
+    };
     const renderSelectedOption = () => {
         switch (actionSelect) {
             case 'anonymousPad':
@@ -178,6 +191,11 @@ export default function Write() {
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
                     <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createPasswordPad}>Add pad</LoadingSpinnerButton>
                 </>);
+            case 'authoredPad':
+                return (<>
+                    <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createAuthoredPad}>Add pad</LoadingSpinnerButton>
+                </>);
             default:
                 return (null);
         }
@@ -198,9 +216,10 @@ export default function Write() {
         { openActions && <>
             <nav>
                 <ul>
-                    <li><a value="anonymousPad" onClick={() => setActionSelect('anonymousPad')}>Create new anonymous pad</a></li>
-                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>Add an existing pad</a></li>
-                    <li><a value="passwordPad" onClick={() => setActionSelect('passwordPad')}>Create password protected pad</a></li>
+                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>{ t('Add an existing pad') }</a></li>
+                    <li><a value="anonymousPad" onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
+                    <li><a value="authoredPad" onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
+                    <li><a value="passwordPad" onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
                 </ul>
             </nav>
             { renderSelectedOption() }

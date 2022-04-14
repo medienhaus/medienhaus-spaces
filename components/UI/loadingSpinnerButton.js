@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Loading } from './loading';
+import LoadingSpinner from './LoadingSpinner';
 
-const LoadingSpinnerButton = ({ className, disabled, onClick: callback, style, children, stopPropagationOnClick }) => {
+const LoadingSpinnerButton = ({ disabled, onClick: callback, children }) => {
     const [loading, setLoading] = useState(false);
     const isMounted = useRef(true);
 
@@ -15,7 +15,6 @@ const LoadingSpinnerButton = ({ className, disabled, onClick: callback, style, c
     }, []);
 
     const onClick = async (e) => {
-        if (stopPropagationOnClick) e.stopPropagation();
         e.preventDefault();
         setLoading(true);
         try {
@@ -29,7 +28,7 @@ const LoadingSpinnerButton = ({ className, disabled, onClick: callback, style, c
         }
     };
 
-    return <button className={className} disabled={loading || disabled} onClick={onClick} style={style}>{ loading ? <Loading /> : children }</button>;
+    return <button disabled={loading || disabled} onClick={onClick}>{ loading ? <LoadingSpinner /> : children }</button>;
 };
 
 export default LoadingSpinnerButton;

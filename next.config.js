@@ -17,14 +17,5 @@ module.exports = {
         account: {
             allowAddingNewEmails: true,
         },
-        writeUrl: 'https://write.udk-berlin.de',
-    },
-    webpack(config) {
-        config.module.rules.push({
-            test: /\.svg$/,
-            use: ['@svgr/webpack'],
-        });
-
-        return config;
     },
 };
