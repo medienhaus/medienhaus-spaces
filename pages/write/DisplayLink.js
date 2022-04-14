@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -29,11 +29,11 @@ const LinkELement = styled.div`
 `;
 
 const DisplayLinks = ({ parent, roomId }) => {
-    const [removingLink, setRemovingLink] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const link = matrix.rooms.get(roomId);
-    const content = matrix.roomContent.get(roomId);
+    const [removingLink, setRemovingLink] = useState(false);
+    const [linkName, setLinkName] = useState('');
+    const [content, setContent] = useState(matrix.roomContent.get(roomId));
     const { t } = useTranslation('explore');
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
@@ -45,12 +45,27 @@ const DisplayLinks = ({ parent, roomId }) => {
         setRemovingLink(false);
     };
 
-    if (!matrix) return <LoadingSpinner />;
-    if (!content) return <p>{ t('Something went wrong') }</p>;
+    useEffect(() => {
+        setLinkName(matrix.rooms.get(roomId).name);
+    }, [matrix.rooms, roomId]);
+
+    useEffect(() => {
+        setContent(matrix.roomContent.get(roomId));
+    }, [matrix.roomContent, roomId]);
+
+    useEffect(() => {
+        const checkForRoomContent = async () => {
+            await matrix.getRoomContent(roomId);
+        };
+        checkForRoomContent();
+    }, [content, matrix, roomId]);
+
+    if (content === undefined) return <LoadingSpinner />;
+    if (content === null) return <p>{ t('There is no content in this room') }</p>;
 
     return (
         <LinkELement>
-            <a href={content.body} target="_blank" rel="noopener noreferrer">{ link.name }</a>
+            <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
                 <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
                 <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
