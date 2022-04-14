@@ -10,7 +10,8 @@ module.exports = {
                 baseUrl: 'https://content.udk-berlin.de',
             },
             write: {
-                baseUrl: 'https://pad.klasseklima.dev/mypads/api',
+                baseUrl: 'https://pad.klasseklima.dev/p',
+                api: 'https://pad.klasseklima.dev/mypads/api',
             },
         },
         contextRootSpaceRoomId: '!pwCcubmjqBIdIMqLRd:dev.medienhaus.udk-berlin.de',

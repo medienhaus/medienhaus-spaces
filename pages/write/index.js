@@ -124,7 +124,7 @@ export default function Write() {
     };
 
     const handleExistingPad = (e) => {
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.writeUrl)) setValidLink(true);
+        if (e.target.value.includes(getConfig().publicRuntimeConfig.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
     };
@@ -135,7 +135,7 @@ export default function Write() {
         const padId = await write.createPad(newPadName, 'private', password);
         console.log(padId);
 
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
 
         console.log('creating room for ' + newPadName);
         const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
@@ -161,7 +161,7 @@ export default function Write() {
                 return (<>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.writeUrl }</span> }
+                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.write.baseUrl }</span> }
                     <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={addExistingPad}>Add existing pad</LoadingSpinnerButton>
                 </>);
             case 'passwordPad':
