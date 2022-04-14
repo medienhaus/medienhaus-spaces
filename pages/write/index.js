@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
+import { isEmpty } from 'lodash';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -33,6 +34,7 @@ export default function Write() {
     const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
+
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -101,82 +103,72 @@ export default function Write() {
     }, [matrix.initialSyncDone]);
 
     useEffect(() => {
+        const syncPadServerWithSpaces = (serverPads) => {
+            for (const pad of serverPads) {
+                setNewPadName(serverPads[pad].name);
+                createWriteRoom(getConfig().publicRuntimeConfig.writeUrl + '/' + serverPads[pad]._id);
+            }
+        };
         const populatePadsfromServer = async () => {
-            await write.syncAllPads(window.localStorage.getItem('write_access_token'));
-            console.log(write.getAllPads());
+            // const serverPads = write.getAllPads();
+            // if (isEmpty(serverPads)) serverPads);
+            // else {
+            //     await write.syncAllPads();
+            //     setPadsOnServer(write.getAllPads());
+            // }
+            const serverPads = write.getAllPads();
+            if (!isEmpty(serverPads)) {
+                console.log(serverPads);
+            } else {
+                await write.syncAllPads();
+                console.log(write.getAllPads());
+            }
+            console.log(serverPads);
         };
         populatePadsfromServer();
     }, [write]);
 
-    if (!serviceSpaceId) return <LoadingSpinner />;
+    async function createWriteRoom(link) {
+        console.log('creating room for ' + newPadName);
+        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
+        await matrixClient.sendMessage(room, {
+            msgtype: 'm.text',
+            body: link,
+        }).catch(console.log);
+        setActionSelect(null);
+        setNewPadName(null);
+        setPassword(null);
+        setValidatePassword(null);
+    }
 
     const createAnonymousPad = async () => {
         let string = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-
         const charactersLength = characters.length;
         for (let i = 0; i < 20; i++) {
             string += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         const link = getConfig().publicRuntimeConfig.writeUrl + '/' + string;
-
-        console.log('creating room for ' + newPadName);
-        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(console.log);
-        setActionSelect('');
-    };
-
-    const addExistingPad = async () => {
-        console.log('creating room for ' + newPadName);
-        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: newPadLink,
-        }).catch(console.log);
-        ('');
-    };
-
-    const handleExistingPad = (e) => {
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.writeUrl)) setValidLink(true);
-        else setValidLink(false);
-        setNewPadLink(e.target.value);
+        await createWriteRoom(link);
     };
 
     const createPasswordPad = async () => {
         const padId = await write.createPad(newPadName, 'private', password);
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
-
-        console.log('creating room for ' + newPadName);
-        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(console.log);
-        setActionSelect('');
-        setNewPadName('');
-        setPassword('');
-        setValidatePassword('');
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+        await createWriteRoom(link);
     };
 
     const createAuthoredPad = async (params) => {
         const padId = await write.createPad(newPadName, 'public');
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + padId;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+        await createWriteRoom(link);
+    };
 
-        console.log('creating room for ' + newPadName);
-        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(console.log);
-        setActionSelect('');
-        setNewPadName('');
+    const handleExistingPad = (e) => {
+        if (e.target.value.includes(getConfig().publicRuntimeConfig.write.baseUrl)) setValidLink(true);
+        else setValidLink(false);
+        setNewPadLink(e.target.value);
     };
 
     const renderSelectedOption = () => {
@@ -190,8 +182,8 @@ export default function Write() {
                 return (<>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.writeUrl }</span> }
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={addExistingPad}>Add existing pad</LoadingSpinnerButton>
+                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.write.baseUrl }</span> }
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={() => createWriteRoom(newPadLink)}>Add existing pad</LoadingSpinnerButton>
                 </>);
             case 'passwordPad':
                 return (<>
@@ -203,7 +195,7 @@ export default function Write() {
             case 'authoredPad':
                 return (<>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createAuthoredPad}>Add pad</LoadingSpinnerButton>
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName} onClick={createAuthoredPad}>Add pad</LoadingSpinnerButton>
                 </>);
             default:
                 return (null);
@@ -214,6 +206,7 @@ export default function Write() {
         setOpenActions(openActions => !openActions);
         if (openActions) setActionSelect('');
     };
+    if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (<WriteView>
         <Header>
