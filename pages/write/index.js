@@ -100,6 +100,14 @@ export default function Write() {
         startLookingForFolders();
     }, [matrix.initialSyncDone]);
 
+    useEffect(() => {
+        const populatePadsfromServer = async () => {
+            await write.syncAllPads(window.localStorage.getItem('write_access_token'));
+            console.log(write.getAllPads());
+        };
+        populatePadsfromServer();
+    }, [write]);
+
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     const createAnonymousPad = async () => {
@@ -170,6 +178,7 @@ export default function Write() {
         setActionSelect('');
         setNewPadName('');
     };
+
     const renderSelectedOption = () => {
         switch (actionSelect) {
             case 'anonymousPad':
