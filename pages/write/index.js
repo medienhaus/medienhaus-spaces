@@ -170,7 +170,7 @@ export default function Write() {
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createPasswordPad}>Add pad</LoadingSpinnerButton>
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Add pad</LoadingSpinnerButton>
                 </form>);
             default:
                 return (null);
