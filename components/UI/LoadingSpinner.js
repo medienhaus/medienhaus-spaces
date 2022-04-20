@@ -1,7 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 
-const Loading = styled.div`
+const LoadingSpinner = styled.div`
     border-color: var(--color-fg) transparent var(--color-fg) transparent;
     border-radius: 50%;
     border-style: solid;
@@ -19,9 +18,5 @@ const Loading = styled.div`
             transform: rotate(360deg);
         }
 }`;
-
-const LoadingSpinner = () => {
-    return <Loading />;
-};
 
 export default LoadingSpinner;
