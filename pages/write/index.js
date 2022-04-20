@@ -125,7 +125,7 @@ export default function Write() {
     };
 
     const handleExistingPad = (e) => {
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.write.baseUrl)) setValidLink(true);
+        if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
     };
@@ -162,7 +162,7 @@ export default function Write() {
                 return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.write.baseUrl }</span> }
+                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
                     <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink}>Add existing pad</LoadingSpinnerButton>
                 </form>);
             case 'passwordPad':
