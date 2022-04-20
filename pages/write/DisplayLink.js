@@ -8,7 +8,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 
-const LinkELement = styled.div`
+const LinkElement = styled.div`
     display: flex;
     align-items: center;
     padding-bottom:0.5em;
@@ -41,7 +41,7 @@ const DisplayLinks = ({ parent, roomId }) => {
     const removeLink = async () => {
         setRemovingLink(true);
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
-        matrix.leaveRoom(roomId);
+        await matrix.leaveRoom(roomId);
         setRemovingLink(false);
     };
 
@@ -55,7 +55,7 @@ const DisplayLinks = ({ parent, roomId }) => {
 
     useEffect(() => {
         const checkForRoomContent = async () => {
-            await matrix.getRoomContent(roomId);
+            await matrix.hydrateRoomContent(roomId);
         };
         checkForRoomContent();
     }, [content, matrix, roomId]);
@@ -64,13 +64,13 @@ const DisplayLinks = ({ parent, roomId }) => {
     if (content === null) return <p>{ t('There is no content in this room') }</p>;
 
     return (
-        <LinkELement>
+        <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
                 <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
                 <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
             </div>
-        </LinkELement>
+        </LinkElement>
     );
 };
 export default DisplayLinks;

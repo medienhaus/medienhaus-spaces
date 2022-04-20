@@ -100,7 +100,7 @@ export default function Write() {
         for (let i = 0; i < 20; i++) {
             string += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-        const link = getConfig().publicRuntimeConfig.writeUrl + '/' + string;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
 
         console.log('creating room for ' + newPadName);
         const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
