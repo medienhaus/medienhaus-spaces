@@ -153,24 +153,24 @@ export default function Write() {
     const renderSelectedOption = () => {
         switch (dropdownSelection) {
             case 'anonymousPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName} onClick={createAnonymousPad}>Create pad</LoadingSpinnerButton>
-                </>);
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName}>Create pad</LoadingSpinnerButton>
+                </form>);
             case 'existingPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
                     { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.write.baseUrl }</span> }
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={addExistingPad}>Add existing pad</LoadingSpinnerButton>
-                </>);
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink}>Add existing pad</LoadingSpinnerButton>
+                </form>);
             case 'passwordPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
                     <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createPasswordPad}>Add pad</LoadingSpinnerButton>
-                </>);
+                </form>);
             default:
                 return (null);
         }
