@@ -120,7 +120,8 @@ export default function Write() {
             msgtype: 'm.text',
             body: newPadLink,
         }).catch(console.log);
-        ('');
+        setNewPadName('');
+        setNewPadLink('');
     };
 
     const handleExistingPad = (e) => {
