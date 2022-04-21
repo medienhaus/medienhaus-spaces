@@ -7,6 +7,7 @@ import { useMatrix } from '../../lib/Matrix';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
+import Lock from '../../assets/icons/lock.svg';
 
 const LinkElement = styled.div`
     display: flex;
@@ -28,18 +29,21 @@ const LinkElement = styled.div`
     }
 `;
 
-const DisplayLinks = ({ parent, roomId }) => {
+const DisplayLinks = ({ parent, roomId, serverPads }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const write = auth.getAuthenticationProvider('write');
     const [removingLink, setRemovingLink] = useState(false);
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContent.get(roomId));
+    const [padExistsOnServer, setPadExistsOnServer] = useState(null);
     const { t } = useTranslation('explore');
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
         setRemovingLink(true);
+        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
         await matrix.leaveRoom(roomId);
         setRemovingLink(false);
@@ -58,7 +62,8 @@ const DisplayLinks = ({ parent, roomId }) => {
             await matrix.hydrateRoomContent(roomId);
         };
         checkForRoomContent();
-    }, [content, matrix, roomId]);
+        setPadExistsOnServer(serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]);
+    }, [content, matrix, roomId, serverPads]);
 
     if (content === undefined) return <LoadingSpinner />;
     if (content === null) return <p>{ t('There is no content in this room') }</p>;
@@ -67,8 +72,9 @@ const DisplayLinks = ({ parent, roomId }) => {
         <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
-                <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
-                <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
+                <a title={t('password protected')}>{ padExistsOnServer?.visibility === 'private' && <Lock fill="var(--color-me)" /> }</a>
+                <a title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
+                <a title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
             </div>
         </LinkElement>
     );

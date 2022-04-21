@@ -8,8 +8,6 @@ import { isEmpty } from 'lodash';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-// import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
-import LoadingSpinnerButton from '../../components/UI/LoadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 import Close from '../../assets/icons/close.svg';
 
@@ -34,6 +32,8 @@ export default function Write() {
     const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
+    const [serverPads, setServerPads] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -43,15 +43,6 @@ export default function Write() {
     const { t } = useTranslation('write');
 
     const write = auth.getAuthenticationProvider('write');
-    // const writeService = useServices('write', auth.getAuthenticationProvider('matrix'), matrix);
-
-    // const writeFolder = useServices('write');
-
-    // for (const space of matrix.spaces.values()) {
-    //     if (space.name !== 'Applications') continue;
-    //     matrixClient.leave(space.roomId);
-    //     setTimeout(() => console.log('waiting'), 200);
-    // }
     const lookForServiceFolder = async (applicationsSpaceId) => {
         const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
         if (findServiceSpace) return findServiceSpace.roomId;
@@ -103,27 +94,13 @@ export default function Write() {
     }, [matrix.initialSyncDone]);
 
     useEffect(() => {
-        const syncPadServerWithSpaces = (serverPads) => {
-            for (const pad of serverPads) {
-                setNewPadName(serverPads[pad].name);
-                createWriteRoom(getConfig().publicRuntimeConfig.writeUrl + '/' + serverPads[pad]._id);
-            }
-        };
         const populatePadsfromServer = async () => {
-            // const serverPads = write.getAllPads();
-            // if (isEmpty(serverPads)) serverPads);
-            // else {
-            //     await write.syncAllPads();
-            //     setPadsOnServer(write.getAllPads());
-            // }
-            const serverPads = write.getAllPads();
-            if (!isEmpty(serverPads)) {
-                console.log(serverPads);
+            if (!isEmpty(write.getAllPads())) {
+                setServerPads(write.getAllPads());
             } else {
                 await write.syncAllPads();
-                console.log(write.getAllPads());
+                setServerPads(write.getAllPads());
             }
-            console.log(serverPads);
         };
         populatePadsfromServer();
     }, [write]);
@@ -136,13 +113,18 @@ export default function Write() {
             msgtype: 'm.text',
             body: newPadLink || link,
         }).catch(console.log);
-        setActionSelect(null);
-        setNewPadName(null);
-        setPassword(null);
-        setValidatePassword(null);
+
+        await write.syncAllPads();
+        setServerPads(write.getAllPads());
+        setActionSelect('');
+        setNewPadName('');
+        setPassword('');
+        setValidatePassword('');
+        setOpenActions(false);
     }
 
     const createAnonymousPad = async () => {
+        setLoading(true);
         let string = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
         const charactersLength = characters.length;
@@ -151,24 +133,31 @@ export default function Write() {
         }
         const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
         await createWriteRoom(link);
+        setLoading(false);
     };
 
     const createPasswordPad = async () => {
+        setLoading(true);
         const padId = await write.createPad(newPadName, 'private', password);
         const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
         await createWriteRoom(link);
+        setLoading(false);
     };
 
     const createAuthoredPad = async (params) => {
+        setLoading(true);
         const padId = await write.createPad(newPadName, 'public');
         const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
         await createWriteRoom(link);
+        setLoading(false);
     };
 
     const handleExistingPad = (e) => {
+        setLoading(true);
         if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
+        setLoading(false);
     };
 
     const renderSelectedOption = () => {
@@ -176,26 +165,26 @@ export default function Write() {
             case 'anonymousPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName}>Create pad</LoadingSpinnerButton>
+                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner /> :t('Create pad') }</button>
                 </form>);
             case 'existingPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink || !validLink}>Add existing pad</LoadingSpinnerButton>
+                    { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
+                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Create pad</LoadingSpinnerButton>
+                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner /> :t('Create pad') }</button>
                 </form>);
             case 'authoredPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Create pad</LoadingSpinnerButton>
+                    <button type="submit" disabled={!newPadName}>{ t('Create pad') }</button>
                 </form>);
             default:
                 return (null);
@@ -232,8 +221,11 @@ export default function Write() {
                 key={roomId}
                 roomId={roomId}
                 parent={serviceSpaceId}
+                serverPads={serverPads}
             />;
         }) }
+        { /*Debug */ }
+        { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
     </WriteView>
     );
 }

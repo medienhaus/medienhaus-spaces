@@ -1,7 +1,11 @@
 {
-    "Create new anonymous pad": "Erstelle ein anonymes Pad",
-    "Add an existing pad": "Füge ein bestehendes Pad hinzu",
-    "Create password protected pad": "Erstelle ein passwortgeschütztes Pad",
+    "Create new anonymous pad": "Neues anonymes Pad anlegen",
+    "Add an existing pad": "Bestehendes Pad hinzufügen",
+    "Create password protected pad": "Neues passwortgeschütztes Pad anlegen",
     "There is no content in this room": "Es befindet sich kein Inhalt in diesem Raum",
-    "Create new authored pad": "Erstelle ein Pad mit autorschaft"
+    "Create new authored pad": "Neues Pad mit Autorschaft anlegen",
+    "Copy pad link to clipboard": "Pad Link kopieren",
+    "Remove pad from my library": "Pad entfernen",
+    "passowrd protected": "Passwort geschützt",
+    "Make sure your link includes": "Link enthält nicht: "
 }
