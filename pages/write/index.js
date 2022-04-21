@@ -134,7 +134,7 @@ export default function Write() {
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
-            body: link,
+            body: newPadLink || link,
         }).catch(console.log);
         setActionSelect(null);
         setNewPadName(null);
@@ -149,7 +149,7 @@ export default function Write() {
         for (let i = 0; i < 20; i++) {
             string += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
-        const link = getConfig().publicRuntimeConfig.writeUrl + '/' + string;
+        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
         await createWriteRoom(link);
     };
 
@@ -166,7 +166,7 @@ export default function Write() {
     };
 
     const handleExistingPad = (e) => {
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.write.baseUrl)) setValidLink(true);
+        if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
     };
@@ -174,29 +174,29 @@ export default function Write() {
     const renderSelectedOption = () => {
         switch (actionSelect) {
             case 'anonymousPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName} onClick={createAnonymousPad}>Create pad</LoadingSpinnerButton>
-                </>);
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName}>Create pad</LoadingSpinnerButton>
+                </form>);
             case 'existingPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.write.baseUrl }</span> }
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink} onClick={() => createWriteRoom(newPadLink)}>Add existing pad</LoadingSpinnerButton>
-                </>);
+                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink || !validLink}>Add existing pad</LoadingSpinnerButton>
+                </form>);
             case 'passwordPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword} onClick={createPasswordPad}>Add pad</LoadingSpinnerButton>
-                </>);
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Create pad</LoadingSpinnerButton>
+                </form>);
             case 'authoredPad':
-                return (<>
+                return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName} onClick={createAuthoredPad}>Add pad</LoadingSpinnerButton>
-                </>);
+                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Create pad</LoadingSpinnerButton>
+                </form>);
             default:
                 return (null);
         }
