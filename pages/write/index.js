@@ -188,7 +188,7 @@ export default function Write() {
         <select defaultValue="" onChange={(event) => setDropdownSelection(event.target.value)}>
             <option disabled value="">-- select option --</option>
             <option value="anonymousPad">{ t('Create new anonymous pad') }</option>
-            <option value="existingPad">{ t('Add an existing pad') }</option>
+            <option value="existingPad">{ t('Add existing pad') }</option>
             <option value="passwordPad">{ t('Create password protected pad') }</option>
 
         </select>
