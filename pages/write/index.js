@@ -137,7 +137,6 @@ export default function Write() {
     };
 
     const createPasswordPad = async () => {
-        await write.init();
         console.log(write.getAllPads());
         const padId = await write.createPad(newPadName, 'private', password);
         console.log(padId);
