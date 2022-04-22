@@ -62,10 +62,10 @@ const DisplayLinks = ({ parent, roomId, serverPads }) => {
             await matrix.hydrateRoomContent(roomId);
         };
         checkForRoomContent();
-        setPadExistsOnServer(serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]);
+        serverPads && setPadExistsOnServer(serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]);
     }, [content, matrix, roomId, serverPads]);
 
-    if (content === undefined) return <LoadingSpinner />;
+    if (content === undefined || serverPads === null) return <LoadingSpinner />;
     if (content === null) return <p>{ t('There is no content in this room') }</p>;
 
     return (
