@@ -107,7 +107,6 @@ export default function Write() {
 
     useEffect(() => {
         const syncServerPadsWithMatrix = async (params) => {
-            console.log(serverPads);
             let matrixPads = {};
             if (matrix?.spaces.get(serviceSpaceId).children) {
                 // if there are rooms within the space id we grab the names of those room
@@ -122,7 +121,6 @@ export default function Write() {
                     });
                 }
             }
-            console.log(matrixPads);
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
                 const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + pad._id;
