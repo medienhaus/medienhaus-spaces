@@ -9,7 +9,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import DisplayLinks from './DisplayLink';
-import Close from '../../assets/icons/close.svg';
+import Plus from '../../assets/icons/plus.svg';
 
 const WriteView = styled.div`
 
@@ -194,21 +194,21 @@ export default function Write() {
             case 'anonymousPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner /> :t('Create pad') }</button>
+                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'existingPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
                     { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
-                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner /> :t('Add existing pad') }</button>
+                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner /> :t('Create pad') }</button>
+                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'authoredPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
@@ -230,7 +230,7 @@ export default function Write() {
         <Header>
             <h1>/write</h1>
             <CloseButton onClick={handleCloseButtonClick}>
-                <Close fill="var(--color-fg)" style={{ transform: openActions && 'rotate(45deg)' }} />
+                <Plus fill="var(--color-fg)" style={{ transform: openActions && 'rotate(45deg)' }} />
             </CloseButton>
         </Header>
         { openActions && <>
