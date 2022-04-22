@@ -67,8 +67,8 @@ const DisplayLinks = ({ parent, roomId }) => {
         <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
-                <a onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
-                <a onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
+                <a title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
+                <a title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
             </div>
         </LinkElement>
     );

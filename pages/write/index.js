@@ -7,8 +7,6 @@ import getConfig from 'next/config';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-// import WriteAuthProvider from '../../lib/auth/WriteAuthProvider';
-import LoadingSpinnerButton from '../../components/UI/LoadingSpinnerButton';
 import DisplayLinks from './DisplayLink';
 
 const WriteView = styled.div`
@@ -23,6 +21,8 @@ export default function Write() {
     const [validatePassword, setValidatePassword] = useState('');
     const [dropdownSelection, setDropdownSelection] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
+    const [loading, setLoading] = useState(false);
+
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -93,6 +93,7 @@ export default function Write() {
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     const createAnonymousPad = async () => {
+        setLoading(true);
         let string = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
 
@@ -110,9 +111,11 @@ export default function Write() {
             body: link,
         }).catch(console.log);
         setDropdownSelection('');
+        setLoading(false);
     };
 
     const addExistingPad = async () => {
+        setLoading(true);
         console.log('creating room for ' + newPadName);
         const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
@@ -122,12 +125,15 @@ export default function Write() {
         }).catch(console.log);
         setNewPadName('');
         setNewPadLink('');
+        setLoading(false);
     };
 
     const handleExistingPad = (e) => {
+        setLoading(true);
         if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
+        setLoading(false);
     };
 
     const createPasswordPad = async () => {
@@ -156,21 +162,22 @@ export default function Write() {
             case 'anonymousPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName}>Create pad</LoadingSpinnerButton>
+                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'existingPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>make sure your link includes:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !newPadLink ||!validLink}>Add existing pad</LoadingSpinnerButton>
+                    { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
+                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <LoadingSpinnerButton type="submit" disabled={!newPadName || !password || password !== validatePassword}>Add pad</LoadingSpinnerButton>
+                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
+
                 </form>);
             default:
                 return (null);
