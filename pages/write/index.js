@@ -24,7 +24,7 @@ const CloseButton = styled.a`
     align-items: center;
 `;
 export default function Write() {
-    const [newPadName, setNewPadName] = useState('');
+    const [newPadName, setNewPadName] = useState(null);
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
     const [password, setPassword] = useState('');
@@ -105,19 +105,48 @@ export default function Write() {
         populatePadsfromServer();
     }, [write]);
 
-    async function createWriteRoom(link) {
-        console.log('creating room for ' + newPadName);
-        const room = await matrix.createRoom(newPadName, false, '', 'invite', 'content', 'link');
+    useEffect(() => {
+        const syncServerPadsWithMatrix = async (params) => {
+            console.log(serverPads);
+            let matrixPads = {};
+            if (matrix?.spaces.get(serviceSpaceId).children) {
+                // if there are rooms within the space id we grab the names of those room
+                for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
+                // in order to get the actual id of the pad we need to check the room content
+                    const id = matrix.roomContent.get(roomId).body.substring(matrix.roomContent.get(roomId).body.lastIndexOf('/') + 1);
+                    matrixPads = Object.assign({}, matrixPads, {
+                        [id]: {
+                            name: matrix.rooms.get(roomId).name,
+                            id: roomId,
+                        },
+                    });
+                }
+            }
+            console.log(matrixPads);
+            for (const pad of Object.values(serverPads)) {
+                if (matrixPads[pad._id]) continue;
+                const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + pad._id;
+                await createWriteRoom(link, pad.name);
+            }
+        };
+
+        serviceSpaceId && serverPads && syncServerPadsWithMatrix();
+    }, [serviceSpaceId, serverPads]);
+
+    async function createWriteRoom(link = newPadLink, name = newPadName) {
+        console.log('creating room for ' + name);
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
-            body: newPadLink || link,
+            body: link,
         }).catch(console.log);
 
         await write.syncAllPads();
         setServerPads(write.getAllPads());
         setActionSelect('');
         setNewPadName('');
+        setNewPadLink('');
         setPassword('');
         setValidatePassword('');
         setOpenActions(false);
