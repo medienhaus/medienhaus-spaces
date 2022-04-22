@@ -29,7 +29,7 @@ const LinkElement = styled.div`
     }
 `;
 
-const DisplayLinks = ({ parent, roomId, serverPads }) => {
+const DisplayLinks = ({ parent, roomId, serverPads, callback }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const write = auth.getAuthenticationProvider('write');
@@ -46,6 +46,7 @@ const DisplayLinks = ({ parent, roomId, serverPads }) => {
         padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
         await matrix.leaveRoom(roomId);
+        await callback();
         setRemovingLink(false);
     };
 

@@ -24,7 +24,7 @@ const CloseButton = styled.a`
     align-items: center;
 `;
 export default function Write() {
-    const [newPadName, setNewPadName] = useState(null);
+    const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
     const [password, setPassword] = useState('');
@@ -98,12 +98,16 @@ export default function Write() {
             if (!isEmpty(write.getAllPads())) {
                 setServerPads(write.getAllPads());
             } else {
-                await write.syncAllPads();
-                setServerPads(write.getAllPads());
+                await syncServerPadsAndSet();
             }
         };
         populatePadsfromServer();
     }, [write]);
+
+    async function syncServerPadsAndSet() {
+        await write.syncAllPads();
+        setServerPads(write.getAllPads());
+    }
 
     useEffect(() => {
         const syncServerPadsWithMatrix = async (params) => {
@@ -249,6 +253,7 @@ export default function Write() {
                 roomId={roomId}
                 parent={serviceSpaceId}
                 serverPads={serverPads}
+                callback={syncServerPadsAndSet}
             />;
         }) }
         { /*Debug */ }
