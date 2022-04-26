@@ -195,21 +195,21 @@ export default function Write() {
         switch (actionSelect) {
             case 'anonymousPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
-                    <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'existingPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
-                    <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="text" placeholder="link to pad" value={newPadLink} onChange={handleExistingPad} />
+                return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
+                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+                    <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
                     { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
                     <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-                    <input type="text" placeholder="pad name" value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <input type="password" placeholder="validate password" value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+                    <input type="password" placeholder={t('validate password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
                     <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'authoredPad':
@@ -238,7 +238,7 @@ export default function Write() {
         { openActions && <>
             <nav>
                 <ul>
-                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>{ t('Add an existing pad') }</a></li>
+                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
                     <li><a value="anonymousPad" onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
                     <li><a value="authoredPad" onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
                     <li><a value="passwordPad" onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
