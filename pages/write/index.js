@@ -181,11 +181,9 @@ export default function Write() {
     };
 
     const handleExistingPad = (e) => {
-        setLoading(true);
         if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
         else setValidLink(false);
         setNewPadLink(e.target.value);
-        setLoading(false);
     };
 
     const renderSelectedOption = () => {
@@ -212,7 +210,7 @@ export default function Write() {
             case 'authoredPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                     <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ t('Create pad') }</button>
+                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
                 </form>);
             default:
                 return (null);

@@ -7,6 +7,7 @@ const LoadingSpinner = styled.div`
     border-width: calc(var(--margin) * 0.2);
     height: 2rem;
     width: 2rem;
+    display: inline-block;
     animation: loading 2.4s linear infinite;
 
     @keyframes loading{
