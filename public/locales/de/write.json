@@ -6,9 +6,9 @@
     "Copy pad link to clipboard": "Pad Link kopieren",
     "Remove pad from my library": "Pad entfernen",
     "passowrd protected": "Passwort geschützt",
-    "Make sure your link includes": "Link enthält nicht: ",
     "Add existing pad": "Bestehendes Pad hinzufügen",
     "Create pad": "Pad anlegen",
+    "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
     "validate password": "passwort bestätigen",
     "link to pad": "link zu pad"
 }
