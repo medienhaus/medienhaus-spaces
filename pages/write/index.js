@@ -12,10 +12,6 @@ import DisplayLinks from './DisplayLink';
 import Plus from '../../assets/icons/plus.svg';
 import InputErrorMessage from '../../components/UI/InputErrorMessage';
 
-const WriteView = styled.div`
-
-`;
-
 const Header = styled.div`
     display:flex;
     justify-content: space-between;
@@ -229,7 +225,7 @@ export default function Write() {
     };
     if (!serviceSpaceId) return <LoadingSpinner />;
 
-    return (<WriteView>
+    return (<div>
         <Header>
             <h1>/write</h1>
             <CloseButton onClick={handleCloseButtonClick}>
@@ -259,6 +255,6 @@ export default function Write() {
         }) }
         { /*Debug */ }
         { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
-    </WriteView>
+    </div>
     );
 }
