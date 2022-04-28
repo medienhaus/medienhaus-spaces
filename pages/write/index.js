@@ -199,7 +199,7 @@ export default function Write() {
                     <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'existingPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
+                return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
                     <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
                     { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
