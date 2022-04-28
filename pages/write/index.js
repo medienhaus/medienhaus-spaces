@@ -8,6 +8,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import DisplayLinks from './DisplayLink';
+import InputErrorMessage from '../../components/UI/InputErrorMessage';
 
 const WriteView = styled.div`
 
@@ -167,7 +168,7 @@ export default function Write() {
                 return (<form onSubmit={(e) => { e.preventDefault(); addExistingPad(); }}>
                     <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.write.baseUrl }</span> }
+                    { !validLink && <InputErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</InputErrorMessage> }
                     <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
@@ -176,7 +177,6 @@ export default function Write() {
                     <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input type="password" placeholder={t('validate password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
                     <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-
                 </form>);
             default:
                 return (null);
