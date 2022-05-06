@@ -12,7 +12,6 @@ import Lock from '../../assets/icons/lock.svg';
 const LinkElement = styled.div`
     display: flex;
     align-items: center;
-    padding-bottom:0.5em;
     justify-content: space-between;
 
     .group{
@@ -24,12 +23,34 @@ const LinkElement = styled.div`
       cursor: pointer;
     }
 
-    input{
-      margin-right:0.5em;
+    button{
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
     }
+
+    button svg{
+        fill: var(--color-fg);
+    }
+    
+    button[disabled] svg{
+        fill: var(--color-me);
+        cursor: initial;
+    }
+
+    ul {
+    list-style: none;
+    margin-bottom: calc(var(--margin) * 3);
+    }
+
+    li {
+      margin-bottom: 0.55rem;
+}
+
 `;
 
-const DisplayLinks = ({ parent, roomId, serverPads, callback }) => {
+const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const write = auth.getAuthenticationProvider('write');
@@ -73,11 +94,11 @@ const DisplayLinks = ({ parent, roomId, serverPads, callback }) => {
         <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
-                <a title={t('password protected')}>{ padExistsOnServer?.visibility === 'private' && <Lock fill="var(--color-me)" /> }</a>
-                <a title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard fill="var(--color-fg)" /></a>
-                <a title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</a>
+                <button disabled title={t('password protected')}>{ padExistsOnServer?.visibility === 'private' && <Lock /> }</button>
+                <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
+                <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
             </div>
         </LinkElement>
     );
 };
-export default DisplayLinks;
+export default WriteListEntry;

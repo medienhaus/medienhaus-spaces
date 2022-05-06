@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import DisplayLinks from './DisplayLink';
+import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import InputErrorMessage from '../../components/UI/InputErrorMessage';
 
@@ -233,17 +233,17 @@ export default function Write() {
         { openActions && <>
             <nav>
                 <ul>
-                    <li><a value="existingPad" onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
-                    <li><a value="anonymousPad" onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
-                    <li><a value="authoredPad" onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
-                    <li><a value="passwordPad" onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
+                    <li><a onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
+                    <li><a onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
+                    <li><a onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
+                    <li><a onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
                 </ul>
             </nav>
             { renderSelectedOption() }
         </>
         }
         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-            return <DisplayLinks
+            return <WriteListEntry
                 key={roomId}
                 roomId={roomId}
                 parent={serviceSpaceId}

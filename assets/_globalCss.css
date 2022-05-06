@@ -173,15 +173,7 @@ input[type="password"][disabled] {
   cursor: not-allowed;
 }
 
-li {
-      margin-bottom: 0.55rem;
-}
-
 nav{
   cursor: pointer;
 }
 
-ul {
-    list-style: none;
-    margin-bottom: calc(var(--margin) * 3);
-}
