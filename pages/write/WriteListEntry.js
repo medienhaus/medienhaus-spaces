@@ -58,7 +58,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContent.get(roomId));
     const [padExistsOnServer, setPadExistsOnServer] = useState(null);
-    const { t } = useTranslation('explore');
+    const { t } = useTranslation('write');
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 

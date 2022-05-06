@@ -20,6 +20,15 @@ const CloseButton = styled.a`
     display: flex;
     align-items: center;
 `;
+
+const WriteNavigation = styled.ul`
+    list-style: none;
+    cursor: pointer;
+ margin-bottom: calc(var(--margin) * 3);
+    li{
+         margin-bottom: calc(var(--margin)/2);
+    }
+`;
 export default function Write() {
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
@@ -231,14 +240,12 @@ export default function Write() {
             </CloseButton>
         </Header>
         { openActions && <>
-            <nav>
-                <ul>
-                    <li><a onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
-                    <li><a onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
-                    <li><a onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
-                    <li><a onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
-                </ul>
-            </nav>
+            <WriteNavigation>
+                <li><a onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
+                <li><a onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
+                <li><a onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
+                <li><a onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
+            </WriteNavigation>
             { renderSelectedOption() }
         </>
         }
