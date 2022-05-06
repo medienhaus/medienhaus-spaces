@@ -1,3 +1,5 @@
+const WebpackConfig = require('./webpack.config.js');
+
 module.exports = {
     publicRuntimeConfig: {
         name: 'udk/spaces',
@@ -15,4 +17,5 @@ module.exports = {
             allowAddingNewEmails: true,
         },
     },
+    webpack: WebpackConfig,
 };
