@@ -9,26 +9,26 @@ import { useAuth } from '../lib/Auth';
 
 const AvatarSection = styled.div`
   display: grid;
-  grid-gap: calc(var(--margin) * 1.3);
   grid-template-columns: auto 1fr;
+  grid-gap: calc(var(--margin) * 1.3);
 `;
 
 const Avatar = styled.img`
+  display: block;
+  grid-row: 1;
+  grid-column: 1;
+  width: 0 calc(var(--margin) * 0.75);
+  height: calc(var(--margin) * 7);
+  margin-bottom: var(--margin);
   background: var(--color-fg);
   border-color: var(--color-fg);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  display: block;
-  grid-column: 1;
-  grid-row: 1;
-  height: calc(var(--margin) * 7);
-  margin-bottom: var(--margin);
-  width: 0 calc(var(--margin) * 0.75);
 `;
 
 const AvatarButtonContainer = styled.div`
-  grid-column: 2;
   grid-row: 1;
+  grid-column: 2;
 `;
 
 export default function Account() {
