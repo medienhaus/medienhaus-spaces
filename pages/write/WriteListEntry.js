@@ -10,44 +10,43 @@ import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
 
 const LinkElement = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    .group{
-      display:inherit;
-    }
+  .group {
+    display: inherit;
+  }
 
-    svg {
-      margin-left: 0.5em;
-      cursor: pointer;
-    }
+  svg {
+    margin-left: 0.5em;
+    cursor: pointer;
+  }
 
-    button{
-        background: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-    }
+  button {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+  }
 
-    button svg{
-        fill: var(--color-fg);
-    }
-    
-    button[disabled] svg{
-        fill: var(--color-me);
-        cursor: initial;
-    }
+  button svg {
+    fill: var(--color-fg);
+  }
 
-    ul {
-    list-style: none;
+  button[disabled] svg {
+    cursor: initial;
+    fill: var(--color-me);
+  }
+
+  ul {
     margin-bottom: calc(var(--margin) * 3);
-    }
+    list-style: none;
+  }
 
-    li {
-      margin-bottom: 0.55rem;
-}
-
+  li {
+    margin-bottom: 0.55rem;
+  }
 `;
 
 const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {

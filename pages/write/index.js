@@ -12,23 +12,38 @@ import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import InputErrorMessage from '../../components/UI/InputErrorMessage';
 
-const Header = styled.div`
-    display:flex;
-    justify-content: space-between;
+const PlusIcon = styled(Plus)`
+  fill: color(--var-fg);
 `;
-const CloseButton = styled.a`
-    display: flex;
-    align-items: center;
+
+const CloseIcon = styled(PlusIcon)`
+  transform: rotate(45deg);
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const CloseButton = styled.button`
+  width: auto;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
 `;
 
 const WriteNavigation = styled.ul`
-    list-style: none;
-    cursor: pointer;
- margin-bottom: calc(var(--margin) * 3);
-    li{
-         margin-bottom: calc(var(--margin)/2);
-    }
+  margin-bottom: calc(var(--margin) * 3);
+  list-style: none;
+  cursor: pointer;
+
+  li {
+    margin-bottom: calc(var(--margin)/2);
+  }
 `;
+
 export default function Write() {
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
@@ -236,7 +251,7 @@ export default function Write() {
         <Header>
             <h1>/write</h1>
             <CloseButton onClick={handleCloseButtonClick}>
-                <Plus fill="var(--color-fg)" style={{ transform: openActions && 'rotate(45deg)' }} />
+                { (openActions ? <CloseIcon /> : <PlusIcon />) }
             </CloseButton>
         </Header>
         { openActions && <>
