@@ -37,10 +37,13 @@ const CloseButton = styled.button`
 const WriteNavigation = styled.ul`
   margin-bottom: calc(var(--margin) * 3);
   list-style: none;
-  cursor: pointer;
 
   li {
     margin-bottom: calc(var(--margin)/2);
+
+    a {
+      cursor: pointer;
+    }
   }
 `;
 
