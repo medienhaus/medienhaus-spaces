@@ -2,10 +2,10 @@
   "name": "medienhaus-frontend",
   "private": true,
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "export": "next build && next export"
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start",
+    "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
     "i18next": "^21.6.14",
@@ -25,6 +25,7 @@
     "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/eslint-plugin": "^7.17.7",
+    "@stylelint/postcss-css-in-js": "^0.38.0",
     "babel-plugin-inline-react-svg": "^2.0.1",
     "babel-plugin-styled-components": "^2.0.6",
     "eslint": "^8.11.0",
@@ -33,7 +34,12 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-matrix-org": "^0.4.0",
     "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-react-hooks": "^4.3.0"
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "stylelint": "^14.8.2",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^25.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-webpack-plugin": "^3.2.0"
   },
   "eslintConfig": {
     "plugins": [

@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
-    list-style: none;
-    margin-bottom: calc(var(--margin) * 3);
-  
-    li {
-      margin-bottom: 0.55rem;
-    }
+  margin-bottom: calc(var(--margin) * 3);
+  list-style: none;
+
+  li {
+    margin-bottom: 0.55rem;
+  }
 `;
 
 export default function Navigation({ closeNavigation }) {

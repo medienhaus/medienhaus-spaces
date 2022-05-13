@@ -7,7 +7,7 @@ import { useAuth } from '../lib/Auth';
 
 const UsernameHomeserverContainer = styled.div`
   position: relative;
-  
+
   @media (min-width: 29em) {
     display: flex;
     align-items: baseline;
@@ -15,15 +15,15 @@ const UsernameHomeserverContainer = styled.div`
 `;
 
 const Homeserver = styled.span`
-  color: var(--color-me);
-  cursor: pointer;
   position: absolute;
-  line-height: calc(var(--margin) * 3);
   right: var(--margin);
   max-width: 40%;
   overflow: hidden;
+  line-height: calc(var(--margin) * 3);
+  color: var(--color-me);
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 `;
 
 export default function Login() {
