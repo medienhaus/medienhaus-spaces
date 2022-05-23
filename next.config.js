@@ -1,3 +1,5 @@
+const WebpackConfig = require('./webpack.config.js');
+
 // eslint-disable-next-line no-undef
 module.exports = {
     publicRuntimeConfig: {
@@ -20,4 +22,5 @@ module.exports = {
             allowAddingNewEmails: true,
         },
     },
+    webpack: WebpackConfig,
 };

@@ -8,89 +8,85 @@ import LanguageChooser from './partials/languageChooser';
 
 const Wrapper = styled.div`
   min-height: 100vh;
-
-  padding-left: var(--margin);
   padding-right: var(--margin);
+  padding-left: var(--margin);
 
   @media (min-width: 29em) {
     display: grid;
-    grid-template-columns: 1fr max-content;
     grid-template-rows: auto 1fr auto;
-    grid-gap: 0 calc(var(--margin) * 2.8);    
+    grid-template-columns: 1fr max-content;
+    grid-gap: 0 calc(var(--margin) * 2.8);
   }
 
   @media (min-width: 40em) {
-    padding-left: calc(var(--margin) * 2);
     padding-right: calc(var(--margin) * 2);
+    padding-left: calc(var(--margin) * 2);
   }
 `;
 
 const Header = styled.header`
-  background-color: var(--color-bg);
-  display: flex;
-  justify-content: space-between;
-  padding: calc(var(--margin) * 1.4) 0;
   position: sticky;
   top: 0;
   z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  padding: calc(var(--margin) * 1.4) 0;
+  background-color: var(--color-bg);
 
   h1 {
-    cursor: pointer;
-    font-size: inherit;
     margin: unset;
+    font-size: inherit;
+    cursor: pointer;
   }
 `;
 
 const HeaderButton = styled.button`
-  background-color: var(--color-bg);
-  border: unset;
-  padding: calc(var(--margin) * 1.4);
-  color: var(--color-fg);
-  cursor: pointer;
-  flex: 0 1;
-  letter-spacing: .05rem;
-  font-weight: bold;
-  transform: rotate(90deg);
-  
   position: fixed;
   top: 0;
   right: 0;
-  
+  flex: 0 1;
   width: 4rem;
   height: 4rem;
+  padding: calc(var(--margin) * 1.4);
+  font-weight: bold;
+  line-height: 0;
+  color: var(--color-fg);
   text-align: center;
-  line-height: 0rem;
+  letter-spacing: 0.05rem;
+  cursor: pointer;
+  background-color: var(--color-bg);
+  border: unset;
+  transform: rotate(90deg);
 
-  ${props => props.open && `
-    font-size: 2rem;
-    padding-bottom: calc(var(--margin) * 1.6);
-    font-weight: 500;
-  `}
-  
   @media (min-width: 29em) {
     display: none;
   }
 `;
 
+const HeaderButtonClose = styled(HeaderButton)`
+  padding-bottom: calc(var(--margin) * 1.6);
+  font-size: 2rem;
+  font-weight: 500;
+`;
+
 const Nav = styled.nav`
-  background: var(--color-bg);
-  display: ${props => props.open ? 'block' : 'none'};
-  padding: calc(var(--margin) * 1.4) var(--margin);
   position: fixed;
-  font-weight: 700;
   top: calc(var(--margin) * 3.9);
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
   z-index: 2;
+  display: ${props => props.open ? 'block' : 'none'};
+  padding: calc(var(--margin) * 1.4) var(--margin);
+  font-weight: 700;
+  background: var(--color-bg);
 
   @media (min-width: 29em) {
-    display: block;
-    min-width: 12ch;
     position: unset;
-    
+    display: block;
     grid-row: 1/3;
     grid-column: 2;
+    min-width: 12ch;
   }
 `;
 
@@ -131,9 +127,11 @@ export default function Default({ children }) {
             <Wrapper>
                 <Header>
                     <Link href="/"><h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1></Link>
-                    <HeaderButton type="button" open={navigationOpen} onClick={() => { setNavigationOpen(!navigationOpen); }}>
-                        { navigationOpen ? '×' : '|||' }
-                    </HeaderButton>
+                    { navigationOpen ? (
+                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    ) : (
+                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                    ) }
                 </Header>
                 <Nav open={navigationOpen}>
                     <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />

@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.p`
-  font-size: 85%;
+  position: relative;
+  padding-left: calc(1.4 * var(--margin));
   margin-top: calc(-0.5 * var(--margin));
   margin-bottom: var(--margin);
-  padding-left: calc(1.4 * var(--margin));
-  position: relative;
-  
+  font-size: 85%;
+
   &::before {
-    content: '❗️';
-    left: 0;
     position: absolute;
+    left: 0;
+    content: '❗️';
   }
 `;
 

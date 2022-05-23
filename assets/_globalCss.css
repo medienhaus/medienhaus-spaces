@@ -2,30 +2,32 @@
 @import '../public/assets/fonts/inter/inter.css';
 
 :root {
-  --color-fg: rgb(0,0,0);
-  --color-bg: rgb(255,255,255);
-  --color-hi: rgb(255,240,170);
-  --color-no: rgb(255,96,96);
-  --color-me: rgb(128,128,128);
-  --color-lo: rgb(240,240,240);
+  --color-fg: rgb(0 0 0);
+  --color-bg: rgb(255 255 255);
+  --color-hi: rgb(255 240 170);
+  --color-no: rgb(255 96 96);
+  --color-me: rgb(128 128 128);
+  --color-lo: rgb(240 240 240);
   --margin: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-fg: rgb(255,255,255);
-    --color-bg: rgb(20,20,20);
-    --color-hi: rgb(228,9,59);
-    --color-no: rgb(255,96,96);
-    --color-me: rgb(128,128,128);
-    --color-lo: rgb(40,40,40);
+    --color-fg: rgb(255 255 255);
+    --color-bg: rgb(20 20 20);
+    --color-hi: rgb(228 9 59);
+    --color-no: rgb(255 96 96);
+    --color-me: rgb(128 128 128);
+    --color-lo: rgb(40 40 40);
   }
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: unset;
   padding: unset;
+  margin: unset;
 }
 
 *::selection {
@@ -33,18 +35,18 @@
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   font-size: calc(1em + 0.5vmin);
   font-style: normal;
   font-weight: 500;
   line-height: 1.3;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
 }
 
 @supports (font-variation-settings: normal) {
   body {
-    font-family: "Inter var", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: 'Inter var', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   }
 }
 
@@ -71,23 +73,23 @@ a:active {
 }
 
 select {
-  appearance: none;
+  width: 100%;
+  height: calc(var(--margin) * 3);
+  padding: 0 calc(var(--margin) * 0.75);
+  margin-bottom: var(--margin);
+  font-weight: 500;
+  color: var(--color-fg);
+  text-overflow: ellipsis;
+  cursor: pointer;
   background-color: var(--color-bg);
-  background-image: url(data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMHB4IiB3aWR0aD0iMzAwcHgiIGZpbGw9InJnYigxMjgsMTI4LDEyOCkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHg9IjBweCIgeT0iMHB4Ij48cG9seWdvbiBwb2ludHM9IjUwIDU3LjEzIDIzLjE5IDMwLjQ2IDE2LjEzIDM3LjU1IDUwIDcxLjIzIDgzLjg2IDM3LjU1IDc2LjgxIDMwLjQ2IDUwIDU3LjEzIj48L3BvbHlnb24+PC9zdmc+);
-  background-position: calc(100% - calc(var(--margin) * 0.75)) 50%;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMHB4IiB3aWR0aD0iMzAwcHgiIGZpbGw9InJnYigxMjgsMTI4LDEyOCkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHg9IjBweCIgeT0iMHB4Ij48cG9seWdvbiBwb2ludHM9IjUwIDU3LjEzIDIzLjE5IDMwLjQ2IDE2LjEzIDM3LjU1IDUwIDcxLjIzIDgzLjg2IDM3LjU1IDc2LjgxIDMwLjQ2IDUwIDU3LjEzIj48L3BvbHlnb24+PC9zdmc+');
   background-repeat: no-repeat;
+  background-position: calc(100% - calc(var(--margin) * 0.75)) 50%;
   background-size: var(--margin);
   border-color: var(--color-fg);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  color: var(--color-fg);
-  cursor: pointer;
-  font-weight: 500;
-  height: calc(var(--margin) * 3);
-  margin-bottom: var(--margin);
-  padding: 0 calc(var(--margin) * 0.75);
-  text-overflow: ellipsis;
-  width: 100%;
+  appearance: none;
 }
 
 select:-moz-focusring {
@@ -101,9 +103,9 @@ select:-moz-focusring * {
 }
 
 select[disabled] {
-  border-color: var(--color-me);
   color: var(--color-me);
   cursor: not-allowed;
+  border-color: var(--color-me);
 }
 
 button {
@@ -111,69 +113,64 @@ button {
 }
 
 button,
-input[type="submit"] {
-  appearance: none;
+input[type='submit'] {
+  width: 100%;
+  height: calc(var(--margin) * 3);
+  padding: 0 calc(var(--margin) * 0.75);
+  margin-bottom: var(--margin);
+  font-weight: 700;
+  color: var(--color-bg);
+  cursor: pointer;
   background-color: var(--color-fg);
   border-color: var(--color-fg);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  color: var(--color-bg);
-  cursor: pointer;
-  font-weight: 700;
-  height: calc(var(--margin) * 3);
-  margin-bottom: var(--margin);
-  padding: 0 calc(var(--margin) * 0.75);
-  width: 100%;
+  appearance: none;
 }
 
 button[disabled],
-input[type="submit"][disabled] {
+input[type='submit'][disabled] {
+  cursor: not-allowed;
   background-color: var(--color-me);
   border-color: var(--color-me);
-  cursor: not-allowed;
 }
 
-input[id*="datalist"],
-input[type="color"],
-input[type="date"],
-input[type="email"],
-input[type="number"],
-input[type="search"],
-input[type="tel"],
-input[type="text"],
-input[type="time"],
-input[type="password"],
-input[type="url"] {
-  appearance: none;
+input[id*='datalist'],
+input[type='color'],
+input[type='date'],
+input[type='email'],
+input[type='number'],
+input[type='search'],
+input[type='tel'],
+input[type='text'],
+input[type='time'],
+input[type='password'],
+input[type='url'] {
+  width: 100%;
+  height: calc(var(--margin) * 3);
+  padding: 0 calc(var(--margin) * 0.75);
+  margin-bottom: var(--margin);
+  font-weight: 500;
+  color: var(--color-fg);
   background-color: var(--color-bg);
   border-color: var(--color-fg);
-  border-radius: unset;
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  color: var(--color-fg);
-  font-weight: 500;
-  height: calc(var(--margin) * 3);
-  margin-bottom: var(--margin);
-  padding: 0 calc(var(--margin) * 0.75);
-  width: 100%;
+  border-radius: unset;
+  appearance: none;
 }
 
-input[id*="datalist"][disabled],
-input[type="color"][disabled],
-input[type="date"][disabled],
-input[type="email"][disabled],
-input[type="number"][disabled],
-input[type="search"][disabled],
-input[type="tel"][disabled],
-input[type="text"][disabled],
-input[type="time"][disabled],
-input[type="password"][disabled] {
-  border-color: var(--color-me);
+input[id*='datalist'][disabled],
+input[type='color'][disabled],
+input[type='date'][disabled],
+input[type='email'][disabled],
+input[type='number'][disabled],
+input[type='search'][disabled],
+input[type='tel'][disabled],
+input[type='text'][disabled],
+input[type='time'][disabled],
+input[type='password'][disabled] {
   color: var(--color-me);
   cursor: not-allowed;
+  border-color: var(--color-me);
 }
-
-nav{
-  cursor: pointer;
-}
-
