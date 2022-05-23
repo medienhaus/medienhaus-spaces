@@ -181,7 +181,7 @@ export default function Write() {
         setLoading(false);
     };
 
-    const createAuthoredPad = async (params) => {
+    const createAuthoredPad = async () => {
         setLoading(true);
         const padId = await write.createPad(newPadName, 'public');
         const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;

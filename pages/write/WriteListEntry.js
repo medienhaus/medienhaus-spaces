@@ -57,12 +57,12 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const [removingLink, setRemovingLink] = useState(false);
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContent.get(roomId));
-    const [padExistsOnServer, setPadExistsOnServer] = useState(null);
     const { t } = useTranslation('write');
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
+        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
         setRemovingLink(true);
         padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
@@ -84,7 +84,6 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
             await matrix.hydrateRoomContent(roomId);
         };
         checkForRoomContent();
-        serverPads && setPadExistsOnServer(serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]);
     }, [content, matrix, roomId, serverPads]);
 
     if (content === undefined || serverPads === null) return <LoadingSpinner />;
@@ -94,7 +93,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
         <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
-                <button disabled title={t('password protected')}>{ padExistsOnServer?.visibility === 'private' && <Lock /> }</button>
+                <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }</button>
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
                 <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
             </div>
