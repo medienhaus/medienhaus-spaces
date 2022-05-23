@@ -13,7 +13,7 @@ import Plus from '../../assets/icons/plus.svg';
 import InputErrorMessage from '../../components/UI/InputErrorMessage';
 
 const PlusIcon = styled(Plus)`
-  fill: color(--var-fg);
+  fill: var(--color-fg);
 `;
 
 const CloseIcon = styled(PlusIcon)`
