@@ -12,7 +12,7 @@ module.exports = {
                 baseUrl: 'https://content.udk-berlin.de',
             },
         },
-        contextRootSpaceRoomId: '!pwCcubmjqBIdIMqLRd:dev.medienhaus.udk-berlin.de',
+        contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
         account: {
             allowAddingNewEmails: true,
         },
