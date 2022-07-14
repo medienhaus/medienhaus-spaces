@@ -174,7 +174,6 @@ export default function Write() {
         };
 
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
-        console.log(serverPads);
 
         return () => cancelled = true;
     }, [serviceSpaceId, serverPads]);
