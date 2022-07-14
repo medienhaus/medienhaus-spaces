@@ -10,7 +10,8 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
-import InputErrorMessage from '../../components/UI/InputErrorMessage';
+import ErrorMessage from '../../components/UI/ErrorMessage';
+import TextButton from '../../components/UI/TextButton';
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -41,8 +42,10 @@ const WriteNavigation = styled.ul`
   li {
     margin-bottom: calc(var(--margin)/2);
 
-    a {
-      cursor: pointer;
+    a[disabled]{
+        color: var(--color-me);
+        cursor: not-allowed;
+        text-decoration: none;
     }
   }
 `;
@@ -56,7 +59,7 @@ export default function Write() {
     const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
-    const [serverPads, setServerPads] = useState(null);
+    const [serverPads, setServerPads] = useState({});
     const [loading, setLoading] = useState(false);
 
     const auth = useAuth();
@@ -103,6 +106,8 @@ export default function Write() {
     };
 
     useEffect(() => {
+        let cancelled = false;
+
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
@@ -114,10 +119,16 @@ export default function Write() {
                 }
             }
         };
-        startLookingForFolders();
+        !cancelled && startLookingForFolders();
+
+        return () => {
+            cancelled = true;
+        };
     }, [matrix.initialSyncDone]);
 
     useEffect(() => {
+        let cancelled = false;
+
         const populatePadsfromServer = async () => {
             if (!isEmpty(write.getAllPads())) {
                 setServerPads(write.getAllPads());
@@ -125,16 +136,22 @@ export default function Write() {
                 await syncServerPadsAndSet();
             }
         };
-        populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.write.api && populatePadsfromServer();
+
+        return () => {
+            cancelled = true;
+        };
     }, [write]);
 
     async function syncServerPadsAndSet() {
-        await write.syncAllPads();
+        await write.syncAllPads().catch(() => setServerPads(null));
         setServerPads(write.getAllPads());
     }
 
     useEffect(() => {
-        const syncServerPadsWithMatrix = async (params) => {
+        let cancelled = false;
+
+        const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
             if (matrix?.spaces.get(serviceSpaceId).children) {
                 // if there are rooms within the space id we grab the names of those room
@@ -156,7 +173,10 @@ export default function Write() {
             }
         };
 
-        serviceSpaceId && serverPads && syncServerPadsWithMatrix();
+        !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
+        console.log(serverPads);
+
+        return () => cancelled = true;
     }, [serviceSpaceId, serverPads]);
 
     async function createWriteRoom(link = newPadLink, name = newPadName) {
@@ -168,8 +188,10 @@ export default function Write() {
             body: link,
         }).catch(console.log);
 
-        await write.syncAllPads();
-        setServerPads(write.getAllPads());
+        if (getConfig().publicRuntimeConfig.authProviders.write.api) {
+            await write.syncAllPads();
+            setServerPads(write.getAllPads());
+        }
         setActionSelect('');
         setNewPadName('');
         setNewPadLink('');
@@ -201,10 +223,15 @@ export default function Write() {
 
     const createAuthoredPad = async () => {
         setLoading(true);
-        const padId = await write.createPad(newPadName, 'public');
+        const padId = await write.createPad(newPadName, 'public').catch((err) => {
+            console.log(err);
+        });
+        if (!padId) {
+            setLoading(false);
+            return;
+        }
         const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
         await createWriteRoom(link);
-        setLoading(false);
     };
 
     const handleExistingPad = (e) => {
@@ -224,7 +251,7 @@ export default function Write() {
                 return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
                     <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
                     <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <InputErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</InputErrorMessage> }
+                    { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
                     <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
                 </form>);
             case 'passwordPad':
@@ -248,8 +275,8 @@ export default function Write() {
         setOpenActions(openActions => !openActions);
         if (openActions) setActionSelect('');
     };
-    if (!serviceSpaceId) return <LoadingSpinner />;
 
+    if (!serviceSpaceId) return <LoadingSpinner />;
     return (<div>
         <Header>
             <h1>/write</h1>
@@ -259,23 +286,27 @@ export default function Write() {
         </Header>
         { openActions && <>
             <WriteNavigation>
-                <li><a onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</a></li>
-                <li><a onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</a></li>
-                <li><a onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</a></li>
-                <li><a onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</a></li>
+
+                <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
+                <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
+                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
+                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
             </WriteNavigation>
             { renderSelectedOption() }
         </>
         }
-        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-            return <WriteListEntry
-                key={roomId}
-                roomId={roomId}
-                parent={serviceSpaceId}
-                serverPads={serverPads}
-                callback={syncServerPadsAndSet}
-            />;
-        }) }
+        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Looks like theres no connection to the write server.') }</ErrorMessage> }
+        <ul>
+            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                return <WriteListEntry
+                    key={roomId}
+                    roomId={roomId}
+                    parent={serviceSpaceId}
+                    serverPads={serverPads}
+                    callback={syncServerPadsAndSet}
+                />;
+            }) }
+        </ul>
         { /*Debug */ }
         { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
     </div>

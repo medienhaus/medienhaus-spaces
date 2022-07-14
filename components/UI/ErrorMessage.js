@@ -14,10 +14,10 @@ const Wrapper = styled.p`
   }
 `;
 
-const InputErrorMessage = (props) => {
+const ErrorMessage = (props) => {
     return (
         <Wrapper {...props} />
     );
 };
 
-export default InputErrorMessage;
+export default ErrorMessage;

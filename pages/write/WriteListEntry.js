@@ -9,10 +9,12 @@ import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
 
-const LinkElement = styled.div`
+const LinkElement = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-left: var(--margin);
+  padding-right: var(--margin);
 
   .group {
     display: inherit;
@@ -39,13 +41,8 @@ const LinkElement = styled.div`
     fill: var(--color-me);
   }
 
-  ul {
-    margin-bottom: calc(var(--margin) * 3);
-    list-style: none;
-  }
-
-  li {
-    margin-bottom: 0.55rem;
+  &:nth-of-type(even){
+    background-color: var(--color-lo);
   }
 `;
 
@@ -61,8 +58,8 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
-        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
         setRemovingLink(true);
+        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
         padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
         await matrix.leaveRoom(roomId);
@@ -71,18 +68,31 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     };
 
     useEffect(() => {
-        setLinkName(matrix.rooms.get(roomId).name);
+        let cancelled = false;
+
+        !cancelled && setLinkName(matrix.rooms.get(roomId).name);
+
+        return () => cancelled = true;
     }, [matrix.rooms, roomId]);
 
     useEffect(() => {
-        setContent(matrix.roomContent.get(roomId));
+        let cancelled = false;
+
+        !cancelled && setContent(matrix.roomContent.get(roomId));
+
+        return () => cancelled = true;
     }, [matrix.roomContent, roomId]);
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
         const checkForRoomContent = async () => {
-            await matrix.hydrateRoomContent(roomId);
+            await matrix.hydrateRoomContent(roomId, 1, signal);
         };
+
         checkForRoomContent();
+
+        return () => controller.abort;
     }, [content, matrix, roomId, serverPads]);
 
     if (content === undefined || serverPads === null) return <LoadingSpinner />;
@@ -92,7 +102,9 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
         <LinkElement>
             <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
             <div className="group">
-                <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }</button>
+                { serverPads &&
+            <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
+            </button> }
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
                 <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
             </div>
