@@ -5,6 +5,12 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 
+const LoginForm = styled.div`
+  & > * + * {
+    margin-top: var(--margin);
+  }
+`;
+
 const UsernameHomeserverContainer = styled.div`
   position: relative;
 
@@ -77,7 +83,7 @@ export default function Login() {
                 </>
             ) : (
                 <>
-                    <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                    <LoginForm onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
                         <UsernameHomeserverContainer>
                             <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
                             { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
@@ -87,7 +93,7 @@ export default function Login() {
                         <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
                         { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                    </form>
+                    </LoginForm>
                 </>
             ) }
         </>

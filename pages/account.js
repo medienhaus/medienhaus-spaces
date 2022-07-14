@@ -7,28 +7,53 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 
-const AvatarSection = styled.div`
+const ProfileSection = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: max-content 1fr;
   grid-gap: calc(var(--margin) * 1.3);
+
+  & > form {
+    grid-row: 2 / 3;
+    grid-column: 1 / -1;
+  }
+
+  & > form > * + * {
+    margin-top: calc(var(--margin) * 1.3);
+  }
+
+  @media (min-width: 40em) {
+    & > form {
+      grid-row: 2 / 3;
+      grid-column: 2;
+    }
+  }
 `;
 
 const Avatar = styled.img`
   display: block;
-  grid-row: 1;
+  grid-row: 1 / 3;
   grid-column: 1;
-  width: 0 calc(var(--margin) * 0.75);
-  height: calc(var(--margin) * 7);
-  margin-bottom: var(--margin);
+  width: calc(var(--margin) * 7.3);
+  aspect-ratio: 1;
   background: var(--color-fg);
   border-color: var(--color-fg);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
+
+  @media (min-width: 40em) {
+    width: calc(var(--margin) * 11.6);
+  }
 `;
 
 const AvatarButtonContainer = styled.div`
-  grid-row: 1;
-  grid-column: 2;
+  display: grid;
+  grid-gap: calc(var(--margin) * 1.3);
+
+  @media (min-width: 40em) {
+    grid-template-columns: repeat(2, auto);
+    grid-row: 1;
+    grid-column: 2;
+  }
 `;
 
 export default function Account() {
@@ -165,44 +190,44 @@ export default function Account() {
     return (
         <>
             <h1>/account</h1>
-            <AvatarSection>
-                <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
+            <ProfileSection>
+                <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'scale') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
                 <AvatarButtonContainer>
                     <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                    <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload avatar') } ...</button>
+                    <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload avatar') } …</button>
                     { profileInfo.avatar_url && (
                         <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
                     ) }
                 </AvatarButtonContainer>
-            </AvatarSection>
-            <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }}>
-                <input
-                    type="text"
-                    value={inputDisplayname}
-                    disabled={isSavingChanges}
-                    placeholder={matrixClient.getUserId()}
-                    onChange={(event) => { setInputDisplayname(event.target.value); }}
-                />
-                { emails.map((email, index) => (
-                    <input key={email} type="email" value={email} disabled />
-                )) }
-                { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
+                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }}>
                     <input
-                        type="email"
-                        value={inputNewEmail}
+                        type="text"
+                        value={inputDisplayname}
                         disabled={isSavingChanges}
-                        placeholder={`${t('add ' + (emails.length ? 'another' : 'your') + ' email address')}...`}
-                        onChange={(event) => { setInputNewEmail(event.target.value); }}
+                        placeholder={matrixClient.getUserId()}
+                        onChange={(event) => { setInputDisplayname(event.target.value); }}
                     />
-                ) }
-                { (
-                    profileInfo.displayname !== inputDisplayname ||
-                    inputNewEmail
-                ) && (
-                    <button type="submit" disabled={isSavingChanges}>{ t('Save changes') }</button>
-                ) }
-                { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
-            </form>
+                    { emails.map((email, index) => (
+                        <input key={email} type="email" value={email} disabled />
+                    )) }
+                    { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
+                        <input
+                            type="email"
+                            value={inputNewEmail}
+                            disabled={isSavingChanges}
+                            placeholder={`${t('add ' + (emails.length ? 'another' : 'your') + ' email address')}...`}
+                            onChange={(event) => { setInputNewEmail(event.target.value); }}
+                        />
+                    ) }
+                    { (
+                        profileInfo.displayname !== inputDisplayname ||
+                        inputNewEmail
+                    ) && (
+                        <button type="submit" disabled={isSavingChanges}>{ t('Save changes') }</button>
+                    ) }
+                    { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+                </form>
+            </ProfileSection>
         </>
     );
 }

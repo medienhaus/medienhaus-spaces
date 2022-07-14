@@ -76,7 +76,6 @@ select {
   width: 100%;
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 0.75);
-  margin-bottom: var(--margin);
   font-weight: 500;
   color: var(--color-fg);
   text-overflow: ellipsis;
@@ -117,7 +116,6 @@ input[type='submit'] {
   width: 100%;
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 0.75);
-  margin-bottom: var(--margin);
   font-weight: 700;
   color: var(--color-bg);
   cursor: pointer;
@@ -149,7 +147,6 @@ input[type='url'] {
   width: 100%;
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 0.75);
-  margin-bottom: var(--margin);
   font-weight: 500;
   color: var(--color-fg);
   background-color: var(--color-bg);
