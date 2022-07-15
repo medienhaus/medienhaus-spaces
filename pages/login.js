@@ -5,9 +5,13 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 
-const LoginForm = styled.div`
+const LoginSection = styled.div`
   & > * + * {
     margin-top: var(--margin);
+  }
+
+  & > pre {
+    overflow-x: scroll;
   }
 `;
 
@@ -73,29 +77,34 @@ export default function Login() {
     return (
         <>
             <h1>/login</h1>
-            { auth.user ? (
-                <>
-                    <button type="button" onClick={onLogout}>Logout</button>
-                    <br />
-                    <a href="#" onClick={logAuthenticationStatus}>Log Authentication Provider Statuses</a>
-                    <p>{ JSON.stringify(auth.user) }</p>
-                    <br />
-                </>
-            ) : (
-                <>
-                    <LoginForm onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                        <UsernameHomeserverContainer>
-                            <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
-                            { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                                <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
-                            ) }
-                        </UsernameHomeserverContainer>
-                        <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
-                        { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                    </LoginForm>
-                </>
-            ) }
+            <LoginSection>
+                { auth.user ? (
+                    <>
+                        <button type="button" onClick={onLogout}>{ t('Logout') }</button>
+                        { /*
+                        <a href="#" onClick={logAuthenticationStatus}>{ t('Log Authentication Provider Statuses') }</a>
+                        */ }
+                        <button type="button" onClick={logAuthenticationStatus}>{ t('Log Authentication Provider Status') }</button>
+                        <pre>
+                            <small>{ JSON.stringify(auth.user, null, 2) }</small>
+                        </pre>
+                    </>
+                ) : (
+                    <>
+                        <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                            <UsernameHomeserverContainer>
+                                <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
+                                { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                                    <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
+                                ) }
+                            </UsernameHomeserverContainer>
+                            <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                            { errorMessage && (<p>❗️ { errorMessage }</p>) }
+                        </form>
+                    </>
+                ) }
+            </LoginSection>
         </>
     );
 }

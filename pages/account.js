@@ -31,7 +31,7 @@ const ProfileSection = styled.div`
 
 const Avatar = styled.img`
   display: block;
-  grid-row: 1 / 3;
+  grid-row: 1 / 2;
   grid-column: 1;
   width: calc(var(--margin) * 7.3);
   aspect-ratio: 1;
@@ -41,6 +41,7 @@ const Avatar = styled.img`
   border-width: calc(var(--margin) * 0.2);
 
   @media (min-width: 40em) {
+    grid-row: 1 / 3;
     width: calc(var(--margin) * 11.6);
   }
 `;
@@ -50,7 +51,7 @@ const AvatarButtonContainer = styled.div`
   grid-gap: calc(var(--margin) * 1.3);
 
   @media (min-width: 40em) {
-    grid-template-columns: repeat(2, auto);
+    grid-template-columns: repeat(auto-fit, minmax(calc(50% - (var(--margin) * 0.65)), 1fr));
     grid-row: 1;
     grid-column: 2;
   }
