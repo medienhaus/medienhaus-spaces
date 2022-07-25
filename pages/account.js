@@ -192,7 +192,7 @@ export default function Account() {
         <>
             <h1>/account</h1>
             <ProfileSection>
-                <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'scale') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
+                <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
                 <AvatarButtonContainer>
                     <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
                     <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload avatar') } …</button>
