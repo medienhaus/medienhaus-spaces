@@ -6,7 +6,8 @@ import styled from 'styled-components';
 import { useAuth } from '../lib/Auth';
 
 const LoginSection = styled.div`
-  & > * + * {
+  & > * + *,
+  & > form > * + * {
     margin-top: var(--margin);
   }
 
@@ -17,11 +18,6 @@ const LoginSection = styled.div`
 
 const UsernameHomeserverContainer = styled.div`
   position: relative;
-
-  @media (min-width: 29em) {
-    display: flex;
-    align-items: baseline;
-  }
 `;
 
 const Homeserver = styled.span`
