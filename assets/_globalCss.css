@@ -75,7 +75,7 @@ a:active {
 select {
   width: 100%;
   height: calc(var(--margin) * 3);
-  padding: 0 calc(var(--margin) * 0.75);
+  padding: 0 calc(var(--margin) * 2) 0 calc(var(--margin) * 0.75);
   font-weight: 500;
   color: var(--color-fg);
   text-overflow: ellipsis;
