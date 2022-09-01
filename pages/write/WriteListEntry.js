@@ -13,8 +13,8 @@ const LinkElement = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-left: var(--margin);
   padding-right: var(--margin);
+  padding-left: var(--margin);
 
   .group {
     display: inherit;
@@ -41,7 +41,7 @@ const LinkElement = styled.li`
     fill: var(--color-me);
   }
 
-  &:nth-of-type(even){
+  &:nth-of-type(even) {
     background-color: var(--color-lo);
   }
 `;
@@ -69,7 +69,6 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
 
     useEffect(() => {
         let cancelled = false;
-
         !cancelled && setLinkName(matrix.rooms.get(roomId).name);
 
         return () => cancelled = true;

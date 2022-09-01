@@ -42,10 +42,10 @@ const WriteNavigation = styled.ul`
   li {
     margin-bottom: calc(var(--margin)/2);
 
-    a[disabled]{
-        color: var(--color-me);
-        cursor: not-allowed;
-        text-decoration: none;
+    a[disabled] {
+      color: var(--color-me);
+      text-decoration: none;
+      cursor: not-allowed;
     }
   }
 `;
@@ -276,6 +276,7 @@ export default function Write() {
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
+
     return (<div>
         <Header>
             <h1>/write</h1>
@@ -283,9 +284,9 @@ export default function Write() {
                 { (openActions ? <CloseIcon /> : <PlusIcon />) }
             </CloseButton>
         </Header>
+
         { openActions && <>
             <WriteNavigation>
-
                 <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
                 <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
                 { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
