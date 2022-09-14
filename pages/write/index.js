@@ -157,7 +157,7 @@ export default function Write() {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
                 // in order to get the actual id of the pad we need to check the room content
-                    const id = matrix.roomContent.get(roomId).body.substring(matrix.roomContent.get(roomId).body.lastIndexOf('/') + 1);
+                    const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                     matrixPads = Object.assign({}, matrixPads, {
                         [id]: {
                             name: matrix.rooms.get(roomId).name,

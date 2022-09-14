@@ -52,7 +52,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const write = auth.getAuthenticationProvider('write');
     const [removingLink, setRemovingLink] = useState(false);
     const [linkName, setLinkName] = useState('');
-    const [content, setContent] = useState(matrix.roomContent.get(roomId));
+    const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const { t } = useTranslation('write');
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
@@ -77,10 +77,10 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     useEffect(() => {
         let cancelled = false;
 
-        !cancelled && setContent(matrix.roomContent.get(roomId));
+        !cancelled && setContent(matrix.roomContents.get(roomId));
 
         return () => cancelled = true;
-    }, [matrix.roomContent, roomId]);
+    }, [matrix.roomContents, roomId]);
 
     useEffect(() => {
         const controller = new AbortController();
