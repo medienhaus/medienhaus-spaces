@@ -256,8 +256,8 @@ export default function Write() {
             case 'passwordPad':
                 return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
                     <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <input type="password" placeholder={t('validate password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
                     <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
                 </form>);
             case 'authoredPad':
@@ -295,7 +295,7 @@ export default function Write() {
             { renderSelectedOption() }
         </>
         }
-        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Looks like theres no connection to the write server.') }</ErrorMessage> }
+        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
         <ul>
             { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                 return <WriteListEntry

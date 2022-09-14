@@ -95,7 +95,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     }, [content, matrix, roomId, serverPads]);
 
     if (content === undefined || serverPads === null) return <LoadingSpinner />;
-    if (content === null) return <p>{ t('There is no content in this room') }</p>;
+    if (content === null) return;
 
     return (
         <LinkElement>
