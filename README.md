@@ -42,6 +42,10 @@ You will also see any lint errors in the console.
 
 Builds a production-ready version of the application and exports it to the `out` directory. The build is minified and the filenames include the hashes.
 
+### Linting
+
+We use [`ESLint`](https://github.com/eslint/eslint) and [`Stylelint`](https://github.com/stylelint/stylelint). The respective configuration files should be detected automatically. For `stylelint` it might be important to tell your editor or IDE to not only check `.css` files, but also `.js` files because we're using styled components.
+
 ### Notes
 
 When wrapping a [Link](https://nextjs.org/docs/api-reference/next/link) from `next/link` within a styled-component, the [as](https://styled-components.com/docs/api#as-polymorphic-prop) prop provided by `styled` will collide with the Link's `as` prop and cause styled-components to throw an `Invalid tag` error. To avoid this, you can either use the recommended [forwardedAs](https://styled-components.com/docs/api#forwardedas-prop) prop from styled-components or use a different named prop to pass to a `styled` Link.

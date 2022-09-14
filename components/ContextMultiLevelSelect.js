@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import getConfig from 'next/config';
 
 import { useAuth } from '../lib/Auth';
-
-const ContextSelect = styled.select`
-  margin-bottom: 5px;
-`;
 
 const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
     const auth = useAuth();
@@ -32,7 +27,7 @@ const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
     }
 
     return (
-        <ContextSelect
+        <select
             value={selectedContext}
             onChange={(e) => {
                 setSelectedContext(e.target.value);
@@ -46,7 +41,7 @@ const ContextBrowserLevel = ({ parentSpaceRoomId, onSelect }) => {
                     { room.name }
                 </option>
             )) }
-        </ContextSelect>
+        </select>
     );
 };
 

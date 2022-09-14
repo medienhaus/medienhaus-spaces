@@ -98,6 +98,7 @@ const LanguageChooserWrapper = styled.div`
 `;
 
 const Main = styled.main`
+  min-width: 0;
   max-width: 55ch;
 
   @media (min-width: 29em) {
