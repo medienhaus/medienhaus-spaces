@@ -9,6 +9,7 @@
     "Add existing pad": "Bestehendes Pad hinzufügen",
     "Create pad": "Pad anlegen",
     "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
-    "validate password": "passwort bestätigen",
-    "link to pad": "link zu pad"
+    "confirm password": "passwort bestätigen",
+    "link to pad": "link zu pad",
+    "Can't connect with the provided /write server. Please try again later.": "Es kann keine Verbindung zum /sketch server hergestellt werden. Bitte bersuche es sp'ter nocheinmal."
 }
