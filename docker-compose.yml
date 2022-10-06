@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "8080:8080"
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  spaces:
+    build:
+      context: .
+    command: dev
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.spaces.entrypoints: "web"
+      traefik.http.routers.spaces.rule: "PathPrefix(`/`)"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+
+  element:
+    image: vectorim/element-web:latest
+    container_name: element
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.element.entrypoints: "web"
+      traefik.http.routers.element.rule: "PathPrefix(`/element/`)"
+      traefik.http.routers.element.middlewares: "element@docker"
+      traefik.http.middlewares.element.stripprefix.prefixes: "/element"
+    volumes:
+      - ./element.config.json:/app/config.json
