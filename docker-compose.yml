@@ -21,7 +21,6 @@ services:
   spaces:
     build:
       context: .
-    command: dev
     labels:
       traefik.enable: "true"
       traefik.http.routers.spaces.entrypoints: "web"
@@ -29,7 +28,6 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-      - /usr/src/app/.next
 
   element:
     image: vectorim/element-web:latest

@@ -15,7 +15,6 @@ const ElementIframe = styled.iframe`
   box-shadow: 0 0 0 5px rgb(0 0 0);
   transform-origin: bottom;
 
-
   @media (min-width: 29em) {
     position: initial;
     float: right;
