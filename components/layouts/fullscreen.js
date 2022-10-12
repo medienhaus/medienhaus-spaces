@@ -14,8 +14,6 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  position: sticky;
-  top: 0;
   z-index: 3;
   display: flex;
   align-items: center;
@@ -79,8 +77,8 @@ const Nav = styled.nav`
 `;
 
 const Main = styled.main`
-  flex-grow: 1;
-  flex-shrink: 0;
+  height: 100%;
+  overflow: auto;
 `;
 
 const Footer = styled.footer`
