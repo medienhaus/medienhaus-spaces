@@ -3,33 +3,24 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
+import Fullscreen from '../components/layouts/fullscreen';
 
-const ElementIframe = styled.iframe`
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  width: 100%;
-  height: calc(100% - 20vh);
-  box-shadow: 0 0 0 5px rgb(0 0 0);
-  transform-origin: bottom;
-
-
-  @media (min-width: 29em) {
-    position: initial;
-    float: right;
-    width: 70%;
-    height: 90%;
-  }
+const Wrapper = styled.div`
+  display: flex;
+  height: 100%;
+  overflow: hidden;
 `;
 
 const Sidebar = styled.div`
-  @media (min-width: 29em) {
-    float: left;
-    width: 30%;
-  }
+  height: 100%;
+  padding: var(--margin);
+  overflow: auto;
+  border-right: 5px solid black;
 
+  @media (min-width: 40em) {
+    padding: var(--margin) calc(var(--margin) * 2);
+  }
+  
   button {
     width: 100%;
 
@@ -40,6 +31,11 @@ const Sidebar = styled.div`
       border-radius: 100%;
     }
   }
+`;
+
+const ElementIframe = styled.iframe`
+  width: 100%;
+  height: 100%;
 `;
 
 export default function Chat() {
@@ -81,8 +77,7 @@ export default function Chat() {
     };
 
     return (
-        <>
-            <h1>/chat</h1>
+        <Wrapper>
             <Sidebar>
                 { matrix.invites.size > 0 && (
                     <details open>
@@ -130,6 +125,10 @@ export default function Chat() {
                 </details>
             </Sidebar>
             <ElementIframe src={iframeLocation} frameBorder="0" ref={iframe} />
-        </>
+        </Wrapper>
     );
 }
+
+Chat.getLayout = () => {
+    return Fullscreen;
+};
