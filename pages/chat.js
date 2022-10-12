@@ -63,7 +63,7 @@ export default function Chat() {
         iframe.current.addEventListener('load', injectCss);
 
         return () => {
-            iframe.current.removeEventListener('load', injectCss);
+            iframe.current && iframe.current.removeEventListener('load', injectCss);
         };
     });
 
