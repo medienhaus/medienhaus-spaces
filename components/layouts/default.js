@@ -109,8 +109,8 @@ const Main = styled.main`
 
 const Footer = styled.footer`
   display: none;
+  padding: var(--margin) 0;
   margin-top: calc(var(--margin) * 4);
-  margin-bottom: calc(var(--margin) * 1.4);
   line-height: calc(var(--margin) * 3);
 
   @media (min-width: 29em) {

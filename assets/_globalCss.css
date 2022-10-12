@@ -26,8 +26,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  padding: unset;
-  margin: unset;
 }
 
 *::selection {
