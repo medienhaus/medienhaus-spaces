@@ -5,17 +5,5 @@
     "feature_video_rooms": true,
     "feature_element_call_video_rooms": true
   },
-  "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json",
-  "default_theme": "custom-medienhaus",
-  "setting_defaults": {
-    "custom_themes": [
-      {
-        "name": "medienhaus",
-        "is_dark": false,
-        "colors": {
-          "icon-button-color": "#000000"
-        }
-      }
-    ]
-  }
+  "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json"
 }
