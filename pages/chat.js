@@ -15,12 +15,12 @@ const Sidebar = styled.div`
   height: 100%;
   padding: var(--margin);
   overflow: auto;
-  border-right: 5px solid black;
+  border-right: 0.2rem solid black;
 
   @media (min-width: 40em) {
     padding: var(--margin) calc(var(--margin) * 2);
   }
-  
+
   button {
     width: 100%;
 
