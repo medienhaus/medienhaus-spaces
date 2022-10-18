@@ -38,6 +38,16 @@ const ElementIframe = styled.iframe`
   height: 100%;
 `;
 
+const UnreadNotificationBadge = styled.span`
+  position: relative;
+  padding: 0.25rem 0.8rem;
+  margin-left: 0.5rem;
+  color: white;
+  text-decoration: none;
+  background: red;
+  border-radius: 2rem;
+`;
+
 export default function Chat() {
     const auth = useAuth();
     const iframe = useRef();
@@ -101,7 +111,7 @@ export default function Chat() {
                                 <a href="#" onClick={() => goToRoom(room.roomId)}>
                                     { room.name }
                                     { room.notificationCount > 0 && (
-                                        <span>{ room.notificationCount }</span>
+                                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
                                     ) }
                                 </a>
                             </li>
@@ -116,7 +126,7 @@ export default function Chat() {
                                 <a href="#" onClick={() => goToRoom(room.roomId)}>
                                     { room.name }
                                     { room.notificationCount > 0 && (
-                                        <span>{ room.notificationCount }</span>
+                                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
                                     ) }
                                 </a>
                             </li>
