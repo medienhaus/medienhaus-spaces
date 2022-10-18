@@ -60,6 +60,7 @@ export default function Write() {
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
     const [serverPads, setServerPads] = useState({});
+    const [iframe, setIframe] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const auth = useAuth();
@@ -278,37 +279,43 @@ export default function Write() {
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (<div>
-        <Header>
-            <h1>/write</h1>
-            <CloseButton onClick={handleCloseButtonClick}>
-                { (openActions ? <CloseIcon /> : <PlusIcon />) }
-            </CloseButton>
-        </Header>
+        { iframe ? <FrameView
+            link={iframe}
+            onClose={() => setIframe(false)}
+        /> : (<>
+            <Header>
+                <h1>/write</h1>
+                <CloseButton onClick={handleCloseButtonClick}>
+                    { (openActions ? <CloseIcon /> : <PlusIcon />) }
+                </CloseButton>
+            </Header>
 
-        { openActions && <>
-            <WriteNavigation>
-                <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
-                <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
-                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
-                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
-            </WriteNavigation>
-            { renderSelectedOption() }
-        </>
-        }
-        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-        <ul>
-            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                return <WriteListEntry
-                    key={roomId}
-                    roomId={roomId}
-                    parent={serviceSpaceId}
-                    serverPads={serverPads}
-                    callback={syncServerPadsAndSet}
-                />;
-            }) }
-        </ul>
-        { /*Debug */ }
-        { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
+            { openActions && <>
+                <WriteNavigation>
+                    <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
+                    <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
+                    { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
+                    { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
+                </WriteNavigation>
+                { renderSelectedOption() }
+            </>
+            }
+            { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
+            <ul>
+                { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                    return <WriteListEntry
+                        key={roomId}
+                        roomId={roomId}
+                        parent={serviceSpaceId}
+                        serverPads={serverPads}
+                        callback={syncServerPadsAndSet}
+                    />;
+                }) }
+            </ul>
+
+            { /*Debug */ }
+            { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
+        </>) }
     </div>
     );
 }
