@@ -29,6 +29,7 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+      - /usr/src/app/.next
 
   element:
     image: vectorim/element-web:latest

@@ -15,12 +15,12 @@ const Sidebar = styled.div`
   height: 100%;
   padding: var(--margin);
   overflow: auto;
-  border-right: 5px solid black;
+  border-right: 0.2rem solid black;
 
   @media (min-width: 40em) {
     padding: var(--margin) calc(var(--margin) * 2);
   }
-  
+
   button {
     width: 100%;
 
@@ -61,6 +61,73 @@ export default function Chat() {
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
+                :root {
+                  /* TODO
+                  --accent: #0f0f0f;
+                  --accent-color: #0f0f0f;
+                  --primary-color: #0f0f0f;
+                  --sidebar-color: #ffffff;
+                  --warning-color: #ff4b55;
+                  --roomlist-background-color: #ffffff;
+                  --roomlist-highlights-color: #f0f0f0;
+                  --roomlist-separator-color: #f0f0f0;
+                  --roomlist-text-color: #0f0f0f;
+                  --roomlist-text-secondary-color: #0f0f0f;
+                  --timeline-background-color: #ffffff;
+                  --timeline-highlights-color: #fff8e3;
+                  --timeline-text-color: #0f0f0f;
+                  --timeline-text-secondary-color: #0f0f0f;
+                  */
+                  --avatar-background-color: #0f0f0f;
+                  --username-color: #0f0f0f;
+                }
+                @media (prefers-color-scheme: dark) {
+                  :root {
+                    /* TODO
+                    --accent: #3f3f3f;
+                    --accent-color: #3f3f3f;
+                    --primary-color: #f0f0f0;
+                    --sidebar-color: #0f0f0f;
+                    --warning-color: #ff4b55;
+                    --roomlist-background-color: #0f0f0f;
+                    --roomlist-highlights-color: #1f1f1f;
+                    --roomlist-separator-color: #1f1f1f;
+                    --roomlist-text-color: #f0f0f0;
+                    --roomlist-text-secondary-color: #f0f0f0;
+                    --timeline-background-color: #0f0f0f;
+                    --timeline-highlights-color: #1a1f1c;
+                    --timeline-text-color: #f0f0f0;
+                    --timeline-text-secondary-color: #f0f0f0;
+                    */
+                    --avatar-background-color: #1f1f1f;
+                    --username-color: #f0f0f0;
+                  }
+                }
+                .mx_BaseAvatar > .mx_BaseAvatar_initial {
+                  background-color: var(--avatar-background-color);
+                }
+                .mx_BaseAvatar > .mx_BaseAvatar_image {
+                  background-color: var(--avatar-background-color);
+                  // dirty hack to "remove" the colored image linked via src="" ...
+                  content: url("");
+                }
+                .mx_Username_color1,
+                .mx_Username_color2,
+                .mx_Username_color3,
+                .mx_Username_color4,
+                .mx_Username_color5,
+                .mx_Username_color6,
+                .mx_Username_color7,
+                .mx_Username_color8 {
+                  color: var(--username-color);
+                }
+                * {
+                  border-radius: unset !important;
+                  font-family: "Inter", "Apple Color Emoji", "Twemoji", sans-serif !important;
+                }
+                .mx_EventTile_content .markdown-body code, .mx_EventTile_content .markdown-body pre {
+                  font-family: "Roboto Mono", "Apple Color Emoji", "Twemoji", monospace !important;
+                }
                 .mx_LeftPanel_wrapper { display: none !important }
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
                 .mx_RoomHeader_name { pointer-events: none; }
