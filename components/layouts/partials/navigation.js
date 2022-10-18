@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
-  margin-bottom: calc(var(--margin) * 3);
+  padding: 0;
+  margin: 0 0 calc(var(--margin) * 3);
   list-style: none;
 
   li {

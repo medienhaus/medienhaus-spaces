@@ -16,6 +16,9 @@ export default function App({ Component, pageProps }) {
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData.getActiveMatrixAuthentications());
 
+    let Layout = DefaultLayout;
+    if (Component.getLayout) { Layout = Component.getLayout(); }
+
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {
         router.push('/login');
@@ -31,11 +34,11 @@ export default function App({ Component, pageProps }) {
             </Head>
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
-                    <DefaultLayout>
+                    <Layout>
                         { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
                         ) }
-                    </DefaultLayout>
+                    </Layout>
                 </MatrixContext.Provider>
             </AuthContext.Provider>
         </>
