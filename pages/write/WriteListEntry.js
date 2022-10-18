@@ -8,6 +8,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
+import TextButton from '../../components/UI/TextButton';
 
 const LinkElement = styled.li`
   display: flex;
@@ -46,7 +47,7 @@ const LinkElement = styled.li`
   }
 `;
 
-const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
+const WriteListEntry = ({ parent, roomId, serverPads, setIframe, callback }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const write = auth.getAuthenticationProvider('write');
@@ -99,7 +100,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
 
     return (
         <LinkElement>
-            <a href={content.body} target="_blank" rel="noopener noreferrer">{ linkName }</a>
+            <TextButton onClick={() => setIframe(content.body)}>{ linkName }</TextButton>
             <div className="group">
                 { serverPads &&
             <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
