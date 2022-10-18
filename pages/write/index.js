@@ -14,6 +14,15 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
 import FrameView from '../../components/FrameView';
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: column;
+  height: 85vh;
+
+  @media (min-width: 29em) {
+    height: 100%;
+  }`;
+
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
 `;
@@ -279,7 +288,7 @@ export default function Write() {
 
     if (!serviceSpaceId) return <LoadingSpinner />;
 
-    return (<div>
+    return (<Wrapper>
         { iframe ? <FrameView
             link={iframe}
             onClose={() => setIframe(false)}
@@ -318,6 +327,6 @@ export default function Write() {
             { /*Debug */ }
             { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
         </>) }
-    </div>
+    </Wrapper>
     );
 }
