@@ -12,6 +12,7 @@ import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
+import FrameView from '../../components/FrameView';
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -308,6 +309,7 @@ export default function Write() {
                         roomId={roomId}
                         parent={serviceSpaceId}
                         serverPads={serverPads}
+                        setIframe={setIframe}
                         callback={syncServerPadsAndSet}
                     />;
                 }) }
