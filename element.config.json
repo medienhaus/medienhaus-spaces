@@ -6,12 +6,16 @@
     "feature_element_call_video_rooms": true
   },
   "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json",
-  "default_theme": "custom-medienhaus day",
+  "default_theme": "custom-medienhaus",
   "setting_defaults": {
     "custom_themes": [
       {
-        "name": "medienhaus day",
+        "name": "medienhaus",
         "is_dark": false,
+        "fonts": {
+          "general": "\"Inter\"",
+          "monospace": "\"Roboto Mono\""
+        },
         "colors": {
           "accent": "#0f0f0f",
           "accent-color": "#0f0f0f",
@@ -30,28 +34,6 @@
           "timeline-text-secondary-color": "#0f0f0f",
           "avatar-background-colors": ["#0f0f0f", "#0f0f0f", "#0f0f0f"],
           "username-colors": ["#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f"]
-        }
-      }, {
-        "name": "medienhaus night",
-        "is_dark": true,
-        "colors": {
-          "accent": "#3f3f3f",
-          "accent-color": "#3f3f3f",
-          "primary-color": "#f0f0f0",
-          "sidebar-color": "#0f0f0f",
-          "warning-color": "#ff4b55",
-          "icon-button-color": "#3f3f3f",
-          "roomlist-background-color": "#0f0f0f",
-          "roomlist-highlights-color": "#1f1f1f",
-          "roomlist-separator-color": "#1f1f1f",
-          "roomlist-text-color": "#f0f0f0",
-          "roomlist-text-secondary-color": "#f0f0f0",
-          "timeline-background-color": "#0f0f0f",
-          "timeline-highlights-color": "#1a1f1c",
-          "timeline-text-color": "#f0f0f0",
-          "timeline-text-secondary-color": "#f0f0f0",
-          "avatar-background-colors": ["#1f1f1f", "#1f1f1f", "#1f1f1f"],
-          "username-colors": ["#f0f0f0", "#f0f0f0", "#f0f0f0", "#f0f0f0", "#f0f0f0", "#f0f0f0", "#f0f0f0", "#f0f0f0"]
         }
       }
     ]

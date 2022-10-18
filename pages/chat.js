@@ -63,10 +63,6 @@ export default function Chat() {
             const styleContent = document.createTextNode(`
                 * {
                   border-radius: unset !important;
-                  font-family: "Inter", "Apple Color Emoji", "Twemoji", sans-serif !important;
-                }
-                .mx_EventTile_content .markdown-body code, .mx_EventTile_content .markdown-body pre {
-                  font-family: "Roboto Mono", "Apple Color Emoji", "Twemoji", monospace !important;
                 }
                 .mx_LeftPanel_wrapper { display: none !important }
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
