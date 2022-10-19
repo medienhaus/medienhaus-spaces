@@ -12,6 +12,20 @@ import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
+import FrameView from '../../components/FrameView';
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: column;
+  height: 85vh;
+
+  ul {
+    all: unset;
+  }
+
+  @media (min-width: 29em) {
+    height: 100%;
+  }`;
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -60,6 +74,7 @@ export default function Write() {
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
     const [serverPads, setServerPads] = useState({});
+    const [iframe, setIframe] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const auth = useAuth();
@@ -276,8 +291,9 @@ export default function Write() {
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
+    if (iframe) return <Wrapper><FrameView link={iframe} onClose={() => setIframe(false)} /></Wrapper>;
 
-    return (<div>
+    return (<Wrapper>
         <Header>
             <h1>/write</h1>
             <CloseButton onClick={handleCloseButtonClick}>
@@ -303,12 +319,14 @@ export default function Write() {
                     roomId={roomId}
                     parent={serviceSpaceId}
                     serverPads={serverPads}
+                    setIframe={setIframe}
                     callback={syncServerPadsAndSet}
                 />;
             }) }
         </ul>
+
         { /*Debug */ }
         { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
-    </div>
-    );
+    </Wrapper>)
+    ;
 }
