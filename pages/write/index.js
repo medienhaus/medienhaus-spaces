@@ -19,6 +19,10 @@ const Wrapper = styled.div`
   flex-flow: column;
   height: 85vh;
 
+  ul {
+    all: unset;
+  }
+
   @media (min-width: 29em) {
     height: 100%;
   }`;
