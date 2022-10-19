@@ -24,14 +24,14 @@ const Utilities = styled.div`
 `;
 
 const FrameView = ({ link, title, onClose }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('ui');
     const [loading, setLoading] = useState(true);
 
     return (<>
         <Utilities>
             <TextButton onClick={onClose}>←</TextButton>
             <div className="group">
-                <TextButton title={t('Copy pad link to clipboard')} onClick={() => navigator.clipboard.writeText(link)}><Clipboard fill="var(--color-fg)" /></TextButton>
+                <TextButton title={t('Copy link to clipboard')} onClick={() => navigator.clipboard.writeText(link)}><Clipboard fill="var(--color-fg)" /></TextButton>
                 <a href={link} title={t('Open in new tab')} target="_blank">↗</a>
             </div>
         </Utilities>
