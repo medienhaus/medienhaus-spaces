@@ -19,10 +19,6 @@ const Wrapper = styled.div`
   flex-flow: column;
   height: 85vh;
 
-  ul {
-    all: unset;
-  }
-
   @media (min-width: 29em) {
     height: 100%;
   }`;
@@ -62,6 +58,11 @@ const WriteNavigation = styled.ul`
       cursor: not-allowed;
     }
   }
+`;
+
+const WriteList = styled.ul`
+  padding: 0;
+  margin: 0;
 `;
 
 export default function Write() {
@@ -312,7 +313,7 @@ export default function Write() {
         </>
         }
         { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-        <ul>
+        <WriteList>
             { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                 return <WriteListEntry
                     key={roomId}
@@ -323,7 +324,7 @@ export default function Write() {
                     callback={syncServerPadsAndSet}
                 />;
             }) }
-        </ul>
+        </WriteList>
 
         { /*Debug */ }
         { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
