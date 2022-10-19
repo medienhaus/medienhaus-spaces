@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 
 import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
@@ -40,13 +41,59 @@ const ElementIframe = styled.iframe`
 
 const UnreadNotificationBadge = styled.span`
   position: relative;
-  padding: 0.25rem 0.8rem;
-  margin-left: 0.5rem;
+  display: flex;
+  flex: 0 0;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.6rem;
   color: white;
   text-decoration: none;
   background: red;
   border-radius: 2rem;
 `;
+
+const Avatar = styled.img`
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.6rem;
+  background: black;
+`;
+
+const SidebarListEntryWrapper = styled.a`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+`;
+
+const RoomName = styled.div`
+  display: flex;
+  flex: 1 0;
+  height: 2rem;
+  overflow: hidden;
+  line-height: 2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const sortRooms = function(room) {
+    return [
+        room.notificationCount == 0,
+        room.name,
+    ];
+};
+
+const SidebarListEntry = function({ room, onClick }) {
+    return (
+        <SidebarListEntryWrapper href="#" onClick={onClick}>
+            { room.avatar ? (<Avatar src={room.avatar} alt={room.name} />) : (<Avatar />) }
+            <RoomName>{ room.name }</RoomName>
+            { room.notificationCount > 0 && (
+                <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+            ) }
+        </SidebarListEntryWrapper>
+    );
+};
 
 export default function Chat() {
     const auth = useAuth();
@@ -95,46 +142,16 @@ export default function Chat() {
                 { matrix.invites.size > 0 && (
                     <details open>
                         <summary><h3 style={{ display: 'inline' }}>invites</h3></summary>
-                        <ul>
-                            { (matrix.invites && [...matrix.invites.values()].map((room) => (
-                                <li key={room.roomId}>
-                                    <a href="#" onClick={() => goToRoom(room.roomId)}>
-                                        { room.name }
-                                    </a>
-                                </li>
-                            ))) }
-                        </ul>
+                        { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
                     </details>
                 ) }
                 <details open>
                     <summary><h3 style={{ display: 'inline' }}>directs</h3></summary>
-                    <ul>
-                        { (matrix.directMessages && [...matrix.directMessages.values()].map((room) => (
-                            <li key={room.roomId}>
-                                <a href="#" onClick={() => goToRoom(room.roomId)}>
-                                    { room.name }
-                                    { room.notificationCount > 0 && (
-                                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
-                                    ) }
-                                </a>
-                            </li>
-                        ))) }
-                    </ul>
+                    { (matrix.directMessages && _.sortBy([...matrix.directMessages.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
                 </details>
                 <details open>
                     <summary><h3 style={{ display: 'inline' }}>rooms</h3></summary>
-                    <ul>
-                        { (matrix.rooms && [...matrix.rooms.values()].map((room) => (
-                            <li key={room.roomId}>
-                                <a href="#" onClick={() => goToRoom(room.roomId)}>
-                                    { room.name }
-                                    { room.notificationCount > 0 && (
-                                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
-                                    ) }
-                                </a>
-                            </li>
-                        ))) }
-                    </ul>
+                    { (matrix.rooms && _.sortBy([...matrix.rooms.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
                 </details>
             </Sidebar>
             <ElementIframe src={iframeLocation} frameBorder="0" ref={iframe} />
