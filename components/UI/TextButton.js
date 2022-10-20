@@ -1,7 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 
-const Button = styled.button`
+const TextButton = styled.button`
   all: unset;
   cursor: pointer;
 
@@ -14,10 +13,4 @@ const Button = styled.button`
     color: var(--color-me);
   }
 `;
-
-const TextButton = ({ onClick, children, disabled }) => {
-    return (
-        <Button onClick={onClick} disabled={disabled}>{ children }</Button>
-    );
-};
 export default TextButton;

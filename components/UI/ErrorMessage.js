@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Wrapper = styled.p`
+const ErrorMessage = styled.p`
   position: relative;
   padding-left: calc(1.4 * var(--margin));
   margin-top: calc(-0.5 * var(--margin));
@@ -13,11 +13,5 @@ const Wrapper = styled.p`
     content: '❗️';
   }
 `;
-
-const ErrorMessage = (props) => {
-    return (
-        <Wrapper {...props} />
-    );
-};
 
 export default ErrorMessage;
