@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
-import { isEmpty } from 'lodash';
+import _ from 'lodash';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -146,7 +146,7 @@ export default function Write() {
         let cancelled = false;
 
         const populatePadsfromServer = async () => {
-            if (!isEmpty(write.getAllPads())) {
+            if (!_.isEmpty(write.getAllPads())) {
                 setServerPads(write.getAllPads());
             } else {
                 await syncServerPadsAndSet();
