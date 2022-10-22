@@ -30,15 +30,24 @@ const InfoOverlay = ({currentId }) => {
         const metaEvent = _.find(stateEvents,{ type: 'dev.medienhaus.meta' })?.content
         const nameEvent = _.find(stateEvents,{ type: 'm.room.name' })?.content
         const joinRulesEvent = _.find(stateEvents,{ type: 'dev.medienhaus.meta' })?.content
-        const memberEvent = _.find(stateEvents,{ type: 'm.room.member' })?.content
+        const memberEvent = _.filter(stateEvents,{ type: 'm.room.member' })
         const topicEvent = _.find(stateEvents,{ type: 'm.room.topic' })?.content
 
-        const initial = {name: nameEvent?.name, topic: topicEvent?.content}
-        const meta = {template: metaEvent?.template, type : metaEvent?.type, application: metaEvent?.application}
+        const members = _.omitBy(_.map(memberEvent,member => {
+            if(member?.content.membership === 'join'){
+                return {id:member?.sender,displaname:member?.content?.displayname}
+            }
+        }), _.isNil)
+        const institutions = _.omitBy(_.map(members, member => member?.id.split(':')[1]), _.isNil)
 
-        const stateInformations = {initial : initial, meta : meta}
 
-        setStateEventInformation({ ...stateEventInformation, meta: stateInformations.meta,initial: stateInformations.initial })
+        const initial = {name: nameEvent?.name, topic: topicEvent?.content,members:members}
+        const custom = {template: metaEvent?.template, type : metaEvent?.type, application: metaEvent?.application}
+
+        const stateInformations = {initial : initial, custom : custom}
+
+        setStateEventInformation({ ...stateEventInformation, custom: stateInformations.custom, initial: stateInformations.initial })
+
 
 
     }
@@ -56,18 +65,29 @@ const InfoOverlay = ({currentId }) => {
                     <summary>meta</summary>
                     <dl>
                         <dt>Type</dt>
-                            <dd>{stateEventInformation?.meta?.type}</dd>
+                            <dd>{stateEventInformation?.custom?.type}</dd>
                         <dt>Template</dt>
-                            <dd>{stateEventInformation?.meta?.template}</dd>
+                            <dd>{stateEventInformation?.custom?.template}</dd>
                         <dt>Application</dt>
-                            <dd>{stateEventInformation?.meta?.type}</dd>
+                            <dd>{stateEventInformation?.custom?.type}</dd>
                     </dl>
                 </details>
                 <details>
                     <summary>Institutions</summary>
+                    <p>{stateEventInformation?.custom?.institutions}</p>
                 </details>
                 <details>
                     <summary>Members</summary>
+                    <ul>
+                    {_.map(stateEventInformation?.initial?.members, (member) =>  { 
+                        return  <details>
+                            <summary>{member?.displaname}</summary>
+                            <p><a href={ `#${member?.id}` }>send dm</a></p>
+                            <p><a href={ `#${member?.id}` }>invite to…</a></p>
+                            </details>
+                    })
+                    }
+                    </ul>
                 </details>
                 <details>
                     <summary>Referenced</summary>
