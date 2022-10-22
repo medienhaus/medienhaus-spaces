@@ -18,6 +18,9 @@ module.exports = {
             },
         },
         contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
+        templates: {
+            context: '!DKzCQzwwAaeXIVkLRh:dev.medienhaus.udk-berlin.de',
+        },
         account: {
             allowAddingNewEmails: true,
         },

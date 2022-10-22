@@ -3,16 +3,28 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import ContextMultiLevelSelect from '../components/ContextMultiLevelSelect';
-import { useAuth } from '../lib/Auth';
+import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
+import { useAuth } from '../../lib/Auth';
+import ModerateOverlay from './moderateOverlay';
+import InfoOverlay from './infoOverlay';
 
 const ExploreSection = styled.div`
   & > * + * {
     margin-top: var(--margin);
   }
-
   & > select + select {
     margin-top: calc(var(--margin) * 0.65);
+  }
+`;
+
+const ActionsSection = styled.div`
+  &  {
+    margin-bottom: var(--margin);
+  }
+
+  & > button {
+    margin-bottom: var(--margin);
+    margin-top: var(--margin);
   }
 `;
 
@@ -22,6 +34,8 @@ export default function Explore() {
 
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);
+
+    const [showActions,setShowActions] = useState({modify:false,infos:false});
 
     useEffect(() => {
         const fetchContents = async () => {
@@ -51,6 +65,8 @@ export default function Explore() {
     return (
         <>
             <h1>/explore</h1>
+            <p>{activeContexts[activeContexts.length - 1]}</p>
+ 
             <ExploreSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
                 { (contents && contents.length > 0) ? (
@@ -71,6 +87,15 @@ export default function Explore() {
                     <p>- { t('There are no contents for this context') } -</p>
                 ) }
             </ExploreSection>
+
+            <ActionsSection>
+                <button onClick= {() => {setShowActions({ ...showActions, infos: !showActions.infos })} } > 🏷️</button>
+                {showActions.infos && <InfoOverlay currentId={activeContexts[activeContexts.length - 1]}  />}
+
+                <button onClick= {() => {setShowActions({ ...showActions, modify: !showActions.modify })} } > ⚙️</button>
+                {showActions.modify && <ModerateOverlay currentId={activeContexts[activeContexts.length - 1]}  />}
+
+            </ActionsSection>
         </>
     );
 }
