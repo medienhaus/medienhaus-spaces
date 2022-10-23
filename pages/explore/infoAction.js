@@ -14,6 +14,7 @@ const InfoSection = styled.div`
 
  
 `;
+
 /*
 * @TODO:
 * - adding routes for user interaction more -> members -> username
@@ -26,12 +27,15 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
+    //States
+    const [stateEventInformation, setStateEventInformation] = useState({});
+
+    //Effects
     useEffect(() => {
         processStateEvents(stateEvents);
     }, [stateEvents]);
 
-    const [stateEventInformation, setStateEventInformation] = useState({});
-
+    //Functions
     async function processStateEvents(stateEvents) { // gets the stateevents of the room
         const metaEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
         const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
@@ -39,8 +43,6 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
         const historyVisibilityEvent = _.find(stateEvents, { type: 'm.room.history_visibility' })?.content;
         const memberEvent = _.filter(stateEvents, { type: 'm.room.member' });
         const topicEvent = _.find(stateEvents, { type: 'm.room.topic' })?.content;
-
-        console.log(joinRulesEvent);
 
         const members = _.compact( //filter out empty ones
             _.map(memberEvent, member => {
@@ -50,13 +52,14 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
 
         const institutions = _.uniq(_.map(members, member => member?.id.split(':')[1])); //show only the tld's of the homeservers. '_.uniq' filters out duplicates
 
-        const initial = { name: nameEvent?.name,
+        const initial = { //contains only extracted data from stateEvents which are mentioned in the  matrix specs
+            name: nameEvent?.name,
             topic: topicEvent?.content,
             members: members,
             join: joinRulesEvent?.join_rule,
-            visibility: historyVisibilityEvent?.history_visibility
+            visibility: historyVisibilityEvent?.history_visibility,
         };
-        const custom = {
+        const custom = { //contains only data extracted from custom stateEvents
             template: metaEvent?.template,
             type: metaEvent?.type,
             application: metaEvent?.application,
@@ -64,8 +67,7 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
         };
 
         const stateInformations = { initial: initial, custom: custom };
-
-        setStateEventInformation({ ...stateEventInformation, custom: stateInformations.custom, initial: stateInformations.initial });
+        setStateEventInformation({ ...stateEventInformation, custom: stateInformations.custom, initial: stateInformations.initial }); // applying the structured data to the observable State
     }
 
     return (
@@ -104,7 +106,7 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
                         switch (stateEventInformation?.initial?.visibility) {
                             case 'world_readable':
                                 return <>🌐</>;
-                            case 'shared': 
+                            case 'shared':
                                 return <>📖</>;
                             case 'joined':
                                 return <>🔐</>;
@@ -158,6 +160,7 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
                 </details>
                 <details>
                     <summary>Referenced</summary>
+                    …
                 </details>
 
             </details>
