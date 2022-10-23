@@ -5,10 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 import { useAuth } from '../../lib/Auth';
-import ModerateOverlay from './moderateOverlay';
-import InfoOverlay from './infoOverlay';
-import AddOverlay from './addOverlay';
-import Actions from './actions'
+import Actions from './actions';
 
 const ExploreSection = styled.div`
   & > * + * {
@@ -19,15 +16,12 @@ const ExploreSection = styled.div`
   }
 `;
 
-
-
 export default function Explore() {
     const auth = useAuth();
     const { t } = useTranslation('explore');
 
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);
-
 
     useEffect(() => {
         const fetchContents = async () => {
@@ -64,8 +58,8 @@ export default function Explore() {
                 { (contents && contents.length > 0) ? (
                     <div>
                         <ol>
-                            { contents.map((content) => (
-                                <li>
+                            { contents.map((content, key) => (
+                                <li key={key}>
                                     { content.name }
                                     <small>
                                         { content.type && (<> (type: <code>{ content.type }</code>)</>) }
@@ -80,10 +74,8 @@ export default function Explore() {
                 ) }
             </ExploreSection>
 
-            
-                    <Actions activeContexts={activeContexts}></Actions>
+            <Actions currentId={activeContexts[activeContexts.length - 1]} />
 
-        
         </>
     );
 }

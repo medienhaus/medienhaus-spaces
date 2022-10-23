@@ -6,19 +6,28 @@ import _ from 'lodash';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-const InfoOverlay = ({ currentId }) => {
+
+const InfoSection = styled.div`
+  &  {
+    margin-bottom: var(--margin);
+
+  }
+
+ 
+`;
+
+const InfoAction = ({ currentId, stateEvents }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     useEffect(() => {
-        getStateEvents(currentId);
-    }, [currentId]);
+        processStateEvents(stateEvents);
+    }, [stateEvents]);
 
     const [stateEventInformation, setStateEventInformation] = useState({});
 
-    async function getStateEvents(roomId) { // gets the stateevents of the room
-        const stateEvents = await matrixClient.roomState(roomId).catch((e) => { });
+    async function processStateEvents(stateEvents) { // gets the stateevents of the room
         const metaEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
         const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
         const joinRulesEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
@@ -52,9 +61,9 @@ const InfoOverlay = ({ currentId }) => {
     }
 
     return (
-        <>
-            <p>Name:{ stateEventInformation?.initial?.name }</p>
-            <p>Topic:{ stateEventInformation?.initial?.topic }</p>
+        <InfoSection>
+            { stateEventInformation?.initial?.name ? <p>Name:{ stateEventInformation?.initial?.name }</p> : <></> }
+            { stateEventInformation?.initial?.topic ? <p>Topic:{ stateEventInformation?.initial?.topic }</p> : <></> }
             <details>
                 <summary>more</summary>
                 <p>Id: <span>{ currentId }</span></p>
@@ -72,8 +81,8 @@ const InfoOverlay = ({ currentId }) => {
                 <details>
                     <summary>Institutions</summary>
                     <ul>
-                        { _.map(stateEventInformation?.custom?.institutions, institution => {
-                            return <li>{ institution }</li>;
+                        { _.map(stateEventInformation?.custom?.institutions, (institution, key) => {
+                            return <li key={key}>{ institution }</li>;
                         }) }
                     </ul>
 
@@ -81,8 +90,8 @@ const InfoOverlay = ({ currentId }) => {
                 <details>
                     <summary>Members</summary>
                     <ul>
-                        { _.map(stateEventInformation?.initial?.members, (member) => {
-                            return <li>
+                        { _.map(stateEventInformation?.initial?.members, (member, key) => {
+                            return <li key={key}>
                                 <details>
                                     <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
                                     <p><a href={`#${member?.id}`}>send dm</a></p>
@@ -103,9 +112,9 @@ const InfoOverlay = ({ currentId }) => {
                     <dd>{ stateEventInformation?.visibilty }</dd>
                 </dl>
             </details>
-        </>
+        </InfoSection>
 
     );
 };
 
-export default InfoOverlay;
+export default InfoAction;

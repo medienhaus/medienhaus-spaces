@@ -18,7 +18,7 @@ const CreateSubstructureSection = styled.details`
     }
 `;
 
-const ModerateOverlay = ({ currentId }) => {
+const SettingsAction = ({ currentId }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -148,4 +148,4 @@ const ModerateOverlay = ({ currentId }) => {
     );
 };
 
-export default ModerateOverlay;
+export default SettingsAction;

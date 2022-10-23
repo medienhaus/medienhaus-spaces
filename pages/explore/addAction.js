@@ -25,7 +25,7 @@ const UserSection = styled.details`
     }
 `;
 
-const AddOverlay = ({ currentId }) => {
+const AddAction = ({ currentId }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -48,4 +48,4 @@ const AddOverlay = ({ currentId }) => {
     );
 };
 
-export default AddOverlay;
+export default AddAction;
