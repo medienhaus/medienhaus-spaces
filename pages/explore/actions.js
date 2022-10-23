@@ -48,12 +48,19 @@ const Actions = ({ currentId }) => {
 
     const [stateEvents, setStateEvents] = useState();
 
+    const [userInfos, setUserInfos] = useState({}); //stores information about the curren User
+
     useEffect(() => {
         getStateEvents(currentId);
     }, [currentId]);
 
     async function getStateEvents(roomId) { // gets the stateevents of the room
-        setStateEvents(await matrixClient.roomState(roomId).catch((e) => { }));
+        const events = await matrixClient.roomState(roomId).catch((e) => { });
+        setStateEvents(events);
+        const userId = matrixClient?.credentials?.userId;
+        const powerLevelsEvent = _.find(events, { type: 'm.room.power_levels' })?.content;
+        const modRights = powerLevelsEvent?.users[userId] >= 50; //check if the current user got is listed with a custom power level if true and >= 50 (mod default) mod flag is set true
+        setUserInfos({ ...userInfos, id: userId, mod: modRights });
     }
 
     return (
@@ -63,12 +70,12 @@ const Actions = ({ currentId }) => {
             <ButtonsSection>
                 <button onClick={() => {setShowActions({ ...showActions, infos: !showActions.infos, add: false, settings: false });}}> 🏷️</button>
                 <button onClick={() => {setShowActions({ ...showActions, add: !showActions.add, infos: false, settings: false });}}> ➕</button>
-                <button onClick={() => {setShowActions({ ...showActions, settings: !showActions.settings, info: false, add: false });}}> ⚙️</button>
+                <button disabled={!userInfos.mod} onClick={() => {setShowActions({ ...showActions, settings: !showActions.settings, infos: false, add: false });}}> ⚙️</button>
             </ButtonsSection>
 
             <MenuSection>
                 { showActions.infos && <InfoAction currentId={currentId} stateEvents={stateEvents} /> }
-                { showActions.add && <AddAction currentId={currentId} /> }
+                { showActions.add && <AddAction userInfos={userInfos} currentId={currentId} /> }
                 { showActions.settings && <SettingsAction currentId={currentId} /> }
             </MenuSection>
 

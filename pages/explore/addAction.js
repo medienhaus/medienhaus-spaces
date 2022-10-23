@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-const ModSection = styled.details`
+const ModSection = styled.div`
     &  {
         margin-bottom: var(--margin);
     }
@@ -15,7 +15,7 @@ const ModSection = styled.details`
     }
 `;
 
-const UserSection = styled.details`
+const UserSection = styled.div`
     &  {
         margin-bottom: var(--margin);
     }
@@ -25,7 +25,7 @@ const UserSection = styled.details`
     }
 `;
 
-const AddAction = ({ currentId }) => {
+const AddAction = ({ currentId, userInfos }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -33,16 +33,16 @@ const AddAction = ({ currentId }) => {
     return (
         <>
             <UserSection>
-                <summary>User Section</summary>
                 <button>⭐</button>
                 <button>Join</button>
             </UserSection>
-            <ModSection>
-                <summary>Mod Section</summary>
-                <button>create new substructure</button>
-                <button>add existing reference</button>
-            </ModSection>
-
+            { userInfos?.mod? //if no mod rights are granted for this current Id this section will not be displayed
+                <ModSection>
+                    <button>create new substructure</button>
+                    <button>add existing reference</button>
+                </ModSection>
+                : <></>
+            }
         </>
 
     );

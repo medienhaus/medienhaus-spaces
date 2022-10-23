@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-
 const InfoSection = styled.div`
   &  {
     margin-bottom: var(--margin);
@@ -34,15 +33,13 @@ const InfoAction = ({ currentId, stateEvents }) => {
         const memberEvent = _.filter(stateEvents, { type: 'm.room.member' });
         const topicEvent = _.find(stateEvents, { type: 'm.room.topic' })?.content;
 
-        const members = _.filter(
+        const members = _.compact( //filter out empty ones
             _.map(memberEvent, member => {
+                if (member?.content?.membership === 'leave') return; //check if the latest event was an leave, so the user is not a member anymore at this point
                 return { id: member?.sender, displaname: member?.content?.displayname };
-            }),
-            el => !_.isNull(el)); //filter out empty ones
+            }));
 
-        const institutions = _.uniq(_.map(members, member => member?.id.split(':')[1]));
-
-        console.log(stateEvents);
+        const institutions = _.uniq(_.map(members, member => member?.id.split(':')[1])); //show only the tld's of the homeservers. '_.uniq' filters out duplicates
 
         const initial = { name: nameEvent?.name,
             topic: topicEvent?.content,
@@ -64,6 +61,26 @@ const InfoAction = ({ currentId, stateEvents }) => {
         <InfoSection>
             { stateEventInformation?.initial?.name ? <p>Name:{ stateEventInformation?.initial?.name }</p> : <></> }
             { stateEventInformation?.initial?.topic ? <p>Topic:{ stateEventInformation?.initial?.topic }</p> : <></> }
+            <dl>
+                { stateEventInformation?.initial?.name ? <>
+                    <dt>Name</dt>
+                    <dd>{ stateEventInformation?.initial?.name }</dd>
+                </>
+                    : <></> }
+                { stateEventInformation?.initial?.topic ? <>
+                    <dt>Topic</dt>
+                    <dd>{ stateEventInformation?.initial?.topic }</dd>
+                </>
+                    : <></> }
+                <>
+                    <dt>Join Rules</dt>
+                    <dd>{ stateEventInformation?.join }</dd>
+                </>
+                <>
+                    <dt>Visibility</dt>
+                    <dd>{ stateEventInformation?.visibilty }</dd>
+                </>
+            </dl>
             <details>
                 <summary>more</summary>
                 <p>Id: <span>{ currentId }</span></p>
@@ -105,12 +122,7 @@ const InfoAction = ({ currentId, stateEvents }) => {
                 <details>
                     <summary>Referenced</summary>
                 </details>
-                <dl>
-                    <dt>Join Rules</dt>
-                    <dd>{ stateEventInformation?.join }</dd>
-                    <dt>Visibility</dt>
-                    <dd>{ stateEventInformation?.visibilty }</dd>
-                </dl>
+
             </details>
         </InfoSection>
 
