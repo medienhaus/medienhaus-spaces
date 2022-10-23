@@ -48,7 +48,7 @@ const Actions = ({ currentId }) => {
 
     const [stateEvents, setStateEvents] = useState();
 
-    const [userInfos, setUserInfos] = useState({}); //stores information about the curren User
+    const [userInfos, setUserInfos] = useState({mod:false}); //stores information about the curren User
 
     useEffect(() => {
         getStateEvents(currentId);
@@ -66,7 +66,6 @@ const Actions = ({ currentId }) => {
     return (
         <ActionsSection>
             <summary onClick={() => getStateEvents(currentId)}>…</summary>
-
             <ButtonsSection>
                 <button onClick={() => {setShowActions({ ...showActions, infos: !showActions.infos, add: false, settings: false });}}> 🏷️</button>
                 <button onClick={() => {setShowActions({ ...showActions, add: !showActions.add, infos: false, settings: false });}}> ➕</button>
@@ -74,13 +73,12 @@ const Actions = ({ currentId }) => {
             </ButtonsSection>
 
             <MenuSection>
-                { showActions.infos && <InfoAction currentId={currentId} stateEvents={stateEvents} /> }
+                { showActions.infos && <InfoAction userInfos={userInfos} currentId={currentId} stateEvents={stateEvents} /> }
                 { showActions.add && <AddAction userInfos={userInfos} currentId={currentId} /> }
                 { showActions.settings && <SettingsAction currentId={currentId} /> }
             </MenuSection>
 
         </ActionsSection>
-
     );
 };
 

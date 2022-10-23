@@ -14,8 +14,14 @@ const InfoSection = styled.div`
 
  
 `;
+/*
+* @TODO:
+* - adding routes for user interaction more -> members -> username
+* - searching for referenced in sync cached rooms (fast)
+* - searching for referenced in root tree (slow)
+*/
 
-const InfoAction = ({ currentId, stateEvents }) => {
+const InfoAction = ({ currentId, stateEvents, userInfos }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -29,9 +35,12 @@ const InfoAction = ({ currentId, stateEvents }) => {
     async function processStateEvents(stateEvents) { // gets the stateevents of the room
         const metaEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
         const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
-        const joinRulesEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
+        const joinRulesEvent = _.find(stateEvents, { type: 'm.room.join_rules' })?.content;
+        const historyVisibilityEvent = _.find(stateEvents, { type: 'm.room.history_visibility' })?.content;
         const memberEvent = _.filter(stateEvents, { type: 'm.room.member' });
         const topicEvent = _.find(stateEvents, { type: 'm.room.topic' })?.content;
+
+        console.log(joinRulesEvent);
 
         const members = _.compact( //filter out empty ones
             _.map(memberEvent, member => {
@@ -44,6 +53,8 @@ const InfoAction = ({ currentId, stateEvents }) => {
         const initial = { name: nameEvent?.name,
             topic: topicEvent?.content,
             members: members,
+            join: joinRulesEvent?.join_rule,
+            visibility: historyVisibilityEvent?.history_visibility
         };
         const custom = {
             template: metaEvent?.template,
@@ -59,8 +70,6 @@ const InfoAction = ({ currentId, stateEvents }) => {
 
     return (
         <InfoSection>
-            { stateEventInformation?.initial?.name ? <p>Name:{ stateEventInformation?.initial?.name }</p> : <></> }
-            { stateEventInformation?.initial?.topic ? <p>Topic:{ stateEventInformation?.initial?.topic }</p> : <></> }
             <dl>
                 { stateEventInformation?.initial?.name ? <>
                     <dt>Name</dt>
@@ -74,11 +83,37 @@ const InfoAction = ({ currentId, stateEvents }) => {
                     : <></> }
                 <>
                     <dt>Join Rules</dt>
-                    <dd>{ stateEventInformation?.join }</dd>
+                    <dd>      { (() => {
+                        switch (stateEventInformation?.initial?.join) {
+                            case 'public':
+                                return <>🌐</>;
+                            case 'restricted': // is the case if is member is also member of a different specified room (aka spacemember function in element)
+                                return <>🔐</>;
+                            case 'knock':
+                                return <>🚪</>;
+                            case 'invite':
+                                return <>🔒</>;
+                            default:
+                                return <></>;
+                        }
+                    })() }</dd>
                 </>
                 <>
                     <dt>Visibility</dt>
-                    <dd>{ stateEventInformation?.visibilty }</dd>
+                    <dd>      { (() => {
+                        switch (stateEventInformation?.initial?.visibility) {
+                            case 'world_readable':
+                                return <>🌐</>;
+                            case 'shared': 
+                                return <>📖</>;
+                            case 'joined':
+                                return <>🔐</>;
+                            case 'invited':
+                                return <>🔒</>;
+                            default:
+                                return <></>;
+                        }
+                    })() }</dd>
                 </>
             </dl>
             <details>
@@ -109,11 +144,13 @@ const InfoAction = ({ currentId, stateEvents }) => {
                     <ul>
                         { _.map(stateEventInformation?.initial?.members, (member, key) => {
                             return <li key={key}>
-                                <details>
-                                    <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
-                                    <p><a href={`#${member?.id}`}>send dm</a></p>
-                                    <p><a href={`#${member?.id}`}>invite to…</a></p>
-                                </details>
+                                { member?.id === userInfos?.id? <>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</> : //checks if the user is the logged in user, to disable interaction
+                                    <details>
+                                        <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
+                                        <p><a href={`#${member?.id}`}>send dm</a></p>
+                                        <p><a href={`#${member?.id}`}>invite to…</a></p>
+                                    </details>
+                                }
                             </li>;
                         })
                         }
