@@ -7,6 +7,8 @@ import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 import { useAuth } from '../../lib/Auth';
 import ModerateOverlay from './moderateOverlay';
 import InfoOverlay from './infoOverlay';
+import AddOverlay from './addOverlay';
+import Actions from './actions'
 
 const ExploreSection = styled.div`
   & > * + * {
@@ -17,16 +19,7 @@ const ExploreSection = styled.div`
   }
 `;
 
-const ActionsSection = styled.div`
-  &  {
-    margin-bottom: var(--margin);
-  }
 
-  & > button {
-    margin-bottom: var(--margin);
-    margin-top: var(--margin);
-  }
-`;
 
 export default function Explore() {
     const auth = useAuth();
@@ -35,7 +28,6 @@ export default function Explore() {
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);
 
-    const [showActions,setShowActions] = useState({modify:false,infos:false});
 
     useEffect(() => {
         const fetchContents = async () => {
@@ -65,8 +57,8 @@ export default function Explore() {
     return (
         <>
             <h1>/explore</h1>
-            <p>{activeContexts[activeContexts.length - 1]}</p>
- 
+            <p>{ activeContexts[activeContexts.length - 1] }</p>
+
             <ExploreSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
                 { (contents && contents.length > 0) ? (
@@ -88,14 +80,10 @@ export default function Explore() {
                 ) }
             </ExploreSection>
 
-            <ActionsSection>
-                <button onClick= {() => {setShowActions({ ...showActions, infos: !showActions.infos })} } > 🏷️</button>
-                {showActions.infos && <InfoOverlay currentId={activeContexts[activeContexts.length - 1]}  />}
+            
+                    <Actions activeContexts={activeContexts}></Actions>
 
-                <button onClick= {() => {setShowActions({ ...showActions, modify: !showActions.modify })} } > ⚙️</button>
-                {showActions.modify && <ModerateOverlay currentId={activeContexts[activeContexts.length - 1]}  />}
-
-            </ActionsSection>
+        
         </>
     );
 }
