@@ -7,18 +7,39 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
 const ModifySection = styled.details`
-    &  {
-        margin-bottom: var(--margin);
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
 `;
 
 const CreateSubstructureSection = styled.details`
-    &  {
-        margin-bottom: var(--margin);
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
 `;
 
-const SettingsAction = ({ currentId }) => {
+const MemberSection = styled.ul`
+  & {
+    margin-bottom: var(--margin);
+  }
+
+  & button {
+    width: 50px;
+  }
+`;
+
+const KickDialog = styled.div`
+  & {
+    margin-bottom: var(--margin);
+  }
+`;
+
+/*
+* @TODO:
+* - connecting stateEvents with Sync, so if a member got kicked the State will chance automatically
+*/
+
+const SettingsAction = ({ currentId, stateEvents, userInfos }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -81,15 +102,87 @@ const SettingsAction = ({ currentId }) => {
         }
     };
 
+    const [stateEventInformation, setStateEventInformation] = useState({});
+
+    useEffect(() => {
+        populateInterface(stateEvents);
+    }, [stateEvents]);
+
+    function populateInterface() {
+        const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
+        const topicEvent = _.find(stateEvents, { type: 'm.room.topic' })?.content;
+        const memberEvent = _.filter(stateEvents, { type: 'm.room.member' });
+
+        const members = _.compact( //filter out empty ones
+            _.map(memberEvent, member => {
+                if (member?.content?.membership === 'leave') return; //check if the latest event was an leave, so the user is not a member anymore at this point
+                return { id: member?.sender, displaname: member?.content?.displayname };
+            }));
+
+        const initial = { //contains only extracted data from stateEvents which are mentioned in the  matrix specs
+            name: nameEvent?.name,
+            topic: topicEvent?.content,
+            members: members,
+        };
+
+        const stateInformations = { initial: initial };
+        setStateEventInformation({ ...stateEventInformation, custom: stateInformations.custom, initial: stateInformations.initial }); // applying the structured data to the observable State
+    }
+
+    const onSave = async (e) => {
+        console.log(e?.target?.name + ':' + e?.target?.value);
+        if (e?.target?.name === 'roomName' && e?.target?.value ==! e?.target?.value) {
+            console.log('bing');
+        } else {
+            console.log('bong');
+        }
+    };
+
+    const [memberKickCandidate, setMemberKickCandidate] = useState();
+
+    const kickUser = async (userId, verfify) => {
+        if (verfify && memberKickCandidate) {
+            await matrixClient.kick(currentId, userId).catch(e => {console.log(e);});
+            console.log(userId + ' kicked!');
+            setMemberKickCandidate('');
+        }
+
+        setMemberKickCandidate(userId);
+    };
+
     return (
         <>
             <ModifySection>
                 <summary>Modify</summary>
-                <input placeholder="id" />
-                <input placeholder="name" />
-                <input placeholder="topic" />
+                <input disabled value={currentId} />
+                <input placeholder="name_" name="roomName" value={stateEventInformation?.initial?.name} onBlur={onSave} />
+                <input placeholder="topic" name="topic" value={stateEventInformation?.initial?.topic} onBlur={onSave} />
                 <details>
                     <summary>members</summary>
+                    <MemberSection>
+                        { _.map(stateEventInformation?.initial?.members, (member, key) => {
+                            return <li key={key}>
+                                { member?.id === userInfos?.id? <>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) } (you)</> :
+                                    <>
+                                        <details>
+                                            <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
+                                            <p><a href={`#${member?.id}`}>send dm</a></p>
+                                            <p><a href={`#${member?.id}`}>invite to…</a></p>
+                                        </details>
+                                        <KickDialog>
+                                            { memberKickCandidate !== member?.id ? <button onClick={() => kickUser(member?.id)}>❌</button> :
+                                                <>
+                                                    <button onClick={() => kickUser(member?.id, true)}>sure?</button>
+                                                    <button onClick={() => kickUser('')}>abort!</button>
+                                                </>
+                                            }
+                                        </KickDialog>
+                                    </>
+                                }
+                            </li>;
+                        })
+                        }
+                    </MemberSection>
                 </details>
                 <details>
                     <summary>advanced</summary>

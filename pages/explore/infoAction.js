@@ -36,7 +36,7 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
     }, [stateEvents]);
 
     //Functions
-    async function processStateEvents(stateEvents) { // gets the stateevents of the room
+    function processStateEvents(stateEvents) { // gets the stateevents of the room
         const metaEvent = _.find(stateEvents, { type: 'dev.medienhaus.meta' })?.content;
         const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
         const joinRulesEvent = _.find(stateEvents, { type: 'm.room.join_rules' })?.content;
@@ -146,7 +146,7 @@ const InfoAction = ({ currentId, stateEvents, userInfos }) => {
                     <ul>
                         { _.map(stateEventInformation?.initial?.members, (member, key) => {
                             return <li key={key}>
-                                { member?.id === userInfos?.id? <>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</> : //checks if the user is the logged in user, to disable interaction
+                                { member?.id === userInfos?.id? <>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) } (you)</> : //checks if the user is the logged in user, to disable interaction
                                     <details>
                                         <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
                                         <p><a href={`#${member?.id}`}>send dm</a></p>

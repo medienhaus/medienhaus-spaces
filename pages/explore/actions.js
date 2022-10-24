@@ -75,7 +75,7 @@ const Actions = ({ currentId }) => {
             <MenuSection>
                 { showActions.infos && <InfoAction userInfos={userInfos} currentId={currentId} stateEvents={stateEvents} /> }
                 { showActions.add && <AddAction userInfos={userInfos} currentId={currentId} /> }
-                { showActions.settings && <SettingsAction currentId={currentId} /> }
+                { showActions.settings && <SettingsAction userInfos={userInfos} stateEvents={stateEvents} currentId={currentId} /> }
             </MenuSection>
 
         </ActionsSection>
