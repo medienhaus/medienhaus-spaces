@@ -7,31 +7,40 @@ import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 
 const Wrapper = styled.div`
-  min-height: 100vh;
-  padding-right: var(--margin);
-  padding-left: var(--margin);
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
 
-  @media (min-width: 29em) {
+  @media (width > 51em) {
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 1fr max-content;
-    grid-gap: 0 calc(var(--margin) * 2.8);
-  }
-
-  @media (min-width: 40em) {
-    padding-right: calc(var(--margin) * 2);
-    padding-left: calc(var(--margin) * 2);
+    grid-template-rows: 0fr auto 0fr;
+    grid-template-columns: 0fr auto;
+    padding: unset;
   }
 `;
 
 const Header = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  padding: calc(var(--margin) * 1.4) 0;
-  background-color: var(--color-bg);
+  @media (width <= 51em) {
+    display: flex;
+    flex: 0 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 var(--margin);
+    background-color: rgb(255 255 255 / 95%);
+    backdrop-filter: blur(5px);
+  }
+
+  @media (width > 51em) {
+    grid-row: 1;
+    grid-column: 1;
+    padding: var(--margin);
+
+    @media (width > 68em) {
+      padding: calc(var(--margin) * 2);
+    }
+  }
 
   h1 {
     margin: unset;
@@ -41,24 +50,21 @@ const Header = styled.header`
 `;
 
 const HeaderButton = styled.button`
-  position: fixed;
-  top: 0;
-  right: 0;
   flex: 0 1;
-  width: 4rem;
-  height: 4rem;
-  padding: calc(var(--margin) * 1.4);
+  width: calc(var(--margin) * 3.5);
+  height: calc(var(--margin) * 3.5);
+  padding: var(--margin);
   font-weight: bold;
   line-height: 0;
   color: var(--color-fg);
   text-align: center;
   letter-spacing: 0.05rem;
   cursor: pointer;
-  background-color: var(--color-bg);
+  background-color: transparent;
   border: unset;
   transform: rotate(90deg);
 
-  @media (min-width: 29em) {
+  @media (width > 51em) {
     display: none;
   }
 `;
@@ -70,57 +76,54 @@ const HeaderButtonClose = styled(HeaderButton)`
 `;
 
 const Nav = styled.nav`
-  position: fixed;
-  top: calc(var(--margin) * 3.9);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
-  display: ${props => props.open ? 'block' : 'none'};
-  padding: calc(var(--margin) * 1.4) var(--margin);
-  font-weight: 700;
-  background: var(--color-bg);
+  padding: var(--margin);
+  overflow: auto;
 
-  @media (min-width: 29em) {
-    position: unset;
-    display: block;
-    grid-row: 1/3;
-    grid-column: 2;
-    min-width: 12ch;
-  }
-`;
-
-const LanguageChooserWrapper = styled.div`
-  @media (min-width: 29em) {
+  @media (width <= 51em) {
     position: fixed;
-    bottom: calc(var(--margin) * 1.4);
+    top: calc(var(--margin) * 3.5);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: ${props => props.open ? 'block' : 'none'};
+    background-color: rgb(255 255 255 / 95%);
+    backdrop-filter: blur(5px);
   }
-`;
 
-const Main = styled.main`
-  min-width: 0;
-  max-width: 55ch;
-
-  @media (min-width: 29em) {
+  @media (width > 51em) {
+    display: block;
     grid-row: 2;
     grid-column: 1;
+    width: 9em;
+
+    @media (width > 68em) {
+      width: 13em;
+      padding: calc(var(--margin) * 2);
+    }
   }
 `;
 
 const Footer = styled.footer`
-  display: none;
-  padding: var(--margin) 0;
-  margin-top: calc(var(--margin) * 4);
-  line-height: calc(var(--margin) * 3);
+  padding: var(--margin);
 
-  @media (min-width: 29em) {
-    display: block;
+  @media (width <= 51em) {
+    display: none;
+  }
+
+  @media (width > 51em) {
     grid-row: 3;
-    grid-column: 1/2;
+    grid-column: 1;
+    font-size: 50%;
+    opacity: 0.1;
+
+    @media (width > 68em) {
+      padding: calc(var(--margin) * 2);
+    }
   }
 `;
 
-export default function Default({ children }) {
+export default function BaseLayout({ children }) {
     const [navigationOpen, setNavigationOpen] = useState(false);
 
     return (
@@ -136,9 +139,9 @@ export default function Default({ children }) {
                 </Header>
                 <Nav open={navigationOpen}>
                     <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                    <LanguageChooserWrapper><LanguageChooser /></LanguageChooserWrapper>
+                    <LanguageChooser />
                 </Nav>
-                <Main>{ children }</Main>
+                { children }
                 <Footer>
                     🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
                 </Footer>
