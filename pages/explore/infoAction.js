@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import UserHandle from './userHandle';
 
 const InfoSection = styled.div`
   &  {
@@ -115,13 +116,15 @@ const InfoAction = ({
                     <ul>
                         { _.map(members?.list, (member, key) => {
                             return <li key={key}>
-                                { member?.id === userInfos?.id? <>{ member?.displayname ? member?.displayname : member?.id.split(':')[0].substring(1) } (you)</> : //checks if the user is the logged in user, to disable interaction
-                                    <details>
-                                        <summary>{ member?.displayname ? member?.displayname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
-                                        <p><a href={`#${member?.id}`}>send dm</a></p>
-                                        <p><a href={`#${member?.id}`}>invite to…</a></p>
-                                        <p>contextualize…</p>
-                                    </details>
+                                { member?.id === userInfos?.id ? //checks if the user is the logged in user, to disable interaction
+                                    <>
+                                        {
+                                            member?.displayname ?
+                                                member?.displayname :
+                                                member?.id.split(':')[0].substring(1)
+                                        } (you)
+                                    </> : 
+                                    <UserHandle userId={member} />
                                 }
                             </li>;
                         })
