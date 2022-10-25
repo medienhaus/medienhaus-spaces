@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import getConfig from 'next/config';
 import _ from 'lodash';
 
+import TemplateSelect from './templateSelect';
+import UserHandle from './userHandle';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import settingsPresets from './settingPresets';
 
-const ModifySection = styled.details`
+const SettingsSection = styled.div`
   & {
     margin-bottom: var(--margin);
   }
-`;
 
-const CreateSubstructureSection = styled.details`
-  & {
+  &  input, select {
     margin-bottom: var(--margin);
   }
 `;
@@ -34,108 +34,72 @@ const KickDialog = styled.div`
   }
 `;
 
-/*
-* @TODO:
-* - connecting stateEvents with Sync, so if a member got kicked the State will chance automatically
+/**
+ * @TODO:
+ * - connecting stateEvents with Sync, so if a member got kicked the State will chance automatically without an additional call.
 */
 
-const SettingsAction = ({ currentId, stateEvents, userInfos }) => {
+/**
+ * COMPONENT 'SettingsAction'
+ * Not all parameters will be explained in detail as the functionallity is quite redundant based on a simmilar naming scheme
+ * @param {String} currentId — the Id of the current observed Room
+ * @param {Object} userInfos — contains the informations about the current loggedIn User
+ * @param {String} name – x
+ * @param {function} setName – x
+ * @param {async function} refreshName – x
+ * …
+ * setMembers is not given as the interaction with the matrix server is all been done in this compontent itself for the members
+*/
+
+const SettingsAction = ({
+    currentId,
+    onInfoChange,
+    userInfos,
+    name,
+    setName,
+    refreshName,
+    topic,
+    setTopic,
+    refreshTopic,
+    join,
+    setJoin,
+    refreshJoin,
+    historyVisibility,
+    sethistoryVisibility,
+    refreshHistoryVisibility,
+    powerLevels,
+    setPowerLevels,
+    refreshPowerLevels,
+    members,
+    refreshMembers,
+}) => {
     const auth = useAuth();
-    const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
-    // Logics for the functions of the 'CreateSubstructureSection'
-    // includes some basic input validation and dynamic form adjustments for the template selection
+    /**
+    * OnSave Functions
+    * For all OnSaveCalled to the matrix server it doesn't matter if the content has not changed and the call is still executed
+    * as matrix will return the same event_id without creating a new one if the content
+    * of the Call is identical with the last event_id content.
+    * So therefore no additional client side checking is absolutly nessesarry if the content has changed at all.
+    */
 
-    const [contextTemplates, setContextTemplates] = useState([]);
-
-    const [generateNewTemplate, setGenerateNewTemplate] = useState(false);
-
-    const [createNew, setCreateNew] = useState({ name: '', template: '', parent: '', interfaceError: '' }); //stores all nessesarry user input from the form
-
-    async function getTemplatesOfContexts(roomId) { // gets the templates from the
-        if (contextTemplates.length > 0) return;
-        const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(roomId, 'dev.medienhaus.meta').catch(() => {});
-        if ((metaEvent?.template !== 'templates')) return;
-        console.log(metaEvent);
-        const roomContent = await (matrix.fetchRoomMessages(roomId, 5));
-        const templates = _.uniq(roomContent?.chunk.map(entry => entry?.content?.body)).filter(e => e);
-        setContextTemplates(templates);
-    }
-
-    useEffect(() => { // basic input validation for the input fields to create a new substructure
-        if (createNew.name === '' || createNew?.name.length < 4) {
-            createNew.interfaceError = 'name too short';
-            return;
-        } else {
-            createNew.interfaceError = '';
-        }
-
-        if (createNew.template === '' || createNew?.template.length < 4) {
-            createNew.interfaceError = 'template name too short';
-            return;
-        } else {
-            createNew.interfaceError = '';
-        }
-    }, [createNew]);
-
-    const createContext = (e) => {
-        e.preventDefault();
-        if (currentId.length > 10 && currentId.charAt(0) === '!' && currentId.includes(':')) { //just some really really basic check if it could be an matrix id
-            setCreateNew({ ...createNew, parent: currentId });
-            console.log('created');
-        } else {
-            createNew.interfaceError = 'something went wrong with the selected matrix Id, please reload';
-        }
+    const onTopicSave = async () => {
+        if (topic?.length < 1) return;
+        const contentToSend = ''+topic;
+        const call = await matrixClient.setRoomTopic(currentId, contentToSend);
+        console.log(call);
+        if (!call?.event_id) return;//show error and return
+        await refreshName(); //refresh with the data from the server side to double ckeck as a verfication if not yet another user changed it in the meantime
+        if (contentToSend !== topic) return; //show error that somethign changed in the meantime
     };
 
-    const createNewChangeHandle = (e) => {
-        if (e.target.name === 'template' && e.target.value === '_createNew') {//check if dropdown is selected for new to modify form
-            e.target.value === '_createNew'? setGenerateNewTemplate(true) : setGenerateNewTemplate(false);
-            setCreateNew({ ...createNew, template: '' });
-            return;
-        }
-        if (e.target.name === 'newTemplate') {
-            setCreateNew({ ...createNew, template: e.target.value });
-        } else {
-            setCreateNew({ ...createNew, [e.target.name]: e.target.value }); //this is the regular way if no errors occured before
-        }
-    };
-
-    const [stateEventInformation, setStateEventInformation] = useState({});
-
-    useEffect(() => {
-        populateInterface(stateEvents);
-    }, [stateEvents]);
-
-    function populateInterface() {
-        const nameEvent = _.find(stateEvents, { type: 'm.room.name' })?.content;
-        const topicEvent = _.find(stateEvents, { type: 'm.room.topic' })?.content;
-        const memberEvent = _.filter(stateEvents, { type: 'm.room.member' });
-
-        const members = _.compact( //filter out empty ones
-            _.map(memberEvent, member => {
-                if (member?.content?.membership === 'leave') return; //check if the latest event was an leave, so the user is not a member anymore at this point
-                return { id: member?.sender, displaname: member?.content?.displayname };
-            }));
-
-        const initial = { //contains only extracted data from stateEvents which are mentioned in the  matrix specs
-            name: nameEvent?.name,
-            topic: topicEvent?.content,
-            members: members,
-        };
-
-        const stateInformations = { initial: initial };
-        setStateEventInformation({ ...stateEventInformation, custom: stateInformations.custom, initial: stateInformations.initial }); // applying the structured data to the observable State
-    }
-
-    const onSave = async (e) => {
-        console.log(e?.target?.name + ':' + e?.target?.value);
-        if (e?.target?.name === 'roomName' && e?.target?.value ==! e?.target?.value) {
-            console.log('bing');
-        } else {
-            console.log('bong');
-        }
+    const onNameSave = async () => {
+        if (topic?.length < 1) return;
+        const call = await matrixClient.setRoomTopic(currentId, topic);
+        console.log(call);
+        if (!call?.event_id) return;//show error and return
+        await refreshName();
     };
 
     const [memberKickCandidate, setMemberKickCandidate] = useState();
@@ -145,6 +109,7 @@ const SettingsAction = ({ currentId, stateEvents, userInfos }) => {
             await matrixClient.kick(currentId, userId).catch(e => {console.log(e);});
             console.log(userId + ' kicked!');
             setMemberKickCandidate('');
+            //onInfoChange()
         }
 
         setMemberKickCandidate(userId);
@@ -152,25 +117,51 @@ const SettingsAction = ({ currentId, stateEvents, userInfos }) => {
 
     return (
         <>
-            <ModifySection>
-                <summary>Modify</summary>
-                <input disabled value={currentId} />
-                <input placeholder="name_" name="roomName" value={stateEventInformation?.initial?.name} onBlur={onSave} />
-                <input placeholder="topic" name="topic" value={stateEventInformation?.initial?.topic} onBlur={onSave} />
+            <SettingsSection>
+                <input type="text" disabled value={currentId} />
+                <input type="text" placeholder="name" onChange={(e) => {setName(e.target.value);}} name="name" value={name} onBlur={onNameSave} />
+                <input type="text" placeholder="topic" onChange={(e) => {setTopic(e.target.value);}} name="topic" value={topic} onBlur={onTopicSave} />
                 <details>
+                    <summary>advanced</summary>
+                    <select>
+                        <option value="" disabled selected>visibilty</option>
+                        { _.map(settingsPresets?.allowedHistoryVisibility, option => {
+                            return <option value={option?.name}>{ option?.display } — { option?.description }</option>;
+                        }) }
+                    </select>
+                    <select>
+                        <option value="" disabled selected>join rules</option>
+                        { _.map(settingsPresets?.allowedJoinRules, option => {
+                            return <option value={option?.name}>{ option?.display } — { option?.description }</option>;
+                        }) }
+                    </select>
+                    <select>
+                        <option value="" disabled selected>member participation presets</option>
+                        { _.map(settingsPresets?.allowedPowerLevelPresets, option => {
+                            return <option value={option?.name}>{ option?.display } — { option?.description }</option>;
+                        }) }
+                    </select>
+                </details>
+                <details onClick={members?.list?.length > 0 ? undefined : refreshMembers}>
                     <summary>members</summary>
                     <MemberSection>
-                        { _.map(stateEventInformation?.initial?.members, (member, key) => {
+                        { _.map(members?.list, (member, key) => {
                             return <li key={key}>
-                                { member?.id === userInfos?.id? <>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) } (you)</> :
+                                { member?.id === userInfos?.id ?
                                     <>
-                                        <details>
-                                            <summary>{ member?.displaname ? member?.displaname : member?.id.split(':')[0].substring(1) }</summary> { /* If Displayname is not set fallback to user id  */ }
-                                            <p><a href={`#${member?.id}`}>send dm</a></p>
-                                            <p><a href={`#${member?.id}`}>invite to…</a></p>
-                                        </details>
+                                        {
+                                            member?.displayname ?
+                                                member?.displayname :
+                                                member?.id.split(':')[0].substring(1)
+                                        } (you)
+                                    </>
+                                    :
+                                    <>
+                                        <UserHandle userId={member} />
                                         <KickDialog>
-                                            { memberKickCandidate !== member?.id ? <button onClick={() => kickUser(member?.id)}>❌</button> :
+                                            { memberKickCandidate !== member?.id ?
+                                                <button onClick={() => kickUser(member?.id)}>❌</button>
+                                                :
                                                 <>
                                                     <button onClick={() => kickUser(member?.id, true)}>sure?</button>
                                                     <button onClick={() => kickUser('')}>abort!</button>
@@ -185,56 +176,11 @@ const SettingsAction = ({ currentId, stateEvents, userInfos }) => {
                     </MemberSection>
                 </details>
                 <details>
-                    <summary>advanced</summary>
-                    <select>
-                        <option value="" disabled selected>visibilty</option>
-                    </select>
-                    <select>
-                        <option value="" disabled selected>join rules</option>
-                    </select>
-                    <select>
-                        <option value="" disabled selected>member participation presets</option>
-                    </select>
-                </details>
-                <details>
                     <summary>danger zone</summary>
                     <button>delete</button>
                 </details>
 
-            </ModifySection>
-            <CreateSubstructureSection onClick={() => getTemplatesOfContexts(getConfig().publicRuntimeConfig.templates.context)}> { /* will only load the templates after expanding this view to prevent unnecessary network traffic */ }
-                <summary>create Substructure</summary>
-                <form onSubmit={createContext}>
-                    <input name="name" value={createNew.name} onChange={createNewChangeHandle} required placeholder="name" />
-                    <select name="template" onChange={createNewChangeHandle}>
-                        <option value="" disabled selected>Template</option>
-                        { contextTemplates.map((template, key) => {
-                            {/* cycle through all of the collective specified templates stored in a matrix room */}
-                            return <option key={key} value={template}>
-                                { template }
-                            </option>;
-                        }) }
-                        <option value="_createNew">create new…</option> { /* static element for users to create a new template */ }
-                    </select>
-                    { generateNewTemplate && <input name="newTemplate" value={createNew.template} onChange={createNewChangeHandle} required placeholder="…" /> }{ /* this input is only generated if the dropwdown was selected 'create new…' */ }
-
-                    <details>
-                        <summary>advanced</summary>
-                        <select>
-                            <option value="" disabled selected>visibilty</option>
-                        </select>
-                        <select>
-                            <option value="" disabled selected>join rules</option>
-                        </select>
-                        <select>
-                            <option value="" disabled selected>member participation presets</option>
-                        </select>
-                    </details>
-
-                    { createNew.interfaceError && <p>‼️ { createNew.interfaceError }</p> } { /* Showing the current Error to the user if some input validation failed */ }
-                    <button disabled={createNew.interfaceError} type="submit">create</button>
-                </form>
-            </CreateSubstructureSection>
+            </SettingsSection>
 
         </>
 
