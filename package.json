@@ -52,6 +52,7 @@
       "browser": true
     },
     "rules": {
+      "max-len": "off",
       "jsx-quotes": [
         "error",
         "prefer-double"

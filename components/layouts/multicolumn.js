@@ -19,7 +19,7 @@ const Column = styled.div`
 
   // On small viewports ...
   @media (width <= 51em) {
-     //... stack all columns on top of each other by squashing all (but the last one) together
+    //... stack all columns on top of each other by squashing all (but the last one) together
     :not(:last-of-type) {
       position: relative;
       height: 4.3rem;
