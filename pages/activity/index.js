@@ -19,6 +19,7 @@ export default function Activity() {
     useEffect(() => {
         // dev variables for templates
         const allowedTemplates = ['event', 'resource', 'article'];
+        let cancelled = false;
 
         const fetchLatestActivity = async () => {
             // we collect all public rooms from the root specId
@@ -51,7 +52,11 @@ export default function Activity() {
             setActivityArray(filteredRooms);
         };
 
-        matrix.initialSyncDone && fetchLatestActivity();
+        matrix.initialSyncDone && !cancelled && fetchLatestActivity();
+
+        return () => {
+            cancelled = true;
+        };
     }, [auth, matrix.initialSyncDone, matrixClient]);
 
     if (!activityArray) return <LoadingSpinner />;
