@@ -13,18 +13,29 @@ const Event = ({ activity }) => {
         <ActivityTemplate.Header
             icon={<CalendarIcon />}
             author={activity.author}
-            template={activity.template}
+            template={activity.metaEvent.template}
             source={activity.source}
             link={activity.link}
             parent={activity.parent}
             published={activity.published}
         />
         <ActivityTemplate.Body>
-            { activity.thumbnail && <ActivityTemplate.Thumbnail src={activity.thumbnail} /> }
+            { activity.avatar_url && <ActivityTemplate.Thumbnail src={activity.avatar_url} /> }
             <RightColumn>
-                <ActivityTemplate.Heading>{ activity.title }</ActivityTemplate.Heading>
-                <ActivityTemplate.Date>{ activity.body }</ActivityTemplate.Date>
-                { activity.location && <ActivityTemplate.Location>{ activity.location }</ActivityTemplate.Location> }
+                <ActivityTemplate.Heading>{ activity.name }</ActivityTemplate.Heading>
+                { activity.allocation?.temporal && activity.allocation.temporal.map((time, index) => <ActivityTemplate.Date key={index + Math.random()}>{ time.start } - { time.end }</ActivityTemplate.Date>) }
+                { activity.allocation?.location && activity.allocation.location.map((location, index) => {
+                    return (<ActivityTemplate.Location key={index + Math.random()}>
+                        { location.lat && 'lat: ' + location.lat + ', ' }
+                        { location.lng && 'lng: ' + location.lng }
+                        { /* // if coordinates are given we want to add a comma and space before the location.info  */ }
+                        { location.info && location.lng && ', ' + location.info }
+                        { location.info && location.info }
+
+                    </ActivityTemplate.Location>);
+                }) }
+                <ActivityTemplate.Paragraph>{ activity.topic }</ActivityTemplate.Paragraph>
+
             </RightColumn>
         </ActivityTemplate.Body>
     </ActivityTemplate>

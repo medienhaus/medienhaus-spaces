@@ -48,7 +48,7 @@ function Header({ author, parent, link, icon, template, published }) {
         { icon && <Icon>{ icon }</Icon> }
         <HeaderBody>
             <span>
-                <strong>{ author }</strong> added a new { template } in: <a href={link}>{ parent }</a>
+                <strong>{ author }</strong> added a new <strong>{ template }</strong>
             </span>
             <sub>{ published }</sub>
         </HeaderBody>
