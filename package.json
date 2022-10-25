@@ -25,6 +25,7 @@
     "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/eslint-plugin": "^7.17.7",
+    "@next/eslint-plugin-next": "^12.3.1",
     "@stylelint/postcss-css-in-js": "^0.38.0",
     "babel-plugin-styled-components": "^2.0.6",
     "eslint": "^8.11.0",
@@ -46,7 +47,8 @@
     ],
     "extends": [
       "plugin:matrix-org/babel",
-      "plugin:matrix-org/react"
+      "plugin:matrix-org/react",
+      "plugin:@next/next/recommended"
     ],
     "env": {
       "browser": true
