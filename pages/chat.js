@@ -1,42 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
-import Fullscreen from '../components/layouts/fullscreen';
+import MultiColumnLayout from '../components/layouts/multicolumn';
 
-const Wrapper = styled.div`
-  display: flex;
-  height: 100%;
-  overflow: hidden;
+const SidebarColumn = styled(MultiColumnLayout.Column)`
+  @media (width > 51em) {
+    max-width: 30ch;
+  }
 `;
 
-const Sidebar = styled.div`
-  height: 100%;
-  padding: var(--margin);
-  overflow: auto;
-  border-right: 0.2rem solid black;
+const IframeColumn = styled(MultiColumnLayout.Column)`
+  max-width: unset;
+  padding: 0;
 
-  @media (min-width: 40em) {
-    padding: var(--margin) calc(var(--margin) * 2);
-  }
-
-  button {
+  iframe {
     width: 100%;
-
-    span {
-      padding: 3px 10px;
-      color: white;
-      background: red;
-      border-radius: 100%;
-    }
+    height: 100%;
+    margin-bottom: -7px; /* For some reason Element renders a 7px tall invisible object at the bottom */
+    border: none;
   }
-`;
-
-const ElementIframe = styled.iframe`
-  width: 100%;
-  height: 100%;
 `;
 
 const UnreadNotificationBadge = styled.span`
@@ -66,8 +52,7 @@ const SidebarListEntryWrapper = styled.a`
   margin-bottom: 0.3rem;
 `;
 
-const RoomName = styled.div`
-  display: flex;
+const RoomName = styled.span`
   flex: 1 0;
   height: 2rem;
   overflow: hidden;
@@ -98,8 +83,10 @@ const SidebarListEntry = function({ room, onClick }) {
 export default function Chat() {
     const auth = useAuth();
     const iframe = useRef();
+    const { t } = useTranslation('chat');
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const [iframeLocation, setIframeLocation] = useState('//localhost/element/#/room/!JCOcYJOShHTvnLmblZ:dev.medienhaus.udk-berlin.de');
+
+    const [iframeLocation, setIframeLocation] = useState('//localhost/element/#/room/!JEDqIsucxXHczdhdBa:medienhaus.dev');
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -137,28 +124,38 @@ export default function Chat() {
     };
 
     return (
-        <Wrapper>
-            <Sidebar>
+        <>
+            <SidebarColumn>
+                <MultiColumnLayout.ColumnMobileHead href="#">/chat</MultiColumnLayout.ColumnMobileHead>
+                <h2>/chat</h2>
+                <br />
                 { matrix.invites.size > 0 && (
-                    <details open>
-                        <summary><h3 style={{ display: 'inline' }}>invites</h3></summary>
-                        { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
-                    </details>
+                    <>
+                        <details open>
+                            <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
+                            { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
+                        </details>
+                        <br />
+                    </>
                 ) }
                 <details open>
-                    <summary><h3 style={{ display: 'inline' }}>directs</h3></summary>
+                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
                     { (matrix.directMessages && _.sortBy([...matrix.directMessages.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
                 </details>
+                <br />
                 <details open>
-                    <summary><h3 style={{ display: 'inline' }}>rooms</h3></summary>
+                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
                     { (matrix.rooms && _.sortBy([...matrix.rooms.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
                 </details>
-            </Sidebar>
-            <ElementIframe src={iframeLocation} frameBorder="0" ref={iframe} />
-        </Wrapper>
+                <br />
+            </SidebarColumn>
+            <IframeColumn>
+                <iframe src={iframeLocation} ref={iframe} />
+            </IframeColumn>
+        </>
     );
 }
 
 Chat.getLayout = () => {
-    return Fullscreen;
+    return MultiColumnLayout.Layout;
 };
