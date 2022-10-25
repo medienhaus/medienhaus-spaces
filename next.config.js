@@ -1,5 +1,6 @@
 const WebpackConfig = require('./webpack.config.js');
 
+// eslint-disable-next-line no-undef
 module.exports = {
     publicRuntimeConfig: {
         name: 'udk/spaces',
@@ -10,6 +11,10 @@ module.exports = {
             },
             matrixContentStorage: {
                 baseUrl: 'https://content.udk-berlin.de',
+            },
+            write: {
+                baseUrl: 'https://pad.klasseklima.dev/p',
+                api: 'https://pad.klasseklima.dev/mypads/api',
             },
         },
         contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
