@@ -12,7 +12,7 @@ const RightColumn = styled.div`
 const Article = ({ activity }) => {
     return (<ActivityTemplate>
         <ActivityTemplate.Header
-            icon={<ArticleIcon />}
+            icon={<ArticleIcon fill="var(--color-fg)" />}
             author={activity.author}
             template={activity.metaEvent.template}
             source={activity.source}

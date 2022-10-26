@@ -11,7 +11,7 @@ const RightColumn = styled.div`
 const Event = ({ activity }) => {
     return (<ActivityTemplate>
         <ActivityTemplate.Header
-            icon={<CalendarIcon />}
+            icon={<CalendarIcon fill="var(--color-fg)" />}
             author={activity.author}
             template={activity.metaEvent.template}
             source={activity.source}
