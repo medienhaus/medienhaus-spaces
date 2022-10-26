@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -47,7 +48,7 @@ const LinkElement = styled.li`
   }
 `;
 
-const WriteListEntry = ({ parent, roomId, serverPads, setIframe, callback }) => {
+const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const write = auth.getAuthenticationProvider('write');
@@ -100,7 +101,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, setIframe, callback }) => 
 
     return (
         <LinkElement>
-            <TextButton onClick={() => setIframe(content.body)}>{ linkName }</TextButton>
+            <Link href={`/write/${roomId}`}>{ linkName }</Link>
             <div className="group">
                 { serverPads &&
             <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
