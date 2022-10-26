@@ -3,21 +3,25 @@ const WebpackConfig = require('./webpack.config.js');
 // eslint-disable-next-line no-undef
 module.exports = {
     publicRuntimeConfig: {
-        name: 'udk/spaces',
+        name: '/spaces',
         authProviders: {
             matrix: {
-                baseUrl: 'https://dev.medienhaus.udk-berlin.de',
+                baseUrl: 'https://matrix.org',
                 allowCustomHomeserver: true,
             },
             matrixContentStorage: {
-                baseUrl: 'https://content.udk-berlin.de',
+                baseUrl: 'https://second.matrixserver.org',
+            },
+            write: {
+                baseUrl: 'https://pad.riseup.net/p',
+                api: 'https://pad.riseup.net/mypads/api',
             },
             write: {
                 baseUrl: 'https://pad.klasseklima.dev/p',
                 api: 'https://pad.klasseklima.dev/mypads/api',
             },
         },
-        contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
+        contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
             allowAddingNewEmails: true,
         },
