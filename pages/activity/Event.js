@@ -23,9 +23,9 @@ const Event = ({ activity }) => {
             { activity.avatar_url && <ActivityTemplate.Thumbnail src={activity.avatar_url} /> }
             <RightColumn>
                 <ActivityTemplate.Heading>{ activity.name }</ActivityTemplate.Heading>
-                { activity.allocation?.temporal && activity.allocation.temporal.map((time, index) => <ActivityTemplate.Date key={index + Math.random()}>{ time.start } - { time.end }</ActivityTemplate.Date>) }
+                { activity.allocation?.temporal && activity.allocation.temporal.map((time, index) => <ActivityTemplate.Calendar key={index}>{ new Date(time.start * 1000).toLocaleString() } - { new Date(time.end * 1000).toLocaleString() }</ActivityTemplate.Calendar>) }
                 { activity.allocation?.location && activity.allocation.location.map((location, index) => {
-                    return (<ActivityTemplate.Location key={index + Math.random()}>
+                    return (<ActivityTemplate.Location key={index}>
                         { location.lat && 'lat: ' + location.lat + ', ' }
                         { location.lng && 'lng: ' + location.lng }
                         { /* // if coordinates are given we want to add a comma and space before the location.info  */ }
