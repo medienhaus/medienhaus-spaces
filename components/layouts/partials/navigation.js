@@ -39,9 +39,6 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/logout">/logout</Link></li>
-            </List>
-            <List>
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
@@ -51,6 +48,9 @@ export default function Navigation({ closeNavigation }) {
                 <li><Link href="/">/cms</Link></li>
                 <li><Link href="/">/stream</Link></li>
                 <li><Link href="/write">/write</Link></li>
+            </List>
+            <List>
+                <li><Link href="/logout">/logout</Link></li>
             </List>
         </>
     );
