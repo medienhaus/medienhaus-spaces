@@ -130,7 +130,7 @@ export default function BaseLayout({ children }) {
         <>
             <Wrapper>
                 <Header>
-                    <Link href="/"><h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1></Link>
+                    <Link href="/activity"><h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1></Link>
                     { navigationOpen ? (
                         <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (

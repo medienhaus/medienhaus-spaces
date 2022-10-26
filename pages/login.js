@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
 
@@ -42,6 +43,7 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState(null);
 
     const auth = useAuth();
+    const router = useRouter();
     const { t } = useTranslation('login');
 
     const onSubmitLoginForm = async () => {
@@ -50,6 +52,7 @@ export default function Login() {
         await auth.signin(name, password, homeserver).catch(/** @param {MatrixError} error */(error) => {
             setErrorMessage(error.message);
         });
+        router.push('/activity');
         setIsTryingToSignIn(false);
     };
 

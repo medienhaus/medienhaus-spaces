@@ -39,7 +39,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/">/dashboard</Link></li>
+                <li><Link href="/activity">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>
