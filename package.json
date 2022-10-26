@@ -27,6 +27,7 @@
     "@babel/eslint-plugin": "^7.17.7",
     "@next/eslint-plugin-next": "^12.3.1",
     "@stylelint/postcss-css-in-js": "^0.38.0",
+    "babel-plugin-inline-react-svg": "^2.0.1",
     "babel-plugin-styled-components": "^2.0.6",
     "eslint": "^8.11.0",
     "eslint-config-google": "^0.14.0",

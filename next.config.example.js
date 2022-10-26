@@ -16,6 +16,10 @@ module.exports = {
                 baseUrl: 'https://pad.riseup.net/p',
                 api: 'https://pad.riseup.net/mypads/api',
             },
+            write: {
+                baseUrl: 'https://pad.klasseklima.dev/p',
+                api: 'https://pad.klasseklima.dev/mypads/api',
+            },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
