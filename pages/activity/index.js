@@ -52,7 +52,8 @@ export default function Activity() {
 
                 filteredRooms.push(room);
             }
-            setActivityArray(filteredRooms);
+
+            setActivityArray(_.orderBy(filteredRooms, 'published', 'desc'));
         };
 
         matrix.initialSyncDone && !cancelled && fetchLatestActivity();
