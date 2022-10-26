@@ -16,11 +16,11 @@ const InfoSection = styled.div`
  
 `;
 
-/*
-* @TODO:
-* - adding routes for user interaction more -> members -> username
-* - searching for referenced in sync cached rooms (fast)
-* - searching for referenced in root tree (slow)
+/**
+ * @TODO:
+ * - adding routes for user interaction more -> members -> username
+ * - searching for referenced in sync cached rooms (fast)
+ * - searching for referenced in root tree (slow)
 */
 
 const InfoAction = ({

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line no-undef
 module.exports = {
     name: {

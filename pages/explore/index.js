@@ -74,7 +74,11 @@ export default function Explore() {
                 ) }
             </ExploreSection>
 
-            <Actions currentId={activeContexts[activeContexts.length - 1]} />
+            <Actions
+                currentId={activeContexts[activeContexts.length - 1]}
+                parentId={activeContexts?.length >= 2 ? activeContexts[activeContexts.length - 2] : undefined}
+                popActiveContexts={() => {activeContexts.pop();}}
+            />
 
         </>
     );

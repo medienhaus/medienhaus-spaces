@@ -5,38 +5,84 @@ import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-
-
 import CreateContext from './createContext';
 import TemplateSelect from './templateSelect';
 
-const ModSection = styled.div`
+const RemoveSection = styled.div`
     &  {
         margin-bottom: var(--margin);
     }
     & > button {
         margin-bottom: var(--margin);
+        margin-right: var(--margin);
+        width:150px;
+    }
+
+    &  span:first-of-type {
+        background-color: var(--color-hi);
     }
 `;
 
-const UserSection = styled.div`
-    &  {
-        margin-bottom: var(--margin);
-    }
+/**
+ * COMPONENT 'RemoveAction'
+ *
+ * @TODO
+ *  - the ContextMultiLevelSelect does not updates completly fine after a remove action is successfully executed. Needs an refresh of the childElements for the Select list.
+ *
+ *
+ * @param {String} currentId — the Id of the current observed Room
+ * @param {String} parentId — x
+ * @param {String} name – x
+ * @param {function} activeAction – x
+ * @param {function} setShowActions – x
+*/
 
-    & > button {
-        margin-bottom: var(--margin);
-    }
-`;
-
-const RemoveAction = ({ currentId, parentId, userInfos }) => {
+const RemoveAction = ({
+    currentId,
+    parentId,
+    parentPowerLevel,
+    name,
+    activeAction,
+    setShowActions,
+    popActiveContexts,
+}) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
+    const [parentName, setParentName] = useState();
+
+    const removeChildFromParent = async () => {
+        const call = await matrix.removeSpaceChild(parentId, currentId);
+        if (call?.event_id) { //if an event_id is provided as an response the call were accepted and the currentId removed from the parentId as a m.room.spaceChild
+            setShowActions('');
+            popActiveContexts();
+        }
+    };
+
+    useEffect(() => {
+        if (activeAction === 'remove') {
+            fetchParentName();
+        }
+    }, [activeAction, parentId]);
+
+    const fetchParentName = async () => {
+        const nameEvent = await matrixClient.getStateEvent(
+            parentId,
+            'm.room.name',
+        ).catch(() => {});
+        setParentName(nameEvent?.name);
+    };
+
     return (
         <>
-            <p>hello :)</p>
+            { (parentName && name) &&
+        (<RemoveSection>
+            <p>are you sure you want to remove this? <span>"{ name }"</span> from <span>"{ parentName }"</span> </p>
+            <button onClick={removeChildFromParent}>yes</button>
+            <button onClick={() => {setShowActions('');}}>abort!</button>
+        </RemoveSection>)
+            }
         </>
 
     );
