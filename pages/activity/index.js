@@ -1,5 +1,6 @@
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
+import _ from 'lodash';
 
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -28,20 +29,22 @@ export default function Activity() {
 
             for (const room of allRooms) {
                 // then we check to see if these rooms are relevant and if so, we fetch more information.
+                const roomState = await matrixClient.roomState(room.room_id);
+                room.published = _.find(roomState, { type: 'm.room.create' }).origin_server_ts;
 
-                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
+                const metaEvent = _.find(roomState, { type: 'dev.medienhaus.meta' })?.content;
                 // If this space/room does not have a meta event or any of the supplied templates, we do not care about it
                 if (!allowedTemplates.includes(metaEvent.template)) continue;
                 // otherwise we add the metaEvent to our object
                 room.metaEvent = metaEvent;
 
                 // get displayName of creator
-                const getAuthor = await matrixClient.getStateEvent(room.room_id, 'm.room.create').catch(() => { });
+                const getAuthor = _.find(roomState, { type: 'm.room.create' })?.content;
                 const getDisplayName = matrixClient.getUser(getAuthor.creator);
                 room.author = getDisplayName.displayName;
 
                 // try to fetch allocation data
-                const allocation = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.allocation').catch(() => { });
+                const allocation = _.find(roomState, { type: 'dev.medienhaus.allocation' })?.content;
                 if (allocation) room.allocation = allocation;
 
                 // if there is an avatar available we immediately convert it to a http link
@@ -49,7 +52,8 @@ export default function Activity() {
 
                 filteredRooms.push(room);
             }
-            setActivityArray(filteredRooms);
+
+            setActivityArray(_.orderBy(filteredRooms, 'published', 'desc'));
         };
 
         matrix.initialSyncDone && !cancelled && fetchLatestActivity();

@@ -50,7 +50,7 @@ function Header({ author, parent, link, icon, template, published }) {
             <span>
                 <strong>{ author }</strong> added a new <strong>{ template }</strong>
             </span>
-            <sub>{ published }</sub>
+            <sub>{ new Date(published).toLocaleString() }</sub>
         </HeaderBody>
     </HeaderMain>
     );
@@ -72,7 +72,7 @@ function Thumbnail({ src }) {
     return <img src={src} width={100} height={100} />;
 }
 
-function Date({ children }) {
+function Calendar({ children }) {
     return <span>🗓 { children }</span>;
 }
 
@@ -85,6 +85,6 @@ ActivityTemplate.Thumbnail = Thumbnail;
 ActivityTemplate.Heading = Heading;
 ActivityTemplate.Body = Body;
 ActivityTemplate.Paragraph = Paragraph;
-ActivityTemplate.Date = Date;
+ActivityTemplate.Calendar = Calendar;
 ActivityTemplate.Location = Location;
 
