@@ -176,7 +176,8 @@ export default function Account() {
     if (hasToConfirmNewEmail) {
         return (
             <>
-                <h1>/account</h1>
+                <h2>/account</h2>
+                <br />
                 <p>{ t('Please enter your account password to confirm adding the given email address to your account:') }</p>
                 <br />
                 <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
@@ -190,7 +191,8 @@ export default function Account() {
 
     return (
         <>
-            <h1>/account</h1>
+            <h2>/account</h2>
+            <br />
             <ProfileSection>
                 <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
                 <AvatarButtonContainer>
