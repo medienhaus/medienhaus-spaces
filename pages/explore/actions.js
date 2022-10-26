@@ -54,7 +54,7 @@ const MenuSection = styled.div`
  * ------------------
  *
  * @param {String} currentId — the Id of the current observed Room
- * @param {String} parentId — the Id of the parent of the currently observed Room
+ * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  *
 */
@@ -117,9 +117,6 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
         }
     }, [parentId]);
 
-    useEffect(() => {
-        console.log(userInfos?.id);
-    }, [userParentIdMod]);
     /**
     * CURRENT ROOM DATA STORAGE (VOLATILE)
     * ------------------
@@ -127,8 +124,8 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     * this can be populated seperatatly to by user interactions and will not preload all informations at the beginnning
     * this approach was chosen instead of just getting all stateEvents of the room for performance reason as it contains a stateEvent for each user,
     * which will increase the requested pauload with a couple of thousends a lot.
-    * sadly as react evolves into this weird directions, the declaration of the variables needed to be implemented like this;
-    * in an non nested way, feels like written by a 5 year old.
+    * sadly as react evolves into this weird directions, the declaration of the variables needed to be implemented like this:
+    * not in a nested way; feels like written by a 5 year old.
     */
 
     const [roomName, setRoomName] = useState();
@@ -186,6 +183,8 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
             };
         });
         members.institutions = _.uniq(_.map(members.list, member => member?.id.split(':')[1]));
+        //  insitutions just holds the names of the matrix homeservers which the joined members orignated from.
+        //  will become more relevant in the future if federatable networks will be implemented. for now its just an non interactive list of strings
         setRoomMembers(members);
     };
     const fetchRoomJoinRule = async () => {
@@ -273,6 +272,9 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
                 <AddAction
                     userInfos={userInfos}
                     currentId={currentId}
+                    mod={userCurrentIdMod}
+                    currentName={roomName}
+                    setShowActions={setShowActions}
                 /> }
                 { showActions === 'remove' &&
                 <RemoveAction

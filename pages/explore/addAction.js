@@ -5,10 +5,9 @@ import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-
-
 import CreateContext from './createContext';
 import TemplateSelect from './templateSelect';
+import AddExistingContext from './AddExistingContext';
 
 const ModSection = styled.div`
     &  {
@@ -29,7 +28,7 @@ const UserSection = styled.div`
     }
 `;
 
-const AddAction = ({ currentId, userInfos }) => {
+const AddAction = ({ currentId, userInfos, mod, currentName,setShowActions }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -40,10 +39,18 @@ const AddAction = ({ currentId, userInfos }) => {
                 <button>⭐</button>
                 <button>Join</button>
             </UserSection>
-            { userInfos?.mod? //if no mod rights are granted for this current Id this section will not be displayed
+            { mod? //if no mod rights are granted for this current Id this section will not be displayed
                 <ModSection>
-                    <button>create new substructure</button>
-                    <button>add existing reference</button>
+                    <details>
+                        <summary>create new substructure</summary>
+                        <CreateContext />
+                    </details>
+
+                    <details>
+                        <summary>add existing context from root</summary>
+                        <AddExistingContext parentId={currentId} parentName={currentName} setShowActions={setShowActions} />
+                    </details>
+
                 </ModSection>
                 : <></>
             }
