@@ -8,7 +8,7 @@ Customizable modular free and open-source environment for decentralized, distrib
 
 <br>
 
-# medienhaus-frontend
+# medienhaus-spaces
 
 This repository contains the code for the **medienhaus/** React application, which is designed to intuitively introduce all participants to the paradigm of federated communication through the modern technology our platform is built around.
 
