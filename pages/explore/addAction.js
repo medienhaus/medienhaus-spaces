@@ -10,25 +10,39 @@ import TemplateSelect from './templateSelect';
 import AddExistingContext from './AddExistingContext';
 
 const ModSection = styled.div`
-    &  {
-        margin-bottom: var(--margin);
-    }
-    & > button {
-        margin-bottom: var(--margin);
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
+
+  & > button {
+    margin-bottom: var(--margin);
+  }
 `;
 
 const UserSection = styled.div`
-    &  {
-        margin-bottom: var(--margin);
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
 
-    & > button {
-        margin-bottom: var(--margin);
-    }
+  & > button {
+    margin-bottom: var(--margin);
+  }
 `;
 
-const AddAction = ({ currentId, userInfos, mod, currentName,setShowActions }) => {
+/**
+ * ACTIONS COMPONENT
+ * ------------------
+ *
+ * @param {String} currentId — the Id of the current observed Room
+ * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
+ * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
+ *
+ * @TODO
+ * - add item function with integration of existing application spaces, like write.
+ * - add joined contexts
+*/
+
+const AddAction = ({ currentId, userInfos, mod, currentName, setShowActions }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();

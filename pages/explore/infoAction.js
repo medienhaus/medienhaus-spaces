@@ -8,12 +8,10 @@ import { useMatrix } from '../../lib/Matrix';
 import UserHandle from './userHandle';
 
 const InfoSection = styled.div`
-  &  {
+  & {
     margin-bottom: var(--margin);
-
   }
 
- 
 `;
 
 /**

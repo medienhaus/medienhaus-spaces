@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const User = styled.div`
-    &  {
-        margin-bottom: var(--margin);
-    }
-    & > button {
-        margin-bottom: var(--margin);
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
+
+  & > button {
+    margin-bottom: var(--margin);
+  }
 `;
 
 const UserHandle = ({ userId }) => {

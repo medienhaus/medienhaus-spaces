@@ -11,6 +11,7 @@ const ExploreSection = styled.div`
   & > * + * {
     margin-top: var(--margin);
   }
+
   & > select + select {
     margin-top: calc(var(--margin) * 0.65);
   }

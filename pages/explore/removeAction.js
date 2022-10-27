@@ -9,18 +9,19 @@ import CreateContext from './createContext';
 import TemplateSelect from './templateSelect';
 
 const RemoveSection = styled.div`
-    &  {
-        margin-bottom: var(--margin);
-    }
-    & > button {
-        margin-bottom: var(--margin);
-        margin-right: var(--margin);
-        width:150px;
-    }
+  & {
+    margin-bottom: var(--margin);
+  }
 
-    &  span:first-of-type {
-        background-color: var(--color-hi);
-    }
+  & > button {
+    width: 150px;
+    margin-right: var(--margin);
+    margin-bottom: var(--margin);
+  }
+
+  & span:first-of-type {
+    background-color: var(--color-hi);
+  }
 `;
 
 /**

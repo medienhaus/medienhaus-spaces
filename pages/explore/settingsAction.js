@@ -13,7 +13,8 @@ const SettingsSection = styled.div`
     margin-bottom: var(--margin);
   }
 
-  &  input, select {
+  & input,
+  select {
     margin-bottom: var(--margin);
   }
 `;

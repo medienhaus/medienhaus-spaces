@@ -11,41 +11,38 @@ import AddAction from './addAction';
 import RemoveAction from './removeAction';
 
 const ActionsSection = styled.details`
-  &  {
+  & {
     margin-bottom: var(--margin);
-    
   }
+
   & > summary {
-    background-color: var(--color-fg);
-    color: var(--color-bg);
     width: 50px;
     height: 35px;
-    list-style: none;
+    font-weight: bold;
+    color: var(--color-bg);
     text-align: center;
-    font-weight:bold;
+    list-style: none;
+    background-color: var(--color-fg);
   }
 
   & > div > button {
-    margin-bottom: var(--margin);
+    width: 50px;
     margin-top: var(--margin);
     margin-right: var(--margin);
-    width: 50px;
-
+    margin-bottom: var(--margin);
   }
 
 `;
 
 const ButtonsSection = styled.div`
-  &  {
+  & {
     margin-bottom: var(--margin);
-
   }
 `;
 
 const MenuSection = styled.div`
-  &  {
+  & {
     margin-bottom: var(--margin);
-
   }
 `;
 
@@ -183,7 +180,7 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
             };
         });
         members.institutions = _.uniq(_.map(members.list, member => member?.id.split(':')[1]));
-        //  insitutions just holds the names of the matrix homeservers which the joined members orignated from.
+        //  institutions just holds the names of the matrix homeservers which the joined members orignated from.
         //  will become more relevant in the future if federatable networks will be implemented. for now its just an non interactive list of strings
         setRoomMembers(members);
     };

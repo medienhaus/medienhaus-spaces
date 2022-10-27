@@ -8,15 +8,17 @@ import { useMatrix } from '../../lib/Matrix';
 import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 
 const AddContextDialog = styled.div`
-    & > * + * {
-        margin-top: var(--margin);
-    }
-    & > select + select {
-        margin-top: calc(var(--margin) * 0.65);
-    }
-    & span {
-        background-color: var(--color-me);
-    }
+  & > * + * {
+    margin-top: var(--margin);
+  }
+
+  & > select + select {
+    margin-top: calc(var(--margin) * 0.65);
+  }
+
+  & span {
+    background-color: var(--color-me);
+  }
 `;
 
 /**
