@@ -14,6 +14,8 @@ const User = styled.div`
 /**
  * UserHandle COMPONENT
  * ------------------
+ * This Component should be uses as an global Component for optional user interaction.
+ * It should be used through the whole space application each time a username/ userId is rendered.
  *
  * @param {String} userId — the Id of the current observed Room
  *

@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import CreateContext from './createContext';
-import TemplateSelect from './templateSelect';
+import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
+import CreateContext from '../CreateContext';
+import TemplateSelect from '../TemplateSelect';
 
 const RemoveSection = styled.div`
   & {
