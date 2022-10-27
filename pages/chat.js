@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import getConfig from 'next/config';
 
 import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
@@ -86,7 +87,7 @@ export default function Chat() {
     const { t } = useTranslation('chat');
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    const [iframeLocation, setIframeLocation] = useState('//localhost/element/#/room/!JEDqIsucxXHczdhdBa:medienhaus.dev');
+    const [iframeLocation, setIframeLocation] = useState(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/`);
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -120,7 +121,7 @@ export default function Chat() {
     if (!auth.user) return null;
 
     const goToRoom = function(roomId) {
-        setIframeLocation(`//localhost/element/#/room/${roomId}`);
+        setIframeLocation(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`);
     };
 
     return (
