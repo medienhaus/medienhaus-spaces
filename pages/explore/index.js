@@ -51,9 +51,8 @@ export default function Explore() {
 
     return (
         <>
-            <h1>/explore</h1>
-            <p>{ activeContexts[activeContexts.length - 1] }</p>
-
+            <h2>/explore</h2>
+            <br />
             <ExploreSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
                 { (contents && contents.length > 0) ? (

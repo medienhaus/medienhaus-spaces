@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -13,15 +15,19 @@ import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
 import FrameView from '../../components/FrameView';
+import MultiColumnLayout from '../../components/layouts/multicolumn';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  height: 85vh;
+const SidebarColumn = styled(MultiColumnLayout.Column)`
+  @media (width > 51em) {
+    width: 30ch;
+    max-width: 30ch;
+  }
+`;
 
-  @media (min-width: 29em) {
-    height: 100%;
-  }`;
+const IframeColumn = styled(MultiColumnLayout.Column)`
+  max-width: unset;
+  padding: 0;
+`;
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -60,12 +66,17 @@ const WriteNavigation = styled.ul`
   }
 `;
 
-const WriteList = styled.ul`
-  padding: 0;
-  margin: 0;
-`;
-
 export default function Write() {
+    const auth = useAuth();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrixSpaces = matrix.spaces.values();
+    const { t } = useTranslation('write');
+    const application = 'write';
+    const router = useRouter();
+    // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
+    const roomId = _.get(router, 'query.roomId.0');
+
     const [newPadName, setNewPadName] = useState('');
     const [newPadLink, setNewPadLink] = useState('');
     const [validLink, setValidLink] = useState('undefined');
@@ -75,15 +86,8 @@ export default function Write() {
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [openActions, setOpenActions] = useState(false);
     const [serverPads, setServerPads] = useState({});
-    const [iframe, setIframe] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrixSpaces = matrix.spaces.values();
-    const application = 'write';
-    const { t } = useTranslation('write');
+    const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
     const lookForServiceFolder = async (applicationsSpaceId) => {
@@ -145,6 +149,14 @@ export default function Write() {
     useEffect(() => {
         let cancelled = false;
 
+        !cancelled && setContent(matrix.roomContents.get(roomId));
+
+        return () => cancelled = true;
+    }, [matrix.roomContents, roomId]);
+
+    useEffect(() => {
+        let cancelled = false;
+
         const populatePadsfromServer = async () => {
             if (!_.isEmpty(write.getAllPads())) {
                 setServerPads(write.getAllPads());
@@ -172,7 +184,7 @@ export default function Write() {
             if (matrix?.spaces.get(serviceSpaceId).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
-                // in order to get the actual id of the pad we need to check the room content
+                    // in order to get the actual id of the pad we need to check the room content
                     const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                     matrixPads = Object.assign({}, matrixPads, {
                         [id]: {
@@ -292,42 +304,53 @@ export default function Write() {
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
-    if (iframe) return <Wrapper><FrameView link={iframe} onClose={() => setIframe(false)} /></Wrapper>;
 
-    return (<Wrapper>
-        <Header>
-            <h1>/write</h1>
-            <CloseButton onClick={handleCloseButtonClick}>
-                { (openActions ? <CloseIcon /> : <PlusIcon />) }
-            </CloseButton>
-        </Header>
+    return (
+        <>
+            <SidebarColumn>
+                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
+                <>
+                    <Header>
+                        <h1>/write</h1>
+                        <CloseButton onClick={handleCloseButtonClick}>
+                            { (openActions ? <CloseIcon /> : <PlusIcon />) }
+                        </CloseButton>
+                    </Header>
 
-        { openActions && <>
-            <WriteNavigation>
-                <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
-                <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
-                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
-                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
-            </WriteNavigation>
-            { renderSelectedOption() }
+                    { openActions && (
+                        <>
+                            <WriteNavigation>
+                                <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
+                                <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
+                                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
+                                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
+                            </WriteNavigation>
+                            { renderSelectedOption() }
+                        </>
+                    ) }
+                    { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
+                    <ul>
+                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                            return <WriteListEntry
+                                key={roomId}
+                                roomId={roomId}
+                                parent={serviceSpaceId}
+                                serverPads={serverPads}
+                                callback={syncServerPadsAndSet}
+                            />;
+                        }) }
+                    </ul>
+                </>
+            </SidebarColumn>
+            { roomId && content && (
+                <IframeColumn>
+                    <FrameView link={content.body} />
+                </IframeColumn>
+            ) }
         </>
-        }
-        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-        <WriteList>
-            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                return <WriteListEntry
-                    key={roomId}
-                    roomId={roomId}
-                    parent={serviceSpaceId}
-                    serverPads={serverPads}
-                    setIframe={setIframe}
-                    callback={syncServerPadsAndSet}
-                />;
-            }) }
-        </WriteList>
-
-        { /*Debug */ }
-        { /* <button onClick={() => write.deletePadById('pw-prtoect-3-tk2ocsi1')}>delete pad</button> */ }
-    </Wrapper>)
-    ;
+    );
 }
+
+Write.getLayout = () => {
+    return MultiColumnLayout.Layout;
+};
