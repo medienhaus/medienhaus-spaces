@@ -6,9 +6,9 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import Article from './Article';
-import Event from './Event';
-import Resource from './Resource';
+import Article from '../../components/activity/Article';
+import Event from '../../components/activity/Event';
+import Resource from '../../components/activity/Resource';
 
 export default function Activity() {
     const auth = useAuth();
