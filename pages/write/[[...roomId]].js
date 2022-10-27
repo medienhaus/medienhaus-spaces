@@ -11,11 +11,11 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
-import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
 import FrameView from '../../components/FrameView';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
+import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 
 const SidebarColumn = styled(MultiColumnLayout.Column)`
   @media (width > 51em) {
@@ -27,43 +27,6 @@ const SidebarColumn = styled(MultiColumnLayout.Column)`
 const IframeColumn = styled(MultiColumnLayout.Column)`
   max-width: unset;
   padding: 0;
-`;
-
-const PlusIcon = styled(Plus)`
-  fill: var(--color-fg);
-`;
-
-const CloseIcon = styled(PlusIcon)`
-  transform: rotate(45deg);
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const CloseButton = styled.button`
-  width: auto;
-  padding: 0;
-  margin: 0;
-  background: none;
-  border: none;
-`;
-
-const WriteNavigation = styled.ul`
-  margin-bottom: calc(var(--margin) * 3);
-  list-style: none;
-
-  li {
-    margin-bottom: calc(var(--margin)/2);
-
-    a[disabled] {
-      color: var(--color-me);
-      text-decoration: none;
-      cursor: not-allowed;
-    }
-  }
 `;
 
 export default function Write() {
@@ -84,7 +47,7 @@ export default function Write() {
     const [validatePassword, setValidatePassword] = useState('');
     const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
-    const [openActions, setOpenActions] = useState(false);
+    const [, setOpenActions] = useState(false);
     const [serverPads, setServerPads] = useState({});
     const [loading, setLoading] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
@@ -298,11 +261,6 @@ export default function Write() {
         }
     };
 
-    const handleCloseButtonClick = () => {
-        setOpenActions(openActions => !openActions);
-        if (openActions) setActionSelect('');
-    };
-
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
@@ -310,24 +268,16 @@ export default function Write() {
             <SidebarColumn>
                 { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
                 <>
-                    <Header>
-                        <h1>/write</h1>
-                        <CloseButton onClick={handleCloseButtonClick}>
-                            { (openActions ? <CloseIcon /> : <PlusIcon />) }
-                        </CloseButton>
-                    </Header>
-
-                    { openActions && (
-                        <>
-                            <WriteNavigation>
-                                <li><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></li>
-                                <li><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></li>
-                                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></li> }
-                                { getConfig().publicRuntimeConfig.authProviders.write.api && <li><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></li> }
-                            </WriteNavigation>
-                            { renderSelectedOption() }
-                        </>
-                    ) }
+                    <ServiceSubmenu title="/write">
+                        <ServiceSubmenu.Toggle callback={() => setActionSelect('')} />
+                        <ServiceSubmenu.List>
+                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></ServiceSubmenu.Item>
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></ServiceSubmenu.Item> }
+                        </ServiceSubmenu.List>
+                    </ServiceSubmenu>
+                    { renderSelectedOption() }
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ul>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
