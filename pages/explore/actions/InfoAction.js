@@ -15,8 +15,10 @@ const InfoSection = styled.div`
 `;
 
 /**
- * @TODO:
- * - adding routes for user interaction more -> members -> username
+ * INFO ACTION COMPONENT
+ * ------------------
+ * @TODO
+ * - adding routes for user interaction 'more' -> 'members' -> 'username'; now been done in the UserHandle Component
  * - searching for referenced in sync cached rooms (fast)
  * - searching for referenced in root tree (slow)
 */
@@ -100,7 +102,7 @@ const InfoAction = ({
                         <dd>{ meta?.template }</dd>
                     </dl>
                 </details>
-                <details onClick={members?.list?.length > 0 ? undefined : getMembers}>
+                <details onClick={members?.list?.length > 0 ? undefined : getMembers}> {/* check first if members are already fetched once to prevent unessesary calls    */}
                     <summary>Institutions</summary>
                     <ul>
                         { _.map(members?.institutions, (institution, key) => {
@@ -129,11 +131,12 @@ const InfoAction = ({
                         }
                     </ul>
                 </details>
-                <details>
-                    <summary>Referenced</summary>
-                    …
-                </details>
-
+                {/*
+                    <details>
+                        <summary>Referenced</summary>
+                        …
+                    </details>
+                */}
             </details>
         </InfoSection>
 

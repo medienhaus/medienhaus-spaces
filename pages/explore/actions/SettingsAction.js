@@ -6,7 +6,7 @@ import TemplateSelect from '../TemplateSelect';
 import UserHandle from '../UserHandle';
 import { useAuth } from '../../../lib/Auth';
 import { useMatrix } from '../../../lib/Matrix';
-import settingsPresets from './settingPresets';
+import settingsPresets from '../presets';
 
 const SettingsSection = styled.div`
   & {

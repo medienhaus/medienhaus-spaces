@@ -54,6 +54,8 @@ const MenuSection = styled.div`
  * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  *
+ * @TODO
+ * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
 
 const Actions = ({ currentId, parentId, popActiveContexts }) => {

@@ -57,12 +57,17 @@ const AddAction = ({ currentId, userInfos, mod, currentName, setShowActions }) =
                 <ModSection>
                     <details>
                         <summary>create new substructure</summary>
-                        <CreateContext />
+                        <CreateContext userInfos={userInfos} />
                     </details>
 
                     <details>
                         <summary>add existing context from root</summary>
                         <AddExistingContext parentId={currentId} parentName={currentName} setShowActions={setShowActions} />
+                    </details>
+
+                    <details>
+                        <summary>add existing item from application</summary>
+                        <></>
                     </details>
 
                 </ModSection>
