@@ -46,6 +46,7 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li><Link href="/">/chat</Link></li>
                 <li><Link href="/write">/write</Link></li>
+                <li><Link href="/sketch">/sketch</Link></li>
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>
