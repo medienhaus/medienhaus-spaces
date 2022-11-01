@@ -9,6 +9,8 @@
   --color-me: rgb(128 128 128);
   --color-lo: rgb(240 240 240);
   --margin: 1rem;
+  --input-height: 3rem;
+  --padding: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
