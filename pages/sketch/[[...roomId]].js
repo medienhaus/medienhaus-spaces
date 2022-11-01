@@ -312,7 +312,6 @@ export default function Sketch() {
                                     id={serviceSpaceId}
                                     setFolderEdit={setFolderEdit}
                                     folderEdit={folderEdit}
-
                                 />
                             }
                         </ul>
@@ -329,3 +328,6 @@ export default function Sketch() {
     );
 }
 
+Sketch.getLayout = () => {
+    return MultiColumnLayout.Layout;
+};
