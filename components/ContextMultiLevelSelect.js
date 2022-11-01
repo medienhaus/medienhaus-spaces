@@ -97,12 +97,14 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
  * This component renders a multi-level <select> UI for an arbitrary set of contexts in the sense of Matrix spaces.
  * `activeContexts` is the array of room IDs for the currently set context spaces.
  *
- * @param [Array] activeContexts
- * @param [Func] onChange (newActiveContexts, isLeaf)
- * @param [Bool] showTopics - If the contents of m.room.topic should be displayed in parentheses next to the name
- * @param [Bool] sortAlphabetically - If entries should be ordered alphabetically
- * @param [Object] templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
- * @param [String] templatePrefixFilter - Optional prefix to filter contexts by their templates
+ * @param {Array} activeContexts
+ * @param {function} onChange (newActiveContexts, isLeaf)
+ * @param {boolean} showTopics - If the contents of m.room.topic should be displayed in parentheses next to the name
+ * @param {boolean} sortAlphabetically - If entries should be ordered alphabetically
+ * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
+ * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
+ *
+ * @return {React.ReactElement}
  */
 const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {

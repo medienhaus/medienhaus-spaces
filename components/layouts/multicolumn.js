@@ -19,7 +19,7 @@ const Column = styled.div`
 
   // On small viewports ...
   @media (width <= 51em) {
-     //... stack all columns on top of each other by squashing all (but the last one) together
+    //... stack all columns on top of each other by squashing all (but the last one) together
     :not(:last-of-type) {
       position: relative;
       height: 4.3rem;
@@ -60,7 +60,6 @@ const ColumnMobileHead = styled.h2`
   padding: var(--margin);
   background-color: rgb(255 255 255 / 95%);
   backdrop-filter: blur(5px);
-  box-shadow: inset 0 -5px 10px -10px rgba(0 0 0 / 60%);
 
   &::before {
     content: '← ';
