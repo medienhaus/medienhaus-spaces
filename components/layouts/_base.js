@@ -14,8 +14,8 @@ const Wrapper = styled.div`
 
   @media (width > 51em) {
     display: grid;
-    grid-template-rows: 0fr auto 0fr;
-    grid-template-columns: 0fr auto;
+    grid-template-rows: min-content 1fr min-content;
+    grid-template-columns: min-content 1fr;
     padding: unset;
   }
 `;
