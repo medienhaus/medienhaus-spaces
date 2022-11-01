@@ -12,13 +12,17 @@ import { useMatrix } from '../../lib/Matrix';
  *
  * @param {String} currentId — the Id of the current observed Room
  * @param {String} templateDirectoryId — the Id of the Room to fetch the templates from
+ * @param {String} userInfos — x
+ * @param {Function} currentTemplate — x
+ * @param {Boolean} updateCurrentId – x
  *
  * @TODO 
  * - piping sync functionallity in this component so that the content of the template room will not be requested each time, without any content has changed.
  * - adding new contents in templateDirectoryRoom
+ * - fixing same bugs to save a new template todo in 'onSaveCreateNewTemplate'
 */
 
-const TemplateSelect = ({ currentId, templateDirectoryId,userInfos }) => {
+const TemplateSelect = ({ currentId, templateDirectoryId, userInfos, currentTemplate   }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -34,6 +38,17 @@ const TemplateSelect = ({ currentId, templateDirectoryId,userInfos }) => {
 
 
 
+    useEffect(() => {
+        //checking if currentTemplate is a function 
+        if (!currentTemplate) return
+            // checking if 'selectedTemplate' is 
+            if(selectedTemplate !== '_createNew') {
+                currentTemplate(selectedTemplate)
+            } else {
+                currentTemplate('')
+            }
+    }, [selectedTemplate]);
+    
 
     useEffect(() => {
         getTemplatesOfContexts(templateDirectoryId)
@@ -52,7 +67,7 @@ const TemplateSelect = ({ currentId, templateDirectoryId,userInfos }) => {
 
     const onChangeTemplateSelect = (e) => {
         if (e.target.value === 'template') return 
-        setSelectedTemplate(e)
+        setSelectedTemplate(e.target.value)
         if(e.target.value === '_createNew')  {
             setCreateNewDialog(true)
         } else {
@@ -121,14 +136,6 @@ const TemplateSelect = ({ currentId, templateDirectoryId,userInfos }) => {
         }
     }
 
-    const changeTemplateInMetaEventOfCurrentId = async () => {
-        /**
-        *   @TODO 
-        *   - checking if user is member of room
-        *   - checking if user is allowed to change the dev.medienhaus.meta stateEvent in the room otherwise throw error
-        */
-    }
-
 
 
     return (
@@ -141,7 +148,7 @@ const TemplateSelect = ({ currentId, templateDirectoryId,userInfos }) => {
                         { template }
                     </option>;
                 }) }
-                <option value="_createNew">create new…</option> { /* static element for users to create a new template */ }
+                <option key="new" value="_createNew">create new…</option> { /* static element for users to create a new template */ }
             </select>
             { createNewDialog && 
                 <>
