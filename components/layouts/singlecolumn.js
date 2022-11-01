@@ -12,7 +12,7 @@ export const Main = styled.main`
     max-width: 55ch;
     height: 100vh;
     overflow: auto;
-    border-left: 0.25rem solid black;
+    border-left: 0.13rem solid black;
 
     @media (width > 68em) {
       padding: calc(var(--margin) * 2);
