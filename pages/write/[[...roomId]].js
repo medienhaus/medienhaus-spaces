@@ -230,38 +230,6 @@ export default function Write() {
         setNewPadLink(e.target.value);
     };
 
-    const renderSelectedOption = () => {
-        switch (actionSelect) {
-            case 'anonymousPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-                </form>);
-            case 'existingPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
-                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
-                </form>);
-            case 'passwordPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-                </form>);
-            case 'authoredPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-                </form>);
-            default:
-                return (null);
-        }
-    };
-
-    // this replaces the `renderSelectedOption()` method inside of `write/index.js`
     const ActionNewAnonymousPad = (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
         <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
         <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
