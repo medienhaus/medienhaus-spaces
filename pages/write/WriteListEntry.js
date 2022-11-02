@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
 import { ServiceLink } from '../../components/UI/ServiceLink';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 const LinkElement = styled(ServiceLink)``;
 
@@ -21,8 +21,6 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const { t } = useTranslation('write');
-
-    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
         setRemovingLink(true);
@@ -71,7 +69,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
                 { serverPads &&
             <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
             </button> }
-                <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
+                <CopyToClipboard content={content} />
                 <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
             </div>
         </LinkElement>
