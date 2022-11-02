@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import Plus from '../../assets/icons/plus.svg';
+import TextButton from './TextButton';
 
 const Header = styled.div`
   display: grid;
@@ -38,13 +39,16 @@ const Navigation = styled.ul`
 
 export function ServiceSubmenu({ title, children }) {
     const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
+    const [renderActionComponent, setRenderActionComponent] = useState(null);
 
-    return (<Header>
-        <h1>{ title }</h1>
-        { React.Children.map(children, child =>
-            React.cloneElement(child, { opensubmenu, setOpenSubmenu }),
-        ) }
-    </Header>
+    return (
+        <Header>
+            <h1>{ title }</h1>
+            { React.Children.map(children, child =>
+                React.cloneElement(child, { opensubmenu, setOpenSubmenu, renderActionComponent, setRenderActionComponent }),
+            ) }
+            { renderActionComponent && renderActionComponent }
+        </Header>
     );
 }
 
@@ -63,12 +67,18 @@ function Toggle({ opensubmenu, setOpenSubmenu, callback }) {
     );
 }
 
-function List({ children, opensubmenu }) {
-    return opensubmenu && <Navigation>{ children }</Navigation>;
+function List({ children, opensubmenu, renderActionComponent, setRenderActionComponent }) {
+    return opensubmenu && (
+        <Navigation>{ React.Children.map(children, child =>
+            React.cloneElement(child, { renderActionComponent, setRenderActionComponent }),
+        ) }</Navigation>);
 }
 
-function Item({ children }) {
-    return <li>{ children }</li>;
+function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender }) {
+    return (<>
+        <li><TextButton onClick={() => setRenderActionComponent(renderActionComponent ? null : actionComponentToRender)}>{ children }</TextButton></li>
+    </>
+    );
 }
 
 ServiceSubmenu.Toggle = Toggle;

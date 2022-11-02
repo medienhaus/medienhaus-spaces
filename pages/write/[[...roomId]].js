@@ -261,6 +261,32 @@ export default function Write() {
         }
     };
 
+    // this replaces the `renderSelectedOption()` method inside of `write/index.js`
+    const ActionNewAnonymousPad = (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
+        <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+        <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
+    </form>);
+
+    const ActionExistingPad = (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
+        <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+        <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
+        { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
+        <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> : t('Add existing pad') }</button>
+    </form>);
+
+    const ActionPasswordPad = (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
+        <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+        <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+        <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
+    </form>);
+    const ActionAuthoredPad = (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
+        <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
+        <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
+    </form>);
+
+    <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>;
+
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
@@ -271,13 +297,12 @@ export default function Write() {
                     <ServiceSubmenu title="/write">
                         <ServiceSubmenu.Toggle callback={() => setActionSelect('')} />
                         <ServiceSubmenu.List>
-                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></ServiceSubmenu.Item>
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></ServiceSubmenu.Item> }
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></ServiceSubmenu.Item> }
+                            <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Add existing pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={ActionExistingPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={ActionPasswordPad}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={ActionAuthoredPad}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
-                    { renderSelectedOption() }
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ul>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
