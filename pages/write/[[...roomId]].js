@@ -266,8 +266,8 @@ export default function Write() {
                     <ServiceSubmenu title="/write">
                         <ServiceSubmenu.Toggle callback={() => setActionSelect('')} />
                         <ServiceSubmenu.List>
-                            <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Add existing pad') }</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item actionComponentToRender={ActionExistingPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={ActionExistingPad}>{ t('Add existing pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={ActionPasswordPad}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={ActionAuthoredPad}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
                         </ServiceSubmenu.List>
