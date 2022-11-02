@@ -52,11 +52,13 @@ export default function SketchLinkEntry({ roomId, parent }) {
     }, [content, matrix, roomId]);
 
     const removeLink = async () => {
+        // @TODO callback function to give user feedback when removing on the server fails
         setRemovingLink(true);
-        await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {
-
-        },
-        );
+        const remove = await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {});
+        if (!remove) {
+            setRemovingLink(false);
+            return;
+        }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
         await matrix.leaveRoom(roomId);
         setRemovingLink(false);
