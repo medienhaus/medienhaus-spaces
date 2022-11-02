@@ -73,7 +73,7 @@ export default function SketchLinkEntry({ roomId, parent }) {
             <div className="group">
                 <>
                     <CopyToClipboard content={content} />
-                    <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</button>
+                    <button title={t('Remove sketch')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</button>
                 </>
             </div>
         </LinkElement>
