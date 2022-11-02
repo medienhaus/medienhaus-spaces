@@ -35,7 +35,7 @@ export default function SketchLinkEntry({ roomId, parent }) {
     useEffect(() => {
         let cancelled = false;
 
-        !cancelled && setContent(matrix.roomContents.get(roomId).body);
+        !cancelled && setContent(matrix.roomContents.get(roomId)?.body);
 
         return () => cancelled = true;
     }, [matrix.roomContents, roomId]);
