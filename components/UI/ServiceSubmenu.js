@@ -76,7 +76,7 @@ function List({ children, opensubmenu, renderActionComponent, setRenderActionCom
 
 function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender }) {
     return (<>
-        <li><TextButton onClick={() => setRenderActionComponent(renderActionComponent ? null : actionComponentToRender)}>{ children }</TextButton></li>
+        <li><TextButton onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>{ children }</TextButton></li>
     </>
     );
 }

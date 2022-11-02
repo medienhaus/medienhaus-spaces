@@ -248,6 +248,7 @@ export default function Write() {
         <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
         <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
     </form>);
+
     const ActionAuthoredPad = (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
         <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
         <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
