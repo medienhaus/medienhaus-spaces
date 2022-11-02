@@ -9,7 +9,6 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
-import TextButton from '../../components/UI/TextButton';
 
 const LinkElement = styled.li`
   display: flex;
