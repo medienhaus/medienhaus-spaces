@@ -56,10 +56,12 @@ export default function Sketch() {
     const lookForApplicationsFolder = async () => {
         const findApplicationsFolder = Array.from(matrixSpaces).find(space => space.meta?.template === 'applications');
         if (findApplicationsFolder) {
-            console.info('found applications space');
+            // eslint-disable-next-line no-undef
+            if (process.env.NODE_ENV === 'development') console.info('found applications space');
             return findApplicationsFolder.roomId;
         } else {
-            console.log('creating root applications folder');
+            // eslint-disable-next-line no-undef
+            if (process.env.NODE_ENV === 'development') console.log('creating root applications folder');
             const newApplicationsFolder = await matrix.createRoom(
                 'Applications',
                 true,
@@ -75,7 +77,8 @@ export default function Sketch() {
         const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
         if (findServiceSpace) return findServiceSpace.roomId;
         else {
-            console.info('creating service space');
+            // eslint-disable-next-line no-undef
+            if (process.env.NODE_ENV === 'development') console.info('creating service space');
             const createRoom = await matrix.createRoom(
                 application,
                 true,
@@ -97,7 +100,8 @@ export default function Sketch() {
                     const space = await lookForServiceFolder(applicationsSpaceId);
                     setServiceSpaceId(space);
                 } catch (err) {
-                    console.log(err);
+                    // eslint-disable-next-line no-undef
+                    if (process.env.NODE_ENV === 'development') console.debug(err);
                 }
             }
         };
@@ -146,6 +150,7 @@ export default function Sketch() {
                     if (matrixSketches[sketch.id]) {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
                         if (sketch.name !== matrixSketches[sketch.id].name) {
+                            // eslint-disable-next-line no-undef
                             if (process.env.NODE_ENV === 'development') console.log('changing name for ' + matrixSketches[sketch.id]);
                             await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
@@ -200,7 +205,8 @@ export default function Sketch() {
     }, [matrix.roomContents, roomId]);
 
     async function createSketchRoom(link = sketchLink, name = newSketchName, parent = serviceSpaceId) {
-        console.debug('creating room for ' + name);
+        // eslint-disable-next-line no-undef
+        if (process.env.NODE_ENV === 'development') console.debug('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link').catch(() => {
             setErrorMessage(t('Something went wrong when trying to create a new room'));
         });
