@@ -12,12 +12,10 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import TextButton from '../../components/UI/TextButton';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import SketchList from './SketchList';
-import FolderEditView from './FolderEditView';
 import FrameView from '../../components/FrameView';
-import CreateNewFolder from './CreateNewFolder';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
+import SketchLinkEntry from './SketchLinkEntry';
 
 const SidebarColumn = styled(MultiColumnLayout.Column)`
   @media (width > 51em) {
@@ -37,7 +35,6 @@ export default function Sketch() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrixSpaces = matrix.spaces.values();
     const { t } = useTranslation('sketch');
-    const [folderEdit, setFolderEdit] = useState(false);
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
 
@@ -92,6 +89,7 @@ export default function Sketch() {
     };
 
     useEffect(() => {
+        let cancelled = false;
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
@@ -103,8 +101,8 @@ export default function Sketch() {
                 }
             }
         };
-        startLookingForFolders();
-
+        !cancelled && startLookingForFolders();
+        return () => cancelled = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix.initialSyncDone]);
 
@@ -145,25 +143,17 @@ export default function Sketch() {
                     // if the element does not have an id key, we can safely assume it is a key of a folder from recursion and skip it.
                     if (!sketch.id) continue;
                     // now we can check if a sketch already exists in matrix and if so we can skip this sketch.
-                    // @TODO check for meta information changes, i.e. name of sketch
                     if (matrixSketches[sketch.id]) {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
-                        if (matrixSketches[sketch.id].name !== 'Link' && sketch.name !== matrixSketches[sketch.id].name) {
-                            console.log('changing name');
-                            console.log(matrixSketches[sketch.id]);
-                            const namechange = await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
-                            console.log(namechange);
+                        if (sketch.name !== matrixSketches[sketch.id].name) {
+                            if (process.env.NODE_ENV === 'development') console.log('changing name for ' + matrixSketches[sketch.id]);
+                            await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
                         continue;
                     }
-                    // then we see if the entry is a folder and if so create the folder and underlying sketches first
+                    // then we check if the entry is a folder and if so cycle through the folder and underlying sketches first
                     if (sketch.type === 'folder') {
-                        const space = await matrix.createRoom(sketch.name, true, '', 'invite', 'item');
-                        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, space).catch(console.log);
-                        const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + 'folders/' + sketch.id;
-
-                        await createSketchRoom(link, 'Link', space);
-                        await updateStructure(sketch, space);
+                        await updateStructure(sketch, parent);
                         continue;
                     }
                     // otherwise we create a room for the sketch
@@ -177,15 +167,7 @@ export default function Sketch() {
         };
 
         if (!cancelled && serviceSpaceId && serverSketches) {
-            const accountData = matrixClient.getAccountData('medienhaus');
-            if (!accountData) {
-                if (confirm(t('Do you want to sync /sketch with /spaces?'))) {
-                    if (confirm(t('Remember choice?'))) matrixClient.setAccountData('medienhaus', { 'alwaysSyncServerSketches': true });
-                    syncServerSketchesWithMatrix();
-                }
-            } else if (accountData.event.content.alwaysSyncServerSketches) {
-                syncServerSketchesWithMatrix();
-            }
+            syncServerSketchesWithMatrix();
         }
 
         return () => cancelled = true;
@@ -194,7 +176,6 @@ export default function Sketch() {
 
     useEffect(() => {
         let cancelled = false;
-
         const populatePadsfromServer = async () => {
             if (!isEmpty(sketch.getStructure())) {
                 setServerSketches(sketch.getStructure());
@@ -300,22 +281,10 @@ export default function Sketch() {
                     </ServiceSubmenu>
                     { renderSelectedOption() }
                 </>
-                { folderEdit ? <FolderEditView
-                    spaceId={serviceSpaceId}
-                    setFolderEdit={setFolderEdit}
-                    folderEdit={folderEdit}
-                /> :syncingServerSketches ? <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
+                { syncingServerSketches ?
+                    <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
                     <>
-                        <ul>
-                            {
-                                matrix.spaces && <SketchList
-                                    id={serviceSpaceId}
-                                    setFolderEdit={setFolderEdit}
-                                    folderEdit={folderEdit}
-                                />
-                            }
-                        </ul>
-                        <CreateNewFolder serviceSpaceId={serviceSpaceId} />
+                        <ul>{ matrix.spaces.get(serviceSpaceId).children?.map(roomId => <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />) }</ul>
                     </>
                 }
             </SidebarColumn>

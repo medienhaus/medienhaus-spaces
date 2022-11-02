@@ -1,20 +1,5 @@
 import styled from 'styled-components';
 
-export const UnstyledList = styled.ul`
-  margin-bottom: calc(var(--margin) * 3);
-  list-style: none;
-
-  li {
-    margin-bottom: calc(var(--margin)/2);
-
-    a[disabled] {
-      color: var(--color-me);
-      text-decoration: none;
-      cursor: not-allowed;
-    }
-  }
-`;
-
 export const ServiceLink = styled.li`
   display: flex;
   align-items: center;

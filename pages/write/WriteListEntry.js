@@ -9,43 +9,9 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
+import { ServiceLink } from '../../components/UI/ServiceLink';
 
-const LinkElement = styled.li`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-right: var(--margin);
-  padding-left: var(--margin);
-
-  .group {
-    display: inherit;
-  }
-
-  svg {
-    margin-left: 0.5em;
-    cursor: pointer;
-  }
-
-  button {
-    padding: 0;
-    margin: 0;
-    background: none;
-    border: none;
-  }
-
-  button svg {
-    fill: var(--color-fg);
-  }
-
-  button[disabled] svg {
-    cursor: initial;
-    fill: var(--color-me);
-  }
-
-  &:nth-of-type(even) {
-    background-color: var(--color-lo);
-  }
-`;
+const LinkElement = styled(ServiceLink)``;
 
 const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const auth = useAuth();

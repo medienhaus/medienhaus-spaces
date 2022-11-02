@@ -7,20 +7,19 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Bin from '../../assets/icons/bin.svg';
-import { ServiceLink } from '../../components/UI/StyledComponents';
+import { ServiceLink } from '../../components/UI/ServiceLink';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 const LinkElement = styled(ServiceLink)`
-  ${props => props.indent && 'button:first-of-type {  margin-left: 24px}'}
 `;
 
-export default function DisplaySketchLinks({ roomId, content: parsedContent, indent }) {
+export default function SketchLinkEntry({ roomId, parent }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const sketch = auth.getAuthenticationProvider('sketch');
     const { t } = useTranslation('sketch');
 
-    const [content, setContent] = useState(parsedContent);
+    const [content, setContent] = useState('');
     const [linkName, setLinkName] = useState('');
     const [removingLink, setRemovingLink] = useState(false);
 
@@ -34,32 +33,40 @@ export default function DisplaySketchLinks({ roomId, content: parsedContent, ind
     }, [matrix.rooms, roomId]);
 
     useEffect(() => {
-        setContent(parsedContent);
-    }, [parsedContent]);
+        let cancelled = false;
+
+        !cancelled && setContent(matrix.roomContents.get(roomId).body);
+
+        return () => cancelled = true;
+    }, [matrix.roomContents, roomId]);
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
         const checkForRoomContent = async () => {
-            await matrix.hydrateRoomContent(roomId);
+            await matrix.hydrateRoomContent(roomId, 1, signal);
         };
         checkForRoomContent();
+
+        return () => controller.abort;
     }, [content, matrix, roomId]);
 
     const removeLink = async () => {
         setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1));
-        console.log(remove);
-        // await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
-        // await matrix.leaveRoom(roomId);
+        await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {
+
+        },
+        );
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await matrix.leaveRoom(roomId);
         setRemovingLink(false);
     };
 
     if (content === undefined) return <LoadingSpinner />;
-    if (content === null) return <p>{ t('There is no content in this room') }</p>;
+    if (content === null) return;
 
     return (
-        <LinkElement indent={indent}
-            key={roomId + Math.random()}
-        >
+        <LinkElement key={roomId}>
             <Link href={`/sketch/${roomId}`}>{ linkName }</Link>
             <div className="group">
                 <>
