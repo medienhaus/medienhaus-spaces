@@ -52,11 +52,13 @@ export function ServiceSubmenu({ title, children }) {
     );
 }
 
-function Toggle({ opensubmenu, setOpenSubmenu, callback }) {
+function Toggle({ opensubmenu, setOpenSubmenu, setRenderActionComponent, callback }) {
     return (
 
         <CloseButton onClick={() => {
             setOpenSubmenu(!opensubmenu);
+            // if opensubmenu changed and was true we don't want to render any action components
+            if (opensubmenu) setRenderActionComponent(null);
             callback && callback();
         }
         }>
@@ -69,9 +71,7 @@ function Toggle({ opensubmenu, setOpenSubmenu, callback }) {
 
 function List({ children, opensubmenu, renderActionComponent, setRenderActionComponent }) {
     return opensubmenu && (
-        <Navigation>{ React.Children.map(children, child =>
-            React.cloneElement(child, { renderActionComponent, setRenderActionComponent }),
-        ) }</Navigation>);
+        <Navigation>{ React.Children.map(children, child => React.cloneElement(child, { renderActionComponent, setRenderActionComponent })) }</Navigation>);
 }
 
 function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender }) {
