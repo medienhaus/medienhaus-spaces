@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
@@ -160,7 +160,8 @@ export default function Write() {
     }, [serviceSpaceId, serverPads]);
 
     async function createWriteRoom(link, name) {
-        console.log('creating room for ' + name);
+        // eslint-disable-next-line no-undef
+        if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
         await matrixClient.sendMessage(room, {
@@ -172,6 +173,7 @@ export default function Write() {
             await write.syncAllPads();
             setServerPads(write.getAllPads());
         }
+        return room;
     }
 
     const ActionNewAnonymousPad = () => {
@@ -187,7 +189,9 @@ export default function Write() {
                 string += characters.charAt(Math.floor(Math.random() * charactersLength));
             }
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
-            await createWriteRoom(link, padName);
+            const roomId = await createWriteRoom(link, padName);
+            router.push(`/write/${roomId}`);
+
             setLoading(false);
             setPadName('');
         };
@@ -214,7 +218,8 @@ export default function Write() {
         const handleSubmit = async (e) => {
             e.preventDefault();
             setLoading(true);
-            await createWriteRoom(padLink, padName);
+            const roomId = await createWriteRoom(padLink, padName);
+            router.push(`/write/${roomId}`);
             setLoading(false);
         };
 
@@ -237,7 +242,8 @@ export default function Write() {
             setLoading(true);
             const padId = await write.createPad(padName, 'private', password);
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-            await createWriteRoom(link, padName);
+            const roomId = await createWriteRoom(link, padName);
+            router.push(`/write/${roomId}`);
             setLoading(false);
         };
 
@@ -263,7 +269,8 @@ export default function Write() {
                 return;
             }
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-            await createWriteRoom(link);
+            const roomId = await createWriteRoom(link);
+            router.push(`/write/${roomId}`);
         };
 
         return (
