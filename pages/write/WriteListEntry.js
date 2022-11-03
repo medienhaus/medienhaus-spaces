@@ -10,6 +10,7 @@ import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
 
+/*
 const LinkElement = styled.li`
   display: flex;
   align-items: center;
@@ -44,6 +45,48 @@ const LinkElement = styled.li`
 
   &:nth-of-type(even) {
     background-color: var(--color-lo);
+  }
+`;
+*/
+
+const TableRow = styled.tr`
+  height: calc(var(--margin) * 3);
+  background-color: var(--color-lo);
+
+  /*
+  &:nth-child(odd) {
+    background-color: var(--color-lo);
+  }
+  */
+
+  & td {
+    /*
+    border-color: var(--color-lo);
+    border-style: solid;
+    border-width: calc(var(--margin) * 0.2);
+    */
+    width: 100%;
+  }
+
+  & td:first-of-type {
+    padding: 0 var(--margin);
+  }
+
+  & button {
+    all: initial;
+    display: grid;
+    place-items: center;
+    width: calc(var(--margin) * 3);
+    height: calc(var(--margin) * 3);
+    cursor: pointer;
+
+    /*
+    background-color: var(--color-fg);
+
+    & svg {
+        fill: var(--color-bg);
+    }
+    */
   }
 `;
 
@@ -99,16 +142,22 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     if (content === null) return;
 
     return (
-        <LinkElement>
-            <Link href={`/write/${roomId}`}>{ linkName }</Link>
-            <div className="group">
+        <TableRow>
+            <td>
+                <Link href={`/write/${roomId}`}>{ linkName }</Link>
+            </td>
+            <td>
                 { serverPads &&
             <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
             </button> }
+            </td>
+            <td>
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
+            </td>
+            <td>
                 <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
-            </div>
-        </LinkElement>
+            </td>
+        </TableRow>
     );
 };
 export default WriteListEntry;

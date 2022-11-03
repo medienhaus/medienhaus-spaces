@@ -28,6 +28,11 @@ const IframeColumn = styled(MultiColumnLayout.Column)`
   padding: 0;
 `;
 
+const Table = styled.table`
+  width: 100%;
+  border-spacing: calc(var(--margin) * 0.2);
+`;
+
 export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -299,17 +304,19 @@ export default function Write() {
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-                    <ul>
-                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                            return <WriteListEntry
-                                key={roomId}
-                                roomId={roomId}
-                                parent={serviceSpaceId}
-                                serverPads={serverPads}
-                                callback={syncServerPadsAndSet}
-                            />;
-                        }) }
-                    </ul>
+                    <Table>
+                        <tbody>
+                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                                return <WriteListEntry
+                                    key={roomId}
+                                    roomId={roomId}
+                                    parent={serviceSpaceId}
+                                    serverPads={serverPads}
+                                    callback={syncServerPadsAndSet}
+                                />;
+                            }) }
+                        </tbody>
+                    </Table>
                 </>
             </SidebarColumn>
             { roomId && content && (
