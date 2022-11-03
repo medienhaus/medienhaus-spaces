@@ -12,7 +12,6 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import TextButton from '../../components/UI/TextButton';
 import FrameView from '../../components/FrameView';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
@@ -39,17 +38,8 @@ export default function Write() {
     const router = useRouter();
     // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
     const roomId = _.get(router, 'query.roomId.0');
-
-    const [newPadName, setNewPadName] = useState('');
-    const [newPadLink, setNewPadLink] = useState('');
-    const [validLink, setValidLink] = useState('undefined');
-    const [password, setPassword] = useState('');
-    const [validatePassword, setValidatePassword] = useState('');
-    const [actionSelect, setActionSelect] = useState('');
     const [serviceSpaceId, setServiceSpaceId] = useState();
-    const [, setOpenActions] = useState(false);
     const [serverPads, setServerPads] = useState({});
-    const [loading, setLoading] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
@@ -169,8 +159,9 @@ export default function Write() {
         return () => cancelled = true;
     }, [serviceSpaceId, serverPads]);
 
-    async function createWriteRoom(link = newPadLink, name = newPadName) {
-        console.log('creating room for ' + name);
+    async function createWriteRoom(link, name) {
+        // eslint-disable-next-line no-undef
+        if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
         await matrixClient.sendMessage(room, {
@@ -182,84 +173,114 @@ export default function Write() {
             await write.syncAllPads();
             setServerPads(write.getAllPads());
         }
-        setActionSelect('');
-        setNewPadName('');
-        setNewPadLink('');
-        setPassword('');
-        setValidatePassword('');
-        setOpenActions(false);
+        return room;
     }
 
-    const createAnonymousPad = async () => {
-        setLoading(true);
-        let string = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-        const charactersLength = characters.length;
-        for (let i = 0; i < 20; i++) {
-            string += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
-        await createWriteRoom(link);
-        setLoading(false);
-    };
+    const ActionNewAnonymousPad = () => {
+        const [padName, setPadName] = useState('');
+        const [loading, setLoading] = useState(false);
 
-    const createPasswordPad = async () => {
-        setLoading(true);
-        const padId = await write.createPad(newPadName, 'private', password);
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-        await createWriteRoom(link);
-        setLoading(false);
-    };
+        const createAnonymousPad = async () => {
+            setLoading(true);
+            let string = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
+            const charactersLength = characters.length;
+            for (let i = 0; i < 20; i++) {
+                string += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
+            const roomId = await createWriteRoom(link, padName);
+            router.push(`/write/${roomId}`);
 
-    const createAuthoredPad = async () => {
-        setLoading(true);
-        const padId = await write.createPad(newPadName, 'public').catch((err) => {
-            console.log(err);
-        });
-        if (!padId) {
             setLoading(false);
-            return;
-        }
-        const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-        await createWriteRoom(link);
+            setPadName('');
+        };
+
+        return (
+            <form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
+                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
+            </form>);
     };
 
-    const handleExistingPad = (e) => {
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
-        else setValidLink(false);
-        setNewPadLink(e.target.value);
+    const ActionExistingPad = () => {
+        const [padName, setPadName] = useState('');
+        const [padLink, setPadLink] = useState('');
+        const [validLink, setValidLink] = useState('undefined');
+        const [loading, setLoading] = useState(false);
+
+        const handleExistingPad = (e) => {
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
+            else setValidLink(false);
+            setPadLink(e.target.value);
+        };
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            const roomId = await createWriteRoom(padLink, padName);
+            router.push(`/write/${roomId}`);
+            setLoading(false);
+        };
+
+        return (
+            <form onSubmit={handleSubmit}>
+                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+                <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
+                { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinner inverted /> : t('Add existing pad') }</button>
+            </form>);
     };
 
-    const renderSelectedOption = () => {
-        switch (actionSelect) {
-            case 'anonymousPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-                </form>);
-            case 'existingPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createWriteRoom(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="text" placeholder={t('link to pad')} value={newPadLink} onChange={handleExistingPad} />
-                    { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
-                    <button type="submit" disabled={!newPadName || !newPadLink || !validLink}>{ loading ? <LoadingSpinner inverted /> :t('Add existing pad') }</button>
-                </form>);
-            case 'passwordPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-                    <button type="submit" disabled={!newPadName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-                </form>);
-            case 'authoredPad':
-                return (<form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
-                    <input type="text" placeholder={t('pad name')} value={newPadName} onChange={(e) => setNewPadName(e.target.value)} />
-                    <button type="submit" disabled={!newPadName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-                </form>);
-            default:
-                return (null);
-        }
+    const ActionPasswordPad = () => {
+        const [padName, setPadName] = useState('');
+        const [password, setPassword] = useState('');
+        const [validatePassword, setValidatePassword] = useState('');
+        const [loading, setLoading] = useState(false);
+
+        const createPasswordPad = async () => {
+            setLoading(true);
+            const padId = await write.createPad(padName, 'private', password);
+            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+            const roomId = await createWriteRoom(link, padName);
+            router.push(`/write/${roomId}`);
+            setLoading(false);
+        };
+
+        return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
+            <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
+        </form>);
     };
+
+    const ActionAuthoredPad = () => {
+        const [padName, setPadName] = useState('');
+        const [loading, setLoading] = useState(false);
+
+        const createAuthoredPad = async () => {
+            setLoading(true);
+            const padId = await write.createPad(padName, 'public').catch((err) => {
+                console.log(err);
+            });
+            if (!padId) {
+                setLoading(false);
+                return;
+            }
+            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+            const roomId = await createWriteRoom(link);
+            router.push(`/write/${roomId}`);
+        };
+
+        return (
+            <form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
+                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
+            </form>);
+    };
+
+    <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>;
 
     if (!serviceSpaceId) return <LoadingSpinner />;
 
@@ -269,15 +290,14 @@ export default function Write() {
                 { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
                 <>
                     <ServiceSubmenu title="/write">
-                        <ServiceSubmenu.Toggle callback={() => setActionSelect('')} />
+                        <ServiceSubmenu.Toggle />
                         <ServiceSubmenu.List>
-                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('existingPad')}>{ t('Add existing pad') }</TextButton></ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item><TextButton onClick={() => setActionSelect('anonymousPad')}>{ t('Create new anonymous pad') }</TextButton></ServiceSubmenu.Item>
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('authoredPad')}>{ t('Create new authored pad') }</TextButton></ServiceSubmenu.Item> }
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item><TextButton disabled={!serverPads} onClick={() => setActionSelect('passwordPad')}>{ t('Create password protected pad') }</TextButton></ServiceSubmenu.Item> }
+                            <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
-                    { renderSelectedOption() }
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ul>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
