@@ -10,7 +10,6 @@ import Link from 'next/link';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import TextButton from '../../components/UI/TextButton';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import FrameView from '../../components/FrameView';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
@@ -41,12 +40,7 @@ export default function Sketch() {
     const application = 'sketch';
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
-    const [actionSelect, setActionSelect] = useState('');
-    const [, setOpenActions] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [newSketchName, setNewSketchName] = useState('');
-    const [sketchLink, setSketchLink] = useState('');
-    const [validLink, setValidLink] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
@@ -204,7 +198,7 @@ export default function Sketch() {
         return () => cancelled = true;
     }, [matrix.roomContents, roomId]);
 
-    async function createSketchRoom(link = sketchLink, name = newSketchName, parent = serviceSpaceId) {
+    async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.debug('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link').catch(() => {
@@ -219,56 +213,49 @@ export default function Sketch() {
         }).catch(() => {
             setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
         });
-        // await write.syncAllPads();
-
-        setActionSelect('');
-        setNewSketchName('');
-        setSketchLink('');
-        // setPassword('');
-        // setValidatePassword('');
-        setOpenActions(false);
     }
 
-    const handleExistingSketch = (e) => {
-        setLoading(true);
-        if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
-        else setValidLink(false);
-        setSketchLink(e.target.value);
-        setActionSelect('');
-        setLoading(false);
+    const ActionNewSketch = () => {
+        const [sketchName, setSketchName] = useState('');
+
+        const createNewSketchRoom = async () => {
+            setLoading(true);
+            const create = await sketch.createSpace(sketchName);
+            const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + 'spaces/' + create._id;
+            createSketchRoom(link);
+            setLoading(false);
+        };
+
+        return (
+            <form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
+                <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinner inverted /> : t('Create sketch') }</button>
+                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            </form>);
     };
 
-    const createNewSketchRoom = async () => {
-        setLoading(true);
-        const create = await sketch.createSpace(newSketchName);
-        const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + 'spaces/' + create._id;
-        createSketchRoom(link);
-        setActionSelect('');
-        setLoading(false);
-    };
+    const ActionExistingSketch = () => {
+        const [sketchName, setSketchName] = useState('');
+        const [sketchLink, setSketchLink] = useState('');
+        const [validLink, setValidLink] = useState(false);
 
-    const renderSelectedOption = () => {
-        switch (actionSelect) {
-            case 'existingSketch':
-                return (
-                    <form onSubmit={(e) => { e.preventDefault(); createSketchRoom(); }}>
-                        <input type="text" placeholder={t('sketch name')} value={newSketchName} onChange={(e) => setNewSketchName(e.target.value)} />
-                        <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                        { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
+        const handleExistingSketch = (e) => {
+            setLoading(true);
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
+            else setValidLink(false);
+            setSketchLink(e.target.value);
+            setLoading(false);
+        };
 
-                        <button type="submit" disabled={!newSketchName}>{ loading ? <LoadingSpinner inverted /> : t('Add existing sketch') }</button>
-                        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                    </form>);
-            case 'newSketch':
-                return (
-                    <form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
-                        <input type="text" placeholder={t('sketch name')} value={newSketchName} onChange={(e) => setNewSketchName(e.target.value)} />
-                        <button type="submit" disabled={!newSketchName}>{ loading ? <LoadingSpinner inverted /> : t('Create sketch') }</button>
-                        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                    </form>);
-            default:
-                return (null);
-        }
+        return (
+            <form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); }}>
+                <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+                <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
+                { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
+
+                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinner inverted /> : t('Add existing sketch') }</button>
+                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            </form>);
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
@@ -279,13 +266,12 @@ export default function Sketch() {
                 { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/sketch</Link></MultiColumnLayout.ColumnMobileHead> }
                 <>
                     <ServiceSubmenu title="/sketch">
-                        <ServiceSubmenu.Toggle callback={() => setActionSelect('')} />
+                        <ServiceSubmenu.Toggle />
                         <ServiceSubmenu.List>
-                            <ServiceSubmenu.Item><TextButton value="existingSketch" onClick={() => setActionSelect('existingSketch')}>{ t('Add existing sketch') }</TextButton></ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item><TextButton value="newSketch" onClick={() => setActionSelect('newSketch')}>{ t('Create sketch') }</TextButton></ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
-                    { renderSelectedOption() }
                 </>
                 { syncingServerSketches ?
                     <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
