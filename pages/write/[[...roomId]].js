@@ -16,7 +16,6 @@ import FrameView from '../../components/FrameView';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import Details from '../../components/UI/Details';
 
 const SidebarColumn = styled(MultiColumnLayout.Column)`
   @media (width > 51em) {
