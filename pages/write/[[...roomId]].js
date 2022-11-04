@@ -29,11 +29,6 @@ const IframeColumn = styled(MultiColumnLayout.Column)`
   padding: 0;
 `;
 
-const Table = styled.table`
-  width: 100%;
-  border-spacing: calc(var(--margin) * 0.2);
-`;
-
 export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
