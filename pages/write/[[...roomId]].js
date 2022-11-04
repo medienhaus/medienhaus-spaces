@@ -15,6 +15,8 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import FrameView from '../../components/FrameView';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import { ServiceTable } from '../../components/UI/ServiceTable';
+import Details from '../../components/UI/Details';
 
 const SidebarColumn = styled(MultiColumnLayout.Column)`
   @media (width > 51em) {
@@ -304,19 +306,17 @@ export default function Write() {
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-                    <Table>
-                        <tbody>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                                return <WriteListEntry
-                                    key={roomId}
-                                    roomId={roomId}
-                                    parent={serviceSpaceId}
-                                    serverPads={serverPads}
-                                    callback={syncServerPadsAndSet}
-                                />;
-                            }) }
-                        </tbody>
-                    </Table>
+                    <ServiceTable>
+                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                            return <WriteListEntry
+                                key={roomId}
+                                roomId={roomId}
+                                parent={serviceSpaceId}
+                                serverPads={serverPads}
+                                callback={syncServerPadsAndSet}
+                            />;
+                        }) }
+                    </ServiceTable>
                 </>
             </SidebarColumn>
             { roomId && content && (

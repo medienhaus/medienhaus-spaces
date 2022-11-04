@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
@@ -9,86 +8,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Clipboard from '../../assets/icons/clipboard.svg';
 import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
-
-/*
-const LinkElement = styled.li`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-right: var(--margin);
-  padding-left: var(--margin);
-
-  .group {
-    display: inherit;
-  }
-
-  svg {
-    margin-left: 0.5em;
-    cursor: pointer;
-  }
-
-  button {
-    padding: 0;
-    margin: 0;
-    background: none;
-    border: none;
-  }
-
-  button svg {
-    fill: var(--color-fg);
-  }
-
-  button[disabled] svg {
-    cursor: initial;
-    fill: var(--color-me);
-  }
-
-  &:nth-of-type(even) {
-    background-color: var(--color-lo);
-  }
-`;
-*/
-
-const TableRow = styled.tr`
-  height: calc(var(--margin) * 3);
-  background-color: var(--color-lo);
-
-  /*
-  &:nth-child(odd) {
-    background-color: var(--color-lo);
-  }
-  */
-
-  & td {
-    /*
-    border-color: var(--color-lo);
-    border-style: solid;
-    border-width: calc(var(--margin) * 0.2);
-    */
-    width: 100%;
-  }
-
-  & td:first-of-type {
-    padding: 0 var(--margin);
-  }
-
-  & button {
-    all: initial;
-    display: grid;
-    place-items: center;
-    width: calc(var(--margin) * 3);
-    height: calc(var(--margin) * 3);
-    cursor: pointer;
-
-    /*
-    background-color: var(--color-fg);
-
-    & svg {
-        fill: var(--color-bg);
-    }
-    */
-  }
-`;
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     const auth = useAuth();
@@ -138,26 +58,23 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
         return () => controller.abort;
     }, [content, matrix, roomId, serverPads]);
 
-    if (content === undefined || serverPads === null) return <LoadingSpinner />;
+    if (content === undefined || serverPads === null) return null;
     if (content === null) return;
 
     return (
-        <TableRow>
-            <td>
-                <Link href={`/write/${roomId}`}>{ linkName }</Link>
-            </td>
-            <td>
-                { serverPads &&
-            <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
-            </button> }
-            </td>
-            <td>
+        <ServiceTable.Row>
+            <ServiceTable.Cell><Link href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
+            { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' &&
+            <ServiceTable.Cell>
+                <button disabled title={t('password protected')}><Lock /></button>
+            </ServiceTable.Cell> }
+            <ServiceTable.Cell>
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
-            </td>
-            <td>
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
                 <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
-            </td>
-        </TableRow>
+            </ServiceTable.Cell>
+        </ServiceTable.Row>
     );
 };
 export default WriteListEntry;
