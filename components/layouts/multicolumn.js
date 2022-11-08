@@ -37,7 +37,7 @@ const Column = styled.div`
     max-width: 55ch;
     height: 100vh;
     overflow: auto;
-    border-left: 0.25rem solid black;
+    border-left: 0.13rem solid black;
 
     // ... the last column should typically stretch and fill out all the remaining space
     :last-of-type {
