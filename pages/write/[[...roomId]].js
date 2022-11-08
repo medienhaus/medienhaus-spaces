@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
@@ -106,7 +105,7 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [matrix.initialSyncDone]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.write]);
 
     useEffect(() => {
         let cancelled = false;
@@ -131,12 +130,12 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [write]);
+    }, [syncServerPadsAndSet, write]);
 
-    async function syncServerPadsAndSet() {
+    const syncServerPadsAndSet = useCallback(async () => {
         await write.syncAllPads().catch(() => setServerPads(null));
         setServerPads(write.getAllPads());
-    }
+    }, [write]);
 
     useEffect(() => {
         let cancelled = false;
@@ -165,6 +164,7 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads]);
 
     async function createWriteRoom(link = newPadLink, name = newPadName) {
