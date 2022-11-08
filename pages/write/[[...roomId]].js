@@ -15,6 +15,7 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import FrameView from '../../components/FrameView';
 import MultiColumnLayout from '../../components/layouts/multicolumn';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 const SidebarColumn = styled(MultiColumnLayout.Column)`
   @media (width > 51em) {
@@ -299,7 +300,7 @@ export default function Write() {
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-                    <ul>
+                    <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <WriteListEntry
                                 key={roomId}
@@ -309,7 +310,7 @@ export default function Write() {
                                 callback={syncServerPadsAndSet}
                             />;
                         }) }
-                    </ul>
+                    </ServiceTable>
                 </>
             </SidebarColumn>
             { roomId && content && (
