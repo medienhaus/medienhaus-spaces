@@ -291,7 +291,6 @@ export default function Write() {
                 { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
                 <>
                     <ServiceSubmenu title="/write">
-                        <ServiceSubmenu.Toggle />
                         <ServiceSubmenu.List>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>

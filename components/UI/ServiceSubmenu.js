@@ -15,7 +15,7 @@ const Header = styled.div`
   }
 `;
 
-const CloseButton = styled.a`
+const ToggleButton = styled.a`
   grid-area: toggle;
   align-self: center;
   justify-self: end;
@@ -41,31 +41,22 @@ export function ServiceSubmenu({ title, children }) {
     const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
     const [renderActionComponent, setRenderActionComponent] = useState(null);
 
+    const handleMenuToggle = () => {
+       setOpenSubmenu(!opensubmenu);
+            // if opensubmenu changed and was true we don't want to render any action components
+            if (opensubmenu) setRenderActionComponent(null);
+    }
     return (
         <Header>
-            <h1>{ title }</h1>
+        <h1>{title}</h1>
+         <ToggleButton onClick={handleMenuToggle}>
+            <Plus fill="var(--color-fg)" style={{ transform: opensubmenu && 'rotate(45deg)' }} />
+        </ToggleButton>
             { React.Children.map(children, child =>
                 React.cloneElement(child, { opensubmenu, setOpenSubmenu, renderActionComponent, setRenderActionComponent }),
             ) }
             { renderActionComponent && renderActionComponent }
         </Header>
-    );
-}
-
-function Toggle({ opensubmenu, setOpenSubmenu, setRenderActionComponent, callback }) {
-    return (
-
-        <CloseButton onClick={() => {
-            setOpenSubmenu(!opensubmenu);
-            // if opensubmenu changed and was true we don't want to render any action components
-            if (opensubmenu) setRenderActionComponent(null);
-            callback && callback();
-        }
-        }>
-            <Plus fill="var(--color-fg)"
-                style={{ transform: opensubmenu && 'rotate(45deg)' }} />
-        </CloseButton>
-
     );
 }
 
@@ -80,7 +71,5 @@ function Item({ children, renderActionComponent, setRenderActionComponent, actio
     </>
     );
 }
-
-ServiceSubmenu.Toggle = Toggle;
 ServiceSubmenu.List = List;
 ServiceSubmenu.Item = Item;
