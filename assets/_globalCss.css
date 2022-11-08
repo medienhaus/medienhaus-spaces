@@ -2,12 +2,10 @@
 @import '../public/assets/fonts/inter/inter.css';
 
 :root {
-  --color-fg: rgb(0 0 0);
-  --color-bg: rgb(255 255 255);
-  --color-hi: rgb(255 240 170);
-  --color-no: rgb(255 96 96);
-  --color-me: rgb(128 128 128);
-  --color-lo: rgb(240 240 240);
+  --color-background: rgb(255 255 255);
+  --color-foreground: rgb(0 0 0);
+  --color-disabled: rgb(128 128 128);
+  --color-selection: rgb(255 240 170);
   --margin: 1rem;
 }
 
@@ -20,7 +18,7 @@
 }
 
 *::selection {
-  background-color: var(--color-hi);
+  background-color: var(--color-selection);
 }
 
 body {
@@ -29,8 +27,8 @@ body {
   font-style: normal;
   font-weight: 500;
   line-height: 1.3;
-  color: var(--color-fg);
-  background-color: var(--color-bg);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
 }
 
 @supports (font-variation-settings: normal) {
@@ -39,26 +37,44 @@ body {
   }
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: unset;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
+}
+
 a:link {
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-decoration: none;
 }
 
 a:visited {
-  color: var(--color-fg);
+  color: var(--color-foreground);
 }
 
 a:hover {
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-decoration: underline;
 }
 
 a:focus {
-  color: var(--color-fg);
+  color: var(--color-foreground);
 }
 
 a:active {
-  color: var(--color-fg);
+  color: var(--color-foreground);
 }
 
 select {
@@ -66,15 +82,15 @@ select {
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 2) 0 calc(var(--margin) * 0.75);
   font-weight: 500;
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-overflow: ellipsis;
   cursor: pointer;
-  background-color: var(--color-bg);
+  background-color: var(--color-background);
   background-image: url('data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMHB4IiB3aWR0aD0iMzAwcHgiIGZpbGw9InJnYigxMjgsMTI4LDEyOCkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHg9IjBweCIgeT0iMHB4Ij48cG9seWdvbiBwb2ludHM9IjUwIDU3LjEzIDIzLjE5IDMwLjQ2IDE2LjEzIDM3LjU1IDUwIDcxLjIzIDgzLjg2IDM3LjU1IDc2LjgxIDMwLjQ2IDUwIDU3LjEzIj48L3BvbHlnb24+PC9zdmc+');
   background-repeat: no-repeat;
   background-position: calc(100% - calc(var(--margin) * 0.75)) 50%;
   background-size: var(--margin);
-  border-color: var(--color-fg);
+  border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
   appearance: none;
@@ -82,18 +98,18 @@ select {
 
 select:-moz-focusring {
   color: transparent;
-  text-shadow: 0 0 0 var(--color-fg);
+  text-shadow: 0 0 0 var(--color-foreground);
 }
 
 select:-moz-focusring * {
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-shadow: none;
 }
 
 select[disabled] {
-  color: var(--color-me);
+  color: var(--color-disabled);
   cursor: not-allowed;
-  border-color: var(--color-me);
+  border-color: var(--color-disabled);
 }
 
 button {
@@ -106,10 +122,10 @@ input[type='submit'] {
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 0.75);
   font-weight: 700;
-  color: var(--color-bg);
+  color: var(--color-background);
   cursor: pointer;
-  background-color: var(--color-fg);
-  border-color: var(--color-fg);
+  background-color: var(--color-foreground);
+  border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
   appearance: none;
@@ -118,8 +134,8 @@ input[type='submit'] {
 button[disabled],
 input[type='submit'][disabled] {
   cursor: not-allowed;
-  background-color: var(--color-me);
-  border-color: var(--color-me);
+  background-color: var(--color-disabled);
+  border-color: var(--color-disabled);
 }
 
 input[id*='datalist'],
@@ -137,9 +153,9 @@ input[type='url'] {
   height: calc(var(--margin) * 3);
   padding: 0 calc(var(--margin) * 0.75);
   font-weight: 500;
-  color: var(--color-fg);
-  background-color: var(--color-bg);
-  border-color: var(--color-fg);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
   border-radius: unset;
@@ -156,7 +172,7 @@ input[type='tel'][disabled],
 input[type='text'][disabled],
 input[type='time'][disabled],
 input[type='password'][disabled] {
-  color: var(--color-me);
+  color: var(--color-disabled);
   cursor: not-allowed;
-  border-color: var(--color-me);
+  border-color: var(--color-disabled);
 }

@@ -5,7 +5,7 @@ import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
   padding: 0;
-  margin: 0 0 calc(var(--margin) * 3);
+  margin: 0 0 calc(var(--margin) * 2);
   list-style: none;
 
   li {
