@@ -1,7 +1,7 @@
 // This component returns a styled table with optional table head(<th />).
 // Example usage:
 
-// <ServiceTable head='Table head'>
+// <ServiceTable>
 //   <ServiceTable.Row>
 //     <ServiceTable.Cell>This content will be aligned left and take up all remaining space</ServiceTable.Cell>
 //     <ServiceTable.Cell>Any following cell will be aligned right and exactly the size of it's content</ServiceTable.Cell>
@@ -44,7 +44,6 @@ const TableCell = styled.td`
 export function ServiceTable({ head, children }) {
     return (
         <Table>
-            { head && <thead>{ head }</thead> }
             <tbody>{ children }</tbody>
         </Table>
     );
