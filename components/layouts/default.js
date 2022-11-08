@@ -11,8 +11,8 @@ export const Main = styled.main`
     grid-column: 2;
     max-width: 55ch;
     height: 100vh;
+    padding: var(--margin) calc(var(--margin) * 1.3);
     overflow: auto;
-    border-left: 0.13rem solid black;
 
     @media (width > 68em) {
       padding: calc(var(--margin) * 2);
@@ -20,7 +20,7 @@ export const Main = styled.main`
   }
 `;
 
-const SingleColumnLayout = ({ children }) => {
+const DefaultLayout = ({ children }) => {
     return (
         <BaseLayout>
             <Main>
@@ -31,5 +31,5 @@ const SingleColumnLayout = ({ children }) => {
 };
 
 export {
-    SingleColumnLayout,
+    DefaultLayout,
 };

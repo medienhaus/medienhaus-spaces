@@ -8,7 +8,7 @@ import '../lib/Internationalization';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '/assets/_globalCss.css';
-import { SingleColumnLayout } from '../components/layouts/singlecolumn';
+import { DefaultLayout } from '../components/layouts/default';
 
 const guestRoutes = ['/', '/login'];
 
@@ -17,7 +17,7 @@ export default function App({ Component, pageProps }) {
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData.getActiveMatrixAuthentications());
 
-    let Layout = SingleColumnLayout;
+    let Layout = DefaultLayout;
     if (Component.getLayout) { Layout = Component.getLayout(); }
 
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
