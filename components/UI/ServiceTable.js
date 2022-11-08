@@ -41,7 +41,7 @@ const TableCell = styled.td`
   }
 `;
 
-export function ServiceTable({ head, children }) {
+export function ServiceTable({ children }) {
     return (
         <Table>
             <tbody>{ children }</tbody>
@@ -49,15 +49,5 @@ export function ServiceTable({ head, children }) {
     );
 }
 
-function Row({ children }) {
-    return (<TableRow>{ children }</TableRow>
-    );
-}
-
-function Cell({ children }) {
-    return (<TableCell>{ children }</TableCell>
-    );
-}
-
-ServiceTable.Row = Row;
-ServiceTable.Cell = Cell;
+ServiceTable.Row = TableRow;
+ServiceTable.Cell = TableCell;
