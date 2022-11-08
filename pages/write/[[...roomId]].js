@@ -70,9 +70,7 @@ export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrixSpaces = matrix.spaces.values();
     const { t } = useTranslation('write');
-    const application = 'write';
     const router = useRouter();
     // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
     const roomId = _.get(router, 'query.roomId.0');
@@ -90,40 +88,6 @@ export default function Write() {
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
-    const lookForServiceFolder = async (applicationsSpaceId) => {
-        const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
-        if (findServiceSpace) return findServiceSpace.roomId;
-        else {
-            console.info('creating service space');
-            const createRoom = await matrix.createRoom(
-                application,
-                true,
-                `This is your private space for the application ${application}. You can find all your ${application} data in here.`,
-                'invite',
-                'context',
-                'application');
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(applicationsSpaceId, createRoom);
-            return createRoom;
-        }
-    };
-
-    const lookForApplicationsFolder = async () => {
-        const findApplicationsFolder = Array.from(matrixSpaces).find(space => space.meta?.template === 'applications');
-        if (findApplicationsFolder) {
-            console.info('found applications space');
-            return findApplicationsFolder.roomId;
-        } else {
-            console.log('creating root applications folder');
-            const newApplicationsFolder = await matrix.createRoom(
-                'Applications',
-                true,
-                'This is your private applications space. You can find all your application data in here.',
-                'invite',
-                'context',
-                'applications');
-            return newApplicationsFolder;
-        }
-    };
 
     useEffect(() => {
         let cancelled = false;
@@ -131,9 +95,7 @@ export default function Write() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
-                    const applicationsSpaceId = await lookForApplicationsFolder();
-                    const space = await lookForServiceFolder(applicationsSpaceId);
-                    setServiceSpaceId(space);
+                    setServiceSpaceId(matrix.serviceSpaces.write);
                 } catch (err) {
                     console.log(err);
                 }
@@ -178,7 +140,6 @@ export default function Write() {
 
     useEffect(() => {
         let cancelled = false;
-
         const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
             if (matrix?.spaces.get(serviceSpaceId).children) {
