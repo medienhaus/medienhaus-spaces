@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import Plus from '../../assets/icons/plus.svg';
+import MenuAdd from '../../assets/icons/menu-add.svg';
 import TextButton from './TextButton';
 
 const Header = styled.div`
@@ -27,12 +27,16 @@ const Navigation = styled.ul`
   list-style: none;
 
   li {
-    margin-bottom: calc(var(--margin)/2);
+    padding: calc(var(--margin)/1.5);
 
     a[disabled] {
       color: var(--color-me);
       text-decoration: none;
       cursor: not-allowed;
+    }
+
+    &:hover {
+      background: var(--color-lo);
     }
   }
 `;
@@ -50,7 +54,7 @@ export function ServiceSubmenu({ title, children }) {
         <Header>
             <h1>{ title }</h1>
             <ToggleButton onClick={handleMenuToggle}>
-                <Plus fill="var(--color-fg)" style={{ transform: opensubmenu && 'rotate(45deg)' }} />
+                <MenuAdd fill="var(--color-fg)" />
             </ToggleButton>
             { React.Children.map(children, child =>
                 React.cloneElement(child, { opensubmenu, setOpenSubmenu, renderActionComponent, setRenderActionComponent }),
@@ -67,7 +71,11 @@ function List({ children, opensubmenu, renderActionComponent, setRenderActionCom
 
 function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender }) {
     return (<>
-        <li><TextButton onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>{ children }</TextButton></li>
+        <li>
+            <TextButton onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>
+                { children }
+            </TextButton>
+        </li>
     </>
     );
 }

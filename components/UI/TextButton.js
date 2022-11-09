@@ -5,7 +5,7 @@ const TextButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    text-decoration: underline;
+    // text-decoration: underline;
   }
 
   &:disabled {
