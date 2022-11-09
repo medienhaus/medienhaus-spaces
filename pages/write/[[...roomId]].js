@@ -1,32 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import FrameView from '../../components/FrameView';
-import MultiColumnLayout from '../../components/layouts/multicolumn';
+import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    width: 30ch;
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-`;
 
 export default function Write() {
     const auth = useAuth();
@@ -251,8 +236,7 @@ export default function Write() {
 
     return (
         <>
-            <SidebarColumn>
-                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
+            <IframeLayout.Sidebar>
                 <>
                     <ServiceSubmenu title="/write">
                         <ServiceSubmenu.List>
@@ -275,16 +259,17 @@ export default function Write() {
                         }) }
                     </ServiceTable>
                 </>
-            </SidebarColumn>
+            </IframeLayout.Sidebar>
             { roomId && content && (
-                <IframeColumn>
-                    <FrameView link={content.body} />
-                </IframeColumn>
+                <IframeLayout.IframeWrapper>
+                    <iframe src={content.body} />
+                    { /* <FrameView link={content.body} /> */ }
+                </IframeLayout.IframeWrapper>
             ) }
         </>
     );
 }
 
 Write.getLayout = () => {
-    return MultiColumnLayout.Layout;
+    return IframeLayout.Layout;
 };
