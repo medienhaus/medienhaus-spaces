@@ -118,7 +118,10 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
-    }, [serviceSpaceId, serverPads, matrix.spaces, matrix.roomContents, matrix.rooms, createWriteRoom]);
+        // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
+        // therefore we need to disable the linter for the next line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [serviceSpaceId, serverPads, createWriteRoom]);
 
     const createWriteRoom = useCallback(async (link, name) => {
         // eslint-disable-next-line no-undef
