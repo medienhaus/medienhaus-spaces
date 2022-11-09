@@ -64,10 +64,10 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell><Link href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
-            { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' &&
+
             <ServiceTable.Cell>
-                <button disabled title={t('password protected')}><Lock /></button>
-            </ServiceTable.Cell> }
+                { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <button disabled title={t('password protected')}><Lock /></button> }
+            </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
             </ServiceTable.Cell>
