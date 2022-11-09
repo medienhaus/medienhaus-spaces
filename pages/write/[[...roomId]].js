@@ -252,7 +252,7 @@ export default function Write() {
         setOpenActions(openActions => !openActions);
         if (openActions) setActionSelect('');
     };
-    console.log(content);
+
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
