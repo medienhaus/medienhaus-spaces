@@ -14,19 +14,8 @@ import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
 import FrameView from '../../components/FrameView';
-import MultiColumnLayout from '../../components/layouts/multicolumn';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    width: 30ch;
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-`;
+import MultiColumnLayout from '../../components/layouts/iframe';
+import IframeLayout from '../../components/layouts/iframe';
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -263,13 +252,12 @@ export default function Write() {
         setOpenActions(openActions => !openActions);
         if (openActions) setActionSelect('');
     };
-
+    console.log(content);
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
         <>
-            <SidebarColumn>
-                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
+            <IframeLayout.Sidebar>
                 <>
                     <Header>
                         <h1>/write</h1>
@@ -302,16 +290,17 @@ export default function Write() {
                         }) }
                     </ul>
                 </>
-            </SidebarColumn>
+            </IframeLayout.Sidebar>
             { roomId && content && (
-                <IframeColumn>
-                    <FrameView link={content.body} />
-                </IframeColumn>
+                <IframeLayout.IframeWrapper>
+                    <iframe src={content.body} />
+                    { /* <FrameView link={content.body} /> */ }
+                </IframeLayout.IframeWrapper>
             ) }
         </>
     );
 }
 
 Write.getLayout = () => {
-    return MultiColumnLayout.Layout;
+    return IframeLayout.Layout;
 };
