@@ -118,10 +118,9 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [serviceSpaceId, serverPads]);
+    }, [serviceSpaceId, serverPads, matrix.spaces, matrix.roomContents, matrix.rooms, createWriteRoom]);
 
-    async function createWriteRoom(link, name) {
+    const createWriteRoom = useCallback(async (link, name) => {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
@@ -136,7 +135,7 @@ export default function Write() {
             setServerPads(write.getAllPads());
         }
         return room;
-    }
+    }, [auth, matrix, matrixClient, serviceSpaceId, write]);
 
     const ActionNewAnonymousPad = () => {
         const [padName, setPadName] = useState('');
@@ -231,8 +230,9 @@ export default function Write() {
                 return;
             }
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-            const roomId = await createWriteRoom(link);
+            const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            setLoading(false);
         };
 
         return (
@@ -255,8 +255,8 @@ export default function Write() {
                         <ServiceSubmenu.List>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
                         </ServiceSubmenu.List>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
