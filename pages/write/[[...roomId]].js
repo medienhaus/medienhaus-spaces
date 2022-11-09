@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -13,8 +12,6 @@ import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
-import FrameView from '../../components/FrameView';
-import MultiColumnLayout from '../../components/layouts/iframe';
 import IframeLayout from '../../components/layouts/iframe';
 
 const PlusIcon = styled(Plus)`
