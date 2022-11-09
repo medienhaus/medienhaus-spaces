@@ -42,16 +42,16 @@ export function ServiceSubmenu({ title, children }) {
     const [renderActionComponent, setRenderActionComponent] = useState(null);
 
     const handleMenuToggle = () => {
-       setOpenSubmenu(!opensubmenu);
-            // if opensubmenu changed and was true we don't want to render any action components
-            if (opensubmenu) setRenderActionComponent(null);
-    }
+        setOpenSubmenu(!opensubmenu);
+        // if opensubmenu changed and was true we don't want to render any action components
+        if (opensubmenu) setRenderActionComponent(null);
+    };
     return (
         <Header>
-        <h1>{title}</h1>
-         <ToggleButton onClick={handleMenuToggle}>
-            <Plus fill="var(--color-fg)" style={{ transform: opensubmenu && 'rotate(45deg)' }} />
-        </ToggleButton>
+            <h1>{ title }</h1>
+            <ToggleButton onClick={handleMenuToggle}>
+                <Plus fill="var(--color-fg)" style={{ transform: opensubmenu && 'rotate(45deg)' }} />
+            </ToggleButton>
             { React.Children.map(children, child =>
                 React.cloneElement(child, { opensubmenu, setOpenSubmenu, renderActionComponent, setRenderActionComponent }),
             ) }
