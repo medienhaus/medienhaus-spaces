@@ -12,6 +12,7 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import Form from '../../components/UI/Form';
 
 export default function Write() {
     const auth = useAuth();
@@ -146,10 +147,10 @@ export default function Write() {
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-            </form>);
+            </Form>);
     };
 
     const ActionExistingPad = () => {
@@ -173,12 +174,12 @@ export default function Write() {
         };
 
         return (
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
                 { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
                 <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinner inverted /> : t('Add existing pad') }</button>
-            </form>);
+            </Form>);
     };
 
     const ActionPasswordPad = () => {
@@ -196,12 +197,12 @@ export default function Write() {
             setLoading(false);
         };
 
-        return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
+        return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
             <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-        </form>);
+        </Form>);
     };
 
     const ActionAuthoredPad = () => {
@@ -224,10 +225,10 @@ export default function Write() {
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-            </form>);
+            </Form>);
     };
 
     <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>;
@@ -238,13 +239,14 @@ export default function Write() {
         <>
             <IframeLayout.Sidebar>
                 <>
-                    <ServiceSubmenu title="/write">
-                        <ServiceSubmenu.List>
+                    <ServiceSubmenu title={<h2>/write</h2>}>
+                        <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
+                            <ServiceSubmenu.Item disabled>-- { t('select action') } --</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
-                        </ServiceSubmenu.List>
+                        </ServiceSubmenu.Menu>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ServiceTable>

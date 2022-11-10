@@ -2,82 +2,89 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import MenuAdd from '../../assets/icons/menu-add.svg';
-import TextButton from './TextButton';
 
-const Header = styled.div`
+const Header = styled.header`
   display: grid;
-  grid-template-areas:
-    'title toggle'
-    'list list';
+  grid-template-columns: 1fr auto;
+`;
 
-  h1 {
-    grid-area: title;
+const ToggleButton = styled.button`
+  /* unset globally defined button styles; set height to line-height */
+  width: unset;
+  height: calc(var(--margin) * 1.3);
+  padding: unset;
+  background-color: unset;
+  border: unset;
+
+  /*
+  &:hover {
+    fill: var(--color-hover);
+  }
+  */
+`;
+
+const Submenu = styled.aside`
+  h3 {
+    margin-bottom: calc(var(--margin) / 1.5);
+  }
+
+  button {
+    padding: calc(var(--margin) / 1.5);
+    text-align: center;
+
+    & + button {
+      margin-top: calc(var(--margin) / 1.5);
+    }
+  }
+
+  /* set margin-bottom on very last child of submenu */
+  & > :last-child {
+    margin-bottom: calc(var(--margin) / 1.5);
   }
 `;
 
-const ToggleButton = styled.a`
-  grid-area: toggle;
-  align-self: center;
-  justify-self: end;
-`;
-
-const Navigation = styled.ul`
-  grid-area: list;
-  margin-bottom: calc(var(--margin) * 3);
-  list-style: none;
-
-  li {
-    padding: calc(var(--margin)/1.5);
-
-    a[disabled] {
-      color: var(--color-me);
-      text-decoration: none;
-      cursor: not-allowed;
-    }
-
-    &:hover {
-      background: var(--color-lo);
-    }
-  }
-`;
-
-export function ServiceSubmenu({ title, children }) {
+export function ServiceSubmenu({ title, icon, children }) {
     const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
-    const [renderActionComponent, setRenderActionComponent] = useState(null);
-
-    const handleMenuToggle = () => {
-        setOpenSubmenu(!opensubmenu);
-        // if opensubmenu changed and was true we don't want to render any action components
-        if (opensubmenu) setRenderActionComponent(null);
-    };
+    const handleMenuToggle = () => setOpenSubmenu(!opensubmenu);
     return (
-        <Header>
-            <h1>{ title }</h1>
-            <ToggleButton onClick={handleMenuToggle}>
-                <MenuAdd fill="var(--color-fg)" />
-            </ToggleButton>
+        <>
+            <Header>
+                { title && title }
+                <ToggleButton onClick={handleMenuToggle}>
+                    { /* <MenuAdd fill="var(--color-background)" /> */ }
+                    { icon ? icon : <MenuAdd /> }
+                </ToggleButton>
+            </Header>
             { React.Children.map(children, child =>
-                React.cloneElement(child, { opensubmenu, setOpenSubmenu, renderActionComponent, setRenderActionComponent }),
+                React.cloneElement(child, { opensubmenu, setOpenSubmenu }),
             ) }
-            { renderActionComponent && renderActionComponent }
-        </Header>
+        </>
     );
 }
 
-function List({ children, opensubmenu, renderActionComponent, setRenderActionComponent }) {
-    return opensubmenu && (
-        <Navigation>{ React.Children.map(children, child => React.cloneElement(child, { renderActionComponent, setRenderActionComponent })) }</Navigation>);
+function Menu({ subheadline, children, opensubmenu }) {
+    const [renderActionComponent, setRenderActionComponent] = useState(null);
+    // if opensubmenu changed and was true we don't want to render any action components
+    if (opensubmenu) {
+        return (
+            <Submenu>
+                { subheadline && <h3>{ subheadline }</h3> }
+                <select>
+                    { React.Children.map(children, child => React.cloneElement(child, { renderActionComponent, setRenderActionComponent })) }
+                </select>
+                { renderActionComponent && renderActionComponent }
+            </Submenu>
+        );
+    }
+    return null;
 }
 
-function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender }) {
-    return (<>
-        <li>
-            <TextButton onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>
-                { children }
-            </TextButton>
-        </li>
-    </>
+function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender, disabled }) {
+    return (
+        <option disabled={disabled} onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>
+            { children }
+        </option>
     );
 }
-ServiceSubmenu.List = List;
+ServiceSubmenu.Menu = Menu;
 ServiceSubmenu.Item = Item;

@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100vw;
   height: 100vh;
-  overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
+  overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
 
   --color-background-sidebar: rgb(240 240 240);
 
@@ -23,8 +23,7 @@ const Wrapper = styled.div`
 
   // This will add a bottom margin to all page-level headings (h2) that is in line with the
   // whitespace between the logo and the first entry of the navigation.
-  & > main > h2:first-child,
-  & > main > div > h2:first-child {
+  & > main h2:first-child {
     margin-bottom: var(--margin);
 
     @media (width > 51em) {
@@ -95,7 +94,7 @@ const Sidebar = styled.aside`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationOpen ? 'flex' : 'none'};
+    display: ${props => props.navigationopen ? 'flex' : 'none'};
   }
 `;
 
@@ -141,7 +140,7 @@ export default function BaseLayout({ children }) {
 
     return (
         <>
-            <Wrapper navigationOpen={navigationOpen}>
+            <Wrapper navigationopen={navigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { navigationOpen ? (
@@ -150,7 +149,7 @@ export default function BaseLayout({ children }) {
                         <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Sidebar navigationOpen={navigationOpen}>
+                <Sidebar navigationopen={navigationOpen}>
                     <Nav>
                         <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
                         <LanguageChooser />

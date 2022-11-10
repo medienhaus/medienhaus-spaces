@@ -6,6 +6,7 @@
   --color-foreground: rgb(0 0 0);
   --color-disabled: rgb(128 128 128);
   --color-selection: rgb(255 240 170);
+  --color-hover: rgb(240 240 240);
   --margin: 1rem;
 }
 

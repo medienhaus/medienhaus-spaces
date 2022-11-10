@@ -4,7 +4,7 @@ const LoadingSpinner = styled.div`
   display: inline-block;
   width: 2rem;
   height: 2rem;
-  border-color: ${props => props.inverted ? 'var(--color-bg) transparent var(--color-bg) transparent' : 'var(--color-fg) transparent var(--color-fg) transparent '};
+  border-color: ${props => props.inverted ? 'var(--color-background) transparent var(--color-background) transparent' : 'var(--color-foreground) transparent var(--color-foreground) transparent '};
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
   border-radius: 50%;

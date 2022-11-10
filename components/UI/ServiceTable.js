@@ -14,13 +14,15 @@ import styled from 'styled-components';
 
 const Table = styled.table`
   width: 100%;
-  border-spacing: calc(var(--margin) * 0.2);
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
   height: calc(var(--margin) * 3);
-  background-color: var(--color-lo);
+
+  &:first-of-type td:first-of-type {
+    border-top: 1px dotted rgb(210 210 210);
+  }
 `;
 
 const TableCell = styled.td`
@@ -28,17 +30,20 @@ const TableCell = styled.td`
   text-overflow: ellipsis;
 
   &:first-of-type {
-    padding: 0 var(--margin);
+    padding: 0;
+    font-size: 85%;
+    border-bottom: 1px dotted rgb(210 210 210);
   }
 
   & button {
     all: initial;
     display: grid;
     place-items: center;
-    width: calc(var(--margin) * 3);
-    height: calc(var(--margin) * 3);
+    width: calc(var(--margin) * 1.3);
+    height: calc(var(--margin) * 1.3);
     cursor: pointer;
   }
+
 `;
 
 export function ServiceTable({ children }) {
