@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import { DashboardItemTemplate } from './DashboardItemTemplate';
+import LoadingSpinner from '../UI/LoadingSpinner';
 
 export default function Publish({ item }) {
     const auth = useAuth();
@@ -20,7 +21,6 @@ export default function Publish({ item }) {
 
         const fetchLatestActivity = async () => {
         // we collect all public rooms from the root specId
-            console.log(matrix);
             const allRooms = await auth.getAuthenticationProvider('matrix').roomHierarchy(getConfig().publicRuntimeConfig.contextRootSpaceRoomId).catch(() => setError('Couldn\'t fetch activity feed'));
             const filteredRooms = [];
 
@@ -49,8 +49,8 @@ export default function Publish({ item }) {
 
                 filteredRooms.push(room);
             }
-
-            setActivityArray(_.orderBy(filteredRooms, 'published', 'desc'));
+            if (_.isEmpty(filteredRooms)) setActivityArray(null); // if filteredRooms is empty we change activityArray to null from undefined so we know, there is no content and we can stop displaying the loading spinner.
+            else setActivityArray(_.orderBy(filteredRooms, 'published', 'desc'));
         };
 
         matrix.initialSyncDone && !cancelled && fetchLatestActivity();
@@ -60,11 +60,10 @@ export default function Publish({ item }) {
         };
     }, [auth, matrix.initialSyncDone, matrixClient]);
 
-    if (!activityArray) console.log('NO');
-    if (error) console.log('ERROR', { error });
-
     console.log(activityArray);
-
+    if (activityArray === undefined) return <LoadingSpinner />;
+    if (activityArray === null) console.log('No activity here...');
+    if (error) console.log('ERROR', { error });
     return (
         <DashboardItemTemplate notifications={item.notifications}>
             <DashboardItemTemplate.Header title={item.title} />
