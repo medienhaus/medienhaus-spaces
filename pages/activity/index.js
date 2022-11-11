@@ -1,12 +1,15 @@
-import _ from 'lodash';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 
+import ErrorMessage from '../../components/UI/ErrorMessage';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import { DashboardItemTemplate } from './DashboardItemTemplate';
+import Article from './Article';
+import Event from './Event';
+import Resource from './Resource';
 
-export default function Publish({ item }) {
+export default function Activity() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -14,34 +17,31 @@ export default function Publish({ item }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
-    // dev variables for templates
+        // dev variables for templates
         const allowedTemplates = ['event', 'resource', 'article'];
         let cancelled = false;
 
         const fetchLatestActivity = async () => {
-        // we collect all public rooms from the root specId
-            console.log(matrix);
+            // we collect all public rooms from the root specId
             const allRooms = await auth.getAuthenticationProvider('matrix').roomHierarchy(getConfig().publicRuntimeConfig.contextRootSpaceRoomId).catch(() => setError('Couldn\'t fetch activity feed'));
             const filteredRooms = [];
 
             for (const room of allRooms) {
-            // then we check to see if these rooms are relevant and if so, we fetch more information.
-                const roomState = await matrixClient.roomState(room.room_id);
-                room.published = _.find(roomState, { type: 'm.room.create' }).origin_server_ts;
+                // then we check to see if these rooms are relevant and if so, we fetch more information.
 
-                const metaEvent = _.find(roomState, { type: 'dev.medienhaus.meta' })?.content;
+                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
                 // If this space/room does not have a meta event or any of the supplied templates, we do not care about it
                 if (!allowedTemplates.includes(metaEvent.template)) continue;
                 // otherwise we add the metaEvent to our object
                 room.metaEvent = metaEvent;
 
                 // get displayName of creator
-                const getAuthor = _.find(roomState, { type: 'm.room.create' })?.content;
+                const getAuthor = await matrixClient.getStateEvent(room.room_id, 'm.room.create').catch(() => { });
                 const getDisplayName = matrixClient.getUser(getAuthor.creator);
                 room.author = getDisplayName.displayName;
 
                 // try to fetch allocation data
-                const allocation = _.find(roomState, { type: 'dev.medienhaus.allocation' })?.content;
+                const allocation = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.allocation').catch(() => { });
                 if (allocation) room.allocation = allocation;
 
                 // if there is an avatar available we immediately convert it to a http link
@@ -49,8 +49,7 @@ export default function Publish({ item }) {
 
                 filteredRooms.push(room);
             }
-
-            setActivityArray(_.orderBy(filteredRooms, 'published', 'desc'));
+            setActivityArray(filteredRooms);
         };
 
         matrix.initialSyncDone && !cancelled && fetchLatestActivity();
@@ -60,14 +59,18 @@ export default function Publish({ item }) {
         };
     }, [auth, matrix.initialSyncDone, matrixClient]);
 
-    if (!activityArray) console.log('NO');
-    if (error) console.log('ERROR', { error });
-
-    console.log(activityArray);
-
+    if (!activityArray) return <LoadingSpinner />;
+    if (error) return <ErrorMessage>{ error }</ErrorMessage>;
     return (
-        <DashboardItemTemplate notifications={item.notifications}>
-            <DashboardItemTemplate.Header title={item.title} />
-        </DashboardItemTemplate>
+        <>
+            <section>
+                { activityArray.map((entry) => {
+                    if (entry.metaEvent.template === 'event') return <Event key={entry.room_id} activity={entry} />;
+                    if (entry.metaEvent.template === 'article') return <Article key={entry.room_id} activity={entry} />;
+                    if (entry.metaEvent.template === 'resource') return <Resource key={entry.room_id} activity={entry} />;
+                }) }
+            </section>
+        </>
     );
 }
+

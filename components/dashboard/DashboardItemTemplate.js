@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const DashboardItem = styled.section`
-  font-size: 1em;
-  padding: 0.25em 1em;
-  background: var(--color-lo);
   position: relative;
+  padding: 0.25em 1em;
+  font-size: 1em;
+  background: var(--color-lo);
 `;
 
 const DashboardHeader = styled.section`
@@ -12,41 +12,41 @@ const DashboardHeader = styled.section`
 `;
 
 const DashboardNotification = styled.section`
-  background: orange;
   position: absolute;
   top: 0;
   right: 0;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 17px;
   height: 17px;
+  font-size: 13px;
   color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translate(50%,-50%);
+  background: orange;
   border-radius: 100%;
+  transform: translate(50%, -50%);
 `;
 
 function Header({ title }) {
-  return (
-    <DashboardHeader>
-      {title}
-    </DashboardHeader>
-  );
+    return (
+        <DashboardHeader>
+            { title }
+        </DashboardHeader>
+    );
 }
 
-export function DashboardItemTemplate ({ children, notifications }) {
-  return (
-    <DashboardItem>
-       { children }
-       {
-        notifications &&
+export function DashboardItemTemplate({ children, notifications }) {
+    return (
+        <DashboardItem>
+            { children }
+            {
+                notifications &&
         <DashboardNotification>
-          {notifications.sum}
+            { notifications.sum }
         </DashboardNotification>
-       }
-    </DashboardItem>
-  );
-};
+            }
+        </DashboardItem>
+    );
+}
 
 DashboardItemTemplate.Header = Header;

@@ -5,9 +5,9 @@ import Chat from '../components/dashboard/Chat';
 import Publish from '../components/dashboard/Publish';
 
 const Wrapper = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-gap: var(--margin);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-gap: var(--margin);
 `;
 
 const data = {
@@ -15,7 +15,7 @@ const data = {
         {
             title: '/write',
             template: 'write',
-            key: 1
+            key: 1,
         },
         {
             title: '/chat',
@@ -80,13 +80,12 @@ const data = {
 export default function Dashboard() {
     return (
         <Wrapper>
-            { data.items.map((item, index) => 
-                {
-                    if (item.template === 'write') return <Write key={item.key} item={item} />;
-                    if (item.template === 'chat') return <Chat key={item.key} item={item} />;
-                    if (item.template === 'publish') return <Publish key={item.key} item={item} />;                
-                }
-            )}
+            { data.items.map((item, index) => {
+                if (item.template === 'write') return <Write key={item.key} item={item} />;
+                if (item.template === 'chat') return <Chat key={item.key} item={item} />;
+                if (item.template === 'publish') return <Publish key={item.key} item={item} />;
+            },
+            ) }
         </Wrapper>
     );
 }
