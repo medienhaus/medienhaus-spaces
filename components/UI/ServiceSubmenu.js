@@ -70,7 +70,10 @@ function Menu({ subheadline, children, opensubmenu }) {
             <Submenu>
                 { subheadline && <h3>{ subheadline }</h3> }
                 <select>
-                    { React.Children.map(children, child => React.cloneElement(child, { renderActionComponent, setRenderActionComponent })) }
+                    { React.Children.map(children, child => {
+                        if (child) return React.cloneElement(child, { renderActionComponent, setRenderActionComponent });
+                    },
+                    ) }
                 </select>
                 { renderActionComponent && renderActionComponent }
             </Submenu>
