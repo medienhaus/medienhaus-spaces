@@ -91,7 +91,7 @@ export default function RoomId() {
                 .mx_RoomHeader_chevron { display: none; }
             `);
             styleTag.appendChild(styleContent);
-            iframe.current.getSVGDocument().getElementsByTagName('html')[0].appendChild(styleTag);
+            iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
         };
 
         iframe.current.addEventListener('load', injectCss);
