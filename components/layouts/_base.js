@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import getConfig from 'next/config';
-import Link from 'next/link';
 import { useState } from 'react';
 
 import NavigationMenu from './partials/navigation';
@@ -11,54 +10,65 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100vw;
   height: 100vh;
+  overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
+
+  --color-background-sidebar: rgb(240 240 240);
 
   @media (width > 51em) {
     display: grid;
-    grid-template-rows: 0fr auto 0fr;
-    grid-template-columns: 0fr auto;
+    grid-template-rows: min-content 1fr min-content;
+    grid-template-columns: min-content 1fr;
     padding: unset;
+  }
+
+  // This will add a bottom margin to all page-level headings (h2) that is in line with the
+  // whitespace between the logo and the first entry of the navigation.
+  & > main > h2:first-child,
+  & > main > div > h2:first-child {
+    margin-bottom: var(--margin);
+
+    @media (width > 51em) {
+      margin-bottom: calc(var(--margin) * 2);
+
+      @media (width > 68em) {
+        margin-bottom: calc(var(--margin) * 3);
+      }
+    }
   }
 `;
 
 const Header = styled.header`
+  background: var(--color-background-sidebar);
+
   @media (width <= 51em) {
     display: flex;
     flex: 0 0;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 0 0 var(--margin);
-    background-color: rgb(255 255 255 / 95%);
-    backdrop-filter: blur(5px);
+    padding: var(--margin);
   }
 
   @media (width > 51em) {
     grid-row: 1;
     grid-column: 1;
-    padding: var(--margin);
+    padding: var(--margin) calc(var(--margin) * 1.3);
 
     @media (width > 68em) {
-      padding: calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 2) calc(var(--margin) * 2);
     }
-  }
-
-  h1 {
-    margin: unset;
-    font-size: inherit;
-    cursor: pointer;
   }
 `;
 
 const HeaderButton = styled.button`
-  flex: 0 1;
+  display: grid;
+  place-content: center;
   width: calc(var(--margin) * 3.5);
   height: calc(var(--margin) * 3.5);
-  padding: var(--margin);
+  margin: calc(var(--margin) * -1);
   font-weight: bold;
-  line-height: 0;
   color: var(--color-fg);
   text-align: center;
-  letter-spacing: 0.05rem;
   cursor: pointer;
   background-color: transparent;
   border: unset;
@@ -70,14 +80,13 @@ const HeaderButton = styled.button`
 `;
 
 const HeaderButtonClose = styled(HeaderButton)`
-  padding-bottom: calc(var(--margin) * 1.6);
   font-size: 2rem;
   font-weight: 500;
 `;
 
-const Nav = styled.nav`
-  padding: var(--margin);
-  overflow: auto;
+const Sidebar = styled.aside`
+  display: flex;
+  flex-direction: column;
 
   @media (width <= 51em) {
     position: fixed;
@@ -86,36 +95,40 @@ const Nav = styled.nav`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.open ? 'block' : 'none'};
-    background-color: rgb(255 255 255 / 95%);
-    backdrop-filter: blur(5px);
+    display: ${props => props.navigationOpen ? 'flex' : 'none'};
   }
+`;
+
+const Nav = styled.nav`
+  flex: 1 0;
+  padding: var(--margin);
+  overflow: auto;
+  font-weight: 500;
+  background: var(--color-background-sidebar);
 
   @media (width > 51em) {
     display: block;
     grid-row: 2;
     grid-column: 1;
-    width: 9em;
+    width: 12em;
+    padding: var(--margin) calc(var(--margin) * 1.3);
 
     @media (width > 68em) {
       width: 13em;
-      padding: calc(var(--margin) * 2);
+      padding: var(--margin) calc(var(--margin) * 2);
     }
   }
 `;
 
 const Footer = styled.footer`
   padding: var(--margin);
-
-  @media (width <= 51em) {
-    display: none;
-  }
+  font-size: 70%;
+  background: var(--color-background-sidebar);
 
   @media (width > 51em) {
     grid-row: 3;
     grid-column: 1;
-    font-size: 50%;
-    opacity: 0.1;
+    padding: calc(var(--margin)) calc(var(--margin) * 1.3);
 
     @media (width > 68em) {
       padding: calc(var(--margin) * 2);
@@ -128,23 +141,25 @@ export default function BaseLayout({ children }) {
 
     return (
         <>
-            <Wrapper>
+            <Wrapper navigationOpen={navigationOpen}>
                 <Header>
-                    <Link href="/activity"><h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1></Link>
+                    <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { navigationOpen ? (
                         <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (
                         <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Nav open={navigationOpen}>
-                    <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                    <LanguageChooser />
-                </Nav>
+                <Sidebar navigationOpen={navigationOpen}>
+                    <Nav>
+                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
+                        <LanguageChooser />
+                    </Nav>
+                    <Footer>
+                        🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
+                    </Footer>
+                </Sidebar>
                 { children }
-                <Footer>
-                    🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
-                </Footer>
             </Wrapper>
         </>
     );
