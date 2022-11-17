@@ -1,30 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-import { useAuth } from '../lib/Auth';
-import { useMatrix } from '../lib/Matrix';
-import MultiColumnLayout from '../components/layouts/multicolumn';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-
-  iframe {
-    width: 100%;
-    height: 100%;
-    margin-bottom: -7px; /* For some reason Element renders a 7px tall invisible object at the bottom */
-    border: none;
-  }
-`;
+import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '../../lib/Matrix';
+import IframeLayout from '../../components/layouts/iframe';
 
 const UnreadNotificationBadge = styled.span`
   position: relative;
@@ -71,23 +55,25 @@ const sortRooms = function(room) {
 
 const SidebarListEntry = function({ room, onClick }) {
     return (
-        <SidebarListEntryWrapper href="#" onClick={onClick}>
-            { room.avatar ? (<Avatar src={room.avatar} alt={room.name} />) : (<Avatar />) }
-            <RoomName>{ room.name }</RoomName>
-            { room.notificationCount > 0 && (
-                <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
-            ) }
-        </SidebarListEntryWrapper>
+        <Link href={`/chat/${room.roomId}`} passHref>
+            <SidebarListEntryWrapper>
+                { room.avatar ? (<Avatar src={room.avatar} alt={room.name} />) : (<Avatar />) }
+                <RoomName>{ room.name }</RoomName>
+                { room.notificationCount > 0 && (
+                    <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                ) }
+            </SidebarListEntryWrapper>
+        </Link>
     );
 };
 
-export default function Chat() {
+export default function RoomId() {
     const auth = useAuth();
     const iframe = useRef();
+    const router = useRouter();
+    const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-
-    const [iframeLocation, setIframeLocation] = useState(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/`);
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -120,43 +106,39 @@ export default function Chat() {
     // existing subpages as well. So this check should be moved somewhere else.
     if (!auth.user) return null;
 
-    const goToRoom = function(roomId) {
-        setIframeLocation(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`);
-    };
-
     return (
         <>
-            <SidebarColumn>
-                <MultiColumnLayout.ColumnMobileHead href="#">/chat</MultiColumnLayout.ColumnMobileHead>
+            <IframeLayout.Sidebar>
                 <h2>/chat</h2>
-                <br />
                 { matrix.invites.size > 0 && (
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
-                            { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
+                            { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
                         </details>
                         <br />
                     </>
                 ) }
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
-                    { (matrix.directMessages && _.sortBy([...matrix.directMessages.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
+                    { (matrix.directMessages && _.sortBy([...matrix.directMessages.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
                 </details>
                 <br />
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
-                    { (matrix.rooms && _.sortBy([...matrix.rooms.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} onClick={() => goToRoom(room.roomId)} />)) }
+                    { (matrix.rooms && _.sortBy([...matrix.rooms.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
                 </details>
                 <br />
-            </SidebarColumn>
-            <IframeColumn>
-                <iframe src={iframeLocation} ref={iframe} />
-            </IframeColumn>
+            </IframeLayout.Sidebar>
+            { roomId && (
+                <IframeLayout.IframeWrapper>
+                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
+                </IframeLayout.IframeWrapper>
+            ) }
         </>
     );
 }
 
-Chat.getLayout = () => {
-    return MultiColumnLayout.Layout;
+RoomId.getLayout = () => {
+    return IframeLayout.Layout;
 };
