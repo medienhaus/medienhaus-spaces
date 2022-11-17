@@ -1,11 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -14,20 +12,7 @@ import WriteListEntry from './WriteListEntry';
 import Plus from '../../assets/icons/plus.svg';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
-import FrameView from '../../components/FrameView';
-import MultiColumnLayout from '../../components/layouts/multicolumn';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    width: 30ch;
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-`;
+import IframeLayout from '../../components/layouts/iframe';
 
 const PlusIcon = styled(Plus)`
   fill: var(--color-fg);
@@ -70,9 +55,7 @@ export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrixSpaces = matrix.spaces.values();
     const { t } = useTranslation('write');
-    const application = 'write';
     const router = useRouter();
     // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
     const roomId = _.get(router, 'query.roomId.0');
@@ -90,40 +73,6 @@ export default function Write() {
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
-    const lookForServiceFolder = async (applicationsSpaceId) => {
-        const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
-        if (findServiceSpace) return findServiceSpace.roomId;
-        else {
-            console.info('creating service space');
-            const createRoom = await matrix.createRoom(
-                application,
-                true,
-                `This is your private space for the application ${application}. You can find all your ${application} data in here.`,
-                'invite',
-                'context',
-                'application');
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(applicationsSpaceId, createRoom);
-            return createRoom;
-        }
-    };
-
-    const lookForApplicationsFolder = async () => {
-        const findApplicationsFolder = Array.from(matrixSpaces).find(space => space.meta?.template === 'applications');
-        if (findApplicationsFolder) {
-            console.info('found applications space');
-            return findApplicationsFolder.roomId;
-        } else {
-            console.log('creating root applications folder');
-            const newApplicationsFolder = await matrix.createRoom(
-                'Applications',
-                true,
-                'This is your private applications space. You can find all your application data in here.',
-                'invite',
-                'context',
-                'applications');
-            return newApplicationsFolder;
-        }
-    };
 
     useEffect(() => {
         let cancelled = false;
@@ -131,9 +80,7 @@ export default function Write() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
-                    const applicationsSpaceId = await lookForApplicationsFolder();
-                    const space = await lookForServiceFolder(applicationsSpaceId);
-                    setServiceSpaceId(space);
+                    setServiceSpaceId(matrix.serviceSpaces.write);
                 } catch (err) {
                     console.log(err);
                 }
@@ -144,7 +91,7 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [matrix.initialSyncDone]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.write]);
 
     useEffect(() => {
         let cancelled = false;
@@ -169,16 +116,15 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [write]);
+    }, [syncServerPadsAndSet, write]);
 
-    async function syncServerPadsAndSet() {
+    const syncServerPadsAndSet = useCallback(async () => {
         await write.syncAllPads().catch(() => setServerPads(null));
         setServerPads(write.getAllPads());
-    }
+    }, [write]);
 
     useEffect(() => {
         let cancelled = false;
-
         const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
             if (matrix?.spaces.get(serviceSpaceId).children) {
@@ -204,6 +150,7 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads]);
 
     async function createWriteRoom(link = newPadLink, name = newPadName) {
@@ -307,8 +254,7 @@ export default function Write() {
 
     return (
         <>
-            <SidebarColumn>
-                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
+            <IframeLayout.Sidebar>
                 <>
                     <Header>
                         <h1>/write</h1>
@@ -341,16 +287,17 @@ export default function Write() {
                         }) }
                     </ul>
                 </>
-            </SidebarColumn>
+            </IframeLayout.Sidebar>
             { roomId && content && (
-                <IframeColumn>
-                    <FrameView link={content.body} />
-                </IframeColumn>
+                <IframeLayout.IframeWrapper>
+                    <iframe src={content.body} />
+                    { /* <FrameView link={content.body} /> */ }
+                </IframeLayout.IframeWrapper>
             ) }
         </>
     );
 }
 
 Write.getLayout = () => {
-    return MultiColumnLayout.Layout;
+    return IframeLayout.Layout;
 };
