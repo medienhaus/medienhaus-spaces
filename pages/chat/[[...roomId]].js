@@ -82,13 +82,11 @@ export default function RoomId() {
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
-                * {
-                  border-radius: unset !important;
-                }
-                .mx_LeftPanel_wrapper { display: none !important }
+                * { border-radius: unset !important }
+                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
-                .mx_RoomHeader_name { pointer-events: none; }
-                .mx_RoomHeader_chevron { display: none; }
+                .mx_RoomHeader_name { pointer-events: none }
+                .mx_RoomHeader_chevron { display: none }
             `);
             styleTag.appendChild(styleContent);
             iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
