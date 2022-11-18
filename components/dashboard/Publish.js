@@ -21,6 +21,9 @@ margin-top: 1rem;
 position: relative; 
 `;
 
+const Meta = styled.div`
+    font-size: 0.9rem;
+`;
 
 const TimelineItem = styled.li`
   list-style: none;
@@ -64,9 +67,9 @@ const Timeline = ({activityArray}) => {
     return (
         <TimelineWrapper>
             { activityArray.map((entry) => {
-                    if (entry.metaEvent.template === 'event') return <TimelineItem key={entry.room_ide}>{entry.author} published  a new event <i>{entry.name}</i></TimelineItem>;
-                    if (entry.metaEvent.template === 'article') return <TimelineItem key={entry.room_ide}>{entry.author} published  a new article <i>{entry.name}</i></TimelineItem>;
-                    if (entry.metaEvent.template === 'resource') return <TimelineItem key={entry.room_ide}>{entry.author} published  a new resource <i>{entry.name}</i></TimelineItem>;
+                    if (entry.metaEvent.template === 'event') return <TimelineItem key={entry.room_ide}><Meta>{ new Date(entry.published).toLocaleString() }</Meta>{entry.author} published  a new event <i>{entry.name}</i></TimelineItem>;
+                    if (entry.metaEvent.template === 'article') return <TimelineItem key={entry.room_ide}><Meta>{ new Date(entry.published).toLocaleString() }</Meta>{entry.author} published  a new article <i>{entry.name}</i></TimelineItem>;
+                    if (entry.metaEvent.template === 'resource') return <TimelineItem key={entry.room_ide}><Meta>{ new Date(entry.published).toLocaleString() }</Meta>{entry.author} published  a new resource <i>{entry.name}</i></TimelineItem>;
                 }) } 
         </TimelineWrapper>
                    )
