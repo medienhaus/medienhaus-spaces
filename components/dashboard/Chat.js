@@ -2,8 +2,8 @@ import { DashboardItemTemplate } from './DashboardItemTemplate';
 
 const Chat = ({ item }) => {
     return (
-        <DashboardItemTemplate notifications={item.notifications}>
-            <DashboardItemTemplate.Header title={item.title} />
+        <DashboardItemTemplate>
+            <DashboardItemTemplate.Header title={'/chat'} />
         </DashboardItemTemplate>
     );
 };

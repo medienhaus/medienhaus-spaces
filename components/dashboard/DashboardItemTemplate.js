@@ -9,6 +9,7 @@ const DashboardItem = styled.section`
 
 const DashboardHeader = styled.section`
   font-style: bold;
+  margin-bottom: 1rem;
 `;
 
 const DashboardNotification = styled.section`
@@ -24,7 +25,7 @@ const DashboardNotification = styled.section`
   color: white;
   background: orange;
   border-radius: 100%;
-  transform: translate(50%, -50%);
+  transform: translate(30%, -30%);
 `;
 
 function Header({ title }) {
@@ -35,15 +36,14 @@ function Header({ title }) {
     );
 }
 
-export function DashboardItemTemplate({ children, notifications }) {
+export function DashboardItemTemplate({ children, notifications}) {
     return (
         <DashboardItem>
             { children }
-            {
-                notifications &&
-        <DashboardNotification>
-            { notifications.sum }
-        </DashboardNotification>
+            {   notifications &&
+                <DashboardNotification>
+                    { notifications.sum }
+                </DashboardNotification>
             }
         </DashboardItem>
     );
