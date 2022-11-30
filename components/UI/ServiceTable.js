@@ -38,7 +38,6 @@ const TableCell = styled.td`
   & a {
     color: ${props => props.selected && 'var(--color-disabled)' };
     text-decoration: ${props => props.selected && 'none' };
-    pointer-events: ${props => props.selected && 'none' };
 
     /* @TODO: this should work, but it does not ?! */
     &:hover {
