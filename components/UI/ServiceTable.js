@@ -35,13 +35,23 @@ const TableCell = styled.td`
     border-bottom: 1px dotted rgb(210 210 210);
   }
 
+  & a {
+    color: ${props => props.selected && 'var(--color-disabled)' };
+    text-decoration: ${props => props.selected && 'none' };
+    pointer-events: ${props => props.selected && 'none' };
+
+    /* @TODO: this should work, but it does not ?! */
+    &:hover {
+      cursor: ${props => props.selected && 'not-allowed' };
+    }
+  }
+
   & button {
-    all: initial;
-    display: grid;
-    place-items: center;
-    width: calc(var(--margin) * 1.3);
-    height: calc(var(--margin) * 1.3);
-    cursor: pointer;
+    padding: 0 4px;
+
+    svg {
+      fill: var(--color-background);
+    }
   }
 
 `;

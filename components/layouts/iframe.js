@@ -41,6 +41,7 @@ const Sidebar = styled.div`
 const IframeWrapper = styled.div`
   display: flex;
   flex: 1 0;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -50,6 +51,46 @@ const IframeWrapper = styled.div`
     height: 100%;
     margin: 0;
     border: none;
+  }
+`;
+
+const IframeHeader = styled.header`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  height: calc(var(--margin) * 4);
+  padding: var(--margin);
+  background: rgb(248 248 248);
+
+  // On bigger viewports ...
+  @media (width > 51em) {
+    padding: var(--margin) calc(var(--margin) * 1.3);
+    overflow: auto;
+
+    @media (width > 68em) {
+      padding: calc(var(--margin) * 2);
+    }
+  }
+
+  /* @TODO: re-factor quick-fix */
+  & h2 {
+    margin: 0 !important;
+  }
+`;
+
+const IframeHeaderButtonWrapper = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: calc(var(--margin) * 0.5);
+  height: 100%;
+
+  & button {
+    /* unset globally defined button styles; set height to line-height */
+    width: unset;
+    height: calc(var(--margin) * 1.3);
+    padding: unset;
+    background-color: unset;
+    border: unset;
   }
 `;
 
@@ -71,6 +112,8 @@ const IframeLayout = {
     Layout,
     Sidebar,
     IframeWrapper,
+    IframeHeader,
+    IframeHeaderButtonWrapper,
 };
 
 export default IframeLayout;

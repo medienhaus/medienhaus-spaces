@@ -4,15 +4,18 @@ import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import Bin from '../../assets/icons/bin.svg';
+import Clipboard from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 export default function Write() {
     const auth = useAuth();
@@ -24,6 +27,7 @@ export default function Write() {
     const roomId = _.get(router, 'query.roomId.0');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [serverPads, setServerPads] = useState({});
+    const [removingLink, setRemovingLink] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
@@ -109,6 +113,18 @@ export default function Write() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads, createWriteRoom]);
 
+    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
+
+    const removeLink = async () => {
+        setRemovingLink(true);
+        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
+        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await matrix.leaveRoom(roomId);
+        await syncServerPadsAndSet();
+        setRemovingLink(false);
+    };
+
     const createWriteRoom = useCallback(async (link, name) => {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
@@ -149,7 +165,7 @@ export default function Write() {
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>);
     };
 
@@ -178,7 +194,7 @@ export default function Write() {
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
                 { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinner inverted /> : t('Add existing pad') }</button>
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing pad') }</button>
             </Form>);
     };
 
@@ -201,7 +217,7 @@ export default function Write() {
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
         </Form>);
     };
 
@@ -227,7 +243,7 @@ export default function Write() {
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>);
     };
 
@@ -250,13 +266,15 @@ export default function Write() {
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ServiceTable>
-                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                        { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
                             return <WriteListEntry
-                                key={roomId}
-                                roomId={roomId}
+                                key={writeRoomId}
+                                roomId={writeRoomId}
+                                selected={writeRoomId === roomId}
                                 parent={serviceSpaceId}
                                 serverPads={serverPads}
-                                callback={syncServerPadsAndSet}
+                                removeLink={removeLink}
+                                copyToClipboard={copyToClipboard}
                             />;
                         }) }
                     </ServiceTable>
@@ -264,8 +282,19 @@ export default function Write() {
             </IframeLayout.Sidebar>
             { roomId && content && (
                 <IframeLayout.IframeWrapper>
+                    <IframeLayout.IframeHeader>
+                        <h2>{ matrix.rooms.get(roomId).name }</h2>
+                        <IframeLayout.IframeHeaderButtonWrapper>
+                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
+                                <Clipboard />
+                            </button>
+                            <button title={t('Remove pad from my library')} onClick={removeLink}>
+                                { removingLink ? <LoadingSpinner /> : <Bin /> }
+                            </button>
+                        </IframeLayout.IframeHeaderButtonWrapper>
+                    </IframeLayout.IframeHeader>
                     <iframe src={content.body} />
-                    { /* <FrameView link={content.body} /> */ }
+
                 </IframeLayout.IframeWrapper>
             ) }
         </>
