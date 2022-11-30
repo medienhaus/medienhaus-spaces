@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const LoadingSpinner = styled.div`
-  display: inline-block;
+  display: block;
   width: 2rem;
   height: 2rem;
   border-color: ${props => props.inverted ? 'var(--color-background) transparent var(--color-background) transparent' : 'var(--color-foreground) transparent var(--color-foreground) transparent '};
