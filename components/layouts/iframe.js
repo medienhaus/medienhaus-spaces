@@ -62,16 +62,6 @@ const IframeHeader = styled.header`
   padding: var(--margin);
   background: rgb(248 248 248);
 
-  // On bigger viewports ...
-  @media (width > 51em) {
-    padding: var(--margin) calc(var(--margin) * 1.3);
-    overflow: auto;
-
-    @media (width > 68em) {
-      padding: calc(var(--margin) * 2);
-    }
-  }
-
   /* @TODO: re-factor quick-fix */
   & h2 {
     margin: 0 !important;
