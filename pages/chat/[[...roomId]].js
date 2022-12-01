@@ -88,6 +88,91 @@ export default function RoomId() {
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
+                @media (prefers-color-scheme: dark) {
+                    @TODO: test and sort if working
+                    body {
+                        --timeline-background-color: rgb(128 0 255) !important;
+
+                        --accent: #3f3f3f !important;
+                        --accent-0pct: #3f3f3f00 !important;
+                        --accent-15pct: #3f3f3f26 !important;
+                        --accent-50pct: #3f3f3f7F !important;
+
+                        --accent-color: #3f3f3f !important;
+                        --accent-color-0pct: #3f3f3f00 !important;
+                        --accent-color-15pct: #3f3f3f26 !important;
+                        --accent-color-50pct: #3f3f3f7F !important;
+
+                        --primary-color: #f0f0f0 !important;
+                        --sidebar-color: #0f0f0f !important;
+                        --warning-color: #ff4b55 !important;
+                        --icon-button-color: #3f3f3f !important;
+                        --roomlist-background-color: #0f0f0f !important;
+                        --roomlist-highlights-color: #1f1f1f !important;
+                        --roomlist-separator-color: #1f1f1f !important;
+                        --roomlist-text-color: #f0f0f0 !important;
+                        --roomlist-text-secondary-color: #f0f0f0 !important;
+                        --timeline-background-color: #0f0f0f !important;
+                        --timeline-highlights-color: #1a1f1c !important;
+                        --timeline-text-color: #f0f0f0 !important;
+                        --timeline-text-secondary-color: #f0f0f0 !important;
+
+                        --primary-color-0pct: #f0f0f000 !important;
+                        --sidebar-color-0pct: #0f0f0f00 !important;
+                        --warning-color-0pct: #ff4b5500 !important;
+                        --icon-button-color-0pct: #3f3f3f00 !important;
+                        --roomlist-background-color-0pct: #0f0f0f00 !important;
+                        --roomlist-highlights-color-0pct: #1f1f1f00 !important;
+                        --roomlist-separator-color-0pct: #1f1f1f00 !important;
+                        --roomlist-text-color-0pct: #f0f0f000 !important;
+                        --roomlist-text-secondary-color-0pct: #f0f0f000 !important;
+                        --timeline-background-color-0pct: #0f0f0f00 !important;
+                        --timeline-highlights-color-0pct: #1a1f1c00 !important;
+                        --timeline-text-color-0pct: #f0f0f000 !important;
+                        --timeline-text-secondary-color-0pct: #f0f0f000 !important;
+
+                        --primary-color-15pct: #f0f0f026 !important;
+                        --sidebar-color-15pct: #0f0f0f26 !important;
+                        --warning-color-15pct: #ff4b5526 !important;
+                        --icon-button-color-15pct: #3f3f3f26 !important;
+                        --roomlist-background-color-15pct: #0f0f0f26 !important;
+                        --roomlist-highlights-color-15pct: #1f1f1f26 !important;
+                        --roomlist-separator-color-15pct: #1f1f1f26 !important;
+                        --roomlist-text-color-15pct: #f0f0f026 !important;
+                        --roomlist-text-secondary-color-15pct: #f0f0f026 !important;
+                        --timeline-background-color-15pct: #0f0f0f26 !important;
+                        --timeline-highlights-color-15pct: #1a1f1c26 !important;
+                        --timeline-text-color-15pct: #f0f0f026 !important;
+                        --timeline-text-secondary-color-15pct: #f0f0f026 !important;
+
+                        --primary-color-50pct: #f0f0f07F !important;
+                        --sidebar-color-50pct: #0f0f0f7F !important;
+                        --warning-color-50pct: #ff4b557F !important;
+                        --icon-button-color-50pct: #3f3f3f7F !important;
+                        --roomlist-background-color-50pct: #0f0f0f7F !important;
+                        --roomlist-highlights-color-50pct: #1f1f1f7F !important;
+                        --roomlist-separator-color-50pct: #1f1f1f7F !important;
+                        --roomlist-text-color-50pct: #f0f0f07F !important;
+                        --roomlist-text-secondary-color-50pct: #f0f0f07F !important;
+                        --timeline-background-color-50pct: #0f0f0f7F !important;
+                        --timeline-highlights-color-50pct: #1a1f1c7F !important;
+                        --timeline-text-color-50pct: #f0f0f07F !important;
+                        --timeline-text-secondary-color-50pct: #f0f0f07F !important;
+
+                        --avatar-background-color_0: #1f1f1f !important;
+                        --avatar-background-color_1: #1f1f1f !important;
+                        --avatar-background-color_2: #1f1f1f !important;
+
+                        --username-colors_0: #f0f0f0 !important;
+                        --username-colors_1: #f0f0f0 !important;
+                        --username-colors_2: #f0f0f0 !important;
+                        --username-colors_3: #f0f0f0 !important;
+                        --username-colors_4: #f0f0f0 !important;
+                        --username-colors_5: #f0f0f0 !important;
+                        --username-colors_6: #f0f0f0 !important;
+                        --username-colors_7: #f0f0f0 !important;
+                    }
+                }
                 * { border-radius: unset !important }
                 .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
