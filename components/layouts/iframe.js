@@ -51,6 +51,7 @@ const IframeWrapper = styled.div`
     height: 100%;
     margin: 0;
     border: none;
+    border-top: 1px dotted rgb(210 210 210);
   }
 `;
 
@@ -59,10 +60,15 @@ const IframeHeader = styled.header`
   grid-template-columns: 1fr auto;
   width: 100%;
   padding: var(--margin);
-  border-bottom: 1px dotted rgb(210 210 210);
+  padding-bottom: var(--margin);
 
-  @media (width > 68em) {
-    padding: calc(var(--margin) * 2);
+  @media (width > 51em) {
+    padding-bottom: calc(var(--margin) * 2);
+
+    @media (width > 68em) {
+      padding: calc(var(--margin) * 2);
+      padding-bottom: calc(var(--margin) * 3);
+    }
   }
 
   /* @TODO: re-factor quick-fix */
