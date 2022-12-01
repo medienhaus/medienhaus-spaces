@@ -74,7 +74,7 @@ const IframeHeader = styled.header`
 const IframeHeaderButtonWrapper = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-gap: calc(var(--margin) * 0.5);
+  grid-gap: calc(var(--margin));
   height: 100%;
 
   & button {

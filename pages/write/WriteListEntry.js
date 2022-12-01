@@ -48,10 +48,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell selected={selected}><Link disabled href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
-
-            <ServiceTable.Cell>
-                { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <TextButton disabled title={t('password protected')}><Lock /></TextButton> }
-            </ServiceTable.Cell>
+            <ServiceTable.Cell>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <span title={t('password protected')}><Lock fill="var(--color-attention)" /></span> }</ServiceTable.Cell>
         </ServiceTable.Row>
     );
 };

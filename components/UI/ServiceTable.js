@@ -14,26 +14,23 @@ import styled from 'styled-components';
 
 const Table = styled.table`
   width: 100%;
+  border-collapse: collapse;
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
   height: calc(var(--margin) * 3);
 
-  &:first-of-type td:first-of-type {
-    border-top: 1px dotted rgb(210 210 210);
+  &:not(:last-of-type) {
+    border-bottom: 1px dotted rgb(210 210 210);
   }
 `;
 
 const TableCell = styled.td`
   width: 100%;
+  padding: 0;
+  font-size: 85%;
   text-overflow: ellipsis;
-
-  &:first-of-type {
-    padding: 0;
-    font-size: 85%;
-    border-bottom: 1px dotted rgb(210 210 210);
-  }
 
   & a {
     color: ${props => props.selected && 'var(--color-disabled)' };
