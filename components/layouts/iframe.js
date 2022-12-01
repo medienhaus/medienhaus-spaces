@@ -58,9 +58,12 @@ const IframeHeader = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
   width: 100%;
-  height: calc(var(--margin) * 4);
   padding: var(--margin);
   background: rgb(248 248 248);
+
+  @media (width > 68em) {
+    padding: calc(var(--margin) * 2);
+  }
 
   /* @TODO: re-factor quick-fix */
   & h2 {
@@ -97,6 +100,8 @@ const Layout = ({ children }) => {
 /**
  * Use this layout if you want a split-view with a sidebar on the left and an iframe on the right. On mobile viewports
  * we'll just collapse and only show one (either sidebar or iframe) at a time.
+ * IframeHeader is an optional component to add a top bar to the view which can contain IframeHeaderButtonWrapper
+ * all content within IframeHeaderButtonWrapper is aligned to the right side of the view.
  */
 const IframeLayout = {
     Layout,
