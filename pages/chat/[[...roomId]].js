@@ -93,6 +93,12 @@ export default function RoomId() {
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
                 .mx_RoomHeader_name { pointer-events: none }
                 .mx_RoomHeader_chevron { display: none }
+
+                /* @TODO: This can be improved... and should probably not target mobile viewports. It's to make the */
+                /* header look like it's on line with our header elements from first & second sidebar. */
+                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: none }
+                .mx_RoomHeader { flex: unset; -webkit-box-flex: unset; padding: 2.85rem 0 } 
+                .mx_RoomHeader_name { font-weight: bold }
             `);
             styleTag.appendChild(styleContent);
             iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
