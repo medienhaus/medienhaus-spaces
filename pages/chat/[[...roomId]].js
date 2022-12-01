@@ -57,7 +57,13 @@ const SidebarListEntry = function({ room, onClick }) {
     return (
         <Link href={`/chat/${room.roomId}`} passHref>
             <SidebarListEntryWrapper>
-                { room.avatar ? (<Avatar src={room.avatar} alt={room.name} />) : (<Avatar />) }
+                { room.avatar ? (
+                    // Render the avatar if we have one
+                    <Avatar src={room.avatar} alt={room.name} />
+                ) : (
+                    // Render an empty GIF if we don't have an avatar
+                    <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                ) }
                 <RoomName>{ room.name }</RoomName>
                 { room.notificationCount > 0 && (
                     <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
