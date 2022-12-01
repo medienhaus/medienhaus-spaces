@@ -6,8 +6,9 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import Lock from '../../assets/icons/lock.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import TextButton from '../../components/UI/TextButton';
 
-const WriteListEntry = ({ parent, roomId, serverPads, selected, copyToClipboard, removeLink }) => {
+const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     // const write = auth.getAuthenticationProvider('write');
@@ -51,7 +52,7 @@ const WriteListEntry = ({ parent, roomId, serverPads, selected, copyToClipboard,
             <ServiceTable.Cell selected={selected}><Link disabled href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
 
             <ServiceTable.Cell>
-                { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <button disabled title={t('password protected')}><Lock /></button> }
+                { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <TextButton disabled title={t('password protected')}><Lock /></TextButton> }
             </ServiceTable.Cell>
             { /* <ServiceTable.Cell>
                 <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>

@@ -45,14 +45,6 @@ const TableCell = styled.td`
     }
   }
 
-  & button {
-    padding: 0 4px;
-
-    svg {
-      fill: var(--color-background);
-    }
-  }
-
 `;
 
 export function ServiceTable({ children }) {
