@@ -10,6 +10,13 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
 
+const sortRooms = function(room) {
+    return [
+        room.notificationCount == 0,
+        room.name,
+    ];
+};
+
 const UnreadNotificationBadge = styled.span`
   position: relative;
   display: flex;
@@ -45,13 +52,6 @@ const RoomName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-
-const sortRooms = function(room) {
-    return [
-        room.notificationCount == 0,
-        room.name,
-    ];
-};
 
 const SidebarListEntry = function({ room, onClick }) {
     return (
@@ -105,10 +105,16 @@ export default function RoomId() {
         };
     });
 
-    // @TODO: This check should happen somewhere more globally. If the user is not logged in / if we're still
-    // determining if the user is logged in, we don't want to render anything. But this goes for pretty much all
-    // existing subpages as well. So this check should be moved somewhere else.
-    if (!auth.user) return null;
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms);
+    const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
+    // Other rooms contains all rooms, except for the ones that ...
+    const otherRooms = _([...matrix.rooms.values()])
+        // ... are direct messages,
+        .reject(room => matrix.directMessages.has(room.roomId))
+        // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
+        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.type !== 'chat')
+        .sortBy(sortRooms)
+        .value();
 
     return (
         <>
@@ -118,19 +124,19 @@ export default function RoomId() {
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
-                            { (matrix.invites && _.sortBy([...matrix.invites.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
+                            { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                         </details>
                         <br />
                     </>
                 ) }
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
-                    { (matrix.directMessages && _.sortBy([...matrix.directMessages.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
+                    { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                 </details>
                 <br />
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
-                    { (matrix.rooms && _.sortBy([...matrix.rooms.values()], sortRooms).map((room) => <SidebarListEntry key={room.roomId} room={room} />)) }
+                    { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                 </details>
                 <br />
             </IframeLayout.Sidebar>
