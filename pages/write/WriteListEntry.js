@@ -11,8 +11,6 @@ import TextButton from '../../components/UI/TextButton';
 const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    // const write = auth.getAuthenticationProvider('write');
-    // const [removingLink, setRemovingLink] = useState(false);
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const { t } = useTranslation('write');
@@ -54,12 +52,6 @@ const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
             <ServiceTable.Cell>
                 { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <TextButton disabled title={t('password protected')}><Lock /></TextButton> }
             </ServiceTable.Cell>
-            { /* <ServiceTable.Cell>
-                <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}><Clipboard /></button>
-            </ServiceTable.Cell>
-            <ServiceTable.Cell>
-                <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
-            </ServiceTable.Cell> */ }
         </ServiceTable.Row>
     );
 };
