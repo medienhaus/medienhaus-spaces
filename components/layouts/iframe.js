@@ -59,14 +59,14 @@ const IframeHeader = styled.header`
   grid-template-columns: 1fr auto;
   width: 100%;
   padding: var(--margin);
-  background: rgb(248 248 248);
+  border-bottom: 1px dotted rgb(210 210 210);
 
   @media (width > 68em) {
     padding: calc(var(--margin) * 2);
   }
 
   /* @TODO: re-factor quick-fix */
-  & h2 {
+  h2 {
     margin: 0 !important;
   }
 `;
@@ -77,7 +77,7 @@ const IframeHeaderButtonWrapper = styled.div`
   grid-gap: calc(var(--margin));
   height: 100%;
 
-  & button {
+  button {
     /* unset globally defined button styles; set height to line-height */
     width: unset;
     height: calc(var(--margin) * 1.3);
