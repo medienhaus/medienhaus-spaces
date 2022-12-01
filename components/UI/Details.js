@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 
-const DetailsWrapper = styled.details`
-`;
-
 const Summary = styled.summary`
   max-width: 100%;
   height: calc(var(--margin) * 3);
@@ -12,10 +9,10 @@ const Summary = styled.summary`
 `;
 
 const Details = ({ title, children }) => {
-    return (<DetailsWrapper>
+    return (<details>
         <Summary>{ title }</Summary>
         { children }
-    </DetailsWrapper>
+    </details>
 
     );
 };

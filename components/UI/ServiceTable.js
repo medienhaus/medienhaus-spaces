@@ -32,7 +32,7 @@ const TableCell = styled.td`
   font-size: 85%;
   text-overflow: ellipsis;
 
-  & a {
+  a {
     color: ${props => props.selected && 'var(--color-disabled)' };
     text-decoration: ${props => props.selected && 'none' };
 

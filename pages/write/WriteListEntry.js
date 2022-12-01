@@ -6,7 +6,6 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import Lock from '../../assets/icons/lock.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import TextButton from '../../components/UI/TextButton';
 
 const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     const auth = useAuth();

@@ -15,12 +15,6 @@ const ToggleButton = styled.button`
   padding: unset;
   background-color: unset;
   border: unset;
-
-  /*
-  &:hover {
-    fill: var(--color-hover);
-  }
-  */
 `;
 
 const Submenu = styled.aside`
@@ -51,7 +45,6 @@ export function ServiceSubmenu({ title, icon, children }) {
             <Header>
                 { title && title }
                 <ToggleButton onClick={handleMenuToggle}>
-                    { /* <MenuAdd fill="var(--color-background)" /> */ }
                     { icon ? icon : <MenuAdd /> }
                 </ToggleButton>
             </Header>
