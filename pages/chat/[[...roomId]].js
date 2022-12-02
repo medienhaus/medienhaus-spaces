@@ -185,8 +185,8 @@ export default function RoomId() {
                         /* @NOTE: the following variables are found throughout element-web's \`theme-light-custom.css\` (fallback: \`#2e2f32\`) and \`theme-dark-custom.css\` (fallback: \`#edf3ff\`) */
                         --secondary-content: var(--primary-color-50pct) !important;
                         --tertiary-content: var(--primary-color-50pct) !important;
-                        --quaternary-content: var(--primary-color-50pct) !important;
-                        --quinary-content: var(--primary-color-50pct) !important;
+                        --quaternary-content: var(--primary-color-15pct) !important;
+                        --quinary-content: var(--primary-color-15pct) !important;
                     }
                 }
                 * { border-radius: unset !important }
