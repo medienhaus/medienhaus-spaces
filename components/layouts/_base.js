@@ -12,8 +12,6 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
 
-  --color-background-sidebar: rgb(240 240 240);
-
   @media (width > 51em) {
     display: grid;
     grid-template-rows: min-content 1fr min-content;
@@ -38,7 +36,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media (width <= 51em) {
     display: flex;
@@ -104,7 +102,7 @@ const Nav = styled.nav`
   padding: var(--margin);
   overflow: auto;
   font-weight: 500;
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media (width > 51em) {
     display: block;
@@ -123,7 +121,7 @@ const Nav = styled.nav`
 const Footer = styled.footer`
   padding: var(--margin);
   font-size: 70%;
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media (width > 51em) {
     grid-row: 3;

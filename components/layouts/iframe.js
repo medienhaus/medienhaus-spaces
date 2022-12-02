@@ -16,7 +16,7 @@ export const Main = styled.main`
 
 const Sidebar = styled.div`
   padding: var(--margin);
-  background: rgb(248 248 248);
+  background: var(--color-background-sidebar);
 
   // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
   @media (width <= 51em) {
