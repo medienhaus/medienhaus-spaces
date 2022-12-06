@@ -13,8 +13,7 @@
         "name": "medienhaus",
         "is_dark": false,
         "fonts": {
-          "general": "\"Inter\"",
-          "monospace": "\"Roboto Mono\""
+          "general": "\"Inter\""
         },
         "colors": {
           "accent": "#0f0f0f",
