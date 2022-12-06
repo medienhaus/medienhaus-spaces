@@ -45,7 +45,7 @@ export function ServiceSubmenu({ title, icon, children }) {
             <Header>
                 { title && title }
                 <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAdd /> }
+                    { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
             { React.Children.map(children, child =>
