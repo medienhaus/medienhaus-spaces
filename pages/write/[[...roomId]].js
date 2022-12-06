@@ -286,10 +286,10 @@ export default function Write() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <Clipboard />
+                                <Clipboard fill="var(--color-foreground)" />
                             </button>
                             <button title={t('Remove pad from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinner /> : <Bin /> }
+                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
