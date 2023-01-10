@@ -20,12 +20,10 @@ export default function Sketch() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrixSpaces = matrix.spaces.values();
     const { t } = useTranslation('sketch');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
 
-    const application = 'sketch';
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [loading, setLoading] = useState(false);
@@ -36,62 +34,23 @@ export default function Sketch() {
 
     const sketch = auth.getAuthenticationProvider('sketch');
 
-    const lookForApplicationsFolder = async () => {
-        const findApplicationsFolder = Array.from(matrixSpaces).find(space => space.meta?.template === 'applications');
-        if (findApplicationsFolder) {
-            // eslint-disable-next-line no-undef
-            if (process.env.NODE_ENV === 'development') console.info('found applications space');
-            return findApplicationsFolder.roomId;
-        } else {
-            // eslint-disable-next-line no-undef
-            if (process.env.NODE_ENV === 'development') console.log('creating root applications folder');
-            const newApplicationsFolder = await matrix.createRoom(
-                'Applications',
-                true,
-                'This is your private applications space. You can find all your application data in here.',
-                'invite',
-                'context',
-                'applications');
-            return newApplicationsFolder;
-        }
-    };
-
-    const lookForServiceFolder = async (applicationsSpaceId) => {
-        const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
-        if (findServiceSpace) return findServiceSpace.roomId;
-        else {
-            // eslint-disable-next-line no-undef
-            if (process.env.NODE_ENV === 'development') console.info('creating service space');
-            const createRoom = await matrix.createRoom(
-                application,
-                true,
-                `This is your private space for the application ${application}. You can find all your ${application} data in here.`,
-                'invite',
-                'context',
-                'application');
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(applicationsSpaceId, createRoom);
-            return createRoom;
-        }
-    };
-
     useEffect(() => {
         let cancelled = false;
+
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
-                    const applicationsSpaceId = await lookForApplicationsFolder();
-                    const space = await lookForServiceFolder(applicationsSpaceId);
-                    setServiceSpaceId(space);
+                    setServiceSpaceId(matrix.serviceSpaces.sketch);
                 } catch (err) {
-                    // eslint-disable-next-line no-undef
-                    if (process.env.NODE_ENV === 'development') console.debug(err);
+                    console.log(err);
                 }
             }
         };
+
         !cancelled && startLookingForFolders();
         return () => cancelled = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrix.initialSyncDone]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.sketch]);
 
     useEffect(() => {
         let cancelled = false;
@@ -276,10 +235,9 @@ export default function Sketch() {
                 { syncingServerSketches ?
                     <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
                     <ServiceTable>
-                        <ul>{ matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />;
                         }) }
-                        </ul>
                     </ServiceTable>
                 }
             </IframeLayout.Sidebar>
