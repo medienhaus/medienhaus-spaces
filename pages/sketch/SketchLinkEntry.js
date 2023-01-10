@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import Bin from '../../assets/icons/bin.svg';
-import { ServiceLink } from '../../components/UI/ServiceLink';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const LinkElement = styled(ServiceLink)`
-`;
-
-export default function SketchLinkEntry({ roomId, parent }) {
+export default function SketchLinkEntry({ roomId, selected }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const sketch = auth.getAuthenticationProvider('sketch');
-    const { t } = useTranslation('sketch');
 
     const [content, setContent] = useState('');
     const [linkName, setLinkName] = useState('');
-    const [removingLink, setRemovingLink] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -51,31 +41,14 @@ export default function SketchLinkEntry({ roomId, parent }) {
         return () => controller.abort;
     }, [content, matrix, roomId]);
 
-    const removeLink = async () => {
-        // @TODO callback function to give user feedback when removing on the server fails
-        setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {});
-        if (!remove) {
-            setRemovingLink(false);
-            return;
-        }
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
-        await matrix.leaveRoom(roomId);
-        setRemovingLink(false);
-    };
-
     if (content === undefined) return <LoadingSpinner />;
     if (content === null) return;
 
     return (
-        <LinkElement key={roomId}>
-            <Link href={`/sketch/${roomId}`}>{ linkName }</Link>
-            <div className="group">
-                <>
-                    <CopyToClipboard content={content} />
-                    <button title={t('Remove sketch')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-fg)" /> }</button>
-                </>
-            </div>
-        </LinkElement>
+        <ServiceTable.Row>
+            <ServiceTable.Cell selected={selected}>
+                <Link disabled href={`/sketch/${roomId}`}>{ linkName }</Link>
+            </ServiceTable.Cell>
+        </ServiceTable.Row>
     );
 }

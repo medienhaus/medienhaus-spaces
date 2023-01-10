@@ -7,7 +7,7 @@ import { useMatrix } from '../../lib/Matrix';
 import Lock from '../../assets/icons/lock.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
+const WriteListEntry = ({ roomId, serverPads, selected }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const [linkName, setLinkName] = useState('');

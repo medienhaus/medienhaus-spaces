@@ -2,31 +2,19 @@ import getConfig from 'next/config';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isEmpty } from 'lodash';
-import styled from 'styled-components';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import FrameView from '../../components/FrameView';
+import Bin from '../../assets/icons/bin.svg';
+import Clipboard from '../../assets/icons/clipboard.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import MultiColumnLayout from '../../components/layouts/multicolumn';
+import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    width: 30ch;
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-`;
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Sketch() {
     const auth = useAuth();
@@ -41,6 +29,7 @@ export default function Sketch() {
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [loading, setLoading] = useState(false);
+    const [removingLink, setRemovingLink] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
@@ -215,6 +204,21 @@ export default function Sketch() {
         });
     }
 
+    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
+
+    const removeLink = async () => {
+        // @TODO callback function to give user feedback when removing on the server fails
+        setRemovingLink(true);
+        const remove = await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {});
+        if (!remove) {
+            setRemovingLink(false);
+            return;
+        }
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await matrix.leaveRoom(roomId);
+        setRemovingLink(false);
+    };
+
     const ActionNewSketch = () => {
         const [sketchName, setSketchName] = useState('');
 
@@ -262,33 +266,43 @@ export default function Sketch() {
 
     return (
         <>
-            <SidebarColumn>
-                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/sketch</Link></MultiColumnLayout.ColumnMobileHead> }
-                <>
-                    <ServiceSubmenu title="/sketch">
-                        <ServiceSubmenu.Toggle />
-                        <ServiceSubmenu.List>
-                            <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
-                        </ServiceSubmenu.List>
-                    </ServiceSubmenu>
-                </>
+            <IframeLayout.Sidebar>
+                <ServiceSubmenu title={<h2>/sketch</h2>}>
+                    <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
+                        <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
+                        <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
+                    </ServiceSubmenu.Menu>
+                </ServiceSubmenu>
                 { syncingServerSketches ?
                     <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
-                    <>
-                        <ul>{ matrix.spaces.get(serviceSpaceId).children?.map(roomId => <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />) }</ul>
-                    </>
+                    <ServiceTable>
+                        <ul>{ matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                            return <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />;
+                        }) }
+                        </ul>
+                    </ServiceTable>
                 }
-            </SidebarColumn>
+            </IframeLayout.Sidebar>
             { roomId && content && (
-                <IframeColumn>
-                    <FrameView link={content.body} />
-                </IframeColumn>
+                <IframeLayout.IframeWrapper>
+                    <IframeLayout.IframeHeader>
+                        <h2>{ matrix.rooms.get(roomId).name }</h2>
+                        <IframeLayout.IframeHeaderButtonWrapper>
+                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
+                                <Clipboard fill="var(--color-foreground)" />
+                            </button>
+                            <button title={t('Remove pad from my library')} onClick={removeLink}>
+                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                            </button>
+                        </IframeLayout.IframeHeaderButtonWrapper>
+                    </IframeLayout.IframeHeader>
+                    <iframe src={content.body} />
+                </IframeLayout.IframeWrapper>
             ) }
         </>
     );
 }
 
 Sketch.getLayout = () => {
-    return MultiColumnLayout.Layout;
+    return IframeLayout.Layout;
 };
