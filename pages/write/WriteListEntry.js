@@ -1,36 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import Bin from '../../assets/icons/bin.svg';
 import Lock from '../../assets/icons/lock.svg';
-import { ServiceLink } from '../../components/UI/ServiceLink';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const LinkElement = styled(ServiceLink)``;
-
-const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
+const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const write = auth.getAuthenticationProvider('write');
-    const [removingLink, setRemovingLink] = useState(false);
     const [linkName, setLinkName] = useState('');
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const { t } = useTranslation('write');
-
-    const removeLink = async () => {
-        setRemovingLink(true);
-        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
-        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
-        await matrix.leaveRoom(roomId);
-        await callback();
-        setRemovingLink(false);
-    };
 
     useEffect(() => {
         let cancelled = false;
@@ -59,20 +41,14 @@ const WriteListEntry = ({ parent, roomId, serverPads, callback }) => {
         return () => controller.abort;
     }, [content, matrix, roomId, serverPads]);
 
-    if (content === undefined || serverPads === null) return <LoadingSpinner />;
+    if (content === undefined || serverPads === null) return null;
     if (content === null) return;
 
     return (
-        <LinkElement>
-            <Link href={`/write/${roomId}`}>{ linkName }</Link>
-            <div className="group">
-                { serverPads &&
-            <button disabled title={t('password protected')}>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <Lock /> }
-            </button> }
-                <CopyToClipboard content={content} />
-                <button title={t('Remove pad from my library')} onClick={removeLink}>{ removingLink ? <LoadingSpinner /> : <Bin /> }</button>
-            </div>
-        </LinkElement>
+        <ServiceTable.Row>
+            <ServiceTable.Cell selected={selected}><Link disabled href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
+            <ServiceTable.Cell>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <span title={t('password protected')}><Lock fill="var(--color-attention)" /></span> }</ServiceTable.Cell>
+        </ServiceTable.Row>
     );
 };
 export default WriteListEntry;

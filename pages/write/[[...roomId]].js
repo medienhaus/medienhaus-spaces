@@ -1,82 +1,36 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import FrameView from '../../components/FrameView';
-import MultiColumnLayout from '../../components/layouts/multicolumn';
+import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-
-const SidebarColumn = styled(MultiColumnLayout.Column)`
-  @media (width > 51em) {
-    width: 30ch;
-    max-width: 30ch;
-  }
-`;
-
-const IframeColumn = styled(MultiColumnLayout.Column)`
-  max-width: unset;
-  padding: 0;
-`;
+import Bin from '../../assets/icons/bin.svg';
+import Clipboard from '../../assets/icons/clipboard.svg';
+import { ServiceTable } from '../../components/UI/ServiceTable';
+import Form from '../../components/UI/Form';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrixSpaces = matrix.spaces.values();
     const { t } = useTranslation('write');
-    const application = 'write';
     const router = useRouter();
     // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
     const roomId = _.get(router, 'query.roomId.0');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [serverPads, setServerPads] = useState({});
+    const [removingLink, setRemovingLink] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     const write = auth.getAuthenticationProvider('write');
-    const lookForServiceFolder = async (applicationsSpaceId) => {
-        const findServiceSpace = Array.from(matrix.spaces.values()).find(space => space.name === application);
-        if (findServiceSpace) return findServiceSpace.roomId;
-        else {
-            console.info('creating service space');
-            const createRoom = await matrix.createRoom(
-                application,
-                true,
-                `This is your private space for the application ${application}. You can find all your ${application} data in here.`,
-                'invite',
-                'context',
-                'application');
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(applicationsSpaceId, createRoom);
-            return createRoom;
-        }
-    };
-
-    const lookForApplicationsFolder = async () => {
-        const findApplicationsFolder = Array.from(matrixSpaces).find(space => space.meta?.template === 'applications');
-        if (findApplicationsFolder) {
-            console.info('found applications space');
-            return findApplicationsFolder.roomId;
-        } else {
-            console.log('creating root applications folder');
-            const newApplicationsFolder = await matrix.createRoom(
-                'Applications',
-                true,
-                'This is your private applications space. You can find all your application data in here.',
-                'invite',
-                'context',
-                'applications');
-            return newApplicationsFolder;
-        }
-    };
 
     useEffect(() => {
         let cancelled = false;
@@ -84,9 +38,7 @@ export default function Write() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
-                    const applicationsSpaceId = await lookForApplicationsFolder();
-                    const space = await lookForServiceFolder(applicationsSpaceId);
-                    setServiceSpaceId(space);
+                    setServiceSpaceId(matrix.serviceSpaces.write);
                 } catch (err) {
                     console.log(err);
                 }
@@ -97,7 +49,7 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [matrix.initialSyncDone]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.write]);
 
     useEffect(() => {
         let cancelled = false;
@@ -122,16 +74,15 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [write]);
+    }, [syncServerPadsAndSet, write]);
 
-    async function syncServerPadsAndSet() {
+    const syncServerPadsAndSet = useCallback(async () => {
         await write.syncAllPads().catch(() => setServerPads(null));
         setServerPads(write.getAllPads());
-    }
+    }, [write]);
 
     useEffect(() => {
         let cancelled = false;
-
         const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
             if (matrix?.spaces.get(serviceSpaceId).children) {
@@ -157,9 +108,24 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
-    }, [serviceSpaceId, serverPads]);
+        // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
+        // therefore we need to disable the linter for the next line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [serviceSpaceId, serverPads, createWriteRoom]);
 
-    async function createWriteRoom(link, name) {
+    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
+
+    const removeLink = async () => {
+        setRemovingLink(true);
+        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
+        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await matrix.leaveRoom(roomId);
+        await syncServerPadsAndSet();
+        setRemovingLink(false);
+    };
+
+    const createWriteRoom = useCallback(async (link, name) => {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
@@ -174,7 +140,7 @@ export default function Write() {
             setServerPads(write.getAllPads());
         }
         return room;
-    }
+    }, [auth, matrix, matrixClient, serviceSpaceId, write]);
 
     const ActionNewAnonymousPad = () => {
         const [padName, setPadName] = useState('');
@@ -197,10 +163,10 @@ export default function Write() {
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-            </form>);
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+            </Form>);
     };
 
     const ActionExistingPad = () => {
@@ -224,12 +190,12 @@ export default function Write() {
         };
 
         return (
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
                 { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinner inverted /> : t('Add existing pad') }</button>
-            </form>);
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing pad') }</button>
+            </Form>);
     };
 
     const ActionPasswordPad = () => {
@@ -247,12 +213,12 @@ export default function Write() {
             setLoading(false);
         };
 
-        return (<form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
+        return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinner inverted /> :t('Create pad') }</button>
-        </form>);
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+        </Form>);
     };
 
     const ActionAuthoredPad = () => {
@@ -269,15 +235,16 @@ export default function Write() {
                 return;
             }
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
-            const roomId = await createWriteRoom(link);
+            const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            setLoading(false);
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinner inverted /> : t('Create pad') }</button>
-            </form>);
+                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+            </Form>);
     };
 
     <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>;
@@ -286,41 +253,54 @@ export default function Write() {
 
     return (
         <>
-            <SidebarColumn>
-                { roomId && <MultiColumnLayout.ColumnMobileHead><Link href="/write">/write</Link></MultiColumnLayout.ColumnMobileHead> }
+            <IframeLayout.Sidebar>
                 <>
-                    <ServiceSubmenu title="/write">
-                        <ServiceSubmenu.Toggle />
-                        <ServiceSubmenu.List>
+                    <ServiceSubmenu title={<h2>/write</h2>}>
+                        <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
+                            <ServiceSubmenu.Item disabled>-- { t('select action') } --</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
-                        </ServiceSubmenu.List>
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
+                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
+                        </ServiceSubmenu.Menu>
                     </ServiceSubmenu>
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
-                    <ul>
-                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                    <ServiceTable>
+                        { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
                             return <WriteListEntry
-                                key={roomId}
-                                roomId={roomId}
+                                key={writeRoomId}
+                                roomId={writeRoomId}
+                                selected={writeRoomId === roomId}
                                 parent={serviceSpaceId}
                                 serverPads={serverPads}
-                                callback={syncServerPadsAndSet}
+                                removeLink={removeLink}
+                                copyToClipboard={copyToClipboard}
                             />;
                         }) }
-                    </ul>
+                    </ServiceTable>
                 </>
-            </SidebarColumn>
+            </IframeLayout.Sidebar>
             { roomId && content && (
-                <IframeColumn>
-                    <FrameView link={content.body} />
-                </IframeColumn>
+                <IframeLayout.IframeWrapper>
+                    <IframeLayout.IframeHeader>
+                        <h2>{ matrix.rooms.get(roomId).name }</h2>
+                        <IframeLayout.IframeHeaderButtonWrapper>
+                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
+                                <Clipboard fill="var(--color-foreground)" />
+                            </button>
+                            <button title={t('Remove pad from my library')} onClick={removeLink}>
+                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                            </button>
+                        </IframeLayout.IframeHeaderButtonWrapper>
+                    </IframeLayout.IframeHeader>
+                    <iframe src={content.body} />
+
+                </IframeLayout.IframeWrapper>
             ) }
         </>
     );
 }
 
 Write.getLayout = () => {
-    return MultiColumnLayout.Layout;
+    return IframeLayout.Layout;
 };
