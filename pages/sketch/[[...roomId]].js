@@ -26,7 +26,6 @@ export default function Sketch() {
 
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
-    const [loading, setLoading] = useState(false);
     const [removingLink, setRemovingLink] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
@@ -104,7 +103,7 @@ export default function Sketch() {
                         continue;
                     }
                     // otherwise we create a room for the sketch
-                    const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + 'spaces/' + sketch.id;
+                    const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + sketch.id;
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
@@ -168,7 +167,7 @@ export default function Sketch() {
     const removeLink = async () => {
         // @TODO callback function to give user feedback when removing on the server fails
         setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.substring(content.lastIndexOf('/') + 1)).catch(() => {});
+        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch(() => {});
         if (!remove) {
             setRemovingLink(false);
             return;
@@ -180,12 +179,13 @@ export default function Sketch() {
 
     const ActionNewSketch = () => {
         const [sketchName, setSketchName] = useState('');
+        const [loading, setLoading] = useState(false);
 
         const createNewSketchRoom = async () => {
             setLoading(true);
             const create = await sketch.createSpace(sketchName);
-            const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + 'spaces/' + create._id;
-            createSketchRoom(link);
+            const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + create._id;
+            createSketchRoom(link, sketchName);
             setLoading(false);
         };
 
@@ -201,6 +201,7 @@ export default function Sketch() {
         const [sketchName, setSketchName] = useState('');
         const [sketchLink, setSketchLink] = useState('');
         const [validLink, setValidLink] = useState(false);
+        const [loading, setLoading] = useState(false);
 
         const handleExistingSketch = (e) => {
             setLoading(true);
@@ -233,7 +234,7 @@ export default function Sketch() {
                     </ServiceSubmenu.Menu>
                 </ServiceSubmenu>
                 { syncingServerSketches ?
-                    <span><LoadingSpinner />{ t('Syncing pads from sketch server') } </span> :
+                    <span><LoadingSpinner />{ t('Syncing sketches ...') } </span> :
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />;
