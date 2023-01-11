@@ -167,13 +167,15 @@ export default function Sketch() {
     const removeLink = async () => {
         // @TODO callback function to give user feedback when removing on the server fails
         setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch(() => {});
-        if (!remove) {
+        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch(() => { });
+
+        if (!remove.ok) {
             setRemovingLink(false);
             return;
         }
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
+        router.push('/sketch');
         setRemovingLink(false);
     };
 
@@ -205,6 +207,7 @@ export default function Sketch() {
 
         const handleExistingSketch = (e) => {
             setLoading(true);
+            // we check if the link is valid for the service (has the same base url)
             if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
             else setValidLink(false);
             setSketchLink(e.target.value);
@@ -237,7 +240,7 @@ export default function Sketch() {
                     <span><LoadingSpinner />{ t('Syncing sketches ...') } </span> :
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                            return <SketchLinkEntry roomId={roomId} key={roomId} parent={serviceSpaceId} />;
+                            return <SketchLinkEntry roomId={roomId} key={roomId} />;
                         }) }
                     </ServiceTable>
                 }
