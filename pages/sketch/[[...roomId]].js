@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { useRouter } from 'next/router';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
@@ -15,6 +16,7 @@ import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import Form from '../../components/UI/Form';
 
 export default function Sketch() {
     const auth = useAuth();
@@ -202,11 +204,11 @@ export default function Sketch() {
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinner inverted /> : t('Create sketch') }</button>
+                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </form>);
+            </Form>);
     };
 
     const ActionExistingSketch = () => {
@@ -225,14 +227,14 @@ export default function Sketch() {
         };
 
         return (
-            <form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); }}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
                 { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
 
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinner inverted /> : t('Add existing sketch') }</button>
+                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </form>);
+            </Form>);
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
@@ -242,12 +244,13 @@ export default function Sketch() {
             <IframeLayout.Sidebar>
                 <ServiceSubmenu title={<h2>/sketch</h2>} closeToggle={closeServiceMenu}>
                     <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
+                        <ServiceSubmenu.Item disabled>-- { t('select action') } --</ServiceSubmenu.Item>
                         <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
                         <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
                     </ServiceSubmenu.Menu>
                 </ServiceSubmenu>
                 { syncingServerSketches ?
-                    <span><LoadingSpinner />{ t('Syncing sketches ...') } </span> :
+                    <span><LoadingSpinnerInline /> { t('Syncing sketches ...') } </span> :
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <SketchLinkEntry roomId={roomId} key={roomId} />;
