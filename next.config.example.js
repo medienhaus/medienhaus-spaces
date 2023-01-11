@@ -21,6 +21,9 @@ module.exports = {
         account: {
             allowAddingNewEmails: true,
         },
+        chat: {
+            pathToElement: '//localhost/element',
+        },
     },
     webpack: WebpackConfig,
 };

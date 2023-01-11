@@ -38,7 +38,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media ${breakpoints.phoneOnly} {
     display: flex;
@@ -104,7 +104,7 @@ const Nav = styled.nav`
   padding: var(--margin);
   overflow: auto;
   font-weight: 500;
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media ${breakpoints.tabletAndAbove} {
     display: block;
@@ -123,7 +123,7 @@ const Nav = styled.nav`
 const Footer = styled.footer`
   padding: var(--margin);
   font-size: 70%;
-  background: var(--color-background-sidebar);
+  background: var(--color-background-navbar);
 
   @media ${breakpoints.tabletAndAbove} {
     grid-row: 3;
