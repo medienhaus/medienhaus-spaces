@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import Lock from '../../assets/icons/lock.svg';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const WriteListEntry = ({ roomId, serverPads, selected }) => {
+export default function SketchLinkEntry({ roomId, selected }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+
+    const [content, setContent] = useState('');
     const [linkName, setLinkName] = useState('');
-    const [content, setContent] = useState(matrix.roomContents.get(roomId));
-    const { t } = useTranslation('write');
 
     useEffect(() => {
         let cancelled = false;
-        !cancelled && setLinkName(matrix.rooms.get(roomId).name);
-
+        if (!cancelled) {
+            const name = matrix.rooms.get(roomId).name;
+            setLinkName(name);
+        }
         return () => cancelled = true;
     }, [matrix.rooms, roomId]);
 
     useEffect(() => {
         let cancelled = false;
 
-        !cancelled && setContent(matrix.roomContents.get(roomId));
+        !cancelled && setContent(matrix.roomContents.get(roomId)?.body);
 
         return () => cancelled = true;
     }, [matrix.roomContents, roomId]);
@@ -35,20 +36,19 @@ const WriteListEntry = ({ roomId, serverPads, selected }) => {
         const checkForRoomContent = async () => {
             await matrix.hydrateRoomContent(roomId, 1, signal);
         };
-
         checkForRoomContent();
 
         return () => controller.abort;
-    }, [content, matrix, roomId, serverPads]);
+    }, [content, matrix, roomId]);
 
-    if (content === undefined || serverPads === null) return null;
+    if (content === undefined) return <LoadingSpinner />;
     if (content === null) return;
 
     return (
         <ServiceTable.Row>
-            <ServiceTable.Cell selected={selected}><Link disabled href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
-            <ServiceTable.Cell>{ serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && <span title={t('password protected')}><Lock fill="var(--color-attention)" /></span> }</ServiceTable.Cell>
+            <ServiceTable.Cell selected={selected}>
+                <Link disabled href={`/sketch/${roomId}`}>{ linkName }</Link>
+            </ServiceTable.Cell>
         </ServiceTable.Row>
     );
-};
-export default WriteListEntry;
+}
