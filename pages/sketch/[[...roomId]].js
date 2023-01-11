@@ -30,6 +30,7 @@ export default function Sketch() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
+    const [closeServiceMenu, setCloseServiceMenu] = useState(false);
 
     const sketch = auth.getAuthenticationProvider('sketch');
 
@@ -160,16 +161,21 @@ export default function Sketch() {
         }).catch(() => {
             setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
         });
+
+        return room;
     }
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
-        // @TODO callback function to give user feedback when removing on the server fails
         setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch(() => { });
-
+        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
+        if (!remove) {
+            setRemovingLink(false);
+            return;
+        }
         if (!remove.ok) {
+        // @TODO callback function to give user feedback when removing on the server fails
             setRemovingLink(false);
             return;
         }
@@ -187,7 +193,11 @@ export default function Sketch() {
             setLoading(true);
             const create = await sketch.createSpace(sketchName);
             const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + create._id;
-            createSketchRoom(link, sketchName);
+            const roomId = await createSketchRoom(link, sketchName);
+            router.push(`/sketch/${roomId}`);
+            // in order to close the service menu after succesfully creating a new room we need to set the state to true and afterwards reset it to false again, for it to work on the next call.
+            setCloseServiceMenu(true);
+            setCloseServiceMenu(false);
             setLoading(false);
         };
 
@@ -230,7 +240,7 @@ export default function Sketch() {
     return (
         <>
             <IframeLayout.Sidebar>
-                <ServiceSubmenu title={<h2>/sketch</h2>}>
+                <ServiceSubmenu title={<h2>/sketch</h2>} closeToggle={closeServiceMenu}>
                     <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
                         <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
                         <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
