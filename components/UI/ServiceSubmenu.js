@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import MenuAdd from '../../assets/icons/menu-add.svg';
@@ -37,15 +37,22 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, children }) {
+export function ServiceSubmenu({ title, icon, closeToggle, children }) {
     const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
     const handleMenuToggle = () => setOpenSubmenu(!opensubmenu);
+
+    useEffect(() => {
+        //@TODO needs a more elegant solution to close the menu from outside of the component
+        // at the moment the state closeToggle has to be parsed as true from the outside of the function
+        closeToggle && opensubmenu && setOpenSubmenu(false);
+    }, [closeToggle, opensubmenu]);
+
     return (
         <>
             <Header>
                 { title && title }
                 <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAdd /> }
+                    { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
             { React.Children.map(children, child =>
