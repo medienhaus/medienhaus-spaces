@@ -13,8 +13,6 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
 
-  --color-background-sidebar: rgb(240 240 240);
-
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
     grid-template-rows: min-content 1fr min-content;
