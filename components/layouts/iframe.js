@@ -42,6 +42,7 @@ const Sidebar = styled.div`
 const IframeWrapper = styled.div`
   display: flex;
   flex: 1 0;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -51,6 +52,45 @@ const IframeWrapper = styled.div`
     height: 100%;
     margin: 0;
     border: none;
+    border-top: 1px dotted rgb(210 210 210);
+  }
+`;
+
+const IframeHeader = styled.header`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+  padding: var(--margin);
+  padding-bottom: var(--margin);
+
+  @media (width > 51em) {
+    padding-bottom: calc(var(--margin) * 2);
+
+    @media (width > 68em) {
+      padding: calc(var(--margin) * 2);
+      padding-bottom: calc(var(--margin) * 3);
+    }
+  }
+
+  /* @TODO: re-factor quick-fix */
+  h2 {
+    margin: 0 !important;
+  }
+`;
+
+const IframeHeaderButtonWrapper = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: calc(var(--margin));
+  height: 100%;
+
+  button {
+    /* unset globally defined button styles; set height to line-height */
+    width: unset;
+    height: calc(var(--margin) * 1.3);
+    padding: unset;
+    background-color: unset;
+    border: unset;
   }
 `;
 
@@ -67,11 +107,15 @@ const Layout = ({ children }) => {
 /**
  * Use this layout if you want a split-view with a sidebar on the left and an iframe on the right. On mobile viewports
  * we'll just collapse and only show one (either sidebar or iframe) at a time.
+ * IframeHeader is an optional component to add a top bar to the view which can contain IframeHeaderButtonWrapper
+ * all content within IframeHeaderButtonWrapper is aligned to the right side of the view.
  */
 const IframeLayout = {
     Layout,
     Sidebar,
     IframeWrapper,
+    IframeHeader,
+    IframeHeaderButtonWrapper,
 };
 
 export default IframeLayout;
