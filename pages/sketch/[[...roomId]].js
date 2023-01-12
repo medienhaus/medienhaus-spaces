@@ -244,9 +244,9 @@ export default function Sketch() {
             <IframeLayout.Sidebar>
                 <ServiceSubmenu title={<h2>/sketch</h2>} closeToggle={closeServiceMenu}>
                     <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
-                        <ServiceSubmenu.Item disabled>-- { t('select action') } --</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
+                        <ServiceSubmenu.Item itemValue="" disabled>-- { t('select action') } --</ServiceSubmenu.Item>
+                        <ServiceSubmenu.Item itemValue="existingSketch" actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
+                        <ServiceSubmenu.Item itemValue="newSketch" actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
                     </ServiceSubmenu.Menu>
                 </ServiceSubmenu>
                 { syncingServerSketches ?
