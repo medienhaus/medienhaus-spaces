@@ -42,7 +42,7 @@ export function ServiceSubmenu({ title, icon, closeToggle, children }) {
     const handleMenuToggle = () => setOpenSubmenu(!opensubmenu);
 
     useEffect(() => {
-        //@TODO needs a more elegant solution to close the menu from outside of the component
+        // @TODO needs a more elegant solution to close the menu from outside of the component
         // at the moment the state closeToggle has to be parsed as true from the outside of the function
         closeToggle && opensubmenu && setOpenSubmenu(false);
     }, [closeToggle, opensubmenu]);
@@ -64,12 +64,16 @@ export function ServiceSubmenu({ title, icon, closeToggle, children }) {
 
 function Menu({ subheadline, children, opensubmenu }) {
     const [renderActionComponent, setRenderActionComponent] = useState(null);
+    const [value, setValue] = useState('');
     // if opensubmenu changed and was true we don't want to render any action components
+    console.log(value);
     if (opensubmenu) {
         return (
             <Submenu>
                 { subheadline && <h3>{ subheadline }</h3> }
-                <select>
+                <select
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}>
                     { React.Children.map(children, child => {
                         if (child) return React.cloneElement(child, { renderActionComponent, setRenderActionComponent });
                     },
@@ -82,9 +86,15 @@ function Menu({ subheadline, children, opensubmenu }) {
     return null;
 }
 
-function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender, disabled }) {
+function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender, disabled, itemValue }) {
     return (
-        <option disabled={disabled} onClick={() => setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender)}>
+        <option value={itemValue}
+            disabled={disabled}
+            onClick={() => {
+                setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender);
+            }
+            }
+        >
             { children }
         </option>
     );
