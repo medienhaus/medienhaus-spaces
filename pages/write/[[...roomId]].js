@@ -257,9 +257,9 @@ export default function Write() {
                 <>
                     <ServiceSubmenu title={<h2>/write</h2>}>
                         <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
-                            <ServiceSubmenu.Item disabled>-- { t('select action') } --</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item disabled itemValue="">-- { t('select action') } --</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item itemValue="existingPad" actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
+                            <ServiceSubmenu.Item itemValue="anonymousPad" actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
                             { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
                         </ServiceSubmenu.Menu>
