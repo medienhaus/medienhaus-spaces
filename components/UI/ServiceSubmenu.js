@@ -66,7 +66,6 @@ function Menu({ subheadline, children, opensubmenu }) {
     const [renderActionComponent, setRenderActionComponent] = useState(null);
     const [value, setValue] = useState('');
     // if opensubmenu changed and was true we don't want to render any action components
-    console.log(value);
     if (opensubmenu) {
         return (
             <Submenu>
