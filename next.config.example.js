@@ -16,6 +16,9 @@ module.exports = {
                 baseUrl: 'https://pad.riseup.net/p',
                 api: 'https://pad.riseup.net/mypads/api',
             },
+            sketch: {
+                baseUrl: 'https://sketch.yourserver.org',
+            },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
