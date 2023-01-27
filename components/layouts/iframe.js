@@ -33,7 +33,7 @@ const Sidebar = styled.div`
     overflow: auto;
 
     @media ${breakpoints.laptopAndAbove} {
-      width: 25rem;
+      width: ${props => props.width ? props.width : '25rem'};
       padding: calc(var(--margin) * 2);
     }
   }
