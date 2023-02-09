@@ -10,12 +10,11 @@ import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import Bin from '../../assets/icons/bin.svg';
-import Clipboard from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import WriteIframeHeader from './WriteIframeHeader';
 
 export default function Write() {
     const auth = useAuth();
@@ -282,17 +281,11 @@ export default function Write() {
             </IframeLayout.Sidebar>
             { roomId && content && (
                 <IframeLayout.IframeWrapper>
-                    <IframeLayout.IframeHeader>
-                        <h2>{ matrix.rooms.get(roomId).name }</h2>
-                        <IframeLayout.IframeHeaderButtonWrapper>
-                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <Clipboard fill="var(--color-foreground)" />
-                            </button>
-                            <button title={t('Remove pad from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
-                            </button>
-                        </IframeLayout.IframeHeaderButtonWrapper>
-                    </IframeLayout.IframeHeader>
+                    <WriteIframeHeader
+                        content={content.body}
+                        title={matrix.rooms.get(roomId).name}
+                        removeLink={removeLink}
+                        removingLink={removingLink} />
                     <iframe src={content.body} />
 
                 </IframeLayout.IframeWrapper>
