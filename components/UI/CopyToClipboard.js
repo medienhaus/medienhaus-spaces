@@ -18,8 +18,8 @@ const CopyToClipboard = ({ content }) => {
     return (
         <TextButton title={t('Copy link to clipboard')} onClick={copyToClipboard}>
             { contentCopied ?
-                '✓':
-                <Clipboard fill="var(--color-fg)" /> }
+                '✔':
+                <Clipboard fill="var(--color-foreground)" /> }
         </TextButton>
     );
 };
