@@ -12,6 +12,7 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
     const svgRef = useRef(null);
+    const [refocus, setRefocus] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -28,7 +29,6 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
         let cancelled = false;
 
         if (!cancelled) {
-            console.log(parsedHeight);
             parsedHeight && setHeight(parsedHeight);
         }
         return () => {
@@ -37,6 +37,9 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
     }, [parsedHeight]);
 
     const drawSvg = (data, height) => {
+        const container = d3.select(svgRef.current);
+        // Remove previous SVG
+        container.selectAll('svg').remove();
         const format = d3.format(',d');
 
         function rectHeight(d) {
@@ -61,7 +64,7 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
                 );
             return partition().size([
                 height,
-                ((root.height + 1) * width / 3),
+                ((root.height + 1) * width / 5),
             ])(root);
         }
 
@@ -70,7 +73,19 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
         // );
 
         const root = iciclePartition(data);
-        console.log(root);
+
+        if (refocus) {
+            console.log(refocus);
+            root.each(
+                (d) =>
+                    (d.target = {
+                        x0: ((d.x0 - refocus.x0) / (refocus.x1 - refocus.x0)) * height,
+                        x1: ((d.x1 - refocus.x0) / (refocus.x1 - refocus.x0)) * height,
+                        y0: d.y0 - refocus.y0,
+                        y1: d.y1 - refocus.y0,
+                    }),
+            );
+        }
         let focus = root;
 
         // const svg = select('body')
@@ -78,7 +93,8 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
         //     // .attr('viewBox', [root.x1, 0, width, height])
         //     .style('font', '10px sans-serif');
 
-        const svg = d3.select(svgRef.current)
+        const svg = container
+            .append('svg')
         // .attr('height', height)
         // .attr('viewBox', [-width / 2, -height / 2, width, height])
             .attr('style', 'max-width: 100%; height: auto; height: intrinsic;')
@@ -87,24 +103,18 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
         const cell = svg
             .selectAll('g')
             .data(root.descendants())
-            .join(
-                enter => enter.append('g'),
-                update => update.
-                    style('display', (d) => console.log(d)),
-                exit => exit.remove(),
-            )
+            .join('g')
             .attr('transform', (d) => `translate(${d.y0},${d.x0})`)
-            .attr('width', (d) => d.y1 - d.y0 - 1);
+            .attr('width', (d) => d.y1 - d.y0);
 
         const rect = cell
             .append('rect')
-            .attr('width', (d) => d.y1 - d.y0 - 1)
+            .attr('width', (d) => d.y1 - d.y0 -1)
             .attr('height', (d) => rectHeight(d))
             .attr('fill', (d) => {
-                if (d.data.template === 'write') return 'red';
-                if (d.data.template === 'sketch') return 'blue';
-                if (d.data.type === 'item') return 'green';
-
+                // if (d.data.template === 'write') return 'red';
+                // if (d.data.template === 'sketch') return 'blue';
+                // if (d.data.type === 'item') return 'green';
                 return 'var(--color-background-sidebar)';
             })
             .attr('stroke', 'var(--color-foreground)')
@@ -122,12 +132,24 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             .attr('fill', 'var(--color-foreground)')
             .attr('fill-opacity', (d) => +labelVisible(d));
 
-        text.append('tspan').text((d) => d.data.name);
+        text.append('tspan').text((d) => {
+            if (d.data.template === 'write') return '📝 ' + d.data.name;
+            if (d.data.template === 'sketch') return '🎨 ' + d.data.name;
+            if (d.data.template === 'chat') return '💬 ' + d.data.name;
+            if (d.data.type === 'item') return '📐 ' + d.data.name;
 
-        // const tspan = text
-        //     .append('tspan')
-        //     .attr('fill-opacity', (d) => labelVisible(d) * 0.7)
-        //     .text((d) => ` ${format(d.value)}`);
+            return d.data.name;
+        });
+
+        const tspan = text
+            .append('tspan')
+            .attr('x', (d) => d.y1 - d.y0 -16)
+            .attr('text-anchor', 'end')
+            .attr('fill-opacity', (d) => labelVisible(d) * 0.7)
+            .text((d) => {
+                console.log(d);
+                return d.data.template;
+            });
 
         cell.append('title').text(
             (d) =>
@@ -138,10 +160,9 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
                     .join('/')}\n${format(d.value)}`,
         );
 
-        async function clicked(event, p) {
+        function startTransition(p) {
             focus = focus === p ? (p = p.parent) : p;
             if (!p) return;
-            await callback(p);
 
             root.each(
                 (d) =>
@@ -164,9 +185,29 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             rect
                 .transition(t)
                 .attr('height', (d) => rectHeight(d.target));
+
             text
                 .transition(t)
                 .attr('fill-opacity', (d) => +labelVisible(d.target));
+        }
+
+        async function clicked(event, p) {
+            if (!p) return;
+            // const newNode = d3.hierarchy(newData);
+            // console.log(newNode);
+            // newNode.depth = p.depth + 1;
+            // newNode.height = p.height - 1;
+            // newNode.parent = p;
+
+            // if (!p.children) {
+            //     p.children = [];
+            //     p.data.children = [];
+            // }
+            // p.children.push(newNode);
+            // p.data.children.push(newNode.data);
+            // // setData(newData);
+            startTransition(p);
+            await callback(p, focus !== p && p.parent);
 
             // tspan
             //     .transition(t)
@@ -176,6 +217,7 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             //     );
         }
     };
+
     useEffect(() => {
         drawSvg(data, height);
         return () => {
@@ -183,7 +225,7 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             // svgRef.current = null;
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, height]);
+    }, [height]);
 
     // useEffect(() => {
     //     // if (svgRef.current) {
@@ -196,7 +238,8 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
     //     };
     // }, [svg, height]);
     if (!height) return <LoadingSpinner />;
-    return <svg ref={svgRef} width="100%" height={height} />;
+    // return <svg ref={svgRef} width="100%" height={height} />;
+    return <svg ref={svgRef} width={selectedNode ? '100%' : '50%'} height={height} />;
 }
 
 export default GraphView;
