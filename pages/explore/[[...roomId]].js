@@ -259,7 +259,7 @@ export default function Explore() {
     const getRoomContent = async (roomId) => {
         // const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
         let fetchMessage = matrix.roomContents.get(roomId);
-
+        console.log(fetchMessage);
         if (!fetchMessage) {
             fetchMessage = await matrix.hydrateRoomContent(roomId);
             console.log(fetchMessage);
@@ -290,7 +290,7 @@ export default function Explore() {
 
             // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
             // console.log(roomId);
-        } if (element.data.template === 'studentproject') {
+        } else if (element.data.template === 'studentproject') {
             setCurrentItemType('studentproject');
             content = element.data.id
         }
