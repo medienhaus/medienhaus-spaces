@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 
 const View = styled.div`
-  display: flex; // this only works if content is wrapped in iframe (studentproject (div) for example break the layout)
+  display: flex; 
   flex: 1 0;
   flex-direction: column;
   overflow-y: scroll;
