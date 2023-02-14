@@ -14,6 +14,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import WriteIframeHeader from '../write/WriteIframeHeader';
+import ProjectView from './ProjectView';
 
 // const ExploreSection = styled.div`
 //   & > * + * {
@@ -257,9 +258,8 @@ export default function Explore() {
 
     const getRoomContent = async (roomId) => {
         // const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
-        console.log(roomId);
         let fetchMessage = matrix.roomContents.get(roomId);
-        console.log(fetchMessage);
+
         if (!fetchMessage) {
             fetchMessage = await matrix.hydrateRoomContent(roomId);
             console.log(fetchMessage);
@@ -278,7 +278,6 @@ export default function Explore() {
     const handleClicked = async (element, parent) => {
         // element is the last node clicked on by the user
         if (!element) return;
-        console.log(element);
         if(element.data.type === 'context') return
         // if (element.children) return;
         // await callApiAndAddToObject(element.data.id);
@@ -291,7 +290,11 @@ export default function Explore() {
 
             // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
             // console.log(roomId);
-        } else {
+        } if (element.data.template === 'studentproject') {
+            setCurrentItemType('studentproject');
+            content = element.data.id
+        }
+        else {
             setCurrentItemType(element.data.template);
             content = await getRoomContent(element.data.id);
             console.log(content);
@@ -318,16 +321,20 @@ export default function Explore() {
                     parsedHeight={d3Height}
                     selectedNode={selectedNode} />
             </IframeLayout.Sidebar>
-            { selectedNode &&
 
-            <IframeLayout.IframeWrapper>
-                <WriteIframeHeader
+            {selectedNode && 
+                <>
+               { currentItemType === 'studentproject' ?
+                    <ProjectView content={selectedNode}/>
+                        :  <IframeLayout.IframeWrapper>
+                            <WriteIframeHeader
                     content={selectedNode}
                     title={matrix.spaces.get(roomId)?.name ||matrix.rooms.get(roomId)?.name}
                     removeLink={() => console.log('removing pad from parent')}
                     removingLink={false} />
-                <iframe ref={iframe} src={selectedNode} />
-            </IframeLayout.IframeWrapper>
+                            <iframe ref={iframe} src={selectedNode} />
+                </IframeLayout.IframeWrapper>}
+                </>
             }
             { /* <ExploreSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
