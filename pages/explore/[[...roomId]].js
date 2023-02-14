@@ -257,8 +257,11 @@ export default function Explore() {
 
     const getRoomContent = async (roomId) => {
         // const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
+        console.log(roomId);
         await matrix.hydrateRoomContent(roomId);
         const fetchMessage = matrix.roomContents.get(roomId);
+        console.log(fetchMessage);
+        if(!fetchMessage) return 
         return fetchMessage.body;
         // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
 
@@ -275,22 +278,21 @@ export default function Explore() {
         // await callApiAndAddToObject(element.data.id);
         // return fetchChildren;
         let content = null;
-        if (element.data.template === 'write') {
-            setCurrentItemType('write');
-            console.log('inside if');
+
+        if (element.data.template === 'chat') {
+            setCurrentItemType('chat');
+            content = `${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${element.data.id}`;
+
+            // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
+            // console.log(roomId);
+        } else {
+            setCurrentItemType(element.data.template);
             content = await getRoomContent(element.data.id);
             console.log(content);
             // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
             // console.log(roomId);
         }
-        if (element.data.template === 'chat') {
-            setCurrentItemType('chat');
-            console.log('inside if');
-            content = `${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${element.data.id}`;
-
-            // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
-            // console.log(roomId);
-        }
+        
         content && !parent && await new Promise(res => setTimeout(res, 650)); // await transition of grid
         // router.push(`/explore/${element.data.id}`);
         setSelectedNode(prevState => content === prevState ? null : content); // if selected node is not undefined iframe loads the url(type string) from selectedNode
