@@ -258,10 +258,14 @@ export default function Explore() {
     const getRoomContent = async (roomId) => {
         // const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
         console.log(roomId);
-        await matrix.hydrateRoomContent(roomId);
-        const fetchMessage = matrix.roomContents.get(roomId);
+        let fetchMessage = matrix.roomContents.get(roomId);
         console.log(fetchMessage);
-        if(!fetchMessage) return 
+        if (!fetchMessage) {
+            fetchMessage = await matrix.hydrateRoomContent(roomId);
+            console.log(fetchMessage);
+            
+        }
+        if(!fetchMessage) return
         return fetchMessage.body;
         // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
 
@@ -274,6 +278,8 @@ export default function Explore() {
     const handleClicked = async (element, parent) => {
         // element is the last node clicked on by the user
         if (!element) return;
+        console.log(element);
+        if(element.data.type === 'context') return
         // if (element.children) return;
         // await callApiAndAddToObject(element.data.id);
         // return fetchChildren;
