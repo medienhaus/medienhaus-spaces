@@ -179,6 +179,7 @@ export default function Explore() {
     // useEffect(() => {
     //     console.log(selectedNode);
     // }, [selectedNode]);
+
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
     return (
         <>
@@ -189,41 +190,47 @@ export default function Explore() {
                     parsedHeight={d3Height}
                     selectedNode={selectedNode} />
             </IframeLayout.Sidebar>
-
-            { selectedNode &&
-                <>
-                    { currentItemType === 'studentproject' ?
-                        <ProjectView content={selectedNode} />
-                        : <IframeLayout.IframeWrapper>
-                            <WriteIframeHeader
-                                content={selectedNode}
-                                title={matrix.spaces.get(roomId)?.name ||matrix.rooms.get(roomId)?.name}
-                                removeLink={() => console.log('removing pad from parent')}
-                                removingLink={false} />
-                            <ChatIframeView src={selectedNode} />
-                        </IframeLayout.IframeWrapper> }
-                </>
-            }
-            { /* <ExploreSection>
-                <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
-                { (contents && contents.length > 0) ? (
-                    <div>
-                        <ol>
-                            { contents.map((content) => (
-                                <li>
-                                    { content.name }
-                                    <small>
-                                        { content.type && (<> (type: <code>{ content.type }</code>)</>) }
-                                        { content.template && (<> (template: <code>{ content.template }</code>)</>) }
-                                    </small>
-                                </li>
-                            )) }
-                        </ol>
-                    </div>
-                ) : (
-                    <p>- { t('There are no contents for this context') } -</p>
-                ) }
-            </ExploreSection> */ }
+            { selectedNode && (
+                (() => {
+                    switch (currentItemType) {
+                        case 'studentproject':
+                            return <ProjectView content={selectedNode} />;
+                        case 'write':
+                            return (
+                                <IframeLayout.IframeWrapper>
+                                    <WriteIframeHeader
+                                        content={selectedNode}
+                                        title={matrix.spaces.get(roomId)?.name || matrix.rooms.get(roomId)?.name}
+                                        removeLink={() => console.log('removing pad from parent')}
+                                        removingLink={false} />
+                                    <iframe src={selectedNode} />
+                                </IframeLayout.IframeWrapper>
+                            );
+                        case 'sketch':
+                            return (
+                                <IframeLayout.IframeWrapper>
+                                    <WriteIframeHeader
+                                        content={selectedNode}
+                                        title={matrix.spaces.get(roomId)?.name || matrix.rooms.get(roomId)?.name}
+                                        removeLink={() => console.log('removing pad from parent')}
+                                        removingLink={false} />
+                                    <iframe src={selectedNode} />
+                                </IframeLayout.IframeWrapper>
+                            );
+                        default:
+                            return (
+                                <IframeLayout.IframeWrapper>
+                                    <WriteIframeHeader
+                                        content={selectedNode}
+                                        title={matrix.spaces.get(roomId)?.name || matrix.rooms.get(roomId)?.name}
+                                        removeLink={() => console.log('removing pad from parent')}
+                                        removingLink={false} />
+                                    <ChatIframeView src={selectedNode} />
+                                </IframeLayout.IframeWrapper>
+                            );
+                    }
+                })()
+            ) }
         </>
     );
 }
