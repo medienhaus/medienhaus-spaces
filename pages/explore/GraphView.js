@@ -12,7 +12,6 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
     const svgRef = useRef(null);
-    const [refocus, setRefocus] = useState(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -74,18 +73,6 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
 
         const root = iciclePartition(data);
 
-        if (refocus) {
-            console.log(refocus);
-            root.each(
-                (d) =>
-                    (d.target = {
-                        x0: ((d.x0 - refocus.x0) / (refocus.x1 - refocus.x0)) * height,
-                        x1: ((d.x1 - refocus.x0) / (refocus.x1 - refocus.x0)) * height,
-                        y0: d.y0 - refocus.y0,
-                        y1: d.y1 - refocus.y0,
-                    }),
-            );
-        }
         let focus = root;
 
         // const svg = select('body')
@@ -147,7 +134,6 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             .attr('text-anchor', 'end')
             .attr('fill-opacity', (d) => labelVisible(d) * 0.7)
             .text((d) => {
-                console.log(d);
                 return d.data.template;
             });
 
