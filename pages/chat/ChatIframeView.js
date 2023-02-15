@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 const ChatIframeView = ({ src }) => {
-    const iframe = useRef()
+    const iframe = useRef();
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {

@@ -128,7 +128,7 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
             return d.data.name;
         });
 
-        const tspan = text
+        text
             .append('tspan')
             .attr('x', (d) => d.y1 - d.y0 -16)
             .attr('text-anchor', 'end')

@@ -11,8 +11,6 @@ import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
 import ChatIframeView from './ChatIframeView';
 
-
-
 const sortRooms = function(room) {
     return [
         room.notificationCount == 0,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import styled from 'styled-components';
 import getConfig from 'next/config';
 // import { useTranslation } from 'react-i18next';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { useRouter } from 'next/router';
 // import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 // import { useAuth } from '../../lib/Auth';
@@ -40,41 +40,41 @@ export default function Explore() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    async function callApiAndAddToObject(roomId) {
-        function findObject(structure, id) {
-            let ret;
-            // base case
-            if (structure.id === id) {
-                return structure;
-            } else {
-                // recursion
-                structure.children?.forEach(child => {
-                    if (!ret) {
-                        const c = findObject(child, id);
-                        if (c) ret = c;
-                    }
-                });
-            }
-            return ret;
-        }
+    // async function callApiAndAddToObject(roomId) {
+    //     function findObject(structure, id) {
+    //         let ret;
+    //         // base case
+    //         if (structure.id === id) {
+    //             return structure;
+    //         } else {
+    //             // recursion
+    //             structure.children?.forEach(child => {
+    //                 if (!ret) {
+    //                     const c = findObject(child, id);
+    //                     if (c) ret = c;
+    //                 }
+    //             });
+    //         }
+    //         return ret;
+    //     }
 
-        const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`).catch(error => console.log(error));
-        if (!response?.ok) return;
-        const data = await response.json();
-        data.children = data.item;
-        data.children.push(...data.context);
-        // setGraphObject(prevTree => {
-        //     const newTree = { ...prevTree };
-        //     const foundObject = findObject(newTree, roomId);
-        //     foundObject.children = data?.children;
-        //     return newTree;
-        // });
+    //     const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`).catch(error => console.log(error));
+    //     if (!response?.ok) return;
+    //     const data = await response.json();
+    //     data.children = data.item;
+    //     data.children.push(...data.context);
+    //     // setGraphObject(prevTree => {
+    //     //     const newTree = { ...prevTree };
+    //     //     const foundObject = findObject(newTree, roomId);
+    //     //     foundObject.children = data?.children;
+    //     //     return newTree;
+    //     // });
 
-        const newTree = { ...graphObject };
-        const foundObject = findObject(newTree, roomId);
-        foundObject.children = data?.children;
-        return data;
-    }
+    //     const newTree = { ...graphObject };
+    //     const foundObject = findObject(newTree, roomId);
+    //     foundObject.children = data?.children;
+    //     return data;
+    // }
 
     const fetchContents = useCallback(async (roomId) => {
         // const contents = [];
@@ -133,9 +133,8 @@ export default function Explore() {
         if (!fetchMessage) {
             fetchMessage = await matrix.hydrateRoomContent(roomId);
             console.log(fetchMessage);
-            
         }
-        if(!fetchMessage) return
+        if (!fetchMessage) return;
         return fetchMessage.body;
         // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
 
@@ -148,7 +147,7 @@ export default function Explore() {
     const handleClicked = async (element, parent) => {
         // element is the last node clicked on by the user
         if (!element) return;
-        if(element.data.type === 'context') return
+        if (element.data.type === 'context') return;
         // if (element.children) return;
         // await callApiAndAddToObject(element.data.id);
         // return fetchChildren;
@@ -162,16 +161,15 @@ export default function Explore() {
             // console.log(roomId);
         } else if (element.data.template === 'studentproject') {
             setCurrentItemType('studentproject');
-            content = element.data.id
-        }
-        else {
+            content = element.data.id;
+        } else {
             setCurrentItemType(element.data.template);
             content = await getRoomContent(element.data.id);
             console.log(content);
             // await new Promise(res => setTimeout(res, 650)); //transition time in d3js minus 100ms
             // console.log(roomId);
         }
-        
+
         content && !parent && await new Promise(res => setTimeout(res, 650)); // await transition of grid
         // router.push(`/explore/${element.data.id}`);
         setSelectedNode(prevState => content === prevState ? null : content); // if selected node is not undefined iframe loads the url(type string) from selectedNode
@@ -192,18 +190,18 @@ export default function Explore() {
                     selectedNode={selectedNode} />
             </IframeLayout.Sidebar>
 
-            {selectedNode && 
+            { selectedNode &&
                 <>
-               { currentItemType === 'studentproject' ?
-                    <ProjectView content={selectedNode}/>
-                        :  <IframeLayout.IframeWrapper>
+                    { currentItemType === 'studentproject' ?
+                        <ProjectView content={selectedNode} />
+                        : <IframeLayout.IframeWrapper>
                             <WriteIframeHeader
-                    content={selectedNode}
-                    title={matrix.spaces.get(roomId)?.name ||matrix.rooms.get(roomId)?.name}
-                    removeLink={() => console.log('removing pad from parent')}
-                    removingLink={false} />
-                <ChatIframeView src={selectedNode} />
-                </IframeLayout.IframeWrapper>}
+                                content={selectedNode}
+                                title={matrix.spaces.get(roomId)?.name ||matrix.rooms.get(roomId)?.name}
+                                removeLink={() => console.log('removing pad from parent')}
+                                removingLink={false} />
+                            <ChatIframeView src={selectedNode} />
+                        </IframeLayout.IframeWrapper> }
                 </>
             }
             { /* <ExploreSection>
