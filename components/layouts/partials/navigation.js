@@ -42,6 +42,8 @@ export default function Navigation({ closeNavigation }) {
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
+                <li><Link href="/explore-d3">/explore d3</Link></li>
+
             </List>
             <List>
                 <li><Link href="/write">/write</Link></li>
