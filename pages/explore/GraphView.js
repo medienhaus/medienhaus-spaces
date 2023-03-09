@@ -1,24 +1,27 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { partition } from 'd3';
+import getConfig from 'next/config';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import TreeLeaves from './TreeLeaves';
 
 // import { partition } from 'd3';
 // import { format } from 'd3';
 
-function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNode }) {
+function GraphView({ parsedData, parsedWidth, parsedHeight, handleClick, activePath }) {
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
-    const svgRef = useRef(null);
+    const router = useRouter();
 
     useEffect(() => {
         let cancelled = false;
         if (!cancelled) {
             setData(parsedData);
         }
-
         return () => {
             cancelled = true;
         };
@@ -35,197 +38,91 @@ function GraphView({ parsedData, callback, parsedWidth, parsedHeight, selectedNo
         };
     }, [parsedHeight]);
 
-    const drawSvg = (data, height) => {
-        const container = d3.select(svgRef.current);
-        // Remove previous SVG
-        container.selectAll('svg').remove();
-        const format = d3.format(',d');
+    const width = parsedWidth || window.innerWidth;
+    // setRoot(iciclePartition(data));
 
-        function rectHeight(d) {
-            return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2);
+    async function callApiAndAddToObject(roomId) {
+        function findObject(structure, id) {
+            console.log(structure);
+            const objectId = structure.id || structure.data.id;
+            let ret;
+            // base case
+            if (objectId === id) {
+                return structure;
+            } else {
+                // recursion
+                structure.children?.forEach(child => {
+                    console.log(child);
+                    if (!ret) {
+                        const c = findObject(child, id);
+                        if (c) ret = c;
+                    }
+                });
+            }
+            return ret;
         }
 
-        function labelVisible(d) {
-            return d.y1 <= width && d.y0 >= 0 && d.x1 - d.x0 > 16;
-        }
+        const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`).catch(error => console.log(error));
+        if (!response?.ok) return;
+        const newdata = await response.json();
+        console.log(newdata);
+        newdata.children = [...newdata.item];
+        newdata.children.push(...newdata.context);
 
-        const width = parsedWidth || window.innerWidth;
-        // const height = parsedHeight;
+        // p.children = newNode.children;
+        // p.data.children = newNode.data.children;
 
-        function iciclePartition(data) {
-            const root = d3
-                .hierarchy(data)
-                .sum((d) => {
-                    return d.value || 1;
-                })
-                .sort(
-                    (a, b) => b.height - a.height || b.value - a.value,
-                );
-            return partition().size([
-                height,
-                ((root.height + 1) * width / 5),
-            ])(root);
-        }
+        // p.children.forEach(child => child.depth += 1);
+        // return newTree;
 
-        // const color = scaleOrdinal(
-        //     quantize(interpolateRainbow, data.children.length + 1),
-        // );
+        // If no child array, create an empty array
+        // if (!p.children) {
+        //     p.children = [];
+        //     p.data.children = [];
+        // }
 
-        const root = iciclePartition(data);
-
-        let focus = root;
-
-        // const svg = select('body')
-        //     .append('svg')
-        //     // .attr('viewBox', [root.x1, 0, width, height])
-        //     .style('font', '10px sans-serif');
-
-        const svg = container
-            .append('svg')
-        // .attr('height', height)
-        // .attr('viewBox', [-width / 2, -height / 2, width, height])
-            .attr('style', 'max-width: 100%; height: auto; height: intrinsic;')
-            .style('font', '10px sans-serif');
-
-        const cell = svg
-            .selectAll('g')
-            .data(root.descendants())
-            .join('g')
-            .attr('transform', (d) => `translate(${d.y0},${d.x0})`)
-            .attr('width', (d) => d.y1 - d.y0);
-
-        const rect = cell
-            .append('rect')
-            .attr('width', (d) => d.y1 - d.y0 -1)
-            .attr('height', (d) => rectHeight(d))
-            .attr('fill', (d) => {
-                // if (d.data.template === 'write') return 'red';
-                // if (d.data.template === 'sketch') return 'blue';
-                // if (d.data.type === 'item') return 'green';
-                return 'var(--color-background-sidebar)';
-            })
-            .attr('stroke', 'var(--color-foreground)')
-            .attr('stroke-width', '8')
-            .style('cursor', 'pointer')
-            .on('click', clicked);
-
-        const text = cell
-            .append('text')
-            .style('user-select', 'none')
-            .attr('pointer-events', 'none')
-            .attr('x', 15)
-            .attr('y', 30)
-            .attr('font-size', '1.2rem')
-            .attr('fill', 'var(--color-foreground)')
-            .attr('fill-opacity', (d) => +labelVisible(d));
-
-        text.append('tspan').text((d) => {
-            if (d.data.template === 'write') return '📝 ' + d.data.name;
-            if (d.data.template === 'sketch') return '🎨 ' + d.data.name;
-            if (d.data.template === 'chat') return '💬 ' + d.data.name;
-            if (d.data.type === 'item') return '📐 ' + d.data.name;
-
-            return d.data.name;
-        });
-
-        text
-            .append('tspan')
-            .attr('x', (d) => d.y1 - d.y0 -16)
-            .attr('text-anchor', 'end')
-            .attr('fill-opacity', (d) => labelVisible(d) * 0.7)
-            .text((d) => {
-                return d.data.template;
-            });
-
-        cell.append('title').text(
-            (d) =>
-                `${d
-                    .ancestors()
-                    .map((d) => d.data.name)
-                    .reverse()
-                    .join('/')}\n${format(d.value)}`,
-        );
-
-        function startTransition(p) {
-            focus = focus === p ? (p = p.parent) : p;
-            if (!p) return;
-
-            root.each(
-                (d) =>
-                    (d.target = {
-                        x0: ((d.x0 - p.x0) / (p.x1 - p.x0)) * height,
-                        x1: ((d.x1 - p.x0) / (p.x1 - p.x0)) * height,
-                        y0: d.y0 - p.y0,
-                        y1: d.y1 - p.y0,
-                    }),
-            );
-
-            const t = cell
-                .transition()
-                .duration(750)
-                .attr(
-                    'transform',
-                    (d) => `translate(${d.target.y0},${d.target.x0})`,
-                );
-
-            rect
-                .transition(t)
-                .attr('height', (d) => rectHeight(d.target));
-
-            text
-                .transition(t)
-                .attr('fill-opacity', (d) => +labelVisible(d.target));
-        }
-
-        async function clicked(event, p) {
-            if (!p) return;
-            // const newNode = d3.hierarchy(newData);
-            // console.log(newNode);
-            // newNode.depth = p.depth + 1;
-            // newNode.height = p.height - 1;
-            // newNode.parent = p;
-
-            // if (!p.children) {
-            //     p.children = [];
-            //     p.data.children = [];
-            // }
-            // p.children.push(newNode);
-            // p.data.children.push(newNode.data);
-            // // setData(newData);
-            startTransition(p);
-            await callback(p, focus !== p && p.parent);
-
-            // tspan
-            //     .transition(t)
-            //     .attr(
-            //         'fill-opacity',
-            //         (d) => labelVisible(d.target) * 0.7,
-            //     );
-        }
+        // console.log(p);
+    }
+    const onClick = async (roomId, type, template) => {
+        // await callApiAndAddToObject(roomId, leaf);
+        handleClick(roomId, type, template);
     };
+    if (!height || !data) return <LoadingSpinner />;
+    const focusedId = router.query?.roomId[0];
+    const roomId = data.id || data.room_id;
 
-    useEffect(() => {
-        drawSvg(data, height);
-        return () => {
-            console.log('unmount svg');
-            // svgRef.current = null;
-        };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [height]);
+    return (
 
-    // useEffect(() => {
-    //     // if (svgRef.current) {
-    //     //     console.log(svg);
-    //     //     svgRef.current.appendChild(svg.node());
-    //     // }
+        <TreeLeaves
+            parent={focusedId === roomId}
+            display={focusedId === roomId ? 'initial' : 'none'}
+            key={roomId}
+            height={height}
+            name={data.name}
+            handleClick={onClick}
+            template={data.template}
+            children={data.children}
+            translateX={0}
+            translateY={0}
+            roomId={data.id} />
 
-    //     return () => {
-    //         svgRef.current = null;
-    //     };
-    // }, [svg, height]);
-    if (!height) return <LoadingSpinner />;
-    // return <svg ref={svgRef} width="100%" height={height} />;
-    return <svg ref={svgRef} width={selectedNode ? '100%' : '50%'} height={height} />;
+    // data.map((leaf) => {
+    //     const focusedId = router.query?.roomId[0];
+    //     // if (focusedId !== leaf.id) return null;
+    //     return <TreeLeaves
+    //         parent={focusedId === leaf.id}
+    //         display={focusedId === leaf.id ? 'initial' : 'none'}
+    //         key={leaf.id}
+    //         height={height}
+    //         name={leaf.name}
+    //         handleClick={onClick}
+    //         template={leaf.template}
+    //         children={leaf.children}
+    //         translateX={0}
+    //         translateY={0}
+    //         roomId={leaf.id} />;
+    // })
+    );
 }
 
 export default GraphView;
