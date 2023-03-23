@@ -35,50 +35,29 @@ export default function Explore() {
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const dimensionsRef = useRef();
     const router = useRouter();
-    const [currentRoomId, setCurrentRoomId] = useState(getConfig().publicRuntimeConfig.contextRootSpaceRoomId);
     const [currentItemType, setCurrentItemType] = useState('');
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    const initialContentFetch = useCallback(async (roomId) => {
-        // const contents = [];
-        // const roomHierarchy = await auth.getAuthenticationProvider('matrix').getMatrixClient().getRoomHierarchy(activeContexts[activeContexts.length - 1], undefined, 1);
-        // // Remove the first entry, which is the context itself
-        // roomHierarchy.rooms.shift();
-        // // Ignore `m.space.child` events that are empty
-        // // We're only interested in the -contents- of this context, so filter out everything that's a sub-context
-        // for (const room of roomHierarchy.rooms) {
-        //     const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
-        //     if (!metaEvent || (metaEvent && metaEvent.type !== 'context')) {
-        //         // This is a valid content item we want to show
-        //         contents.push({
-        //             ...room,
-        //             type: metaEvent?.type ?? 'chat', // If there's no meta.type we assume it's a chat room
-        //             template: metaEvent?.template,
-        //             children: room.children_state,
-        //         });
-        //     }
-        // }
-        // console.log(contents);
-
-        // setContents({
-        //     name: 'First Level',
-        //     children: contents,
-        // });
-
+    const initialContentFetch = useCallback(async () => {
         // initial fetch of object
-        const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId)
-            .catch(async (err) => {
-                console.debug(err);
-            });
+        const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
+
+        // if an api endpoint is defined we try to fetch the object from the api. othwerwise we set object to null in order to trigger the else loop.
+        // @TODO if we don't do this fetch will return status 200 even with the api url eing undefined. it will try to fetch "domain.com/explore/undefined" which will return 200.
+        // I am not sure why the url below defaults to "domain.com/explore/undefined/api/v2" instead of "undefined/api/v2". hence the  below.
+        const object = getConfig().publicRuntimeConfig.authProviders.matrix.api ?
+            await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId)
+                .catch((err) => console.debug(err)) :
+            null;
         // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
+
         if (object?.ok) {
             const json = await object.json();
             json.children = json.item;
             json.children.push(...json.context);
             json.root = true;
             router.push(json.id);
-
             setGraphObject(json);
         } else {
             console.log('no api:');
@@ -96,6 +75,7 @@ export default function Explore() {
                 if (space.room_id === roomId) continue;
                 children.push(space);
             }
+            console.log(spaceHierarchy);
             spaceHierarchy[0].children = children;
             router.push(spaceHierarchy[0].room_id);
 
@@ -104,10 +84,10 @@ export default function Explore() {
     }, [matrix]);
 
     useEffect(() => {
-        if (currentRoomId && !graphObject) {
-            initialContentFetch(currentRoomId);
+        if (!graphObject) {
+            initialContentFetch();
         }
-    }, [currentRoomId, graphObject, initialContentFetch]);
+    }, [graphObject, initialContentFetch]);
 
     useEffect(() => {
         // 8 for border
@@ -128,8 +108,6 @@ export default function Explore() {
     const handleClicked = async (roomId, type, template) => {
         console.log(roomId);
         if (!roomId) return;
-        console.log('template');
-        console.log(template);
         setActivePath(prevState => {
             const parent = activePath[activePath.length - 2];
             if (parent === roomId && activePath.length > 1) return prevState.splice(0, activePath.length - 1);
@@ -156,7 +134,7 @@ export default function Explore() {
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
     return (
         <>
-            <IframeLayout.Sidebar width={!selectedNode && '100%'}>
+            <IframeLayout.Sidebar width="100%">
                 <h2 ref={dimensionsRef}>/explore</h2>
                 <GraphView
                     parsedData={graphObject}
@@ -176,7 +154,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(currentRoomId)?.name || matrix.rooms.get(currentRoomId)?.name}
+                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
                                     <iframe src={selectedNode} />
@@ -187,7 +165,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(currentRoomId)?.name || matrix.rooms.get(currentRoomId)?.name}
+                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
                                         removeLink={() => console.log('removing sketch from parent')}
                                         removingLink={false} />
                                     <iframe src={selectedNode} />
@@ -198,7 +176,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(currentRoomId)?.name || matrix.rooms.get(currentRoomId)?.name}
+                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
                                     <ChatIframeView src={selectedNode} />

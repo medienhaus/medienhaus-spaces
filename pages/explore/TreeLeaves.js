@@ -47,6 +47,7 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, children, heigh
         { children && children.map((child, index) => {
             const roomId = child.id || child.room_id;
             return <TreeLeaves
+                key={roomId + index} // @TODO could still create douplicate keys
                 parent={router.query.roomId[0] === roomId}
                 display={router.query.roomId[0] === roomId ? 'initial' : parent ? 'initial' : 'none'}
                 index={index}
