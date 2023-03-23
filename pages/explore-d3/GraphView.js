@@ -31,7 +31,7 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleCl
         return partition()
             .size([
                 height,
-                ((root.height + 1) * width / 5),
+                ((root.height + 1) * width / 2.5),
             ])(root);
     }, [height, width]);
 
