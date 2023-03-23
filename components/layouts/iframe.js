@@ -16,6 +16,7 @@ export const Main = styled.main`
 `;
 
 const Sidebar = styled.div`
+  height: 100%;
   padding: var(--margin);
   background: var(--color-background-sidebar);
 
