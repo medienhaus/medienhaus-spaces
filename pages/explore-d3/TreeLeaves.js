@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const Leaf = styled.button`
   position: absolute;
@@ -28,6 +30,14 @@ const Leaf = styled.button`
 
 `;
 const TreeLeaves = ({ handleClick, name, roomId, type, template, x, y, width, height, parsedHeight, leaf, translateX, translateY }) => {
+    const [fetchingLeaves, setFetchingLeaves] = useState(false);
+
+    const onClick =async (e) => {
+        e.preventDefault();
+        setFetchingLeaves(true);
+        await handleClick(roomId, leaf);
+        setFetchingLeaves(false);
+    };
     return (
         <Leaf
             x={x}
@@ -37,11 +47,9 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, x, y, width, he
             width={width}
             height={height}
             parsedHeight={parsedHeight}
-            onClick={(e) => {
-                e.preventDefault();
-                handleClick(roomId, leaf);
-            }}>
+            onClick={onClick}>
             { name }
+            { fetchingLeaves && <LoadingSpinnerInline /> }
         </Leaf>
     );
 };

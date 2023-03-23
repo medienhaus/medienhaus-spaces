@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const Leaf = styled.button`
   display: ${props => [props.display]};
@@ -22,7 +24,15 @@ const Leaf = styled.button`
 
 `;
 const TreeLeaves = ({ handleClick, name, roomId, type, template, children, height, parent, display, index }) => {
+    const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
+
+    const onClick = async (e) => {
+        e.preventDefault();
+        setFetchingLeaves(true);
+        await handleClick(roomId, type, template);
+        setFetchingLeaves(false);
+    };
     return (<>
         <Leaf
             className={parent ? 'parent' : 'child'}
@@ -30,10 +40,9 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, children, heigh
             display={display}
             index={index}
             childrenLength={children?.length + 1}
-            onClick={() => {
-                handleClick(roomId, type, template);
-            }}>
+            onClick={onClick}>
             { name }
+            { fetchingLeaves && <LoadingSpinnerInline /> }
         </Leaf>
         { children && children.map((child, index) => {
             const roomId = child.id || child.room_id;

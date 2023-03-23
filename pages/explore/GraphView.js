@@ -83,10 +83,7 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, handleClick, activeP
 
         // console.log(p);
     }
-    const onClick = async (roomId, type, template) => {
-        // await callApiAndAddToObject(roomId, leaf);
-        handleClick(roomId, type, template);
-    };
+
     if (!height || !data) return <LoadingSpinner />;
     const focusedId = router.query?.roomId[0];
     const roomId = data.id || data.room_id;
@@ -99,7 +96,7 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, handleClick, activeP
             key={roomId}
             height={height}
             name={data.name}
-            handleClick={onClick}
+            handleClick={handleClick}
             template={data.template}
             children={data.children}
             translateX={0}
