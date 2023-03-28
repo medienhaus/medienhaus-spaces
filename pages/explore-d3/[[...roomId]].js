@@ -15,7 +15,6 @@ import { useMatrix } from '../../lib/Matrix';
 import WriteIframeHeader from '../write/WriteIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
-import TreeView from './TreeView';
 import GraphView from './GraphView';
 
 // const ExploreSection = styled.div`
@@ -50,7 +49,6 @@ export default function Explore() {
             await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId)
                 .catch((err) => console.debug(err)) :
             null;
-        // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
 
         if (object?.ok) {
             const json = await object.json();
@@ -81,6 +79,8 @@ export default function Explore() {
 
             setGraphObject(spaceHierarchy[0]);
         }
+        // @TODO dix dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix]);
 
     useEffect(() => {
@@ -134,7 +134,7 @@ export default function Explore() {
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
     return (
         <>
-            <IframeLayout.Sidebar width="100%">
+            <IframeLayout.Sidebar width={!selectedNode && '100%'}>
                 <h2 ref={dimensionsRef}>/explore</h2>
                 <GraphView
                     parsedData={graphObject}
@@ -142,6 +142,7 @@ export default function Explore() {
                     parent={activePath[activePath.length - 2]}
                     handleClick={handleClicked}
                     activePath={activePath}
+                    selectedNode={selectedNode}
                 />
             </IframeLayout.Sidebar>
             { selectedNode && (
