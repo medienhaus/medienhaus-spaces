@@ -1,12 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import getConfig from 'next/config';
-// import { useTranslation } from 'react-i18next';
-// import _ from 'lodash';
 import { useRouter } from 'next/router';
-// import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
-// import { useAuth } from '../../lib/Auth';
-// import GraphView from './GraphView';
 
 import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -36,7 +31,7 @@ const ExploreSection = styled.div`
 `;
 
 export default function Explore() {
-    const [, setHierarchy] = useState();
+    // const [, setHierarchy] = useState();
     const [graphObject, setGraphObject] = useState(null);
     const [selectedNode, setSelectedNode] = useState(null);
     const [d3Height, setD3Height] = useState();
@@ -107,7 +102,6 @@ export default function Explore() {
 
     const initialContentFetch = useCallback(async () => {
         // initial fetch of object
-
         const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
 
         // if an api endpoint is defined we try to fetch the object from the api. othwerwise we set object to null in order to trigger the else loop.
@@ -125,7 +119,7 @@ export default function Explore() {
             json.root = true;
             json.depth = 0;
             router.push(`/explore/${json.id}`);
-            setHierarchy(json);
+            // setHierarchy(json);
             setGraphObject(json);
         } else {
             console.debug('no api:');
@@ -146,9 +140,11 @@ export default function Explore() {
             spaceHierarchy[0].children = children;
 
             router.push(`/explore/${spaceHierarchy[0].room_id}`);
-            setHierarchy(spaceHierarchy[0]);
+            // setHierarchy(spaceHierarchy[0]);
             setGraphObject(spaceHierarchy[0]);
         }
+        // @TODO dix dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix]);
 
     useEffect(() => {
@@ -245,7 +241,6 @@ export default function Explore() {
                         parsedHeight={d3Height}
                         parent={activePath[activePath.length - 2]}
                         handleClick={handleClicked}
-                        activePath={activePath}
                     />
                 </ExploreSection>
             </IframeLayout.Sidebar>
@@ -281,7 +276,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(currentRoomId)?.name || matrix.rooms.get(currentRoomId)?.name}
+                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
                                     <ChatIframeView src={selectedNode} />

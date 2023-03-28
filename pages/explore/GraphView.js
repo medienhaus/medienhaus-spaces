@@ -1,18 +1,12 @@
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import { partition } from 'd3';
+import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
-import _ from 'lodash';
 import { useRouter } from 'next/router';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import TreeLeaves from './TreeLeaves';
 
-// import { partition } from 'd3';
-// import { format } from 'd3';
-
-function GraphView({ parsedData, parsedWidth, parsedHeight, handleClick, activePath }) {
+function GraphView({ parsedData, parsedHeight, handleClick }) {
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
     const router = useRouter();
@@ -38,54 +32,8 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, handleClick, activeP
         };
     }, [parsedHeight]);
 
-    const width = parsedWidth || window.innerWidth;
-    // setRoot(iciclePartition(data));
-
-    async function callApiAndAddToObject(roomId) {
-        function findObject(structure, id) {
-            console.log(structure);
-            const objectId = structure.id || structure.data.id;
-            let ret;
-            // base case
-            if (objectId === id) {
-                return structure;
-            } else {
-                // recursion
-                structure.children?.forEach(child => {
-                    console.log(child);
-                    if (!ret) {
-                        const c = findObject(child, id);
-                        if (c) ret = c;
-                    }
-                });
-            }
-            return ret;
-        }
-
-        const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`).catch(error => console.log(error));
-        if (!response?.ok) return;
-        const newdata = await response.json();
-        console.log(newdata);
-        newdata.children = [...newdata.item];
-        newdata.children.push(...newdata.context);
-
-        // p.children = newNode.children;
-        // p.data.children = newNode.data.children;
-
-        // p.children.forEach(child => child.depth += 1);
-        // return newTree;
-
-        // If no child array, create an empty array
-        // if (!p.children) {
-        //     p.children = [];
-        //     p.data.children = [];
-        // }
-
-        // console.log(p);
-    }
-
     if (!height || !data) return <LoadingSpinner />;
-    const focusedId = router.query?.roomId[0];
+    const focusedId = router.query?.roomId[0] || getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
     const roomId = data.id || data.room_id;
 
     return (
