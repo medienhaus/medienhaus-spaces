@@ -125,12 +125,12 @@ export default function Sketch() {
 
     useEffect(() => {
         let cancelled = false;
-        const populatePadsfromServer = async () => {
+        const populatePadsfromServer = async (recursion) => {
             if (!isEmpty(sketch.getStructure())) {
                 setServerSketches(sketch.getStructure());
-            } else {
+            } else if (!recursion) {
                 await sketch.syncAllSketches();
-                populatePadsfromServer();
+                populatePadsfromServer(true);
             }
         };
         !cancelled && getConfig().publicRuntimeConfig.authProviders.write.api && populatePadsfromServer();
