@@ -1,9 +1,8 @@
 
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { partition } from 'd3';
 import getConfig from 'next/config';
-import _ from 'lodash';
 import { useRouter } from 'next/router';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -14,11 +13,11 @@ import { useMatrix } from '../../lib/Matrix';
 // import { partition } from 'd3';
 // import { format } from 'd3';
 
-function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleClick }) {
+function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, selectedNode, handleClick }) {
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
     const [root, setRoot] = useState();
-    const [currentDepth, setCurrentDepth] = useState(0);
+    // const [, setCurrentDepth] = useState(0);
     const router = useRouter();
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -91,58 +90,62 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleCl
     }
     async function callApiAndAddToObject(roomId) {
         let fetchChildren;
-        if (router.query.roomId[0] !== roomId) {
-            console.log('in fetch');
+        const newTree = { ...data };
+        const foundObject = findObject(newTree, roomId);
+
+        const fetchFromMatrix = async () => {
+            const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+                .catch(err => console.debug(err));
+            const children = [];
+            console.log(spaceHierarchy);
+            for (const space of spaceHierarchy) {
+                if (space.room_id === roomId) continue;
+                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta').catch(() => {});
+                if (metaEvent) {
+                    console.log(metaEvent);
+                    space.type = metaEvent.type;
+                    space.template = metaEvent.template;
+                    space.application = metaEvent.application;
+                }
+                children.push(space);
+            }
+            fetchChildren = { children: children };
+        };
+
+        // if the id in the url does not match the id of the clicked leaf we fetch new content.
+
+        if (router.query.roomId[0] !== roomId && !foundObject.children) {
             // if the object does not have any children yet we fetch the next children from the api or from matrix directly
-            // @TODO add matrix calls if api isnt available
-            // @TODO escaping the fetch prevents recently added spaces from showing up without a manual reload.
+            // while this saves data, it also prevents updates inside the structure from showing up when already browsing through explore
             if (getConfig().publicRuntimeConfig.authProviders.matrix.api) {
-                const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`).catch(error => console.log(error));
+                const response = await fetch(`${getConfig().publicRuntimeConfig.authProviders.matrix.api}/api/v2/${roomId}`)
+                    .catch(async (error) => {
+                        console.debug(error);
+                        // if fetching from the api fails we try fetching directly from the matrix server
+                        await fetchFromMatrix();
+                    });
                 if (!response?.ok) return;
                 fetchChildren = await response.json();
                 fetchChildren.children = [...fetchChildren.item];
                 fetchChildren.children.push(...fetchChildren.context);
             } else {
-                console.log('in else');
-
-                const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
-                    .catch(err => console.debug(err));
-                const children = [];
-                console.log(spaceHierarchy);
-                for (const space of spaceHierarchy) {
-                    if (space.room_id === roomId) continue;
-                    const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta').catch(() => {});
-                    if (metaEvent) {
-                        console.log(metaEvent);
-                        space.type = metaEvent.type;
-                        space.template = metaEvent.template;
-                        space.application = metaEvent.application;
-                    }
-                    children.push(space);
-                }
-                fetchChildren = { children: children };
+                await fetchFromMatrix();
             }
         }
 
-        setData((prevTree) => {
-            const newTree = { ...prevTree };
-            const foundObject = findObject(newTree, roomId);
-            // @TODO children are in wrong position when appearing for the first time
-            if (fetchChildren) foundObject.children = fetchChildren.children;
+        setData(() => {
+            if (fetchChildren) {
+                foundObject.children = fetchChildren.children;
+            }
 
-            // if (foundObject.children) return prevTree;
-            // foundObject.children = newNode.children;
-            // foundObject.data.children = newNode.data.children;
             const newHierarchy = iciclePartition(newTree);
             let p = findObject(newHierarchy, roomId);
             console.log(p);
             // if the already active node is clicked we want to go back to it's parent if possible.
-
             if (router.query.roomId[0] === roomId) p = p.parent;
-
             // in case p is null now we know there are no parent nodes and we return the previous state
             if (!p) return newTree;
-            if (fetchChildren) {
+            if (router.query.roomId[0] !== roomId) {
                 newHierarchy.each(
                     (d) => {
                         if (!d.target) {
@@ -155,8 +158,7 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleCl
                         }
                     },
                 );
-            }
-            if (router.query.roomId[0] === roomId) {
+            } else {
                 newHierarchy.each(
                     (d) => {
                         return d.target = {
@@ -202,15 +204,15 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleCl
     };
     const onClick = async (roomId, leaf) => {
         await callApiAndAddToObject(roomId);
-        await new Promise(r => setTimeout(r, 0));
+        await new Promise(r => setTimeout(r, 0)); // hack to actually update positions @TODO fix properly
         await updatePositions(roomId);
-
-        const id = router.query.roomId[0] !== roomId ? roomId : leaf.parent?.data.id;
+        const parentId = leaf.parent?.data.id || leaf.parent?.data.room_id;
+        const id = router.query.roomId[0] !== roomId ? roomId : parentId;
         // if id is undefined we can assume there is no known parent and we exit the function
         if (!id) return;
         const type = router.query.roomId[0] !== roomId ? leaf.data.type : leaf.parent.data.type;
         const template = router.query.roomId[0] !== roomId ? leaf.data.template : leaf.parent.data.template;
-        setCurrentDepth(router.query.roomId[0] !== roomId ? leaf.depth : leaf.parent.depth);
+        // setCurrentDepth(router.query.roomId[0] !== roomId ? leaf.depth : leaf.parent.depth);
         handleClick(id, type, template);
     };
 
@@ -223,8 +225,11 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, handleCl
                     return d.x1 - d.x0;
                 }
                 const roomId = leaf.data.id || leaf.data.room_id;
+                // if a node is selected we need to make room for the iframe, therefore dividing the width by 2
+                const leafWidth = selectedNode ? (leaf.y1 - leaf.y0) / 2 : leaf.y1 - leaf.y0;
                 return <TreeLeaves
-                    width={leaf.y1 - leaf.y0}
+                    key={roomId + leaf.y0}
+                    width={leafWidth}
                     height={leaf.target ? rectHeight(leaf.target) : rectHeight(leaf)}
                     parsedHeight={height}
                     name={leaf.data.name}
