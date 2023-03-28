@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 
@@ -41,8 +42,8 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
-                <li><Link href="/explore">/explore</Link></li>
-                <li><Link href="/explore-d3">/explore d3</Link></li>
+                <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li>
+                <li><Link href={`/explore-d3/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore d3/</Link></li>
 
             </List>
             <List>
