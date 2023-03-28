@@ -29,7 +29,7 @@ const Leaf = styled.button`
   }
 
 `;
-const TreeLeaves = ({ handleClick, name, roomId, type, template, x, y, width, height, parsedHeight, leaf, translateX, translateY }) => {
+const TreeLeaves = ({ handleClick, name, roomId, x, y, width, height, parsedHeight, leaf, translateX, translateY }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
 
     const onClick =async (e) => {
@@ -47,7 +47,7 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, x, y, width, he
             width={width}
             height={height}
             parsedHeight={parsedHeight}
-            onClick={onClick}>
+            onClick={(e) => onClick(e, leaf)}>
             { name }
             { fetchingLeaves && <LoadingSpinnerInline /> }
         </Leaf>
