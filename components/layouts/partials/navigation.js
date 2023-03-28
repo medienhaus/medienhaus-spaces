@@ -43,7 +43,7 @@ export default function Navigation({ closeNavigation }) {
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li>
-                <li><Link href={`/explore-d3/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore d3/</Link></li>
+                <li><Link href={`/explore-d3/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore d3</Link></li>
 
             </List>
             <List>
