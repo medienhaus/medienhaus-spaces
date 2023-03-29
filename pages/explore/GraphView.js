@@ -49,7 +49,9 @@ function GraphView({ parsedData, parsedHeight, handleClick }) {
             children={data.children}
             translateX={0}
             translateY={0}
-            roomId={data.id} />
+            roomId={data.id}
+            missingMetaEvent={data.missingMetaEvent}
+        />
 
     // data.map((leaf) => {
     //     const focusedId = router.query?.roomId[0];

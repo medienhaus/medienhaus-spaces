@@ -23,7 +23,7 @@ const Leaf = styled.button`
   }
 
 `;
-const TreeLeaves = ({ handleClick, name, roomId, type, template, children, height, parent, display, index }) => {
+const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, template, children, height, parent, display, index }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
 
@@ -33,6 +33,7 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, children, heigh
         await handleClick(roomId, type, template);
         setFetchingLeaves(false);
     };
+
     return (<>
         <Leaf
             className={parent ? 'parent' : 'child'}
@@ -41,7 +42,7 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, children, heigh
             index={index}
             childrenLength={children?.length + 1}
             onClick={onClick}>
-            { name }
+            { missingMetaEvent ? <em>{ name }</em> : name }
             { fetchingLeaves && <LoadingSpinnerInline /> }
         </Leaf>
         { children && children.map((child, index) => {
@@ -59,7 +60,9 @@ const TreeLeaves = ({ handleClick, name, roomId, type, template, children, heigh
                 template={child.template}
                 translateX={0}
                 translateY={0}
-                roomId={roomId} />;
+                roomId={roomId}
+                missingMetaEvent={child.missingMetaEvent}
+            />;
         }) }
 
     </>

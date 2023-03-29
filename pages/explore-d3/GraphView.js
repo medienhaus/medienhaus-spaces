@@ -100,7 +100,11 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, selected
             console.log(spaceHierarchy);
             for (const space of spaceHierarchy) {
                 if (space.room_id === roomId) continue;
-                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta').catch(() => {});
+                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta')
+                    .catch((err) => {
+                        console.debug(err);
+                        space.missingMetaEvent = true;
+                    });
                 if (metaEvent) {
                     console.log(metaEvent);
                     space.type = metaEvent.type;
@@ -237,7 +241,10 @@ function GraphView({ parsedData, parsedWidth, parsedHeight, activePath, selected
                     leaf={leaf}
                     translateX={leaf.target.y0}
                     translateY={leaf.target.x0}
-                    roomId={roomId} />;
+                    roomId={roomId}
+                    missingMetaEvent={leaf.data.missingMetaEvent}
+
+                />;
             }) }</div>
     );
 }

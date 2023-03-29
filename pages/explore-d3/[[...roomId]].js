@@ -63,7 +63,11 @@ export default function Explore() {
                 .catch(err => console.debug(err));
             const children = [];
             for (const space of spaceHierarchy) {
-                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta').catch(() => {});
+                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta')
+                    .catch((err) => {
+                        console.debug(err);
+                        space.missingMetaEvent = true;
+                    });
                 if (metaEvent) {
                     console.log(metaEvent);
                     space.type = metaEvent.type;
