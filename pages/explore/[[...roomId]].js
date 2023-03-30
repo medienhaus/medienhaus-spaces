@@ -232,10 +232,6 @@ export default function Explore() {
         // setCurrentRoomId(roomId);
     };
 
-    useEffect(() => {
-        console.log(graphObject);
-    }, [graphObject]);
-
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
     return (
         <>
