@@ -219,9 +219,23 @@ export default function Sketch() {
 
         const handleExistingSketch = (e) => {
             setLoading(true);
+             if (getConfig().publicRuntimeConfig.authProviders.sketch.bypassUrlValidation) {
+                const isValidUrl = urlString => {
+                    let url;
+                    try {
+                        url = new URL(urlString);
+                    } catch (e) {
+                        return false;
+                    }
+                    return url.protocol === 'http:' || url.protocol === 'https:';
+                };
+                if (isValidUrl(e.target.value)) setValidLink(true);
+                else setValidLink(false);
+            } else {
             // we check if the link is valid for the service (has the same base url)
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl) || getConfig().publicRuntimeConfig.authProviders.sketch.bypassUrlValidation) setValidLink(true);
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
             else setValidLink(false);
+            }
             setSketchLink(e.target.value);
             setLoading(false);
         };
