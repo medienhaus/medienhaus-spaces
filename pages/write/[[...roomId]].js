@@ -202,26 +202,11 @@ export default function Write() {
 
         const handleSubmit = async (e) => {
             e.preventDefault();
-            async function replaceUrlAndFetch(inputUrl) {
-                const apiUrl = inputUrl.replace('/p/', '/mypads/api/pad/');
 
-                const response = await fetch(apiUrl).catch((error) => {
-                    console.log(error);
-                });
-                console.log(response);
-                const data = await response.json();
-                return data;
-            }
-
+            const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
+            const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
+            console.log(checkForPasswordProtection);
             setLoading(true);
-
-            replaceUrlAndFetch(padLink)
-                .then(data => console.log(data))
-                .catch(error => {
-                    console.log('in catch');
-                    console.log(error);
-                });
-            return;
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
             // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
