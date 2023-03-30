@@ -15,9 +15,11 @@ module.exports = {
             write: {
                 baseUrl: 'https://pad.riseup.net/p',
                 api: 'https://pad.riseup.net/mypads/api',
+                bypassUrlValidation: false,
             },
             sketch: {
                 baseUrl: 'https://sketch.yourserver.org',
+                bypassUrlValidation: false,
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',

@@ -175,7 +175,7 @@ export default function Write() {
         const [loading, setLoading] = useState(false);
 
         const handleExistingPad = (e) => {
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl) || getConfig().publicRuntimeConfig.authProviders.write.bypassUrlValidation) setValidLink(true);
             else setValidLink(false);
             setPadLink(e.target.value);
         };
