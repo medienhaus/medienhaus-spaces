@@ -220,7 +220,7 @@ export default function Sketch() {
         const handleExistingSketch = (e) => {
             setLoading(true);
             // we check if the link is valid for the service (has the same base url)
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl) || getConfig().publicRuntimeConfig.authProviders.sketch.bypassUrlValidation) setValidLink(true);
             else setValidLink(false);
             setSketchLink(e.target.value);
             setLoading(false);
