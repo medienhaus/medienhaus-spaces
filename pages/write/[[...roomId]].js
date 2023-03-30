@@ -202,6 +202,10 @@ export default function Write() {
 
         const handleSubmit = async (e) => {
             e.preventDefault();
+
+            const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
+            const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
+            console.log(checkForPasswordProtection);
             setLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
