@@ -119,9 +119,10 @@ export default function Write() {
         setRemovingLink(true);
         const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
         padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
         await syncServerPadsAndSet();
+        router.push('/write');
         setRemovingLink(false);
     };
 
