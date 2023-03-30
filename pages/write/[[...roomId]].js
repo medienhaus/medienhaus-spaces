@@ -29,6 +29,7 @@ export default function Write() {
     const [serverPads, setServerPads] = useState({});
     const [removingLink, setRemovingLink] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
+    const [closeSubemnuToggle, setCloseSubemnuToggle] = useState(false);
 
     const write = auth.getAuthenticationProvider('write');
 
@@ -119,9 +120,10 @@ export default function Write() {
         setRemovingLink(true);
         const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
         padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
         await syncServerPadsAndSet();
+        router.push('/write');
         setRemovingLink(false);
     };
 
@@ -160,6 +162,9 @@ export default function Write() {
 
             setLoading(false);
             setPadName('');
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
         };
 
         return (
@@ -176,8 +181,22 @@ export default function Write() {
         const [loading, setLoading] = useState(false);
 
         const handleExistingPad = (e) => {
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
-            else setValidLink(false);
+            if (getConfig().publicRuntimeConfig.authProviders.write.bypassUrlValidation) {
+                const isValidUrl = urlString => {
+                    let url;
+                    try {
+                        url = new URL(urlString);
+                    } catch (e) {
+                        return false;
+                    }
+                    return url.protocol === 'http:' || url.protocol === 'https:';
+                };
+                if (isValidUrl(e.target.value)) setValidLink(true);
+                else setValidLink(false);
+            } else {
+                if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
+                else setValidLink(false);
+            }
             setPadLink(e.target.value);
         };
 
@@ -186,6 +205,10 @@ export default function Write() {
             setLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadLink('');
             setLoading(false);
         };
 
@@ -193,7 +216,11 @@ export default function Write() {
             <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
-                { !validLink && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }</ErrorMessage> }
+                { !validLink && <ErrorMessage>
+                    { t(getConfig().publicRuntimeConfig.authProviders.write.bypassUrlValidation ?
+                        'Not a valid link'
+                        : 'Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
+                </ErrorMessage> }
                 <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing pad') }</button>
             </Form>);
     };
@@ -210,6 +237,10 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadName('');
             setLoading(false);
         };
 
@@ -237,6 +268,10 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadName('');
             setLoading(false);
         };
 
@@ -255,7 +290,7 @@ export default function Write() {
         <>
             <IframeLayout.Sidebar>
                 <>
-                    <ServiceSubmenu title={<h2>/write</h2>}>
+                    <ServiceSubmenu title={<h2>/write</h2>} closeToggle={closeSubemnuToggle}>
                         <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
                             <ServiceSubmenu.Item disabled itemValue="">-- { t('select action') } --</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item itemValue="existingPad" actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
