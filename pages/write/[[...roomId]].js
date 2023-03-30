@@ -29,6 +29,7 @@ export default function Write() {
     const [serverPads, setServerPads] = useState({});
     const [removingLink, setRemovingLink] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
+    const [closeSubemnuToggle, setCloseSubemnuToggle] = useState(false);
 
     const write = auth.getAuthenticationProvider('write');
 
@@ -161,6 +162,9 @@ export default function Write() {
 
             setLoading(false);
             setPadName('');
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
         };
 
         return (
@@ -201,6 +205,10 @@ export default function Write() {
             setLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadLink('');
             setLoading(false);
         };
 
@@ -229,6 +237,10 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadName('');
             setLoading(false);
         };
 
@@ -256,6 +268,10 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
+            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
+            setCloseSubemnuToggle(true);
+            setCloseSubemnuToggle(false);
+            setPadName('');
             setLoading(false);
         };
 
@@ -274,7 +290,7 @@ export default function Write() {
         <>
             <IframeLayout.Sidebar>
                 <>
-                    <ServiceSubmenu title={<h2>/write</h2>}>
+                    <ServiceSubmenu title={<h2>/write</h2>} closeToggle={closeSubemnuToggle}>
                         <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
                             <ServiceSubmenu.Item disabled itemValue="">-- { t('select action') } --</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item itemValue="existingPad" actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
