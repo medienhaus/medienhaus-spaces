@@ -14,10 +14,11 @@ import GraphView from './GraphView';
 
 const ExploreSection = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  ${props => !props.selectedNode && 'grid-template-columns: repeat(2, 1fr);'}
+
   grid-auto-flow: rows;
   grid-gap: 0 calc(var(--margin) * -0.2);
-  height: calc(100% - calc(var(--margin) * 4.7));
+  height: ${props => props.selectedNode ? 'calc(var(--margin) * 3))' : 'calc(100% - calc(var(--margin) * 4.7))'};
 
   .parent {
     grid-column: ${props => props.selectedNode ? '1/-1' : '1'};
@@ -74,26 +75,29 @@ export default function Explore() {
                 const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
                     .catch(err => console.debug(err));
                 const children = [];
-                console.log(spaceHierarchy);
+                let parentName;
                 for (const space of spaceHierarchy) {
-                    if (space.room_id === roomId) continue;
+                    if (space.room_id === roomId) {
+                        parentName = space.name;
+                        continue;
+                    }
                     const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta')
                         .catch((err) => {
                             console.debug(err);
                             space.missingMetaEvent = true;
                         });
                     if (metaEvent) {
-                        console.log(metaEvent);
                         space.type = metaEvent.type;
                         space.template = metaEvent.template;
                         space.application = metaEvent.application;
                     }
+                    // we also add the parent to the object so we can easily access it when we have a selectedNode.
+                    space.parent = { id: roomId, name: parentName };
                     children.push(space);
                 }
                 data = { children: children };
             }
         }
-        console.log(data);
 
         setGraphObject(prevTree => {
             const newTree = { ...prevTree };
@@ -130,19 +134,24 @@ export default function Explore() {
             const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
                 .catch(err => console.debug(err));
             const children = [];
+            let parentName;
             for (const space of spaceHierarchy) {
+                if (space.room_id === roomId) {
+                    parentName = space.name;
+                    continue;
+                }
                 const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta')
                     .catch((err) => {
                         console.debug(err);
                         space.missingMetaEvent = true;
                     });
                 if (metaEvent) {
-                    console.log(metaEvent);
                     space.type = metaEvent.type;
                     space.template = metaEvent.template;
                     space.application = metaEvent.application;
                 }
-                if (space.room_id === roomId) continue;
+
+                space.parent = { id: roomId, name: parentName };
                 children.push(space);
             }
             spaceHierarchy[0].children = children;
@@ -183,19 +192,23 @@ export default function Explore() {
         // }
     };
 
-    const handleClicked = async (roomId, type, template) => {
+    const handleClicked = async (roomId, template, isChild) => {
         if (!roomId) return;
         // element is the last node clicked on by the user
         // if (!element) return;
         // if (element.data.type === 'context') return;
         // if (element.children) return;
         await callApiAndAddToObject(roomId);
-        console.log(roomId);
+        // console.log(roomId);
         setActivePath(prevState => {
-            if (router.query.roomId[0] === roomId && activePath.length > 1) {
+            if (selectedNode) prevState = prevState.splice(0, prevState.length - 1);
+
+            // const id = parent || roomId;
+            // console.log(parent);
+            if ((selectedNode && !isChild) || router.query.roomId[0] === roomId && prevState.length > 1) {
                 console.log('parent');
-                router.push(`/explore/${activePath[activePath.length - 2]}`);
-                return prevState.splice(0, activePath.length - 1);
+                router.push(`/explore/${prevState[prevState.length - 2]}`);
+                return prevState.splice(0, prevState.length - 1);
             } else {
                 console.log('child');
                 router.push(`/explore/${roomId}`);
@@ -224,14 +237,12 @@ export default function Explore() {
         }
 
         // setSelectedNode(content); // if selected node is not undefined iframe loads the url(type string) from selectedNode
-
         setSelectedNode(prevState => content === prevState ? null : content); // if selected node is not undefined iframe loads the url(type string) from selectedNode
         // router.push(`/explore/${roomId}`);
         // await callApiAndAddToObject(roomId);
 
         // setCurrentRoomId(roomId);
     };
-
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
     return (
         <>
@@ -243,8 +254,10 @@ export default function Explore() {
                     <GraphView
                         parsedData={graphObject}
                         parsedHeight={d3Height}
-                        parent={activePath[activePath.length - 2]}
+                        isParent={activePath[activePath.length - 2]}
                         handleClick={handleClicked}
+                        selectedNode={!!selectedNode}
+                        activePath={activePath}
                     />
                 </ExploreSection>
             </IframeLayout.Sidebar>

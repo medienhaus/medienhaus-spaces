@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import TreeLeaves from './TreeLeaves';
 
-function GraphView({ parsedData, parsedHeight, handleClick }) {
+function GraphView({ parsedData, parsedHeight, handleClick, selectedNode, activePath }) {
     const [data, setData] = useState(parsedData);
     const [height, setHeight] = useState();
     const router = useRouter();
@@ -15,6 +15,7 @@ function GraphView({ parsedData, parsedHeight, handleClick }) {
         let cancelled = false;
         if (!cancelled) {
             setData(parsedData);
+            // console.log(parsedData);
         }
         return () => {
             cancelled = true;
@@ -33,13 +34,13 @@ function GraphView({ parsedData, parsedHeight, handleClick }) {
     }, [parsedHeight]);
 
     if (!height || !data) return <LoadingSpinner />;
-    const focusedId = router.query?.roomId[0] || getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
+    const focusedId = selectedNode && data.parent ? data.parent.id : router.query?.roomId[0] || getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
     const roomId = data.id || data.room_id;
 
     return (
-
         <TreeLeaves
-            parent={focusedId === roomId}
+            isParent={focusedId === roomId}
+            parent={data.parent}
             display={focusedId === roomId ? 'initial' : 'none'}
             key={roomId}
             height={height}
@@ -49,15 +50,18 @@ function GraphView({ parsedData, parsedHeight, handleClick }) {
             children={data.children}
             translateX={0}
             translateY={0}
-            roomId={data.id}
+            roomId={roomId}
             missingMetaEvent={data.missingMetaEvent}
+            selectedNode={selectedNode}
+            activePath={activePath}
+
         />
 
     // data.map((leaf) => {
     //     const focusedId = router.query?.roomId[0];
     //     // if (focusedId !== leaf.id) return null;
     //     return <TreeLeaves
-    //         parent={focusedId === leaf.id}
+    //         isParent={focusedId === leaf.id}
     //         display={focusedId === leaf.id ? 'initial' : 'none'}
     //         key={leaf.id}
     //         height={height}
