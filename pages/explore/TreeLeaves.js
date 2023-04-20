@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Link from 'next/link';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -63,6 +62,12 @@ const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, templat
                            <a onClick={(e) => onClick(e, roomId, child.template, true)}>
                                { child.name }
                            </a>
+                       </ServiceTable.Cell>
+                       <ServiceTable.Cell>
+                           { child.template === 'write' ? '📝'
+                               : child.template === 'chat' ? '💬'
+                                   : child.template === 'sketch' ? '🎨'
+                                       : child.template === 'studentproject' && '🎓' }
                        </ServiceTable.Cell>
                    </ServiceTable.Row>);
                })
