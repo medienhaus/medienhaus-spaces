@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
 import BaseLayout from './_base';
+import { breakpoints } from '../_breakpoints';
 
 export const Main = styled.main`
   display: flex;
   flex: 1 0;
   flex-direction: column;
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     flex-direction: row;
     grid-row: 1/4;
     grid-column: 2;
@@ -19,19 +20,19 @@ const Sidebar = styled.div`
   background: rgb(248 248 248);
 
   // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
-  @media (width <= 51em) {
+  @media ${breakpoints.phoneOnly} {
     &:not(:only-child) {
       display: none;
     }
   }
 
   // On bigger viewports ...
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     width: 21rem;
     padding: var(--margin) calc(var(--margin) * 1.3);
     overflow: auto;
 
-    @media (width > 68em) {
+    @media ${breakpoints.laptopAndAbove} {
       width: 25rem;
       padding: calc(var(--margin) * 2);
     }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
+import { breakpoints } from '../_breakpoints';
 
 const Wrapper = styled.div`
   display: flex;
@@ -14,7 +15,7 @@ const Wrapper = styled.div`
 
   --color-background-sidebar: rgb(240 240 240);
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     display: grid;
     grid-template-rows: min-content 1fr min-content;
     grid-template-columns: min-content 1fr;
@@ -26,10 +27,10 @@ const Wrapper = styled.div`
   & > main h2:first-child {
     margin-bottom: var(--margin);
 
-    @media (width > 51em) {
+    @media ${breakpoints.tabletAndAbove} {
       margin-bottom: calc(var(--margin) * 2);
 
-      @media (width > 68em) {
+      @media ${breakpoints.laptopAndAbove} {
         margin-bottom: calc(var(--margin) * 3);
       }
     }
@@ -39,7 +40,7 @@ const Wrapper = styled.div`
 const Header = styled.header`
   background: var(--color-background-sidebar);
 
-  @media (width <= 51em) {
+  @media ${breakpoints.phoneOnly} {
     display: flex;
     flex: 0 0;
     flex-direction: row;
@@ -48,12 +49,12 @@ const Header = styled.header`
     padding: var(--margin);
   }
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     grid-row: 1;
     grid-column: 1;
     padding: var(--margin) calc(var(--margin) * 1.3);
 
-    @media (width > 68em) {
+    @media ${breakpoints.laptopAndAbove} {
       padding: calc(var(--margin) * 2) calc(var(--margin) * 2);
     }
   }
@@ -73,7 +74,7 @@ const HeaderButton = styled.button`
   border: unset;
   transform: rotate(90deg);
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
 `;
@@ -87,7 +88,7 @@ const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
 
-  @media (width <= 51em) {
+  @media ${breakpoints.phoneOnly} {
     position: fixed;
     top: calc(var(--margin) * 3.5);
     right: 0;
@@ -105,14 +106,14 @@ const Nav = styled.nav`
   font-weight: 500;
   background: var(--color-background-sidebar);
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     display: block;
     grid-row: 2;
     grid-column: 1;
     width: 12em;
     padding: var(--margin) calc(var(--margin) * 1.3);
 
-    @media (width > 68em) {
+    @media ${breakpoints.laptopAndAbove} {
       width: 13em;
       padding: var(--margin) calc(var(--margin) * 2);
     }
@@ -124,12 +125,12 @@ const Footer = styled.footer`
   font-size: 70%;
   background: var(--color-background-sidebar);
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     grid-row: 3;
     grid-column: 1;
     padding: calc(var(--margin)) calc(var(--margin) * 1.3);
 
-    @media (width > 68em) {
+    @media ${breakpoints.laptopAndAbove} {
       padding: calc(var(--margin) * 2);
     }
   }
