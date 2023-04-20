@@ -95,6 +95,7 @@ select {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
+  border-radius: unset;
   appearance: none;
 }
 
