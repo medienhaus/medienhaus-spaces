@@ -8,13 +8,12 @@ const Summary = styled.summary`
   background-color: var(--color-lo);
 `;
 
-const Details = ({ title, children }) => {
-    return (<details>
+const Details = ({ title, children }) => (
+    <details>
         <Summary>{ title }</Summary>
         { children }
     </details>
+);
 
-    );
-};
 
 export default Details;
