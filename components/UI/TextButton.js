@@ -1,16 +1,20 @@
 import styled from 'styled-components';
 
 const TextButton = styled.button`
-  all: unset;
+  padding: 0;
+  font: inherit;
   cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  background: none;
+  border: none;
+  outline: inherit;
 
   &:disabled {
-    all: unset;
-    color: var(--color-me);
+    color: var(--color-disabled);
+    background: none;
+
+    svg {
+      fill: var(--color-disabled);
+    }
   }
 `;
 export default TextButton;
