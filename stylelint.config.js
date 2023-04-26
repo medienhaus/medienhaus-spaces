@@ -25,6 +25,7 @@ module.exports = {
                 'indentation': [2, { 'baseIndentLevel': 1 }],
                 'no-empty-first-line': null,
                 'no-invalid-double-slash-comments': null,
+                'value-keyword-case': null, // Disabled because this rule clashes when using props with camel-case names
             },
         },
     ],
