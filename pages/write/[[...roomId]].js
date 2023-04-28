@@ -281,7 +281,7 @@ export default function Write() {
             <IframeLayout.Sidebar>
                 <>
                     <ServiceSubmenu title={<h2>/write</h2>} closeToggle={closeSubemnuToggle}>
-                        <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
+                        <ServiceSubmenu.Menu subheadline={t('What would you like to do?')}>
                             <ServiceSubmenu.Item disabled itemValue="">-- { t('select action') } --</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item itemValue="existingPad" actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
                             <ServiceSubmenu.Item itemValue="anonymousPad" actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
