@@ -311,7 +311,7 @@ export default function Write() {
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
                             <button title={t('Remove pad from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
