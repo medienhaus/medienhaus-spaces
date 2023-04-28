@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import Lock from '../../assets/icons/lock.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
+
+const LockIcon = styled(Lock)`
+  display: block;
+  transform: scale(0.9);
+`;
 
 const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
     const auth = useAuth();
@@ -49,8 +55,8 @@ const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
             <ServiceTable.Cell selected={selected}><Link disabled href={`/write/${roomId}`}>{ linkName }</Link></ServiceTable.Cell>
             { /* Show a lock icon if this is a password protected pad */ }
             { serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)]?.visibility === 'private' && (
-                <ServiceTable.Cell>
-                    <span title={t('password protected')}><Lock fill="var(--color-attention)" /></span>
+                <ServiceTable.Cell title={t('password protected')}>
+                    <LockIcon />
                 </ServiceTable.Cell>
             ) }
         </ServiceTable.Row>
