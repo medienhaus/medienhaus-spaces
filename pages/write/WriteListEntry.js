@@ -13,7 +13,7 @@ const LockIcon = styled(Lock)`
   transform: scale(0.9);
 `;
 
-const WriteListEntry = ({ parent, roomId, serverPads, selected }) => {
+const WriteListEntry = ({ roomId, serverPads, selected }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const [linkName, setLinkName] = useState('');

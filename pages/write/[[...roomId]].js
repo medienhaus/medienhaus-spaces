@@ -296,10 +296,7 @@ export default function Write() {
                                 key={writeRoomId}
                                 roomId={writeRoomId}
                                 selected={writeRoomId === roomId}
-                                parent={serviceSpaceId}
                                 serverPads={serverPads}
-                                removeLink={removeLink}
-                                copyToClipboard={copyToClipboard}
                             />;
                         }) }
                     </ServiceTable>
