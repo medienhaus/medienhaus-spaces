@@ -65,34 +65,34 @@ export function ServiceSubmenu({ title, icon, closeToggle, children }) {
 function Menu({ subheadline, children, opensubmenu }) {
     const [renderActionComponent, setRenderActionComponent] = useState(null);
     const [value, setValue] = useState('');
+
     // if opensubmenu changed and was true we don't want to render any action components
-    if (opensubmenu) {
-        return (
-            <Submenu>
-                { subheadline && <h3>{ subheadline }</h3> }
-                <select
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}>
-                    { React.Children.map(children, child => {
-                        if (child) return React.cloneElement(child, { renderActionComponent, setRenderActionComponent });
-                    },
-                    ) }
-                </select>
-                { renderActionComponent && renderActionComponent }
-            </Submenu>
-        );
-    }
-    return null;
+    if (!opensubmenu) return null;
+
+    return (
+        <Submenu>
+            { subheadline && <h3>{ subheadline }</h3> }
+            <select
+                value={value}
+                onChange={(e) => setValue(e.target.value)}>
+                { React.Children.map(children, child => {
+                    if (child) return React.cloneElement(child, { renderActionComponent, setRenderActionComponent });
+                },
+                ) }
+            </select>
+            { renderActionComponent && renderActionComponent }
+        </Submenu>
+    );
 }
 
 function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender, disabled, itemValue }) {
     return (
-        <option value={itemValue}
+        <option
+            value={itemValue}
             disabled={disabled}
             onClick={() => {
                 setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender);
-            }
-            }
+            }}
         >
             { children }
         </option>

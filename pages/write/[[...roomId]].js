@@ -181,27 +181,17 @@ export default function Write() {
         const [loading, setLoading] = useState(false);
 
         const handleExistingPad = (e) => {
-            if (getConfig().publicRuntimeConfig.authProviders.write.bypassUrlValidation) {
-                const isValidUrl = urlString => {
-                    let url;
-                    try {
-                        url = new URL(urlString);
-                    } catch (e) {
-                        return false;
-                    }
-                    return url.protocol === 'http:' || url.protocol === 'https:';
-                };
-                if (isValidUrl(e.target.value)) setValidLink(true);
-                else setValidLink(false);
-            } else {
-                if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
-                else setValidLink(false);
-            }
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
+            else setValidLink(false);
             setPadLink(e.target.value);
         };
 
         const handleSubmit = async (e) => {
             e.preventDefault();
+
+            const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
+            const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
+            console.log(checkForPasswordProtection);
             setLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
@@ -216,12 +206,12 @@ export default function Write() {
             <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
-                { !validLink && <ErrorMessage>
-                    { t(getConfig().publicRuntimeConfig.authProviders.write.bypassUrlValidation ?
-                        'Not a valid link'
-                        : 'Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
-                </ErrorMessage> }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing pad') }</button>
+                { !validLink && (
+                    <ErrorMessage>
+                        { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
+                    </ErrorMessage>
+                ) }
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
             </Form>);
     };
 
