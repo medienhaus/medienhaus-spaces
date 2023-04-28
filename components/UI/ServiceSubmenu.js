@@ -38,14 +38,14 @@ const Submenu = styled.aside`
 `;
 
 export function ServiceSubmenu({ title, icon, closeToggle, children }) {
-    const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
-    const handleMenuToggle = () => setOpenSubmenu(!opensubmenu);
+    const [isOpen, setIsOpen] = useState(false);
+    const handleMenuToggle = () => setIsOpen(!isOpen);
 
     useEffect(() => {
         // @TODO needs a more elegant solution to close the menu from outside of the component
         // at the moment the state closeToggle has to be parsed as true from the outside of the function
-        closeToggle && opensubmenu && setOpenSubmenu(false);
-    }, [closeToggle, opensubmenu]);
+        closeToggle && isOpen && setIsOpen(false);
+    }, [closeToggle, isOpen]);
 
     return (
         <>
@@ -56,7 +56,7 @@ export function ServiceSubmenu({ title, icon, closeToggle, children }) {
                 </ToggleButton>
             </Header>
             { React.Children.map(children, child =>
-                React.cloneElement(child, { opensubmenu, setOpenSubmenu }),
+                React.cloneElement(child, { opensubmenu: isOpen, setOpenSubmenu: setIsOpen }),
             ) }
         </>
     );
