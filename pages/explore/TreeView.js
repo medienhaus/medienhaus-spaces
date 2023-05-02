@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -52,10 +51,10 @@ export default function TreeView({ parsedData, onClick, parent, parsedWidth, par
         setData(parsedData);
     }, [parsedData]);
 
-    const handleClick = async (roomId, type, template) => {
-        // await new Promise((res) => setTimeout(res, 500));
-        onClick(roomId, type, template);
-    };
+    // const handleClick = async (roomId, type, template) => {
+    //     // await new Promise((res) => setTimeout(res, 500));
+    //     onClick(roomId, type, template);
+    // };
 
     const Branch = ({ name, roomId, type, template, handleClick, offset }) => {
         return (
