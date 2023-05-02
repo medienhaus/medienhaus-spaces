@@ -61,7 +61,6 @@ const IframeHeader = styled.header`
   grid-template-columns: 1fr auto;
   width: 100%;
   padding: var(--margin);
-  padding-bottom: var(--margin);
 
   @media (width > 51em) {
     padding-bottom: calc(var(--margin) * 2);
