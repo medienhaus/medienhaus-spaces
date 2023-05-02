@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import MenuAdd from '../../assets/icons/menu-add.svg';
 
@@ -37,15 +39,14 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, closeToggle, children }) {
-    const [opensubmenu, setOpenSubmenu] = useState(false); // @TODO stylelint is throwing an error for line 27 if variable is camelCase. disableing stylelint for the line doesn't work for some reason.
-    const handleMenuToggle = () => setOpenSubmenu(!opensubmenu);
+export function ServiceSubmenu({ title, icon, subheadline, items }) {
+    const { t } = useTranslation();
+    const [isOpen, setIsOpen] = useState(false);
+    const [value, setValue] = useState('');
 
-    useEffect(() => {
-        // @TODO needs a more elegant solution to close the menu from outside of the component
-        // at the moment the state closeToggle has to be parsed as true from the outside of the function
-        closeToggle && opensubmenu && setOpenSubmenu(false);
-    }, [closeToggle, opensubmenu]);
+    const handleMenuToggle = () => setIsOpen(!isOpen);
+
+    const ActionComponent = value && _.get(_.find(items, { value: value }), 'actionComponentToRender');
 
     return (
         <>
@@ -55,48 +56,21 @@ export function ServiceSubmenu({ title, icon, closeToggle, children }) {
                     { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
-            { React.Children.map(children, child =>
-                React.cloneElement(child, { opensubmenu, setOpenSubmenu }),
+            { isOpen && (
+                <Submenu>
+                    { subheadline && <h3>{ subheadline }</h3> }
+                    <select
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                    >
+                        <option disabled value="">-- { t('select action') } --</option>
+                        { items.filter(Boolean).map(({ value, label }) => (
+                            <option key={value} value={value}>{ label }</option>
+                        )) }
+                    </select>
+                    { value && <ActionComponent callbackDone={handleMenuToggle} /> }
+                </Submenu>
             ) }
         </>
     );
 }
-
-function Menu({ subheadline, children, opensubmenu }) {
-    const [renderActionComponent, setRenderActionComponent] = useState(null);
-    const [value, setValue] = useState('');
-
-    // if opensubmenu changed and was true we don't want to render any action components
-    if (!opensubmenu) return null;
-
-    return (
-        <Submenu>
-            { subheadline && <h3>{ subheadline }</h3> }
-            <select
-                value={value}
-                onChange={(e) => setValue(e.target.value)}>
-                { React.Children.map(children, child => {
-                    if (child) return React.cloneElement(child, { renderActionComponent, setRenderActionComponent });
-                },
-                ) }
-            </select>
-            { renderActionComponent && renderActionComponent }
-        </Submenu>
-    );
-}
-
-function Item({ children, renderActionComponent, setRenderActionComponent, actionComponentToRender, disabled, itemValue }) {
-    return (
-        <option
-            value={itemValue}
-            disabled={disabled}
-            onClick={() => {
-                setRenderActionComponent(renderActionComponent === actionComponentToRender ? null : actionComponentToRender);
-            }}
-        >
-            { children }
-        </option>
-    );
-}
-ServiceSubmenu.Menu = Menu;
-ServiceSubmenu.Item = Item;
