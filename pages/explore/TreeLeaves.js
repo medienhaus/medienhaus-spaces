@@ -15,7 +15,8 @@ const Leaf = styled.button`
   cursor: pointer;
   background: none;
   border-style: solid;
-  transition: all 1s;
+  ${props => props.className !== 'parent' && 'transition: all 1s;'}
+
   animation: fade-in 1s;
 
   @keyframes fade-in {
