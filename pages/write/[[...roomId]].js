@@ -29,7 +29,6 @@ export default function Write() {
     const [serverPads, setServerPads] = useState({});
     const [removingLink, setRemovingLink] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
-    const [closeSubemnuToggle, setCloseSubemnuToggle] = useState(false);
 
     const write = auth.getAuthenticationProvider('write');
 
@@ -57,7 +56,7 @@ export default function Write() {
 
         !cancelled && setContent(matrix.roomContents.get(roomId));
 
-        return () => cancelled = true;
+        return () => { cancelled = true; };
     }, [matrix.roomContents, roomId]);
 
     useEffect(() => {
@@ -108,7 +107,7 @@ export default function Write() {
 
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
-        return () => cancelled = true;
+        return () => { cancelled = true; };
         // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
         // therefore we need to disable the linter for the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,7 +143,7 @@ export default function Write() {
         return room;
     }, [auth, matrix, matrixClient, serviceSpaceId, write]);
 
-    const ActionNewAnonymousPad = () => {
+    const ActionNewAnonymousPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
         const [loading, setLoading] = useState(false);
 
@@ -160,24 +159,23 @@ export default function Write() {
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
 
+            callbackDone && callbackDone();
             setLoading(false);
             setPadName('');
-            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
-            setCloseSubemnuToggle(true);
-            setCloseSubemnuToggle(false);
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
-            </Form>);
+            </Form>
+        );
     };
 
-    const ActionExistingPad = () => {
+    const ActionExistingPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
         const [padLink, setPadLink] = useState('');
-        const [validLink, setValidLink] = useState('undefined');
+        const [validLink, setValidLink] = useState(false);
         const [loading, setLoading] = useState(false);
 
         const handleExistingPad = (e) => {
@@ -195,9 +193,8 @@ export default function Write() {
             setLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
-            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
-            setCloseSubemnuToggle(true);
-            setCloseSubemnuToggle(false);
+
+            callbackDone && callbackDone();
             setPadLink('');
             setLoading(false);
         };
@@ -215,7 +212,7 @@ export default function Write() {
             </Form>);
     };
 
-    const ActionPasswordPad = () => {
+    const ActionPasswordPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
         const [password, setPassword] = useState('');
         const [validatePassword, setValidatePassword] = useState('');
@@ -227,9 +224,8 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
-            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
-            setCloseSubemnuToggle(true);
-            setCloseSubemnuToggle(false);
+
+            callbackDone && callbackDone();
             setPadName('');
             setLoading(false);
         };
@@ -242,7 +238,7 @@ export default function Write() {
         </Form>);
     };
 
-    const ActionAuthoredPad = () => {
+    const ActionAuthoredPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
         const [loading, setLoading] = useState(false);
 
@@ -258,9 +254,8 @@ export default function Write() {
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
-            // in order to close the service sub menu we need to set the toggle to true and reset it to false so it works again the next time around
-            setCloseSubemnuToggle(true);
-            setCloseSubemnuToggle(false);
+
+            callbackDone && callbackDone();
             setPadName('');
             setLoading(false);
         };
@@ -272,23 +267,21 @@ export default function Write() {
             </Form>);
     };
 
-    <ServiceSubmenu.Item actionComponentToRender={ActionNewAnonymousPad}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>;
-
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
         <>
             <IframeLayout.Sidebar>
                 <>
-                    <ServiceSubmenu title={<h2>/write</h2>} closeToggle={closeSubemnuToggle}>
-                        <ServiceSubmenu.Menu subheadline={t('What would you like to do?')}>
-                            <ServiceSubmenu.Item disabled itemValue="">-- { t('select action') } --</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item itemValue="existingPad" actionComponentToRender={<ActionExistingPad />}>{ t('Add existing pad') }</ServiceSubmenu.Item>
-                            <ServiceSubmenu.Item itemValue="anonymousPad" actionComponentToRender={<ActionNewAnonymousPad />}>{ t('Create new anonymous pad') }</ServiceSubmenu.Item>
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionAuthoredPad />}>{ t('Create new authored pad') }</ServiceSubmenu.Item> }
-                            { getConfig().publicRuntimeConfig.authProviders.write.api && <ServiceSubmenu.Item actionComponentToRender={<ActionPasswordPad />}>{ t('Create password protected pad') }</ServiceSubmenu.Item> }
-                        </ServiceSubmenu.Menu>
-                    </ServiceSubmenu>
+                    <ServiceSubmenu
+                        title={<h2>/write</h2>}
+                        subheadline={t('What would you like to do?')}
+                        items={[
+                            { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
+                            { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
+                            getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
+                            getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
+                        ]} />
                     { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
