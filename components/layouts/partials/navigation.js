@@ -17,8 +17,8 @@ export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
 
     const Link = ({ href, children }) => (
-        <NextLink href={href} passHref>
-            <a onClick={closeNavigation}>{ children }</a>
+        <NextLink href={href} onClick={closeNavigation}>
+            { children }
         </NextLink>
     );
 

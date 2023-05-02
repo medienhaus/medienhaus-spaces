@@ -67,7 +67,7 @@ const HeaderButton = styled.button`
   height: calc(var(--margin) * 3.5);
   margin: calc(var(--margin) * -1);
   font-weight: bold;
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-align: center;
   cursor: pointer;
   background-color: transparent;

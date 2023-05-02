@@ -23,4 +23,7 @@ module.exports = {
         },
     },
     webpack: WebpackConfig,
+    experimental: {
+        forceSwcTransforms: true,
+    },
 };
