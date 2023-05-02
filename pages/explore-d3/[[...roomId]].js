@@ -69,7 +69,6 @@ export default function Explore() {
                         space.missingMetaEvent = true;
                     });
                 if (metaEvent) {
-                    console.log(metaEvent);
                     space.type = metaEvent.type;
                     space.template = metaEvent.template;
                     space.application = metaEvent.application;
