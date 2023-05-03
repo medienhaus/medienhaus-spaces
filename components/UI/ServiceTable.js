@@ -15,28 +15,24 @@ import styled from 'styled-components';
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  border-top: 1px solid rgb(0 0 0 / 5%);
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
-  border-top: 1px dotted rgb(210 210 210);
-
-  &:not(:last-of-type) {
-    border-bottom: 1px dotted rgb(210 210 210);
-  }
+  border-bottom: 1px solid rgb(0 0 0 / 5%);
 `;
 
 const TableCell = styled.td`
   width: 100%;
   padding: 0;
-  font-size: 85%;
   text-overflow: ellipsis;
 
   a {
     display: block;
     width: 100%;
     line-height: calc(var(--margin) * 3);
-    color: ${props => props.selected && 'var(--color-disabled)' };
+    color: ${props => props.selected && 'rgb(0 0 0 / 50%)' };
     text-decoration: ${props => props.selected && 'none' };
 
     &:hover {

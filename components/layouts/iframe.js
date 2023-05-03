@@ -52,7 +52,10 @@ const IframeWrapper = styled.div`
     height: 100%;
     margin: 0;
     border: none;
-    border-top: 1px dotted rgb(210 210 210);
+
+    @media ${breakpoints.phoneOnly} {
+      border-top: 1px solid rgb(0 0 0 / 5%);
+    }
   }
 `;
 
@@ -62,12 +65,11 @@ const IframeHeader = styled.header`
   width: 100%;
   padding: var(--margin);
 
-  @media (width > 51em) {
-    padding-bottom: calc(var(--margin) * 2);
+  @media ${breakpoints.tabletAndAbove} {
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
 
-    @media (width > 68em) {
-      padding: calc(var(--margin) * 2);
-      padding-bottom: calc(var(--margin) * 3);
+    @media ${breakpoints.laptopAndAbove} {
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 
