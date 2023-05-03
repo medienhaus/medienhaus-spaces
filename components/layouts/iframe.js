@@ -17,7 +17,7 @@ export const Main = styled.main`
 
 const Sidebar = styled.div`
   padding: var(--margin);
-  background: rgb(248 248 248);
+  background: rgb(0 0 0 / 3%);
 
   // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
   @media ${breakpoints.phoneOnly} {
@@ -29,12 +29,12 @@ const Sidebar = styled.div`
   // On bigger viewports ...
   @media ${breakpoints.tabletAndAbove} {
     width: 21rem;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
 
     @media ${breakpoints.laptopAndAbove} {
       width: 25rem;
-      padding: calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;

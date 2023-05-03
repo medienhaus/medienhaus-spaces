@@ -23,7 +23,7 @@
 
 body {
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  font-size: calc(1em + 0.5vmin);
+  font-size: calc(1em + 0.25vmin);
   font-style: normal;
   font-weight: 500;
   line-height: 1.3;
@@ -79,7 +79,7 @@ a:active {
 
 select {
   width: 100%;
-  height: calc(var(--margin) * 3);
+  height: calc((var(--margin) * 3) + 1px);
   padding: 0 calc(var(--margin) * 2) 0 calc(var(--margin) * 0.75);
   font-weight: 500;
   color: var(--color-foreground);
@@ -120,7 +120,7 @@ button {
 button,
 input[type='submit'] {
   width: 100%;
-  height: calc(var(--margin) * 3);
+  height: calc((var(--margin) * 3) + 1px);
   padding: 0 calc(var(--margin) * 0.75);
   font-weight: 700;
   color: var(--color-background);
