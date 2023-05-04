@@ -32,7 +32,6 @@ export default function Sketch() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
-    const [closeServiceMenu, setCloseServiceMenu] = useState(false);
 
     const sketch = auth.getAuthenticationProvider('sketch');
 
@@ -187,19 +186,19 @@ export default function Sketch() {
         setRemovingLink(false);
     };
 
-    const ActionNewSketch = () => {
+    const ActionNewSketch = ({ callbackDone }) => {
         const [sketchName, setSketchName] = useState('');
         const [loading, setLoading] = useState(false);
 
         const createNewSketchRoom = async () => {
             setLoading(true);
+
             const create = await sketch.createSpace(sketchName);
             const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + create._id;
             const roomId = await createSketchRoom(link, sketchName);
             router.push(`/sketch/${roomId}`);
-            // in order to close the service menu after succesfully creating a new room we need to set the state to true and afterwards reset it to false again, for it to work on the next call.
-            setCloseServiceMenu(true);
-            setCloseServiceMenu(false);
+
+            callbackDone && callbackDone();
             setLoading(false);
         };
 
@@ -211,7 +210,7 @@ export default function Sketch() {
             </Form>);
     };
 
-    const ActionExistingSketch = () => {
+    const ActionExistingSketch = ({ callbackDone }) => {
         const [sketchName, setSketchName] = useState('');
         const [sketchLink, setSketchLink] = useState('');
         const [validLink, setValidLink] = useState(false);
@@ -219,7 +218,7 @@ export default function Sketch() {
 
         const handleExistingSketch = (e) => {
             setLoading(true);
-             if (getConfig().publicRuntimeConfig.authProviders.sketch.bypassUrlValidation) {
+            if (getConfig().publicRuntimeConfig.authProviders.sketch.bypassUrlValidation) {
                 const isValidUrl = urlString => {
                     let url;
                     try {
@@ -233,15 +232,15 @@ export default function Sketch() {
                 else setValidLink(false);
             } else {
             // we check if the link is valid for the service (has the same base url)
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
-            else setValidLink(false);
+                if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
+                else setValidLink(false);
             }
             setSketchLink(e.target.value);
             setLoading(false);
         };
 
         return (
-            <Form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); }}>
+            <Form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); callbackDone && callbackDone(); }}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
                 { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
@@ -256,13 +255,14 @@ export default function Sketch() {
     return (
         <>
             <IframeLayout.Sidebar>
-                <ServiceSubmenu title={<h2>/sketch</h2>} closeToggle={closeServiceMenu}>
-                    <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
-                        <ServiceSubmenu.Item itemValue="" disabled>-- { t('select action') } --</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item itemValue="existingSketch" actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item itemValue="newSketch" actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
-                    </ServiceSubmenu.Menu>
-                </ServiceSubmenu>
+                <ServiceSubmenu
+                    title={<h2>/sketch</h2>}
+                    subheadline={t('What would you like to do?')}
+                    items={[
+                        { value: 'existingSketch', actionComponentToRender: ActionExistingSketch, label: t('Add existing sketch') },
+                        { value: 'newSketch', actionComponentToRender: ActionNewSketch, label: t('Create sketch') },
+                    ]}
+                />
                 { syncingServerSketches ?
                     <span><LoadingSpinnerInline /> { t('Syncing sketches ...') } </span> :
                     <ServiceTable>
