@@ -205,7 +205,7 @@ export default function Sketch() {
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
+                <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
             </Form>);
     };
@@ -217,21 +217,28 @@ export default function Sketch() {
         const [loading, setLoading] = useState(false);
 
         const handleExistingSketch = (e) => {
-            setLoading(true);
             // we check if the link is valid for the service (has the same base url)
             if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
             else setValidLink(false);
             setSketchLink(e.target.value);
+        };
+
+        const handleSubmit = async (e) => {
+            setLoading(true);
+            e.preventDefault();
+            await createSketchRoom(sketchLink, sketchName);
+            callbackDone && callbackDone();
             setLoading(false);
+
         };
 
         return (
-            <Form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); callbackDone && callbackDone(); }}>
+            <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
                 { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
 
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
+                <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
             </Form>);
     };
@@ -250,7 +257,7 @@ export default function Sketch() {
                     ]}
                 />
                 { syncingServerSketches ?
-                    <span><LoadingSpinnerInline /> { t('Syncing sketches ...') } </span> :
+                    <LoadingSpinnerInline /> :
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <SketchLinkEntry roomId={roomId} key={roomId} />;
@@ -266,7 +273,7 @@ export default function Sketch() {
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
-                            <button title={t('Remove pad from my library')} onClick={removeLink}>
+                            <button title={t('Remove sketch from my library')} onClick={removeLink}>
                                 { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
