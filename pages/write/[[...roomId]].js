@@ -178,15 +178,13 @@ export default function Write() {
         const [validLink, setValidLink] = useState(false);
         const [loading, setLoading] = useState(false);
 
-        const handleExistingPad = (e) => {
+        const validatePadUrl = (e) => {
             if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
             else setValidLink(false);
             setPadLink(e.target.value);
         };
 
-        const handleSubmit = async (e) => {
-            e.preventDefault();
-
+        const handleExistingPadSubmit = async () => {
             const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
             const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
             console.log(checkForPasswordProtection);
@@ -200,10 +198,10 @@ export default function Write() {
         };
 
         return (
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <input type="text" placeholder={t('link to pad')} value={padLink} onChange={handleExistingPad} />
-                { !validLink && (
+                <input type="text" placeholder={t('link to pad')} value={padLink} onChange={validatePadUrl} />
+                { !validLink && padLink && (
                     <ErrorMessage>
                         { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
                     </ErrorMessage>
