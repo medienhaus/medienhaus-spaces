@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
 
-  --color-background-sidebar: rgb(240 240 240);
+  --color-background-sidebar: rgb(0 0 0 / 6%);
 
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
@@ -52,10 +52,10 @@ const Header = styled.header`
   @media ${breakpoints.tabletAndAbove} {
     grid-row: 1;
     grid-column: 1;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2) calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;
@@ -67,7 +67,7 @@ const HeaderButton = styled.button`
   height: calc(var(--margin) * 3.5);
   margin: calc(var(--margin) * -1);
   font-weight: bold;
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-align: center;
   cursor: pointer;
   background-color: transparent;
@@ -87,6 +87,7 @@ const HeaderButtonClose = styled(HeaderButton)`
 const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
+  background: white;
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
@@ -111,18 +112,20 @@ const Nav = styled.nav`
     grid-row: 2;
     grid-column: 1;
     width: 12em;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: 0 calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
       width: 13em;
-      padding: var(--margin) calc(var(--margin) * 2);
+      padding: 0 calc(var(--margin) * 2);
     }
   }
 `;
 
 const Footer = styled.footer`
   padding: var(--margin);
-  font-size: 70%;
+  font-weight: 700;
+  color: rgb(0 0 0 / 10%);
+  cursor: default;
   background: var(--color-background-sidebar);
 
   @media ${breakpoints.tabletAndAbove} {
@@ -134,6 +137,12 @@ const Footer = styled.footer`
       padding: calc(var(--margin) * 2);
     }
   }
+`;
+
+const Copyleft = styled.span`
+  position: relative;
+  top: 1px;
+  font-weight: 600;
 `;
 
 export default function BaseLayout({ children }) {
@@ -156,7 +165,7 @@ export default function BaseLayout({ children }) {
                         <LanguageChooser />
                     </Nav>
                     <Footer>
-                        🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
+                        <Copyleft>🄯</Copyleft> medienhaus/
                     </Footer>
                 </Sidebar>
                 { children }
