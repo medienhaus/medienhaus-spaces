@@ -18,7 +18,6 @@ module.exports = {
             },
             sketch: {
                 baseUrl: 'https://sketch.yourserver.org',
-                bypassUrlValidation: false,
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
