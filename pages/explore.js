@@ -18,6 +18,8 @@ const ExploreSection = styled.div`
 
 export default function Explore() {
     const auth = useAuth();
+    const matrix = auth.getAuthenticationProvider('matrix');
+    const matrixClient = matrix.getMatrixClient();
     const { t } = useTranslation('explore');
 
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
@@ -26,13 +28,20 @@ export default function Explore() {
     useEffect(() => {
         const fetchContents = async () => {
             const contents = [];
-            const roomHierarchy = await auth.getAuthenticationProvider('matrix').getMatrixClient().getRoomHierarchy(activeContexts[activeContexts.length - 1], undefined, 1);
+            let roomHierarchy = await matrixClient.getRoomHierarchy(activeContexts[activeContexts.length - 1], undefined, 1)
+                .catch(/** @param {MatrixError} error */(error) => {
+                    // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
+                    // In every other case this is really an unexpected error and we want to throw.
+                    if (error.errcode !== 'M_FORBIDDEN') throw error;
+                });
+            if (!roomHierarchy) roomHierarchy = { rooms: [] };
+
             // Remove the first entry, which is the context itself
             roomHierarchy.rooms.shift();
             // Ignore `m.space.child` events that are empty
             // We're only interested in the -contents- of this context, so filter out everything that's a sub-context
             for (const room of roomHierarchy.rooms) {
-                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
+                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
                 if (!metaEvent || (metaEvent && metaEvent.type !== 'context')) {
                     // This is a valid content item we want to show
                     contents.push({
@@ -46,7 +55,7 @@ export default function Explore() {
         };
 
         if (activeContexts) fetchContents();
-    }, [activeContexts, auth]);
+    }, [activeContexts, matrixClient]);
 
     return (
         <>
@@ -56,12 +65,12 @@ export default function Explore() {
                 { (contents && contents.length > 0) ? (
                     <div>
                         <ol>
-                            { contents.map((content) => (
-                                <li>
-                                    { content.name }
+                            { contents.map(({ type, template, name, room_id: roomId }) => (
+                                <li key={roomId}>
+                                    { name }
                                     <small>
-                                        { content.type && (<> (type: <code>{ content.type }</code>)</>) }
-                                        { content.template && (<> (template: <code>{ content.template }</code>)</>) }
+                                        { type && (<> (type: <code>{ type }</code>)</>) }
+                                        { template && (<> (template: <code>{ template }</code>)</>) }
                                     </small>
                                 </li>
                             )) }

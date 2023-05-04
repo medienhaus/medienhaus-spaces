@@ -17,7 +17,7 @@ export const Main = styled.main`
 
 const Sidebar = styled.div`
   padding: var(--margin);
-  background: rgb(248 248 248);
+  background: rgb(0 0 0 / 3%);
 
   // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
   @media ${breakpoints.phoneOnly} {
@@ -29,12 +29,12 @@ const Sidebar = styled.div`
   // On bigger viewports ...
   @media ${breakpoints.tabletAndAbove} {
     width: 21rem;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
 
     @media ${breakpoints.laptopAndAbove} {
       width: 25rem;
-      padding: calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;
@@ -52,7 +52,10 @@ const IframeWrapper = styled.div`
     height: 100%;
     margin: 0;
     border: none;
-    border-top: 1px dotted rgb(210 210 210);
+
+    @media ${breakpoints.phoneOnly} {
+      border-top: 1px solid rgb(0 0 0 / 5%);
+    }
   }
 `;
 
@@ -62,12 +65,11 @@ const IframeHeader = styled.header`
   width: 100%;
   padding: var(--margin);
 
-  @media (width > 51em) {
-    padding-bottom: calc(var(--margin) * 2);
+  @media ${breakpoints.tabletAndAbove} {
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
 
-    @media (width > 68em) {
-      padding: calc(var(--margin) * 2);
-      padding-bottom: calc(var(--margin) * 3);
+    @media ${breakpoints.laptopAndAbove} {
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 

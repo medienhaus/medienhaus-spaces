@@ -12,11 +12,11 @@ export const Main = styled.main`
     grid-column: 2;
     max-width: 55ch;
     height: 100vh;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
 
     @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;

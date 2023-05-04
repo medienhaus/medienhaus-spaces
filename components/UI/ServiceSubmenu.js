@@ -20,8 +20,12 @@ const ToggleButton = styled.button`
 `;
 
 const Submenu = styled.aside`
+  padding-bottom: calc(var(--margin) * 3);
+  border-top: 1px solid transparent;
+
   h3 {
-    margin-bottom: calc(var(--margin) / 1.5);
+    line-height: calc(var(--margin) * 3);
+    border-bottom: 1px solid transparent;
   }
 
   button {
@@ -31,11 +35,6 @@ const Submenu = styled.aside`
     & + button {
       margin-top: calc(var(--margin) / 1.5);
     }
-  }
-
-  /* set margin-bottom on very last child of submenu */
-  & > :last-child {
-    margin-bottom: calc(var(--margin) / 1.5);
   }
 `;
 
