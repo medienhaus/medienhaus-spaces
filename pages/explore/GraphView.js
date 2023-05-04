@@ -15,7 +15,7 @@ function GraphView({ parsedData, parsedHeight, handleClick, selectedNode, active
         let cancelled = false;
         if (!cancelled) {
             setData(parsedData);
-            // console.log(parsedData);
+            console.log(parsedData);
         }
         return () => {
             cancelled = true;
@@ -48,13 +48,14 @@ function GraphView({ parsedData, parsedHeight, handleClick, selectedNode, active
             handleClick={handleClick}
             template={data.template}
             children={data.children}
+            directChildren={data.children_state}
             translateX={0}
             translateY={0}
             roomId={roomId}
             missingMetaEvent={data.missingMetaEvent}
             selectedNode={selectedNode}
             activePath={activePath}
-
+            toddler={false}
         />
 
     // data.map((leaf) => {

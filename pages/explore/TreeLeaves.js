@@ -15,7 +15,7 @@ const Leaf = styled.button`
   cursor: pointer;
   background: none;
   border-style: solid;
-  ${props => props.className !== 'parent' && 'transition: all 1s;'}
+  ${props => props.className !== 'parent' && 'transition: background-color 1s;'}
 
   animation: fade-in 1s;
 
@@ -26,31 +26,37 @@ const Leaf = styled.button`
 
 `;
 
-const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, template, children, height, isParent, parent, display, index, selectedNode, activePath }) => {
+const ToddlerWrapper = styled.div`
+  display: grid;
+  height: 100%;
+  margin-left: 15%;
+`;
+
+const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, toddler, template, children, directChildren, height, isParent, parent, display, index, selectedNode, activePath }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
 
     const onClick = async (e, id, childTemplate, isChild) => {
         e.preventDefault();
         setFetchingLeaves(true);
-        await handleClick(id || roomId, childTemplate|| template, isChild);
+        await handleClick(id || roomId, childTemplate|| template, isChild, toddler && parent.id);
         setFetchingLeaves(false);
     };
 
     return (<>
         <Leaf
-            className={isParent ? 'parent' : 'child'}
+            className={toddler ? 'toddler' : isParent ? 'parent' : 'child'}
             height={height}
             // the reason we are using display to change the visibility of the element, is that if we want to use animations between different stages of the explore tree,
             // the elements need to exist so that they can be animated (i.e from not visible to visible). AFAIK this doesn't work with the 'display' property, we will have to use 'visibility' or something else.
             // depending on how and what kind of transitions/animations we implement this might need to change and we could actually not create 'Leaf' elements if they aren't visible, instead of just hiding them.
-            display={display}
+            display={toddler ? 'initial' : display}
             index={index}
             childrenLength={children?.length + 1}
             onClick={onClick}>
             { missingMetaEvent ?
-                <em>{ isParent && parent ? '← ' + name : name }</em>
-                : <>{ isParent && parent ? '← ' + name : name } </> }
+                <em>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } { name }</em>
+                : <>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } { name } </> }
             { fetchingLeaves && <LoadingSpinnerInline /> }
         </Leaf>
         { selectedNode && display === 'initial' && children &&
@@ -79,25 +85,54 @@ const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, templat
             && children
             && children.map((child, index) => {
                 const roomId = child.id || child.room_id;
-                return <TreeLeaves
-                    key={roomId + index} // @TODO could still create douplicate keys
-                    parent={child.parent}
-                    isParent={selectedNode ? roomId === activePath[activePath.length - 2] : router.query.roomId[0] === roomId}
-                    display={selectedNode && roomId === activePath[activePath.length - 2] ? 'initial' : !selectedNode && router.query.roomId[0] === roomId ? 'initial' : isParent ? 'initial' : 'none'}
-                    index={index}
-                    width={300}
-                    height={height}
-                    name={child.name}
-                    handleClick={handleClick}
-                    children={child.children}
-                    template={child.template}
-                    translateX={0}
-                    translateY={0}
-                    roomId={roomId}
-                    missingMetaEvent={child.missingMetaEvent}
-                    selectedNode={selectedNode}
-                    activePath={activePath}
-                />;
+                // if (directChildren.filter(directChild => directChild.state_key === roomId).length === 0) return null;
+                return (<>
+                    <TreeLeaves
+                        key={roomId + index} // @TODO could still create douplicate keys
+                        parent={child.parent}
+                        isParent={selectedNode ? roomId === activePath[activePath.length - 2] : router.query.roomId[0] === roomId}
+                        display={selectedNode && roomId === activePath[activePath.length - 2] ? 'initial' : !selectedNode && router.query.roomId[0] === roomId ? 'initial' : isParent ? 'initial' : 'none'}
+                        index={index}
+                        width={300}
+                        height={height}
+                        name={child.name}
+                        handleClick={handleClick}
+                        children={child.children}
+                        template={child.template}
+                        translateX={0}
+                        translateY={0}
+                        roomId={roomId}
+                        missingMetaEvent={child.missingMetaEvent}
+                        selectedNode={selectedNode}
+                        activePath={activePath}
+                    />
+                    { child.parent?.id === router.query.roomId[0] && child.children && <ToddlerWrapper>{ child.children.map((child, index) => {
+                        const childId = child.id || child.room_id;
+                        return <TreeLeaves
+                            key={roomId + index} // @TODO could still create douplicate keys
+                            parent={child.parent}
+                            isParent={false}
+                            toddler={true}
+                            display="initial"
+                            index={index}
+                            width={300}
+                            height={height}
+                            name={child.name}
+                            handleClick={handleClick}
+                            children={child.children}
+                            template={child.template}
+                            translateX={0}
+                            translateY={0}
+                            roomId={selectedNode ? child.parent?.id : childId}
+                            missingMetaEvent={child.missingMetaEvent}
+                            selectedNode={selectedNode}
+                            activePath={activePath}
+
+                        />;
+                    })
+                    }</ToddlerWrapper> }
+                </>
+                );
             }) }
 
     </>
