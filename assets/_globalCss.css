@@ -79,7 +79,7 @@ a:active {
 
 select {
   width: 100%;
-  height: calc((var(--margin) * 3) + 1px);
+  height: calc((var(--margin) * 3));
   padding: 0 calc(var(--margin) * 2) 0 calc(var(--margin) * 0.75);
   font-weight: 500;
   color: var(--color-foreground);
@@ -120,7 +120,7 @@ button {
 button,
 input[type='submit'] {
   width: 100%;
-  height: calc((var(--margin) * 3) + 1px);
+  height: calc((var(--margin) * 3));
   padding: 0 calc(var(--margin) * 0.75);
   font-weight: 700;
   color: var(--color-background);
@@ -176,4 +176,26 @@ input[type='password'][disabled] {
   color: var(--color-disabled);
   cursor: not-allowed;
   border-color: var(--color-disabled);
+}
+
+.my-node-enter {
+  opacity: 0;
+  transform: translateY(-5%);
+}
+
+.my-node-enter-active {
+  opacity: 1;
+  transition: all 300ms ease-in-out;
+  transform: translateY(0);
+}
+
+.my-node-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.my-node-exit-active {
+  opacity: 0;
+  transition: all 300ms ease-in-out;
+  transform: translateY(-5%);
 }

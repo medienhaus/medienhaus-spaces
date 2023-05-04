@@ -16,6 +16,7 @@ export const Main = styled.main`
 `;
 
 const Sidebar = styled.div`
+  position: relative;
   padding: var(--margin);
   background: rgb(0 0 0 / 3%);
 
