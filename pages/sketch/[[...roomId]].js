@@ -32,6 +32,7 @@ export default function Sketch() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
+    const [isSketchServerDown, setIsSketchServerDown] = useState(false);
 
     const sketch = auth.getAuthenticationProvider('sketch');
 
@@ -86,6 +87,7 @@ export default function Sketch() {
             getAllMatrixSketches(serviceSpaceId);
 
             const updateStructure = async (object, parent) => {
+                console.log('object');
                 for (const sketch of Object.values(object)) {
                     // if the element does not have an id key, we can safely assume it is a key of a folder from recursion and skip it.
                     if (!sketch.id) continue;
@@ -109,8 +111,12 @@ export default function Sketch() {
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
-            await sketch.syncAllSketches();
-            await updateStructure(sketch.getStructure());
+            const syncSketches = await sketch.syncAllSketches()
+                .catch((error) => {
+                    console.debug(error);
+                    setIsSketchServerDown(true);
+                });
+            syncSketches && await updateStructure(sketch.getStructure());
             setSyncingServerSketches(false);
         };
 
@@ -257,12 +263,16 @@ export default function Sketch() {
                     ]}
                 />
                 { syncingServerSketches ?
-                    <LoadingSpinnerInline /> :
+                    <LoadingSpinner /> :
+                    <>
                     <ServiceTable>
                         { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
                             return <SketchLinkEntry roomId={roomId} key={roomId} />;
-                        }) }
+                        })}
                     </ServiceTable>
+                        {isSketchServerDown && <ErrorMessage>{t('Can\'t connect with the provided /sketch server. Please try again later.')}</ErrorMessage>}
+                </>
+
                 }
             </IframeLayout.Sidebar>
             { roomId && content && (
