@@ -17,6 +17,7 @@ import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 export default function Sketch() {
     const auth = useAuth();
@@ -130,15 +131,15 @@ export default function Sketch() {
 
     useEffect(() => {
         let cancelled = false;
-        const populatePadsfromServer = async (recursion) => {
+        const populateSketchesfromServer = async (recursion) => {
             if (!isEmpty(sketch.getStructure())) {
                 setServerSketches(sketch.getStructure());
             } else if (!recursion) {
                 await sketch.syncAllSketches();
-                populatePadsfromServer(true);
+                populateSketchesfromServer(true);
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.write.api && populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl && populateSketchesfromServer();
 
         return () => {
             cancelled = true;
@@ -171,8 +172,6 @@ export default function Sketch() {
 
         return room;
     }
-
-    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     const removeLink = async () => {
         setRemovingLink(true);
@@ -235,14 +234,13 @@ export default function Sketch() {
             await createSketchRoom(sketchLink, sketchName);
             callbackDone && callbackDone();
             setLoading(false);
-
         };
 
         return (
             <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
+                { !validLink && sketchLink !=='' && <ErrorMessage>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</ErrorMessage> }
 
                 <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
@@ -280,10 +278,11 @@ export default function Sketch() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
+                            <button onClick={copyToClipboard}>
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
-                            <button title={t('Remove sketch from my library')} onClick={removeLink}>
+                            <CopyTolClipboard title={t('Copy sketch link to clipboard')} content={content.body} /> 
+                            <button title={t('Delete sketch from my library')} onClick={removeLink}>
                                 { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
