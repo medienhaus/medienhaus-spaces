@@ -140,6 +140,7 @@ export default function Write() {
             await write.syncAllPads();
             setServerPads(write.getAllPads());
         }
+
         return room;
     }, [auth, matrix, matrixClient, serviceSpaceId, write]);
 
@@ -247,6 +248,7 @@ export default function Write() {
             });
             if (!padId) {
                 setLoading(false);
+
                 return;
             }
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
