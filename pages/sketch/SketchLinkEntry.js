@@ -19,6 +19,7 @@ export default function SketchLinkEntry({ roomId, selected }) {
             const name = matrix.rooms.get(roomId).name;
             setLinkName(name);
         }
+
         return () => cancelled = true;
     }, [matrix.rooms, roomId]);
 

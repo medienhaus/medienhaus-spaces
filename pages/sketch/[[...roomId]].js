@@ -51,6 +51,7 @@ export default function Sketch() {
         };
 
         !cancelled && startLookingForFolders();
+
         return () => cancelled = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix.initialSyncDone, matrix.serviceSpaces.sketch]);
@@ -178,11 +179,13 @@ export default function Sketch() {
         const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
         if (!remove) {
             setRemovingLink(false);
+
             return;
         }
         if (!remove.ok) {
         // @TODO callback function to give user feedback when removing on the server fails
             setRemovingLink(false);
+
             return;
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
@@ -263,13 +266,13 @@ export default function Sketch() {
                 { syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>
-                    <ServiceTable>
-                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                            return <SketchLinkEntry roomId={roomId} key={roomId} />;
-                        })}
-                    </ServiceTable>
-                        {isSketchServerDown && <ErrorMessage>{t('Can\'t connect with the provided /sketch server. Please try again later.')}</ErrorMessage>}
-                </>
+                        <ServiceTable>
+                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                                return <SketchLinkEntry roomId={roomId} key={roomId} />;
+                            }) }
+                        </ServiceTable>
+                        { isSketchServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                    </>
 
                 }
             </IframeLayout.Sidebar>
@@ -278,7 +281,7 @@ export default function Sketch() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} /> 
+                            <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <button title={t('Delete sketch from my library')} onClick={removeLink}>
                                 { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
