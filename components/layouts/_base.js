@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
   overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
 
@@ -115,7 +116,7 @@ const Nav = styled.nav`
     padding: 0 calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
-      width: 100%;
+      width: 13em;
       padding: 0 calc(var(--margin) * 2);
     }
   }
