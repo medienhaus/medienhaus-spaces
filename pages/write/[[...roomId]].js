@@ -266,6 +266,13 @@ export default function Write() {
         );
     };
 
+    const submenuItems = _.filter([
+        { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
+        { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
+        getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
+        getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
+    ]);
+
     return (
         <>
             <IframeLayout.Sidebar>
@@ -279,12 +286,7 @@ export default function Write() {
                         <ServiceSubmenu
                             title={<h2>/write</h2>}
                             subheadline={t('What would you like to do?')}
-                            items={[
-                                { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
-                                { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
-                                getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
-                                getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
-                            ]} />
+                            items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
