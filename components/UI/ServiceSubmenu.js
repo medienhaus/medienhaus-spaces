@@ -33,6 +33,17 @@ const Submenu = styled.aside`
   }
 `;
 
+const BlurOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(247 247 247 / 90%);
+  backdrop-filter: blur(3px);
+`;
+
 export function ServiceSubmenu({ title, icon, subheadline, items }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +65,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                         { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
                     </ToggleButton>
                 </Header>
-                <CSSTransition nodeRef={nodeRef} in={isOpen} timeout={300} classNames="my-node" unmountOnExit>
+                <CSSTransition nodeRef={nodeRef} in={isOpen} timeout={300} classNames="my-node" mountOnEnter unmountOnExit>
                     <Submenu ref={nodeRef}>
                         { subheadline && <h3>{ subheadline }</h3> }
                         <select
@@ -70,8 +81,8 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                     </Submenu>
                 </CSSTransition>
             </div>
-            <CSSTransition nodeRef={nodeRef2} in={isOpen} timeout={300} classNames="my-node" unmountOnExit>
-                <div style={{ position: 'absolute', left: 0, bottom: 0, right: 0, top: 0, background: 'rgb(247 247 247 / 90%)', backdropFilter: 'blur(3px)', zIndex: 0 }} />
+            <CSSTransition nodeRef={nodeRef2} in={isOpen} timeout={300} classNames="my-node" mountOnEnter unmountOnExit>
+                <BlurOverlay ref={nodeRef2} />
             </CSSTransition>
         </>
     );
