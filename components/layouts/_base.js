@@ -10,8 +10,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
+  overflow: ${props => props.isNavigationOpen ? 'hidden' : 'unset'};
 
   --color-background-sidebar: rgb(0 0 0 / 6%);
 
@@ -96,7 +97,7 @@ const Sidebar = styled.aside`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationopen ? 'flex' : 'none'};
+    display: ${props => props.isNavigationOpen ? 'flex' : 'none'};
   }
 `;
 
@@ -115,7 +116,7 @@ const Nav = styled.nav`
     padding: 0 calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
-      width: 100%;
+      width: 13em;
       padding: 0 calc(var(--margin) * 2);
     }
   }
@@ -146,22 +147,22 @@ const Copyleft = styled.span`
 `;
 
 export default function BaseLayout({ children }) {
-    const [navigationOpen, setNavigationOpen] = useState(false);
+    const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
         <>
-            <Wrapper navigationopen={navigationOpen}>
+            <Wrapper isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
-                    { navigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    { isNavigationOpen ? (
+                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Sidebar navigationopen={navigationOpen}>
+                <Sidebar isNavigationOpen={isNavigationOpen}>
                     <Nav>
-                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
+                        <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                         <LanguageChooser />
                     </Nav>
                     <Footer>
