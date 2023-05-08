@@ -275,6 +275,13 @@ export default function Write() {
         getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
     ]);
 
+    // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    let iframeUrl;
+    if (roomId && content) {
+        iframeUrl = new URL(content.body);
+        iframeUrl.searchParams.set('userName', auth.user.displayname);
+    }
+
     return (
         <>
             <IframeLayout.Sidebar>
@@ -316,8 +323,7 @@ export default function Write() {
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
-
+                    <iframe src={iframeUrl.toString()} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
