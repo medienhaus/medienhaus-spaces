@@ -115,7 +115,7 @@ const Nav = styled.nav`
     padding: 0 calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
-      width: 13em;
+      width: 100%;
       padding: 0 calc(var(--margin) * 2);
     }
   }
