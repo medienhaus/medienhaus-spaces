@@ -20,17 +20,39 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const write = auth.getAuthenticationProvider('write');
+
     const { t } = useTranslation('write');
     const router = useRouter();
-    // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
-    const roomId = _.get(router, 'query.roomId.0');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [serverPads, setServerPads] = useState({});
-    const [removingLink, setRemovingLink] = useState(false);
+    const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
-    const write = auth.getAuthenticationProvider('write');
+    /**
+     * A roomId is set when the route is /write/<roomId>, otherwise it's undefined
+     * @type {String|undefined}
+     */
+    const roomId = _.get(router, 'query.roomId.0');
+
+    /**
+     * If the currently visible pad can be accessed via the mypads API, this will be the mypads pad object; e.g.
+     *
+     * {
+     *   "name": "Flo Authored Pad",
+     *   "group": "udk-spaces-q420ibx",
+     *   "users": [],
+     *   "visibility": "public",
+     *   "readonly": null,
+     *   "_id": "flo-authored-pad-n230azd",
+     *   "ctime": 1683553447118
+     * }
+     *
+     * @type {{name: string, group: string, users: [], visibility: string, readonly, _id: string, ctime: number}|undefined}
+     */
+    const mypadsPadObject = roomId && content && content.body && serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
 
     useEffect(() => {
         let cancelled = false;
@@ -115,15 +137,24 @@ export default function Write() {
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
-    const removeLink = async () => {
-        setRemovingLink(true);
-        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
-        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
+    /**
+     * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
+     */
+    const deletePad = async () => {
+        setIsDeletingPad(true);
+
+        // If this pad is known by mypads we'll try to delete it altogether
+        if (mypadsPadObject) {
+            await write.deletePadById(mypadsPadObject._id);
+        }
+
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
+
         await syncServerPadsAndSet();
+
         router.push('/write');
-        setRemovingLink(false);
+        setIsDeletingPad(false);
     };
 
     const createWriteRoom = useCallback(async (link, name) => {
@@ -277,7 +308,7 @@ export default function Write() {
 
     // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
     let iframeUrl;
-    if (roomId && content) {
+    if (roomId && content && content.body) {
         iframeUrl = new URL(content.body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
     }
@@ -318,8 +349,8 @@ export default function Write() {
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
-                            <button title={t('Remove pad from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                            <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
