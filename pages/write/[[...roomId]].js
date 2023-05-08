@@ -146,10 +146,10 @@ export default function Write() {
 
     const ActionNewAnonymousPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createAnonymousPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             let string = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
             const charactersLength = characters.length;
@@ -161,14 +161,14 @@ export default function Write() {
             router.push(`/write/${roomId}`);
 
             callbackDone && callbackDone();
-            setLoading(false);
+            setIsLoading(false);
             setPadName('');
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>
         );
     };
@@ -177,7 +177,7 @@ export default function Write() {
         const [padName, setPadName] = useState('');
         const [padLink, setPadLink] = useState('');
         const [validLink, setValidLink] = useState(false);
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const validatePadUrl = (e) => {
             if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
@@ -189,13 +189,13 @@ export default function Write() {
             const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
             const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
             console.log(checkForPasswordProtection);
-            setLoading(true);
+            setIsLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
 
             callbackDone && callbackDone();
             setPadLink('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (
@@ -207,7 +207,7 @@ export default function Write() {
                         { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
                     </ErrorMessage>
                 ) }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
             </Form>);
     };
 
@@ -215,10 +215,10 @@ export default function Write() {
         const [padName, setPadName] = useState('');
         const [password, setPassword] = useState('');
         const [validatePassword, setValidatePassword] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createPasswordPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const padId = await write.createPad(padName, 'private', password);
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
@@ -226,28 +226,28 @@ export default function Write() {
 
             callbackDone && callbackDone();
             setPadName('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
         </Form>);
     };
 
     const ActionAuthoredPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createAuthoredPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const padId = await write.createPad(padName, 'public').catch((err) => {
                 console.log(err);
             });
             if (!padId) {
-                setLoading(false);
+                setIsLoading(false);
 
                 return;
             }
@@ -257,13 +257,13 @@ export default function Write() {
 
             callbackDone && callbackDone();
             setPadName('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>
         );
     };
