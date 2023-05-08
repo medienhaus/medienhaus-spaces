@@ -20,17 +20,39 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 export default function Write() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const write = auth.getAuthenticationProvider('write');
+
     const { t } = useTranslation('write');
     const router = useRouter();
-    // A roomId is set when the route is /write/<roomId>, otherwise it's undefined
-    const roomId = _.get(router, 'query.roomId.0');
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [serverPads, setServerPads] = useState({});
-    const [removingLink, setRemovingLink] = useState(false);
+    const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
-    const write = auth.getAuthenticationProvider('write');
+    /**
+     * A roomId is set when the route is /write/<roomId>, otherwise it's undefined
+     * @type {String|undefined}
+     */
+    const roomId = _.get(router, 'query.roomId.0');
+
+    /**
+     * If the currently visible pad can be accessed via the mypads API, this will be the mypads pad object; e.g.
+     *
+     * {
+     *   "name": "Flo Authored Pad",
+     *   "group": "udk-spaces-q420ibx",
+     *   "users": [],
+     *   "visibility": "public",
+     *   "readonly": null,
+     *   "_id": "flo-authored-pad-n230azd",
+     *   "ctime": 1683553447118
+     * }
+     *
+     * @type {{name: string, group: string, users: [], visibility: string, readonly, _id: string, ctime: number}|undefined}
+     */
+    const mypadsPadObject = roomId && content && content.body && serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
 
     useEffect(() => {
         let cancelled = false;
@@ -115,15 +137,35 @@ export default function Write() {
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
-    const removeLink = async () => {
-        setRemovingLink(true);
-        const padExistsOnServer = serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
-        padExistsOnServer && await write.deletePadById(padExistsOnServer._id);
+    /**
+     * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
+     */
+    const deletePad = async () => {
+        // Confirm if the user really wants to remove/delete this pad ...
+        let confirmDeletionMessage;
+        if (mypadsPadObject) {
+            confirmDeletionMessage = t('Do you really want to delete this pad and all of its content?');
+        } else {
+            confirmDeletionMessage = t('Do you really want to remove this pad from your library?');
+        }
+
+        // ... and cancel the process if the user decided otherwise.
+        if (!confirm(confirmDeletionMessage)) return;
+
+        setIsDeletingPad(true);
+
+        // If this pad is known by mypads we'll try to delete it altogether
+        if (mypadsPadObject) {
+            await write.deletePadById(mypadsPadObject._id);
+        }
+
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
+
         await syncServerPadsAndSet();
+
         router.push('/write');
-        setRemovingLink(false);
+        setIsDeletingPad(false);
     };
 
     const createWriteRoom = useCallback(async (link, name) => {
@@ -146,10 +188,10 @@ export default function Write() {
 
     const ActionNewAnonymousPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createAnonymousPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             let string = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
             const charactersLength = characters.length;
@@ -161,14 +203,14 @@ export default function Write() {
             router.push(`/write/${roomId}`);
 
             callbackDone && callbackDone();
-            setLoading(false);
+            setIsLoading(false);
             setPadName('');
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>
         );
     };
@@ -177,7 +219,7 @@ export default function Write() {
         const [padName, setPadName] = useState('');
         const [padLink, setPadLink] = useState('');
         const [validLink, setValidLink] = useState(false);
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const validatePadUrl = (e) => {
             if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
@@ -189,13 +231,13 @@ export default function Write() {
             const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
             const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
             console.log(checkForPasswordProtection);
-            setLoading(true);
+            setIsLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/write/${roomId}`);
 
             callbackDone && callbackDone();
             setPadLink('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (
@@ -207,7 +249,7 @@ export default function Write() {
                         { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
                     </ErrorMessage>
                 ) }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
+                <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
             </Form>);
     };
 
@@ -215,10 +257,10 @@ export default function Write() {
         const [padName, setPadName] = useState('');
         const [password, setPassword] = useState('');
         const [validatePassword, setValidatePassword] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createPasswordPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const padId = await write.createPad(padName, 'private', password);
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
@@ -226,28 +268,28 @@ export default function Write() {
 
             callbackDone && callbackDone();
             setPadName('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
         </Form>);
     };
 
     const ActionAuthoredPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
-        const [loading, setLoading] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
 
         const createAuthoredPad = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const padId = await write.createPad(padName, 'public').catch((err) => {
                 console.log(err);
             });
             if (!padId) {
-                setLoading(false);
+                setIsLoading(false);
 
                 return;
             }
@@ -257,13 +299,13 @@ export default function Write() {
 
             callbackDone && callbackDone();
             setPadName('');
-            setLoading(false);
+            setIsLoading(false);
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
                 <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>
         );
     };
@@ -274,6 +316,13 @@ export default function Write() {
         getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
         getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
     ]);
+
+    // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    let iframeUrl;
+    if (roomId && content && content.body) {
+        iframeUrl = new URL(content.body);
+        iframeUrl.searchParams.set('userName', auth.user.displayname);
+    }
 
     return (
         <>
@@ -311,13 +360,12 @@ export default function Write() {
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
-                            <button title={t('Remove pad from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                            <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
-
+                    <iframe src={iframeUrl.toString()} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
