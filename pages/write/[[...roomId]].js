@@ -141,6 +141,17 @@ export default function Write() {
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
      */
     const deletePad = async () => {
+        // Confirm if the user really wants to remove/delete this pad ...
+        let confirmDeletionMessage;
+        if (mypadsPadObject) {
+            confirmDeletionMessage = t('Do you really want to delete this pad and all of its content?');
+        } else {
+            confirmDeletionMessage = t('Do you really want to remove this pad from your library?');
+        }
+
+        // ... and cancel the process if the user decided otherwise.
+        if (!confirm(confirmDeletionMessage)) return;
+
         setIsDeletingPad(true);
 
         // If this pad is known by mypads we'll try to delete it altogether
