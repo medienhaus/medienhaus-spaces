@@ -22,7 +22,7 @@ const ExploreSection = styled.div`
 
   .parent {
     grid-column: ${props => props.selectedNode ? '1/-1' : '1'};
-    width: 15%;
+    width: 12%;
     height: 100%;
     padding-top: var(--margin);
     color: var(--color-background);
@@ -35,7 +35,7 @@ const ExploreSection = styled.div`
   .child {
     grid-column: 1;
     height: 100%;
-    margin-left: 15%;
+    margin-left: 12%;
   }
 
   .toddler {
@@ -83,7 +83,6 @@ export default function Explore() {
         if (router.query.roomId[0] !== roomId) {
             const newTree = { ...graphObject };
             const foundObject = findObject(newTree, roomId);
-            console.log(foundObject);
             if (foundObject.children.length !== foundObject.children_state.length) {
                 const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 2)
                     .catch(err => console.debug(err));
@@ -216,14 +215,14 @@ export default function Explore() {
             json.root = true;
             json.depth = 0;
             router.push(`/explore/${json.id}`);
-            // setHierarchy(json);
+
             setGraphObject(json);
         } else {
             console.debug('no api:');
             const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 2)
                 .catch(err => console.debug(err));
             const nest = await createNestedObject(spaceHierarchy);
-            console.log(nest);
+
             // const children = [];
             // let parentName;
             // for (const space of spaceHierarchy) {
