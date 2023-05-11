@@ -29,7 +29,7 @@ const Leaf = styled.button`
 const ToddlerWrapper = styled.div`
   display: grid;
   height: 100%;
-  margin-left: 15%;
+  margin-left: 12%;
 `;
 
 const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, toddler, template, children, directChildren, height, isParent, parent, display, index, selectedNode, activePath }) => {
@@ -64,7 +64,8 @@ const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, toddler
            <ServiceTable>
                { children.map((child, index) => {
                    const roomId = child.id || child.room_id;
-                   return (<ServiceTable.Row key={roomId + '-' + index}>
+                   return (<ServiceTable.Row
+                       key={roomId + '-' + index}>
                        <ServiceTable.Cell selected={router.query.roomId[0] === roomId}>
                            <a onClick={(e) => onClick(e, roomId, child.template, true)}>
                                { child.name }
@@ -106,7 +107,10 @@ const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, toddler
                         selectedNode={selectedNode}
                         activePath={activePath}
                     />
-                    { child.parent?.id === router.query.roomId[0] && child.children && <ToddlerWrapper>{ child.children.map((child, index) => {
+                    {child.parent?.id === router.query.roomId[0]
+                        && child.children
+                        && <ToddlerWrapper>{child.children.map((child, index) => {
+                        if (child.template === 'lang') return null // lamguage spaces should not be displayed in explore
                         const childId = child.id || child.room_id;
                         return <TreeLeaves
                             key={roomId + index} // @TODO could still create douplicate keys
