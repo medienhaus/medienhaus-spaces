@@ -14,8 +14,6 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
 
-  --color-background-sidebar: rgb(0 0 0 / 6%);
-
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
     grid-template-rows: min-content 1fr min-content;
@@ -40,7 +38,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  background: var(--color-background-sidebar);
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     display: flex;
@@ -89,7 +87,11 @@ const HeaderButtonClose = styled(HeaderButton)`
 const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
-  background: white;
+  row-gap: var(--margin);
+  padding: 0 var(--margin) var(--margin);
+  overflow: hidden;
+  overflow-y: auto;
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
@@ -100,45 +102,30 @@ const Sidebar = styled.aside`
     z-index: 2;
     display: ${props => props.navigationOpen ? 'flex' : 'none'};
   }
+
+  @media ${breakpoints.tabletAndAbove} {
+    row-gap: calc(var(--margin) * 1.5);
+    min-width: 12em;
+    padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
+
+    @media ${breakpoints.laptopAndAbove} {
+      row-gap: calc(var(--margin) * 2);
+      min-width: 13em;
+      padding: 0 calc(var(--margin) * 2) calc(var(--margin) * 2);
+    }
+  }
 `;
 
 const Nav = styled.nav`
   flex: 1 0;
-  padding: var(--margin);
-  overflow: auto;
   font-weight: 500;
-  background: var(--color-background-sidebar);
-
-  @media ${breakpoints.tabletAndAbove} {
-    display: block;
-    grid-row: 2;
-    grid-column: 1;
-    width: 12em;
-    padding: 0 calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      width: 13em;
-      padding: 0 calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Footer = styled.footer`
-  padding: var(--margin);
   font-weight: 700;
   color: rgb(0 0 0 / 10%);
+  white-space: nowrap;
   cursor: default;
-  background: var(--color-background-sidebar);
-
-  @media ${breakpoints.tabletAndAbove} {
-    grid-row: 3;
-    grid-column: 1;
-    padding: calc(var(--margin)) calc(var(--margin) * 1.3);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Copyleft = styled.span`
@@ -164,8 +151,10 @@ export default function BaseLayout({ children }) {
                 <Sidebar navigationOpen={navigationOpen}>
                     <Nav>
                         <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                        <LanguageChooser />
                     </Nav>
+                    <div>
+                        <LanguageChooser />
+                    </div>
                     <Footer>
                         <Copyleft>🄯</Copyleft> medienhaus/
                     </Footer>

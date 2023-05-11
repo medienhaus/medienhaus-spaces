@@ -17,7 +17,7 @@ export const Main = styled.main`
 
 const Sidebar = styled.div`
   padding: var(--margin);
-  background: rgb(0 0 0 / 3%);
+  background: var(--color-background-alpha);
 
   // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
   @media ${breakpoints.phoneOnly} {
