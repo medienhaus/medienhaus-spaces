@@ -6,6 +6,7 @@
 //     <ServiceTable.Cell>This content will be aligned left and take up all remaining space</ServiceTable.Cell>
 //     <ServiceTable.Cell>Any following cell will be aligned right and fit the exact size of its content</ServiceTable.Cell>
 //     ...
+
 //   </ServiceTable.Row>
 // </ServiceTable>
 
@@ -14,12 +15,16 @@ import styled from 'styled-components';
 
 const Table = styled.table`
   width: 100%;
+  ${props => props.explore && 'max-width: calc(33% - (3 * var(--margin)));'}
+
   border-collapse: collapse;
+  height: fit-content;
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
   border-top: 1px dotted rgb(210 210 210);
+  text-decoration: ${props => props.disabled && 'none'};
 
   &:not(:last-of-type) {
     border-bottom: 1px dotted rgb(210 210 210);
@@ -36,22 +41,22 @@ const TableCell = styled.td`
     display: block;
     width: 100%;
     line-height: calc(var(--margin) * 3);
-    color: ${props => props.selected && 'var(--color-disabled)' };
-    text-decoration: ${props => props.selected && 'none' };
+    color: ${props => props.selected && 'var(--color-disabled)'};
+    text-decoration: ${props => props.selected && 'none'};
 
     &:hover {
-      cursor: ${props => props.selected && 'not-allowed' };
+      cursor: ${props => props.selected && 'not-allowed'};
     }
   }
 
 `;
 
-export function ServiceTable({ children }) {
-    return (
-        <Table>
-            <tbody>{ children }</tbody>
-        </Table>
-    );
+export function ServiceTable({ children, explore }) {
+  return (
+    <Table explore={explore}>
+      <tbody>{children}</tbody>
+    </Table>
+  );
 }
 
 ServiceTable.Row = TableRow;
