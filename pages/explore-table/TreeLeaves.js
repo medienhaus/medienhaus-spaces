@@ -27,20 +27,26 @@ const Leaf = styled.button`
 
 `;
 
-const TreeLeaves = ({ handleClick, row, data, roomId, toddler, isParent, parent, selectedNode, activePath }) => {
+const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selectedNode, activePath }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
 
-    const onClick = async (e, id, index, childTemplate, isChild) => {
+    const onClick = async (e, id, index, childTemplate, parentId) => {
         e.preventDefault();
         setFetchingLeaves(id);
-        await handleClick(e, id || roomId, index, childTemplate, isChild, toddler && parent.id);
+        await handleClick(e, id || roomId, index, childTemplate, parentId);
         setFetchingLeaves(false);
     };
 
     if (!data) return <LoadingSpinner />;
     return (<>
-        { selectedNode && data[0]?.parent && <Leaf onClick={(e) => onClick(e, data[0].parent.room_id, row - 1)} className="parent">← { data[0].parent.name }</Leaf> }
+        { selectedNode && data[0]?.parent && <Leaf
+            onClick={(e) => onClick(e, data[0].parent.room_id, row - 1, data[0].parent.template)}
+            className="parent"
+            key={data[0].parent.room_id}
+        >
+            ← { data[0].parent.name }
+        </Leaf> }
         <ServiceTable explore={selectedNode ? false : true}>
             { data.map((child, index) => {
                 if (index === 0) return null;
@@ -50,7 +56,7 @@ const TreeLeaves = ({ handleClick, row, data, roomId, toddler, isParent, parent,
                         <ServiceTable.Cell
                             disabled={fetchingLeaves}
                             selected={router.query.roomId[0] === roomId || activePath.indexOf(roomId) > -1}
-                            onClick={(e) => onClick(e, roomId, row, child.template)}>
+                            onClick={(e) => onClick(e, roomId, row, child.template, data[0].room_id)}>
                             { child.missingMetaEvent ?
                                 <em>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
                                 : <>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></> }

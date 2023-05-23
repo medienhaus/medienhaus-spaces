@@ -12,10 +12,12 @@ import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import GraphView from './GraphView';
 
+// height calculation is guess work at the moment...
 const ExploreSection = styled.div`
   ${props => !props.selectedNode && 'display: flex;'}
   ${props => !props.selectedNode && 'grid-template-columns: repeat(2, 1fr);'}
 
+  height: calc(100% - calc(var(--margin) * 4.8));
   gap: var(--margin);
 
   .parent {
@@ -29,7 +31,6 @@ export default function Explore() {
     // const [, setHierarchy] = useState();
     const [graphObject, setGraphObject] = useState(null);
     const [selectedNode, setSelectedNode] = useState(null);
-    const [d3Height, setD3Height] = useState();
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const dimensionsRef = useRef();
     const router = useRouter();
@@ -131,54 +132,13 @@ export default function Explore() {
     const initialContentFetch = useCallback(async () => {
     // initial fetch of object
         const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
+        const iframeRoomId = router.query.roomId && router.query.roomId[1];
 
-        // if an api endpoint is defined we try to fetch the object from the api. othwerwise we set object to null in order to trigger the else loop.
-        // @TODO if we don't do this fetch will return status 200 even with the api url being undefined. it will try to fetch "domain.com/explore/undefined" which will return 200.
-        // I am not sure why the url below defaults to "domain.com/explore/undefined/api/v2" instead of "undefined/api/v2". hence the code below.
-        // const object = getConfig().publicRuntimeConfig.authProviders.matrix.api ?
-        //   await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId)
-        //     .catch((err) => console.debug(err)) :
-        //   null;
-        // // const object = await fetch('http://192.168.0.50:3009/api/v2/!gBzMkmAvxvlPEwlvdq:moci.space/render/d3/fullTree').catch((err) => console.error(err));
-        // if (object?.ok) {
-        //   const json = await object.json();
-        //   json.children = json.item;
-        //   json.children.push(...json.context);
-        //   json.root = true;
-        //   json.depth = 0;
-        //   router.push(`/explore-table/${json.id}`);
-
-        //   setGraphObject(json);
-        // } else {
-        //   console.debug('no api:');
-        // const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
-        //   .catch(err => console.debug(err));
-        // const nest = await createNestedObject(spaceHierarchy);
-
-        // const children = [];
-        // let parentName;
-        // for (const space of spaceHierarchy) {
-        //     if (space.room_id === roomId) {
-        //         parentName = space.name;
-        //         continue;
-        //     }
-        //     const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(space.room_id, 'dev.medienhaus.meta')
-        //         .catch((err) => {
-        //             console.debug(err);
-        //             space.missingMetaEvent = true;
-        //         });
-        //     if (metaEvent) {
-        //         space.type = metaEvent.type;
-        //         space.template = metaEvent.template;
-        //         space.application = metaEvent.application;
-        //     }
-
-        //     space.parent = { id: roomId, name: parentName };
-        //     // children.push(space);
-        // }
-        // spaceHierarchy[0].children = children;
-
-        router.push(`/explore-table/${roomId}`);
+        if (iframeRoomId) {
+            router.push(`/explore-table/${roomId}/${iframeRoomId}`);
+            setSelectedNode(iframeRoomId);
+            setActivePath([roomId, iframeRoomId]);
+        } else router.push(`/explore-table/${roomId}`);
         // setHierarchy(spaceHierarchy[0]);
         setGraphObject(roomId);
     // }
@@ -192,11 +152,6 @@ export default function Explore() {
         }
     }, [graphObject, initialContentFetch]);
 
-    useEffect(() => {
-    // 8 for border
-        dimensionsRef.current && setD3Height(document.querySelector('main').offsetHeight - (8 + dimensionsRef?.current?.offsetHeight + (dimensionsRef?.current?.offsetTop * 2) + parseInt(window.getComputedStyle(dimensionsRef.current).marginBottom)));
-    }, [graphObject]);
-
     const getRoomContent = async (roomId) => {
         let fetchMessage = matrix.roomContents.get(roomId);
         if (!fetchMessage) {
@@ -206,11 +161,10 @@ export default function Explore() {
         return fetchMessage.body;
     };
 
-    const handleClicked = async (roomId, template, index) => {
+    const handleClicked = async (roomId, template, index, parentId) => {
         if (!roomId) return;
         setActivePath(prevState => {
             prevState.splice(index < 0 ? 0 : index);
-            router.push(`/explore-table/${roomId}`);
             return [...prevState, roomId];
         });
 
@@ -228,7 +182,16 @@ export default function Explore() {
             content = await getRoomContent(roomId);
         }
 
-        setSelectedNode(prevState => content === prevState ? null : content); // if selected node is not undefined iframe loads the url(type string) from selectedNode
+        // if selected node is not undefined iframe loads the url(type string) from selectedNode
+        setSelectedNode(() => {
+            if (content) {
+                router.push(`/explore-table/${parentId}/${roomId}`);
+                return content;
+            } else {
+                router.push(`/explore-table/${roomId}`);
+                return null;
+            }
+        });
     };
 
     if (!graphObject || typeof window === 'undefined') return <LoadingSpinner />;
@@ -239,9 +202,8 @@ export default function Explore() {
                 <ExploreSection selectedNode={!!selectedNode}>
                     <GraphView
                         id={graphObject}
-                        parsedHeight={d3Height}
                         handleClick={handleClicked}
-                        selectedNode={!!selectedNode}
+                        selectedNode={selectedNode}
                         activePath={activePath}
                     />
                 </ExploreSection>
