@@ -13,18 +13,23 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// @TODO max-height is used because just using 'height' messes up other services like write and sketch. because those are using serviceSubmenu and the calculation doesn't work there.'
 const Table = styled.table`
+  display: block;
   width: 100%;
-  ${props => props.explore && 'max-width: calc(33% - (3 * var(--margin)));'}
-
+  max-height: 100%;
+  overflow-y: auto;
   border-collapse: collapse;
-  height: fit-content;
+
+  @media (width > 51em) {
+    ${props => props.explore && 'max-width: calc(33% - (3 * var(--margin)));'}
+  }
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
-  border-top: 1px dotted rgb(210 210 210);
   text-decoration: ${props => props.disabled && 'none'};
+  border-top: 1px dotted rgb(210 210 210);
 
   &:not(:last-of-type) {
     border-bottom: 1px dotted rgb(210 210 210);
@@ -52,11 +57,11 @@ const TableCell = styled.td`
 `;
 
 export function ServiceTable({ children, explore }) {
-  return (
-    <Table explore={explore}>
-      <tbody>{children}</tbody>
-    </Table>
-  );
+    return (
+        <Table explore={explore}>
+            <tbody>{ children }</tbody>
+        </Table>
+    );
 }
 
 ServiceTable.Row = TableRow;
