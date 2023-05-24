@@ -43,6 +43,8 @@ export default function Dashboard() {
                 const link = matrix.roomContents.get(id);
                 const name = matrix.rooms.get(id)?.name;
                 const roomId = id;
+                // we skip to the next item if there is no link body
+                if (!link.body) continue;
                 tempArray.push({ name: name, link: link.body, roomId: roomId });
             }
             setBookmarkLinks(tempArray);
