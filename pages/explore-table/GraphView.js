@@ -72,7 +72,7 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
         // spaceHierarchy.shift()
 
         const getMetaEvent = async (obj) => {
-            console.debug('getting meta event for ' + obj.state_key || obj.room_id);
+            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
             const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
                 .catch((err) => {
                     console.debug(err);
@@ -114,7 +114,8 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
                 if (selectedNode && index != data.length - 2) return null; // if a node is selected only show the selected row.
                 if (leaf.length <= 1) return <ErrorMessage key="error-message">Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄</ErrorMessage>;
                 // we sort the array to display object of the type 'item' before others.
-                leaf.sort(function(a, b) {
+                const parent = leaf[0];
+                const sortedLeaves = [...leaf].sort(function(a, b) {
                     if (a.type === 'item' && b.type !== 'item') {
                         return -1; // a comes before b
                     } else if (a.type !== 'item' && b.type === 'item') {
@@ -125,7 +126,8 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
                 });
                 return <TreeLeaves
                     row={index}
-                    data={leaf}
+                    data={sortedLeaves}
+                    parent={parent}
                     key={leaf[0].room_id + '_' + index}
                     handleClick={callApiAndAddToObject}
                     selectedNode={selectedNode}
