@@ -17,6 +17,7 @@ import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
+import AddBookmark from '../../components/UI/AddBookmark';
 
 export default function Sketch() {
     const auth = useAuth();
@@ -280,6 +281,7 @@ export default function Sketch() {
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
                                 <Clipboard fill="var(--color-foreground)" />
                             </button>
+                            <AddBookmark name={matrix.rooms.get(roomId).name} />
                             <button title={t('Remove pad from my library')} onClick={removeLink}>
                                 { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
