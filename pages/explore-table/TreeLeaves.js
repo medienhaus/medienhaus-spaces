@@ -30,6 +30,7 @@ const Leaf = styled.button`
 const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selectedNode, activePath }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
+    const parentSpace = data?.filter(space => (space.room_id || space.roomId)=== router.query.roomId[0]);
 
     const onClick = async (e, id, index, childTemplate, parentId) => {
         e.preventDefault();
@@ -40,23 +41,26 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
 
     if (!data) return <LoadingSpinner />;
     return (<>
-        { selectedNode && data[0]?.parent && <Leaf
-            onClick={(e) => onClick(e, data[0].parent.room_id, row - 1, data[0].parent.template)}
+        { selectedNode && parentSpace[0] && <Leaf
+            onClick={(e) => onClick(e, parentSpace[0].room_id, row - 1, parentSpace[0].template)}
             className="parent"
-            key={data[0].parent.room_id}
+            key={parentSpace[0].room_id}
         >
-            ← { data[0].parent.name }
+            ← { parentSpace[0].name }
         </Leaf> }
         <ServiceTable explore={selectedNode ? false : true}>
-            { data.map((child, index) => {
-                if (index === 0) return null;
+            { data.map((child) => {
                 const roomId = child.id || child.room_id;
+                // if the roomId is the selected space we skip it
+                if (roomId === router.query.roomId[0]) return null;
+                // if an iframe is open we only want to show items in the list
+                if (selectedNode && child.type !== 'item') return null;
                 return <>
                     <ServiceTable.Row key={roomId} disabled={fetchingLeaves}>
                         <ServiceTable.Cell
                             disabled={fetchingLeaves}
                             selected={router.query.roomId[0] === roomId || activePath.indexOf(roomId) > -1}
-                            onClick={(e) => onClick(e, roomId, row, child.template, data[0].room_id)}>
+                            onClick={(e) => onClick(e, roomId, row, child.template, parentSpace[0].room_id)}>
                             { child.missingMetaEvent ?
                                 <em>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
                                 : <>{ isParent && parent && selectedNode ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></> }
