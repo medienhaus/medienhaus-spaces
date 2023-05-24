@@ -72,7 +72,7 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
         // spaceHierarchy.shift()
 
         const getMetaEvent = async (obj) => {
-            console.debug('getting meta event for ' + obj.state_key || obj.room_id);
+            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
             const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
                 .catch((err) => {
                     console.debug(err);
