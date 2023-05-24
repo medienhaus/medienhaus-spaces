@@ -102,7 +102,7 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
     // const roomId = data.id || data.room_id;
     return (
         <>
-            { !selectedNode && <TreePath
+            { !selectedNode && !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
                 selectedNode={selectedNode}
                 data={data}
                 callApiAndAddToObject={callApiAndAddToObject}
