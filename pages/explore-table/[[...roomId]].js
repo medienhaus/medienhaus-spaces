@@ -218,7 +218,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
+                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
                                     <iframe src={selectedNode} />
@@ -229,7 +229,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
+                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing sketch from parent')}
                                         removingLink={false} />
                                     <iframe src={selectedNode} />
@@ -240,7 +240,7 @@ export default function Explore() {
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
                                         content={selectedNode}
-                                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name}
+                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
                                     <ChatIframeView src={selectedNode} />
