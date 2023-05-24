@@ -24,6 +24,7 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
         return () => {
             cancelled = true;
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function callApiWithInitalNode(e, roomId, index, template, parentId) {
@@ -112,6 +113,16 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
                 if (index < data.length - numberOfRows) return null; // only show a maximum of rows.
                 if (selectedNode && index != data.length - 2) return null; // if a node is selected only show the selected row.
                 if (leaf.length <= 1) return <ErrorMessage key="error-message">Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄</ErrorMessage>;
+                // we sort the array to display object of the type 'item' before others.
+                leaf.sort(function(a, b) {
+                    if (a.type === 'item' && b.type !== 'item') {
+                        return -1; // a comes before b
+                    } else if (a.type !== 'item' && b.type === 'item') {
+                        return 1; // a comes after b
+                    } else {
+                        return 0; // no sorting necessary
+                    }
+                });
                 return <TreeLeaves
                     row={index}
                     data={leaf}

@@ -17,8 +17,8 @@ const ExploreSection = styled.div`
   ${props => !props.selectedNode && 'display: flex;'}
   ${props => !props.selectedNode && 'grid-template-columns: repeat(2, 1fr);'}
 
-  height: calc(100% - calc(var(--margin) * 4.8));
   gap: var(--margin);
+  height: calc(100% - calc(var(--margin) * 4.8));
 
   .parent {
     color: var(--color-background);
