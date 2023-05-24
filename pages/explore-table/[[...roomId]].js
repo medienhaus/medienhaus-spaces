@@ -28,7 +28,6 @@ const ExploreSection = styled.div`
 `;
 
 export default function Explore() {
-    // const [, setHierarchy] = useState();
     const [graphObject, setGraphObject] = useState(null);
     const [selectedNode, setSelectedNode] = useState(null);
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
@@ -37,97 +36,6 @@ export default function Explore() {
     const [currentItemType, setCurrentItemType] = useState('');
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-
-    // async function callApiAndAddToObject(roomId) {
-    //   console.log('call Api or matrix and add');
-    //   function findObject(structure, id) {
-    //     //this function recursively goes through the nested object until it finds the object with the matching roomId and returns the match.
-    //     let ret;
-    //     const currentRoomId = structure.id || structure.room_id;
-    //     // base case
-    //     if (currentRoomId === id) {
-    //       return structure;
-    //     } else {
-    //       // recursion
-    //       structure.children?.forEach(child => {
-    //         if (!ret) {
-    //           if (!child.depth) child.depth = structure.depth + 1;
-    //           const c = findObject(child, id);
-    //           if (c) ret = c;
-    //         }
-    //       });
-    //     }
-    //     return ret;
-    //   }
-
-    //   let data;
-    //   // we only want to check for new children if we are going deeper into the tree.
-    //   // if the roomId therefore matches the router query, we know the user is going back and don't need to look for new children.
-    //   if (router.query.roomId[0] !== roomId) {
-    //     const newTree = { ...graphObject };
-    //     const foundObject = findObject(newTree, roomId);
-    //     if (foundObject.children.length !== foundObject.children_state.length) {
-    //       const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 2)
-    //         .catch(err => console.debug(err));
-    //       const nest = await createNestedObject(spaceHierarchy);
-
-    //       foundObject.children = nest.children;
-    //     }
-    //     for (const child of foundObject.children) {
-    //       console.log(child);
-    //       if (child.children.length > 0) continue;
-    //       const spaceHierarchy = await matrix.roomHierarchy(child.room_id, null, 2)
-    //         .catch(err => console.debug(err));
-    //       const nest = await createNestedObject(spaceHierarchy);
-    //       child.children = nest.children;
-    //     }
-    //     setGraphObject(newTree);
-    //   }
-    // }
-
-    // async function createNestedObject(parsedArray, child) {
-    //   const getMetaEvent = async (obj) => {
-    //     console.log('getting meta event');
-    //     console.log(obj);
-    //     const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
-    //       .catch((err) => {
-    //         console.debug(err);
-    //         obj.missingMetaEvent = true;
-    //       });
-    //     if (metaEvent) {
-    //       obj.type = metaEvent.type;
-    //       obj.template = metaEvent.template;
-    //       obj.application = metaEvent.application;
-    //     }
-    //   };
-
-    //   // if we are running the function for the first time we get the meta event for the first array entry.
-    //   // otherwise the meta event will be collected in the loop below.
-
-    //   if (!parsedArray[0].metaEvent) getMetaEvent(parsedArray[0]);
-
-    //   const array = child || parsedArray;
-
-    //   array[0].children = [];
-    //   // if there already is a parent key we can skip the calls since we already did them.
-    //   // if (!array[0].parent) {
-
-    //   for (const child of array[0].children_state) {
-    //     const childObject = parsedArray.filter(obj => obj.room_id === child.state_key);
-
-    //     if (childObject.length > 0) {
-    //       childObject[0].parent = { id: array[0].room_id, name: array[0].name };
-    //       await getMetaEvent(childObject[0]);
-
-    //       const recursiveChild = await createNestedObject(parsedArray, childObject);
-    //       console.log(recursiveChild);
-    //       array[0].children.push(childObject[0]);
-    //     }
-    //   }
-    //   // }
-    //   console.log(array[0]);
-    //   return array[0];
-    // }
 
     const initialContentFetch = useCallback(async () => {
     // initial fetch of object
@@ -142,15 +50,16 @@ export default function Explore() {
         // setHierarchy(spaceHierarchy[0]);
         setGraphObject(roomId);
     // }
-    // @TODO dix dependencies
+    // @TODO fix dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (!graphObject) {
-            initialContentFetch();
-        }
-    }, [graphObject, initialContentFetch]);
+        let cancelled = false;
+        !cancelled && initialContentFetch();
+
+        return () => cancelled = true;
+    }, [initialContentFetch]);
 
     const getRoomContent = async (roomId) => {
         let fetchMessage = matrix.roomContents.get(roomId);
