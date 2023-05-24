@@ -7,6 +7,7 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Bin from '../../assets/icons/bin.svg';
+import TextButton from '../../components/UI/TextButton';
 
 export default function Dashboard() {
     const auth = useAuth();
@@ -44,10 +45,9 @@ export default function Dashboard() {
                 const roomId = id;
                 tempArray.push({ name: name, link: link.body, roomId: roomId });
             }
-            console.log(tempArray);
             setBookmarkLinks(tempArray);
         }
-    }, [bookmarkSpace]);
+    }, [bookmarkSpace, matrix.roomContents, matrix.rooms, matrix.spaces]);
 
     const removeBookmark = async (e, roomId) => {
         e.preventDefault();
@@ -74,9 +74,9 @@ export default function Dashboard() {
                                 <Bookmarks link={space.link} name={space.name} />
                             </ServiceTable.Cell>
                             <ServiceTable.Cell>
-                                <button title={t('Remove bookmark')} onClick={(e) => removeBookmark(e, space.roomId)}>
+                                <TextButton title={t('Remove bookmark')} onClick={(e) => removeBookmark(e, space.roomId)}>
                                     { removingBookmark ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
-                                </button></ServiceTable.Cell>
+                                </TextButton></ServiceTable.Cell>
                         </ServiceTable.Row>;
                     }) }
                 </ServiceTable> }
