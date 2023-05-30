@@ -108,8 +108,8 @@ export default function Write() {
         !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
 
         return () => cancelled = true;
-        // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
-        // therefore we need to disable the linter for the next line
+    // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
+    // therefore we need to disable the linter for the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads, createWriteRoom]);
 
@@ -127,7 +127,7 @@ export default function Write() {
     };
 
     const createWriteRoom = useCallback(async (link, name) => {
-        // eslint-disable-next-line no-undef
+    // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
@@ -251,7 +251,7 @@ export default function Write() {
             <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
             <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
         </Form>);
     };
 
