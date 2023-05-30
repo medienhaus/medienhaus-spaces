@@ -42,10 +42,10 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
-                <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li>
-                <li><Link href={`/explore-table/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore table</Link></li>
+                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
+                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore-table/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore table</Link></li> }
 
-                <li><Link href={`/explore-d3/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore d3</Link></li>
+                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore-d3/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore d3</Link></li> }
 
             </List>
             <List>
