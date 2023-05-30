@@ -107,34 +107,34 @@ const TreeLeaves = ({ handleClick, missingMetaEvent, name, roomId, type, toddler
                         selectedNode={selectedNode}
                         activePath={activePath}
                     />
-                    {child.parent?.id === router.query.roomId[0]
+                    { child.parent?.id === router.query.roomId[0]
                         && child.children
-                        && <ToddlerWrapper>{child.children.map((child, index) => {
-                        if (child.template === 'lang') return null // lamguage spaces should not be displayed in explore
-                        const childId = child.id || child.room_id;
-                        return <TreeLeaves
-                            key={roomId + index} // @TODO could still create douplicate keys
-                            parent={child.parent}
-                            isParent={false}
-                            toddler={true}
-                            display="initial"
-                            index={index}
-                            width={300}
-                            height={height}
-                            name={child.name}
-                            handleClick={handleClick}
-                            children={child.children}
-                            template={child.template}
-                            translateX={0}
-                            translateY={0}
-                            roomId={selectedNode ? child.parent?.id : childId}
-                            missingMetaEvent={child.missingMetaEvent}
-                            selectedNode={selectedNode}
-                            activePath={activePath}
+                        && <ToddlerWrapper>{ child.children.map((child, index) => {
+                            if (child.template === 'lang') return null; // lamguage spaces should not be displayed in explore
+                            const childId = child.id || child.room_id;
+                            return <TreeLeaves
+                                key={roomId + index} // @TODO could still create douplicate keys
+                                parent={child.parent}
+                                isParent={false}
+                                toddler={true}
+                                display="initial"
+                                index={index}
+                                width={300}
+                                height={height}
+                                name={child.name}
+                                handleClick={handleClick}
+                                children={child.children}
+                                template={child.template}
+                                translateX={0}
+                                translateY={0}
+                                roomId={selectedNode ? child.parent?.id : childId}
+                                missingMetaEvent={child.missingMetaEvent}
+                                selectedNode={selectedNode}
+                                activePath={activePath}
 
-                        />;
-                    })
-                    }</ToddlerWrapper> }
+                            />;
+                        })
+                        }</ToddlerWrapper> }
                 </>
                 );
             }) }
