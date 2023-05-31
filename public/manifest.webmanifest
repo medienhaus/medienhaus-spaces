@@ -1,0 +1,13 @@
+{
+  "name": "medienhaus/spaces",
+  "short_name": "—/spaces",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "display": "fullscreen",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [{
+    "src": "./assets/img/favicon-512.png",
+    "sizes": "512x512"
+  }]
+}
