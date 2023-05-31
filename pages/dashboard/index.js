@@ -41,6 +41,7 @@ export default function Dashboard() {
             const tempArray = [];
             for (const id of matrix.spaces.get(bookmarkSpace).children) {
                 const link = matrix.roomContents.get(id);
+                if (!link) continue;
                 const name = matrix.rooms.get(id)?.name;
                 const roomId = id;
                 // we skip to the next item if there is no link body
