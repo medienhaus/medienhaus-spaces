@@ -131,6 +131,7 @@ export default function Write() {
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
+        await new Promise(r => setTimeout(r, 1000)); // quick rate limit hack
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
