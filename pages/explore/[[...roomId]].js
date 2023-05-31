@@ -153,6 +153,7 @@ export default function Explore() {
     }
 
     async function createNestedObject(parsedArray, child) {
+        if (!parsedArray) return;
         const getMetaEvent = async (obj) => {
             console.log('getting meta event');
             console.log(obj);
