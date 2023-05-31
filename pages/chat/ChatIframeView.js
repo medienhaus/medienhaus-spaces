@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const ChatIframeView = ({ src }) => {
+const ChatIframeView = ({ src, applicationsFolder }) => {
     const iframe = useRef();
 
     // Injecting custom CSS into the Element <iframe>
@@ -114,8 +114,8 @@ const ChatIframeView = ({ src }) => {
                     }
                 }
                 * { border-radius: unset !important }
-                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
-                .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
+                // .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
+                // .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
                 .mx_RoomHeader_name { pointer-events: none }
                 .mx_RoomHeader_chevron { display: none }
 
@@ -129,10 +129,21 @@ const ChatIframeView = ({ src }) => {
             iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
         };
 
+        const filterSpaces = () => {
+            iframe.current.contentDocument.querySelector('[data-rbd-draggable-id ="' + applicationsFolder + '"]').style.display = 'none';
+        };
         iframe.current.addEventListener('load', injectCss);
 
+        if (iframe.current.readyState !== 'loading') {
+            setTimeout(() => filterSpaces(), 1000);
+        } else {
+            iframe.current.addEventListener('DOMContentLoaded', filterSpaces);
+        }
         return () => {
-            currentRef && currentRef.removeEventListener('load', injectCss);
+            if (currentRef) {
+                currentRef.removeEventListener('load', injectCss);
+                currentRef.removeEventListener('DOMContentLoaded', filterSpaces);
+            }
         };
     });
 

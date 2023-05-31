@@ -10,6 +10,7 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
 import ChatIframeView from './ChatIframeView';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const sortRooms = function(room) {
     return [
@@ -92,9 +93,10 @@ export default function RoomId() {
         .sortBy(sortRooms)
         .value();
 
+    if (!matrix?.applicationsFolder) return <LoadingSpinner />;
     return (
         <>
-            <IframeLayout.Sidebar>
+            { /* <IframeLayout.Sidebar>
                 <h2>/chat</h2>
                 { matrix.invites.size > 0 && (
                     <>
@@ -115,10 +117,10 @@ export default function RoomId() {
                     { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                 </details>
                 <br />
-            </IframeLayout.Sidebar>
+            </IframeLayout.Sidebar> */ }
             { roomId && (
                 <IframeLayout.IframeWrapper>
-                    <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} />
+                    <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} applicationsFolder={matrix.applicationsFolder} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
