@@ -15,7 +15,8 @@ import styled from 'styled-components';
 
 // @TODO max-height is used because just using 'height' messes up other services like write and sketch. because those are using serviceSubmenu and the calculation doesn't work there.'
 const Table = styled.table`
-  display: block;
+  ${props => props.explore && 'display: block;'}
+
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
