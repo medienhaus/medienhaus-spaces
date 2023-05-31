@@ -68,6 +68,7 @@ function GraphView({ handleClick, selectedNode, activePath, id, currentItemType 
         console.log('call Api or matrix and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
             .catch(err => console.debug(err));
+        if (!spaceHierarchy) return;
         const parent = spaceHierarchy[0];
         // spaceHierarchy.shift()
 
