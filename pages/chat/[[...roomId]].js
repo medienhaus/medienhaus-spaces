@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -12,6 +12,9 @@ import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import { ServiceTable } from '../../components/UI/ServiceTable';
+import Bin from '../../assets/icons/bin.svg';
+import TextButton from '../../components/UI/TextButton';
 
 const sortRooms = function(room) {
     return [
@@ -40,39 +43,50 @@ const Avatar = styled.img`
   background: black;
 `;
 
-const SidebarListEntryWrapper = styled.a`
+const Checkbox = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 0.3rem;
-`;
-
-const RoomName = styled.span`
-  flex: 1 0;
-  height: 2rem;
-  overflow: hidden;
-  line-height: 2rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  justify-content: space-between;
 `;
 
 const SidebarListEntry = function({ room, onClick }) {
+    const [isLeavingRoom, setIsLeavingRoom] = useState(false);
+    const { t } = useTranslation();
+    const auth = useAuth();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+
+    const handleLeave = async (roomId) => {
+        setIsLeavingRoom(true);
+        await matrix.leaveRoom(roomId)
+            .catch(error => console.debug(error));
+        setIsLeavingRoom(false);
+    };
+
     return (
-        <Link href={`/chat/${room.roomId}`} passHref>
-            <SidebarListEntryWrapper>
-                { room.avatar ? (
+        <ServiceTable.Row>
+            <ServiceTable.Cell selected={false}>
+                <Link href={`/chat/${room.roomId}`} passHref>
+                    { room.avatar && (
+                        // Render the avatar if we have one
+                        <Avatar src={room.avatar} alt={room.name} />
+                    ) }
+                    { /* { room.avatar ? (
                     // Render the avatar if we have one
-                    <Avatar src={room.avatar} alt={room.name} />
-                ) : (
+                        <Avatar src={room.avatar} alt={room.name} />
+                    ) : (
                     // Render an empty GIF if we don't have an avatar
-                    <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                ) }
-                <RoomName>{ room.name }</RoomName>
-                { room.notificationCount > 0 && (
-                    <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
-                ) }
-            </SidebarListEntryWrapper>
-        </Link>
+                        <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                    ) } */ }
+                    { room.name }
+                    { room.notificationCount > 0 && (
+                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                    ) }           </Link>
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
+                <TextButton title={t('Leave room and remove from my library')} onClick={() => handleLeave(room.roomId)}>
+                    { isLeavingRoom ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                </TextButton>
+            </ServiceTable.Cell>
+        </ServiceTable.Row>
     );
 };
 
@@ -203,6 +217,8 @@ export default function RoomId() {
                 .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: none }
                 .mx_RoomHeader { flex: unset; -webkit-box-flex: unset; padding: 2.85rem 0 } 
                 .mx_RoomHeader_name { font-weight: bold }
+                .mx_HomePage_default_buttons { display: initial !important }
+                .mx_HomePage_default_wrapper > div:first-child { display: none }
             `);
             styleTag.appendChild(styleContent);
             iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
@@ -231,7 +247,7 @@ export default function RoomId() {
         .sortBy(sortRooms)
         .value();
 
-    const ActionNewDirectMessage = ({ callbackDone }) => {
+    const ActionNewRoom = ({ callbackDone }) => {
         const [roomName, setRoomName] = useState('');
         const [topic, setTopic] = useState('');
         const [encrypted, setEncrypted] = useState(false);
@@ -241,7 +257,7 @@ export default function RoomId() {
             setIsLoading(true);
             // eslint-disable-next-line no-undef
             if (process.env.NODE_ENV === 'development') console.log('creating room for ' + roomName);
-            const roomId = await matrix.createRoom(roomName, false, topic, 'invite', 'item', 'chat', getConfig().publicRuntimeConfig.name, 'private', 'shared', false)
+            await matrix.createRoom(roomName, false, topic, 'invite', 'item', 'chat', getConfig().publicRuntimeConfig.name, 'private', 'shared', encrypted)
                 .catch((error => console.debug(error)));
             // router.push(`/chat/${roomId}`);
 
@@ -253,13 +269,15 @@ export default function RoomId() {
             <Form onSubmit={(e) => { e.preventDefault(); createNewRoom(); }}>
                 <input type="text" placeholder={t('room name')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
                 <input type="text" placeholder={t('topic (optional)')} value={topic} onChange={(e) => setTopic(e.target.value)} />
-                <label htmlFor="encrypted">Enctypted</label><input type="checkbox" name="encrypted" checked={encrypted} onChange={() => setEncrypted(prevState => !prevState)} />
+                <Checkbox><label htmlFor="encrypted">Encrypted</label><input type="checkbox" name="encrypted" checked={encrypted} onChange={() => setEncrypted(prevState => !prevState)} /></Checkbox>
                 <button type="submit" disabled={!roomName}>{ isLoading ?<LoadingSpinnerInline inverted /> : t('Create room') }</button>
             </Form>
         );
     };
+
     const submenuItems = _.filter([
-        { value: 'newRoom', actionComponentToRender: ActionNewDirectMessage, label: t('New room') },
+        { value: 'newRoom', actionComponentToRender: ActionNewRoom, label: t('New room') },
+
     ]);
 
     return (
@@ -285,15 +303,16 @@ export default function RoomId() {
                 <br />
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
-                    { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                    { otherRooms && otherRooms.map((room) => {
+                        return <ServiceTable><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
+                    }) }
                 </details>
                 <br />
             </IframeLayout.Sidebar>
-            { roomId && (
-                <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
-                </IframeLayout.IframeWrapper>
-            ) }
+
+            <IframeLayout.IframeWrapper>
+                <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home' }`} ref={iframe} />
+            </IframeLayout.IframeWrapper>
         </>
     );
 }
