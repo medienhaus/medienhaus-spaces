@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,9 @@ import Link from 'next/link';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
+import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import Form from '../../components/UI/Form';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const sortRooms = function(room) {
     return [
@@ -219,14 +222,53 @@ export default function RoomId() {
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
         // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.type !== 'chat')
+        .reject(room => {
+            if (!room.events) return;
+
+            return room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.template !== 'chat';
+        })
+
         .sortBy(sortRooms)
         .value();
+
+    const ActionNewDirectMessage = ({ callbackDone }) => {
+        const [roomName, setRoomName] = useState('');
+        const [topic, setTopic] = useState('');
+        const [encrypted, setEncrypted] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
+
+        const createNewRoom = async () => {
+            setIsLoading(true);
+            // eslint-disable-next-line no-undef
+            if (process.env.NODE_ENV === 'development') console.log('creating room for ' + roomName);
+            const roomId = await matrix.createRoom(roomName, false, topic, 'invite', 'item', 'chat', getConfig().publicRuntimeConfig.name, 'private', 'shared', false)
+                .catch((error => console.debug(error)));
+            // router.push(`/chat/${roomId}`);
+
+            callbackDone && callbackDone();
+            setIsLoading(false);
+        };
+
+        return (
+            <Form onSubmit={(e) => { e.preventDefault(); createNewRoom(); }}>
+                <input type="text" placeholder={t('room name')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
+                <input type="text" placeholder={t('topic (optional)')} value={topic} onChange={(e) => setTopic(e.target.value)} />
+                <label htmlFor="encrypted">Enctypted</label><input type="checkbox" name="encrypted" checked={encrypted} onChange={() => setEncrypted(prevState => !prevState)} />
+                <button type="submit" disabled={!roomName}>{ isLoading ?<LoadingSpinnerInline inverted /> : t('Create room') }</button>
+            </Form>
+        );
+    };
+    const submenuItems = _.filter([
+        { value: 'newRoom', actionComponentToRender: ActionNewDirectMessage, label: t('New room') },
+    ]);
 
     return (
         <>
             <IframeLayout.Sidebar>
-                <h2>/chat</h2>
+                <ServiceSubmenu
+                    title={<h2>/chat</h2>}
+                    subheadline={t('What would you like to do?')}
+                    items={submenuItems} />
                 { matrix.invites.size > 0 && (
                     <>
                         <details open>
