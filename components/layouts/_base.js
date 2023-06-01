@@ -4,15 +4,17 @@ import { useState } from 'react';
 
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
+import { breakpoints } from '../_breakpoints';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
+  overflow: ${props => props.isNavigationOpen ? 'hidden' : 'unset'};
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     display: grid;
     grid-template-rows: min-content 1fr min-content;
     grid-template-columns: min-content 1fr;
@@ -21,14 +23,13 @@ const Wrapper = styled.div`
 
   // This will add a bottom margin to all page-level headings (h2) that is in line with the
   // whitespace between the logo and the first entry of the navigation.
-  & > main > h2:first-child,
-  & > main > div > h2:first-child {
+  & > main h2:first-child {
     margin-bottom: var(--margin);
 
-    @media (width > 51em) {
+    @media ${breakpoints.tabletAndAbove} {
       margin-bottom: calc(var(--margin) * 2);
 
-      @media (width > 68em) {
+      @media ${breakpoints.laptopAndAbove} {
         margin-bottom: calc(var(--margin) * 3);
       }
     }
@@ -36,9 +37,9 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  background: var(--color-background-navbar);
+  background: var(--color-background-beta);
 
-  @media (width <= 51em) {
+  @media ${breakpoints.phoneOnly} {
     display: flex;
     flex: 0 0;
     flex-direction: row;
@@ -47,13 +48,13 @@ const Header = styled.header`
     padding: var(--margin);
   }
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     grid-row: 1;
     grid-column: 1;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
 
-    @media (width > 68em) {
-      padding: calc(var(--margin) * 2) calc(var(--margin) * 2);
+    @media ${breakpoints.laptopAndAbove} {
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;
@@ -65,14 +66,14 @@ const HeaderButton = styled.button`
   height: calc(var(--margin) * 3.5);
   margin: calc(var(--margin) * -1);
   font-weight: bold;
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-align: center;
   cursor: pointer;
   background-color: transparent;
   border: unset;
   transform: rotate(90deg);
 
-  @media (width > 51em) {
+  @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
 `;
@@ -85,76 +86,76 @@ const HeaderButtonClose = styled(HeaderButton)`
 const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
+  row-gap: var(--margin);
+  padding: 0 var(--margin) var(--margin);
+  overflow: hidden;
+  overflow-y: auto;
+  background: var(--color-background-beta);
 
-  @media (width <= 51em) {
+  @media ${breakpoints.phoneOnly} {
     position: fixed;
     top: calc(var(--margin) * 3.5);
     right: 0;
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationOpen ? 'flex' : 'none'};
+    display: ${props => props.isNavigationOpen ? 'flex' : 'none'};
+  }
+
+  @media ${breakpoints.tabletAndAbove} {
+    row-gap: calc(var(--margin) * 1.5);
+    min-width: 12em;
+    padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
+
+    @media ${breakpoints.laptopAndAbove} {
+      row-gap: calc(var(--margin) * 2);
+      min-width: 13em;
+      padding: 0 calc(var(--margin) * 2) calc(var(--margin) * 2);
+    }
   }
 `;
 
 const Nav = styled.nav`
   flex: 1 0;
-  padding: var(--margin);
-  overflow: auto;
   font-weight: 500;
-  background: var(--color-background-navbar);
-
-  @media (width > 51em) {
-    display: block;
-    grid-row: 2;
-    grid-column: 1;
-    width: 12em;
-    padding: var(--margin) calc(var(--margin) * 1.3);
-
-    @media (width > 68em) {
-      width: 13em;
-      padding: var(--margin) calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Footer = styled.footer`
-  padding: var(--margin);
-  font-size: 70%;
-  background: var(--color-background-navbar);
+  font-weight: 700;
+  color: rgb(0 0 0 / 10%);
+  white-space: nowrap;
+  cursor: default;
+`;
 
-  @media (width > 51em) {
-    grid-row: 3;
-    grid-column: 1;
-    padding: calc(var(--margin)) calc(var(--margin) * 1.3);
-
-    @media (width > 68em) {
-      padding: calc(var(--margin) * 2);
-    }
-  }
+const Copyleft = styled.span`
+  position: relative;
+  top: 1px;
+  font-weight: 600;
 `;
 
 export default function BaseLayout({ children }) {
-    const [navigationOpen, setNavigationOpen] = useState(false);
+    const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
         <>
-            <Wrapper navigationOpen={navigationOpen}>
+            <Wrapper isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
-                    { navigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    { isNavigationOpen ? (
+                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Sidebar navigationOpen={navigationOpen}>
+                <Sidebar isNavigationOpen={isNavigationOpen}>
                     <Nav>
-                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                        <LanguageChooser />
+                        <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
+                    <div>
+                        <LanguageChooser />
+                    </div>
                     <Footer>
-                        🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
+                        <Copyleft>🄯</Copyleft> medienhaus/
                     </Footer>
                 </Sidebar>
                 { children }

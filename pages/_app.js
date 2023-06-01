@@ -23,6 +23,7 @@ export default function App({ Component, pageProps }) {
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {
         router.push('/login');
+
         return null;
     }
 
