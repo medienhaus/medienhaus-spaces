@@ -62,7 +62,6 @@ export default function Dashboard() {
     };
 
     const Bookmarks = ({ link, name }) => {
-        console.log(link);
         return (<Link href={link}>{ name }</Link>);
     };
     return (
@@ -71,8 +70,7 @@ export default function Dashboard() {
             { !bookmarkLinks || !matrix ? <LoadingSpinner />
                 : <ServiceTable>
                     { bookmarkLinks.map(space => {
-                        console.log(space);
-                        return <ServiceTable.Row>
+                        return <ServiceTable.Row key={space.roomId}>
                             <ServiceTable.Cell>
                                 <Bookmarks link={space.link} name={space.name} />
                             </ServiceTable.Cell>
