@@ -65,21 +65,24 @@ const SidebarListEntry = function({ room, onClick }) {
         <ServiceTable.Row>
             <ServiceTable.Cell selected={false}>
                 <Link href={`/chat/${room.roomId}`} passHref>
-                    { room.avatar && (
+                    <span>
+                        { room.avatar && (
                         // Render the avatar if we have one
-                        <Avatar src={room.avatar} alt={room.name} />
-                    ) }
-                    { /* { room.avatar ? (
+                            <Avatar src={room.avatar} alt={room.name} />
+                        ) }
+                        { /* { room.avatar ? (
                     // Render the avatar if we have one
                         <Avatar src={room.avatar} alt={room.name} />
                     ) : (
                     // Render an empty GIF if we don't have an avatar
                         <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                     ) } */ }
-                    { room.name }
-                    { room.notificationCount > 0 && (
-                        <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
-                    ) }           </Link>
+                        { room.name }
+                        { room.notificationCount > 0 && (
+                            <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                        ) }
+                    </span>
+                </Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Leave room and remove from my library')} onClick={() => handleLeave(room.roomId)}>
