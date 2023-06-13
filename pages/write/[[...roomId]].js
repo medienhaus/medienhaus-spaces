@@ -344,8 +344,9 @@ export default function Write() {
                                 return <WriteListEntry
                                     key={writeRoomId}
                                     roomId={writeRoomId}
+                                    padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
-                                    serverPads={serverPads}
                                 />;
                             }) }
                         </ServiceTable>
