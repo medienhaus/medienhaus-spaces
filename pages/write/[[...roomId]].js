@@ -144,9 +144,9 @@ export default function Write() {
         // Confirm if the user really wants to remove/delete this pad ...
         let confirmDeletionMessage;
         if (mypadsPadObject) {
-            confirmDeletionMessage = t('Do you really want to delete this pad and all of its content?');
+            confirmDeletionMessage = t('This is going to delete the pad and all of its content.');
         } else {
-            confirmDeletionMessage = t('Do you really want to remove this pad from your library?');
+            confirmDeletionMessage = t('This will remove the pad from your library. The contents of the pad will remain accessible to anyone who has the link to it.');
         }
 
         // ... and cancel the process if the user decided otherwise.
@@ -209,7 +209,7 @@ export default function Write() {
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
-                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+                <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
                 <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
             </Form>
         );
@@ -242,8 +242,8 @@ export default function Write() {
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
-                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <input type="text" placeholder={t('link to pad')} value={padLink} onChange={validatePadUrl} />
+                <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+                <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
                 { !validLink && padLink && (
                     <ErrorMessage>
                         { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
@@ -272,9 +272,9 @@ export default function Write() {
         };
 
         return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-            <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-            <input type="password" placeholder={t('confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+            <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
             <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
         </Form>);
     };
@@ -338,14 +338,15 @@ export default function Write() {
                             title={<h2>/write</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect with the provided /write server. Please try again later.') }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
                                 return <WriteListEntry
                                     key={writeRoomId}
                                     roomId={writeRoomId}
+                                    padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
-                                    serverPads={serverPads}
                                 />;
                             }) }
                         </ServiceTable>
