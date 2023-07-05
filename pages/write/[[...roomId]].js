@@ -22,7 +22,7 @@ export default function Write() {
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const write = auth.getAuthenticationProvider('write');
+    const write = auth.getAuthenticationProvider('etherpadMyPads');
 
     const { t } = useTranslation('write');
     const router = useRouter();
