@@ -60,6 +60,8 @@ export default function Write() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
+                    // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
+                    // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
                     setServiceSpaceId(matrix.serviceSpaces.write);
                 } catch (err) {
                     console.log(err);
@@ -76,6 +78,8 @@ export default function Write() {
     useEffect(() => {
         let cancelled = false;
 
+        // @TODO: Similar to above, this seems unnecessary. Here we store the contents of a given Matrix room,
+        // which already lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
         !cancelled && setContent(matrix.roomContents.get(roomId));
 
         return () => { cancelled = true; };
