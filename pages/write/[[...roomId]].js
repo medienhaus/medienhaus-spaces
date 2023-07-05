@@ -10,8 +10,8 @@ import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import Bin from '../../assets/icons/bin.svg';
-import Clipboard from '../../assets/icons/clipboard.svg';
+import BinIcon from '../../assets/icons/bin.svg';
+import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -363,10 +363,10 @@ export default function Write() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <Clipboard fill="var(--color-foreground)" />
+                                <ClipboardIcon fill="var(--color-foreground)" />
                             </button>
                             <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
