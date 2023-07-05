@@ -1,0 +1,19 @@
+{
+    "Create new anonymous pad": "Neues anonymes Pad anlegen",
+    "Create password protected pad": "Neues passwortgeschütztes Pad anlegen",
+    "Create new authored pad": "Neues Pad mit Autorschaft anlegen",
+    "Copy pad link to clipboard": "Link zum Pad kopieren",
+    "Delete pad": "Pad löschen",
+    "Remove pad from my library": "Pad entfernen",
+    "This is going to delete the pad and all of its content.": "Das Pad und dessen gesamter Inhalt werden unwiderruflich gelöscht.",
+    "This will remove the pad from your library. The contents of the pad will remain accessible to anyone who has the link to it.": "Dieses Pad wird aus deiner Liste entfernt. Die Inhalte des Pads bleiben jedoch für alle abrufbar, die den Link zum Pad abgespeichert haben.",
+    "password protected": "Passwortgeschützt",
+    "Add existing pad": "Bestehendes Pad hinzufügen",
+    "Add pad": "Pad hinzufügen",
+    "Create pad": "Pad anlegen",
+    "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
+    "Pad name": "Name",
+    "Confirm password": "Passwort bestätigen",
+    "Link to pad": "Link zum Pad",
+    "Can't connect to the provided /write server. Please try again later.": "Es kann keine Verbindung zum /write Server hergestellt werden. Bitte probiere es später nochmal."
+}

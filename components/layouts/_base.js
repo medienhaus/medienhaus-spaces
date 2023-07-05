@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   width: 100vw;
   max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.navigationOpen ? 'hidden' : 'unset'};
+  overflow: ${props => props.isNavigationOpen ? 'hidden' : 'unset'};
 
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
@@ -23,8 +23,7 @@ const Wrapper = styled.div`
 
   // This will add a bottom margin to all page-level headings (h2) that is in line with the
   // whitespace between the logo and the first entry of the navigation.
-  & > main > h2:first-child,
-  & > main > div > h2:first-child {
+  & > main h2:first-child {
     margin-bottom: var(--margin);
 
     @media ${breakpoints.tabletAndAbove} {
@@ -100,7 +99,7 @@ const Sidebar = styled.aside`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationOpen ? 'flex' : 'none'};
+    display: ${props => props.isNavigationOpen ? 'flex' : 'none'};
   }
 
   @media ${breakpoints.tabletAndAbove} {
@@ -135,22 +134,22 @@ const Copyleft = styled.span`
 `;
 
 export default function BaseLayout({ children }) {
-    const [navigationOpen, setNavigationOpen] = useState(false);
+    const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
         <>
-            <Wrapper navigationOpen={navigationOpen}>
+            <Wrapper isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
-                    { navigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    { isNavigationOpen ? (
+                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Sidebar navigationOpen={navigationOpen}>
+                <Sidebar isNavigationOpen={isNavigationOpen}>
                     <Nav>
-                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
+                        <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
                     <div>
                         <LanguageChooser />

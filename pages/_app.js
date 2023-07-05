@@ -9,13 +9,14 @@ import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '/assets/_globalCss.css';
 import { DefaultLayout } from '../components/layouts/default';
+import MatrixAuthProvider from '../lib/auth/MatrixAuthProvider';
 
 const guestRoutes = ['/', '/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
     const authData = useAuthProvider();
-    const matrixData = useMatrixProvider(authData.getActiveMatrixAuthentications());
+    const matrixData = useMatrixProvider(authData.getActiveAuthenticationsByType(MatrixAuthProvider));
 
     let Layout = DefaultLayout;
     if (Component.getLayout) { Layout = Component.getLayout(); }
