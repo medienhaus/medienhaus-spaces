@@ -35,8 +35,8 @@ const Avatar = styled.img`
   grid-column: 1;
   width: calc(var(--margin) * 7.3);
   aspect-ratio: 1;
-  background: var(--color-fg);
-  border-color: var(--color-fg);
+  background: var(--color-foreground);
+  border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
 
