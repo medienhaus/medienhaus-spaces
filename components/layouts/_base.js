@@ -137,7 +137,7 @@ export default function BaseLayout({ children }) {
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
-        <>zw
+        <>
             <Wrapper isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
