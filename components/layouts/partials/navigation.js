@@ -6,11 +6,13 @@ import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
   padding: 0;
-  margin: 0 0 calc(var(--margin) * 2);
+  margin: 0 0 calc(var(--margin) * 3);
   list-style: none;
+  border-top: 1px solid rgb(0 0 0 / 5%);
 
   li {
-    margin-bottom: 0.55rem;
+    line-height: calc(var(--margin) * 3);
+    border-bottom: 1px solid rgb(0 0 0 / 5%);
   }
 `;
 
@@ -18,8 +20,8 @@ export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
 
     const Link = ({ href, children }) => (
-        <NextLink href={href} passHref>
-            <a onClick={closeNavigation}>{ children }</a>
+        <NextLink href={href} onClick={closeNavigation}>
+            { children }
         </NextLink>
     );
 

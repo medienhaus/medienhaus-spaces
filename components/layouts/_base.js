@@ -10,8 +10,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
+  overflow: ${props => props.isNavigationOpen ? 'hidden' : 'unset'};
 
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
@@ -36,7 +37,7 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.header`
-  background: var(--color-background-navbar);
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     display: flex;
@@ -50,10 +51,10 @@ const Header = styled.header`
   @media ${breakpoints.tabletAndAbove} {
     grid-row: 1;
     grid-column: 1;
-    padding: var(--margin) calc(var(--margin) * 1.3);
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
 
     @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2) calc(var(--margin) * 2);
+      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
     }
   }
 `;
@@ -65,7 +66,7 @@ const HeaderButton = styled.button`
   height: calc(var(--margin) * 3.5);
   margin: calc(var(--margin) * -1);
   font-weight: bold;
-  color: var(--color-fg);
+  color: var(--color-foreground);
   text-align: center;
   cursor: pointer;
   background-color: transparent;
@@ -85,6 +86,11 @@ const HeaderButtonClose = styled(HeaderButton)`
 const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
+  row-gap: var(--margin);
+  padding: 0 var(--margin) var(--margin);
+  overflow: hidden;
+  overflow-y: auto;
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
@@ -93,68 +99,63 @@ const Sidebar = styled.aside`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationopen ? 'flex' : 'none'};
+    display: ${props => props.isNavigationOpen ? 'flex' : 'none'};
+  }
+
+  @media ${breakpoints.tabletAndAbove} {
+    row-gap: calc(var(--margin) * 1.5);
+    min-width: 12em;
+    padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
+
+    @media ${breakpoints.laptopAndAbove} {
+      row-gap: calc(var(--margin) * 2);
+      min-width: 13em;
+      padding: 0 calc(var(--margin) * 2) calc(var(--margin) * 2);
+    }
   }
 `;
 
 const Nav = styled.nav`
   flex: 1 0;
-  padding: var(--margin);
-  overflow: auto;
   font-weight: 500;
-  background: var(--color-background-navbar);
-
-  @media ${breakpoints.tabletAndAbove} {
-    display: block;
-    grid-row: 2;
-    grid-column: 1;
-    width: 12em;
-    padding: var(--margin) calc(var(--margin) * 1.3);
-
-    @media ${breakpoints.laptopAndAbove} {
-      width: 13em;
-      padding: var(--margin) calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Footer = styled.footer`
-  padding: var(--margin);
-  font-size: 70%;
-  background: var(--color-background-navbar);
+  font-weight: 700;
+  color: rgb(0 0 0 / 10%);
+  white-space: nowrap;
+  cursor: default;
+`;
 
-  @media ${breakpoints.tabletAndAbove} {
-    grid-row: 3;
-    grid-column: 1;
-    padding: calc(var(--margin)) calc(var(--margin) * 1.3);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2);
-    }
-  }
+const Copyleft = styled.span`
+  position: relative;
+  top: 1px;
+  font-weight: 600;
 `;
 
 export default function BaseLayout({ children }) {
-    const [navigationOpen, setNavigationOpen] = useState(false);
+    const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
-        <>
-            <Wrapper navigationopen={navigationOpen}>
+        <>zw
+            <Wrapper isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
-                    { navigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    { isNavigationOpen ? (
+                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
                     ) }
                 </Header>
-                <Sidebar navigationopen={navigationOpen}>
+                <Sidebar isNavigationOpen={isNavigationOpen}>
                     <Nav>
-                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                        <LanguageChooser />
+                        <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
+                    <div>
+                        <LanguageChooser />
+                    </div>
                     <Footer>
-                        🄯 { new Date().getFullYear() } <strong>medienhaus/</strong>
+                        <Copyleft>🄯</Copyleft> medienhaus/
                     </Footer>
                 </Sidebar>
                 { children }
