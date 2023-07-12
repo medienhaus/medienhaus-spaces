@@ -10,8 +10,8 @@ import WriteListEntry from './WriteListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import Bin from '../../assets/icons/bin.svg';
-import Clipboard from '../../assets/icons/clipboard.svg';
+import BinIcon from '../../assets/icons/bin.svg';
+import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -22,7 +22,7 @@ export default function Write() {
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const write = auth.getAuthenticationProvider('write');
+    const etherpadMyPads = auth.getAuthenticationProvider('etherpadMyPads');
 
     const { t } = useTranslation('write');
     const router = useRouter();
@@ -60,6 +60,8 @@ export default function Write() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
+                    // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
+                    // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
                     setServiceSpaceId(matrix.serviceSpaces.write);
                 } catch (err) {
                     console.log(err);
@@ -76,6 +78,8 @@ export default function Write() {
     useEffect(() => {
         let cancelled = false;
 
+        // @TODO: Similar to above, this seems unnecessary. Here we store the contents of a given Matrix room,
+        // which already lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
         !cancelled && setContent(matrix.roomContents.get(roomId));
 
         return () => { cancelled = true; };
@@ -85,8 +89,8 @@ export default function Write() {
         let cancelled = false;
 
         const populatePadsfromServer = async () => {
-            if (!_.isEmpty(write.getAllPads())) {
-                setServerPads(write.getAllPads());
+            if (!_.isEmpty(etherpadMyPads.getAllPads())) {
+                setServerPads(etherpadMyPads.getAllPads());
             } else {
                 await syncServerPadsAndSet();
             }
@@ -96,12 +100,12 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [syncServerPadsAndSet, write]);
+    }, [syncServerPadsAndSet, etherpadMyPads]);
 
     const syncServerPadsAndSet = useCallback(async () => {
-        await write.syncAllPads().catch(() => setServerPads(null));
-        setServerPads(write.getAllPads());
-    }, [write]);
+        await etherpadMyPads.syncAllPads().catch(() => setServerPads(null));
+        setServerPads(etherpadMyPads.getAllPads());
+    }, [etherpadMyPads]);
 
     useEffect(() => {
         let cancelled = false;
@@ -156,7 +160,7 @@ export default function Write() {
 
         // If this pad is known by mypads we'll try to delete it altogether
         if (mypadsPadObject) {
-            await write.deletePadById(mypadsPadObject._id);
+            await etherpadMyPads.deletePadById(mypadsPadObject._id);
         }
 
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
@@ -179,12 +183,12 @@ export default function Write() {
         }).catch(console.log);
 
         if (getConfig().publicRuntimeConfig.authProviders.write.api) {
-            await write.syncAllPads();
-            setServerPads(write.getAllPads());
+            await etherpadMyPads.syncAllPads();
+            setServerPads(etherpadMyPads.getAllPads());
         }
 
         return room;
-    }, [auth, matrix, matrixClient, serviceSpaceId, write]);
+    }, [auth, matrix, matrixClient, serviceSpaceId, etherpadMyPads]);
 
     const ActionNewAnonymousPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
@@ -229,7 +233,7 @@ export default function Write() {
 
         const handleExistingPadSubmit = async () => {
             const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
-            const checkForPasswordProtection = await write.checkPadForPassword(apiUrl);
+            const checkForPasswordProtection = await etherpadMyPads.checkPadForPassword(apiUrl);
             console.log(checkForPasswordProtection);
             setIsLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
@@ -261,7 +265,7 @@ export default function Write() {
 
         const createPasswordPad = async () => {
             setIsLoading(true);
-            const padId = await write.createPad(padName, 'private', password);
+            const padId = await etherpadMyPads.createPad(padName, 'private', password);
             const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
@@ -285,7 +289,7 @@ export default function Write() {
 
         const createAuthoredPad = async () => {
             setIsLoading(true);
-            const padId = await write.createPad(padName, 'public').catch((err) => {
+            const padId = await etherpadMyPads.createPad(padName, 'public').catch((err) => {
                 console.log(err);
             });
             if (!padId) {
@@ -359,10 +363,10 @@ export default function Write() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <Clipboard fill="var(--color-foreground)" />
+                                <ClipboardIcon fill="var(--color-foreground)" />
                             </button>
                             <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>

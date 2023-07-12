@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import Lock from '../../assets/icons/lock.svg';
+import LockIcon from '../../assets/icons/lock.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const LockIcon = styled(Lock)`
+const LockIconResized = styled(LockIcon)`
   display: block;
   transform: scale(0.9);
 `;
@@ -20,7 +20,7 @@ const WriteListEntry = ({ roomId, padName, passwordProtected, selected }) => {
             { /* Show a lock icon if this is a password protected pad */ }
             { passwordProtected && (
                 <ServiceTable.Cell title={t('password protected')}>
-                    <LockIcon />
+                    <LockIconResized />
                 </ServiceTable.Cell>
             ) }
         </ServiceTable.Row>
