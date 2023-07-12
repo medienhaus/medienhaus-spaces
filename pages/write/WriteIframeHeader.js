@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
 
 import IframeLayout from '../../components/layouts/iframe';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import Bin from '../../assets/icons/bin.svg';
-import { useAuth } from '../../lib/Auth';
+import BinIcon from '../../assets/icons/bin.svg';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
-const WriteIframeHeader = ({ removingLink, removeLink, title, content }) => {
+const WriteIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -14,8 +13,8 @@ const WriteIframeHeader = ({ removingLink, removeLink, title, content }) => {
             <h2>{ title }</h2>
             <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
-                <button title={t('Remove pad from my library')} onClick={removeLink}>
-                    { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                    { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                 </button>
             </IframeLayout.IframeHeaderButtonWrapper>
         </IframeLayout.IframeHeader>
