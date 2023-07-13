@@ -5,7 +5,7 @@ import BinIcon from '../../assets/icons/bin.svg';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
-const WriteIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject }) => {
+const WriteIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content }) => {
     const { t } = useTranslation('write');
 
     return (
