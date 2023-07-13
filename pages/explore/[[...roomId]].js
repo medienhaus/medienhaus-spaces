@@ -7,7 +7,7 @@ import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import WriteIframeHeader from '../write/WriteIframeHeader';
+import WriteIframeHeader from '../etherpad/WriteIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import TableView from './TableView';
