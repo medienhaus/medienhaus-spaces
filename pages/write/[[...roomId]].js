@@ -175,7 +175,7 @@ export default function Write() {
     const createWriteRoom = useCallback(async (link, name) => {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link');
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'write-link');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
