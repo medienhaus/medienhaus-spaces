@@ -11,13 +11,13 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Bin from '../../assets/icons/bin.svg';
-import Clipboard from '../../assets/icons/clipboard.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import AddBookmark from '../../components/UI/AddBookmark';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 export default function Sketch() {
     const auth = useAuth();
@@ -33,7 +33,7 @@ export default function Sketch() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
-    const [closeServiceMenu, setCloseServiceMenu] = useState(false);
+    const [isSketchServerDown, setIsSketchServerDown] = useState(false);
 
     const sketch = auth.getAuthenticationProvider('sketch');
 
@@ -51,6 +51,7 @@ export default function Sketch() {
         };
 
         !cancelled && startLookingForFolders();
+
         return () => cancelled = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix.initialSyncDone, matrix.serviceSpaces.sketch]);
@@ -111,8 +112,12 @@ export default function Sketch() {
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
-            await sketch.syncAllSketches();
-            await updateStructure(sketch.getStructure());
+            const syncSketches = await sketch.syncAllSketches()
+                .catch((error) => {
+                    console.debug(error);
+                    setIsSketchServerDown(true);
+                });
+            syncSketches && await updateStructure(sketch.getStructure());
             setSyncingServerSketches(false);
         };
 
@@ -126,15 +131,15 @@ export default function Sketch() {
 
     useEffect(() => {
         let cancelled = false;
-        const populatePadsfromServer = async (recursion) => {
+        const populateSketchesfromServer = async (recursion) => {
             if (!isEmpty(sketch.getStructure())) {
                 setServerSketches(sketch.getStructure());
             } else if (!recursion) {
                 await sketch.syncAllSketches();
-                populatePadsfromServer(true);
+                populateSketchesfromServer(true);
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.write.api && populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl && populateSketchesfromServer();
 
         return () => {
             cancelled = true;
@@ -152,7 +157,7 @@ export default function Sketch() {
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link').catch(() => {
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'sketch-link').catch(() => {
             setErrorMessage(t('Something went wrong when trying to create a new room'));
         });
         await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
@@ -168,18 +173,18 @@ export default function Sketch() {
         return room;
     }
 
-    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
-
     const removeLink = async () => {
         setRemovingLink(true);
         const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
         if (!remove) {
             setRemovingLink(false);
+
             return;
         }
         if (!remove.ok) {
         // @TODO callback function to give user feedback when removing on the server fails
             setRemovingLink(false);
+
             return;
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
@@ -188,31 +193,31 @@ export default function Sketch() {
         setRemovingLink(false);
     };
 
-    const ActionNewSketch = () => {
+    const ActionNewSketch = ({ callbackDone }) => {
         const [sketchName, setSketchName] = useState('');
         const [loading, setLoading] = useState(false);
 
         const createNewSketchRoom = async () => {
             setLoading(true);
+
             const create = await sketch.createSpace(sketchName);
             const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + create._id;
             const roomId = await createSketchRoom(link, sketchName);
             router.push(`/sketch/${roomId}`);
-            // in order to close the service menu after succesfully creating a new room we need to set the state to true and afterwards reset it to false again, for it to work on the next call.
-            setCloseServiceMenu(true);
-            setCloseServiceMenu(false);
+
+            callbackDone && callbackDone();
             setLoading(false);
         };
 
         return (
             <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
+                <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
             </Form>);
     };
 
-    const ActionExistingSketch = () => {
+    const ActionExistingSketch = ({ callbackDone }) => {
         const [sketchName, setSketchName] = useState('');
         const [sketchLink, setSketchLink] = useState('');
         const [validLink, setValidLink] = useState(false);
@@ -228,6 +233,7 @@ export default function Sketch() {
                     } catch (e) {
                         return false;
                     }
+
                     return url.protocol === 'http:' || url.protocol === 'https:';
                 };
                 if (isValidUrl(e.target.value)) setValidLink(true);
@@ -238,16 +244,23 @@ export default function Sketch() {
                 else setValidLink(false);
             }
             setSketchLink(e.target.value);
+        };
+
+        const handleSubmit = async (e) => {
+            setLoading(true);
+            e.preventDefault();
+            await createSketchRoom(sketchLink, sketchName);
+            callbackDone && callbackDone();
             setLoading(false);
         };
 
         return (
-            <Form onSubmit={(e) => { e.preventDefault(); createSketchRoom(sketchLink, sketchName); }}>
+            <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                { !validLink && sketchLink !=='' && <span>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</span> }
+                { !validLink && sketchLink !=='' && <ErrorMessage>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</ErrorMessage> }
 
-                <button type="submit" disabled={!sketchName}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
+                <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
             </Form>);
     };
@@ -257,20 +270,25 @@ export default function Sketch() {
     return (
         <>
             <IframeLayout.Sidebar>
-                <ServiceSubmenu title={<h2>/sketch</h2>} closeToggle={closeServiceMenu}>
-                    <ServiceSubmenu.Menu subheadline={t('What do you want to do?')}>
-                        <ServiceSubmenu.Item itemValue="" disabled>-- { t('select action') } --</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item itemValue="existingSketch" actionComponentToRender={<ActionExistingSketch />}>{ t('Add existing sketch') }</ServiceSubmenu.Item>
-                        <ServiceSubmenu.Item itemValue="newSketch" actionComponentToRender={<ActionNewSketch />}>{ t('Create sketch') }</ServiceSubmenu.Item>
-                    </ServiceSubmenu.Menu>
-                </ServiceSubmenu>
+                <ServiceSubmenu
+                    title={<h2>/sketch</h2>}
+                    subheadline={t('What would you like to do?')}
+                    items={[
+                        { value: 'existingSketch', actionComponentToRender: ActionExistingSketch, label: t('Add existing sketch') },
+                        { value: 'newSketch', actionComponentToRender: ActionNewSketch, label: t('Create sketch') },
+                    ]}
+                />
                 { syncingServerSketches ?
-                    <span><LoadingSpinnerInline /> { t('Syncing sketches ...') } </span> :
-                    <ServiceTable>
-                        { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                            return <SketchLinkEntry roomId={roomId} key={roomId} />;
-                        }) }
-                    </ServiceTable>
+                    <LoadingSpinner /> :
+                    <>
+                        <ServiceTable>
+                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
+                                return <SketchLinkEntry roomId={roomId} key={roomId} />;
+                            }) }
+                        </ServiceTable>
+                        { isSketchServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                    </>
+
                 }
             </IframeLayout.Sidebar>
             { roomId && content && (
@@ -278,11 +296,9 @@ export default function Sketch() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <Clipboard fill="var(--color-foreground)" />
-                            </button>
+                            <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <AddBookmark name={matrix.rooms.get(roomId).name} />
-                            <button title={t('Remove pad from my library')} onClick={removeLink}>
+                            <button title={t('Delete sketch from my library')} onClick={removeLink}>
                                 { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>

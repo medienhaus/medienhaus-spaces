@@ -12,14 +12,13 @@ module.exports = {
             matrixContentStorage: {
                 baseUrl: 'https://second.matrixserver.org',
             },
-            write: {
+            etherpadMyPads: {
                 baseUrl: 'https://pad.riseup.net/p',
-                api: 'https://pad.riseup.net/mypads/api',
-                bypassUrlValidation: false,
+                // api: 'https://your.etherpadserver.org/mypads/api',
+                // spacesGroupName: '/spaces'
             },
             sketch: {
                 baseUrl: 'https://sketch.yourserver.org',
-                bypassUrlValidation: false,
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
