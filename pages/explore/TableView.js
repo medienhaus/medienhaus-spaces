@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -20,12 +20,13 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
             if (selectedRoomId) callApiWithInitalNode(null, selectedRoomId, 0, currentItemType, id);
             else callApiAndAddToObject(null, id, 0);
         }
+
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [callApiAndAddToObject, callApiWithInitalNode, currentItemType, id, selectedRoomId]);
 
-    async function callApiWithInitalNode(e, roomId, index, template, parentId) {
+    const callApiWithInitalNode = useCallback(async(e, roomId, index, template, parentId) => {
         e && e.preventDefault();
         console.debug('call Api or matrix with initial id and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
@@ -34,7 +35,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
             .catch(err => console.debug(err));
         const parent = parentHierarchy[0];
 
-        const getMetaEvent = async (obj) => {
+        async function getMetaEvent(obj) {
             console.debug('getting meta event');
             const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
                 .catch((err) => {
@@ -46,7 +47,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
                 obj.template = metaEvent.template;
                 obj.application = metaEvent.application;
             }
-        };
+        }
         for (const space of parentHierarchy) {
             space.parent = parent;
             await getMetaEvent(space);
@@ -57,9 +58,9 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
         }
         await handleClick(roomId, spaceHierarchy[0].template, index, parentId);
         setData([parentHierarchy, spaceHierarchy]);
-    }
+    }, [auth, handleClick, matrix])
 
-    async function callApiAndAddToObject(e, roomId, index, template, parentId) {
+   const callApiAndAddToObject = useCallback( async (e, roomId, index, template, parentId) => {
         e && e.preventDefault();
         console.log('call Api or matrix and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
@@ -88,11 +89,13 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
         await handleClick(roomId, template, index, parentId);
         setData((prevData) => {
             prevData.splice(index + 1); // delete all entries after the selected row.
+
             return [...prevData, spaceHierarchy];
         });
-    }
+    },[auth, handleClick, matrix])
 
     if (!data) return <LoadingSpinner />;
+
     return (
         <>
             { !selectedRoomId && !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
@@ -117,6 +120,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
                         return 0; // no sorting necessary
                     }
                 });
+
                 return <TreeLeaves
                     row={index}
                     data={sortedLeaves}
