@@ -138,8 +138,6 @@ export default function Write() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads, createWriteRoom]);
 
-    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
-
     /**
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
      */
@@ -364,7 +362,7 @@ export default function Write() {
                         title={matrix.rooms.get(roomId).name}
                         deletePad={deletePad}
                         isDeletingPad={isDeletingPad}
-                        mypadsPadObject={mypadsPadObject } />
+                        mypadsPadObject={mypadsPadObject} />
                     <iframe src={iframeUrl.toString()}  />
                 </IframeLayout.IframeWrapper>
             ) }
