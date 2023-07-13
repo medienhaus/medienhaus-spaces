@@ -11,7 +11,7 @@ const LockIconResized = styled(LockIcon)`
   transform: scale(0.9);
 `;
 
-const WriteListEntry = ({ roomId, padName, passwordProtected, selected }) => {
+const EtherpadListEntry = ({ roomId, padName, passwordProtected, selected }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -26,4 +26,4 @@ const WriteListEntry = ({ roomId, padName, passwordProtected, selected }) => {
         </ServiceTable.Row>
     );
 };
-export default WriteListEntry;
+export default EtherpadListEntry;
