@@ -37,10 +37,10 @@ module.exports = {
                 destination: '/etherpad',
             },
             {
-                source: this.publicRuntimeConfig.authProviders.etherpad.path + "/:roomId",
+                source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
                 destination: '/etherpad/:roomId',
             },
-        ]
+        ];
     },
     webpack: WebpackConfig,
 };
