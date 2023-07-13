@@ -62,7 +62,7 @@ export default function Write() {
                 try {
                     // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
                     // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
-                    setServiceSpaceId(matrix.serviceSpaces.write);
+                    setServiceSpaceId(matrix.serviceSpaces.etherpadMyPads);
                 } catch (err) {
                     console.log(err);
                 }
@@ -73,7 +73,7 @@ export default function Write() {
         return () => {
             cancelled = true;
         };
-    }, [matrix.initialSyncDone, matrix.serviceSpaces.write]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.etherpadMyPads]);
 
     useEffect(() => {
         let cancelled = false;
@@ -95,7 +95,7 @@ export default function Write() {
                 await syncServerPadsAndSet();
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.write.api && populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.api && populatePadsfromServer();
 
         return () => {
             cancelled = true;
@@ -126,7 +126,7 @@ export default function Write() {
             }
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
-                const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + pad._id;
+                const link = getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
         };
@@ -182,7 +182,7 @@ export default function Write() {
             body: link,
         }).catch(console.log);
 
-        if (getConfig().publicRuntimeConfig.authProviders.write.api) {
+        if (getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.api) {
             await etherpadMyPads.syncAllPads();
             setServerPads(etherpadMyPads.getAllPads());
         }
@@ -202,7 +202,7 @@ export default function Write() {
             for (let i = 0; i < 20; i++) {
                 string += characters.charAt(Math.floor(Math.random() * charactersLength));
             }
-            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + string;
+            const link = getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl + '/' + string;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
 
@@ -226,7 +226,7 @@ export default function Write() {
         const [isLoading, setIsLoading] = useState(false);
 
         const validatePadUrl = (e) => {
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.write.baseUrl)) setValidLink(true);
+            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl)) setValidLink(true);
             else setValidLink(false);
             setPadLink(e.target.value);
         };
@@ -250,7 +250,7 @@ export default function Write() {
                 <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
                 { !validLink && padLink && (
                     <ErrorMessage>
-                        { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.write.baseUrl }) }
+                        { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl }) }
                     </ErrorMessage>
                 ) }
                 <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
@@ -266,7 +266,7 @@ export default function Write() {
         const createPasswordPad = async () => {
             setIsLoading(true);
             const padId = await etherpadMyPads.createPad(padName, 'private', password);
-            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+            const link = getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
 
@@ -297,7 +297,7 @@ export default function Write() {
 
                 return;
             }
-            const link = getConfig().publicRuntimeConfig.authProviders.write.baseUrl + '/' + padId;
+            const link = getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.baseUrl + '/' + padId;
             const roomId = await createWriteRoom(link, padName);
             router.push(`/write/${roomId}`);
 
@@ -317,8 +317,8 @@ export default function Write() {
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
         { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
-        getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
-        getConfig().publicRuntimeConfig.authProviders.write.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
     ]);
 
     // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
@@ -342,7 +342,7 @@ export default function Write() {
                             title={<h2>/write</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.write.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.etherpadMyPads.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
                                 return <WriteListEntry
