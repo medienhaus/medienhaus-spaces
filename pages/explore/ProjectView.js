@@ -58,22 +58,22 @@ const ProjectView = ({ removingLink, removeLink, content }) => {
     }, [content]);
 
     const fetchProjectHtml =async (roomId) => {
-      const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
-      const json = await object.json().catch(() => { });
-       if (!json) {
-        return  setProject('error fetching project from API')
-      }
-      setProject(json);
+        const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
+        const json = await object.json().catch(() => { });
+        if (!json) {
+            return setProject('error fetching project from API');
+        }
+        setProject(json);
     };
 
-  if (!project) return <LoadingSpinner />;
-  if (typeof project === 'string') return <ErrorMessage>{project}</ErrorMessage>
+    if (!project) return <LoadingSpinner />;
+    if (typeof project === 'string') return <ErrorMessage>{ project }</ErrorMessage>;
 
     return (
         <View>
             <Header>
                 <h2>{ project.abstract.name }</h2>
-        </Header>
+            </Header>
             <div dangerouslySetInnerHTML={{ __html: project.languages.EN.formattedContent }} />
         </View>
     );
