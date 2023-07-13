@@ -232,6 +232,7 @@ export default function Sketch() {
                     } catch (e) {
                         return false;
                     }
+
                     return url.protocol === 'http:' || url.protocol === 'https:';
                 };
                 if (isValidUrl(e.target.value)) setValidLink(true);

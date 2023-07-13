@@ -67,9 +67,9 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
                                 : <>{ isParent && parent && selectedRoomId ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></> }
                         </ServiceTable.Cell>
                         <ServiceTable.Cell title={child.template}>
-                            { child.template === 'write' ? '📝'
-                                : child.template === 'chat' ? '💬'
-                                    : child.template === 'sketch' ? '🎨'
+                            { child.template === 'write-link' ? '📝'
+                                : child.template === 'chat-link' ? '💬'
+                                    : child.template === 'sketch-link' ? '🎨'
                                         : child.template === 'studentproject' && '🎓' }
                         </ServiceTable.Cell>
                     </ServiceTable.Row>

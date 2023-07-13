@@ -21,7 +21,7 @@ const Leaf = styled(ServiceTable.Cell)`
   }
 
 `;
-const TreePath = ({ selectedNode, data, callApiAndAddToObject }) => {
+const TreePath = ({ selectedRoomId, data, callApiAndAddToObject }) => {
     const [isFetching, setIsFetching] = useState(false);
 
     const handleClick = async (e, roomId, row, template) => {
@@ -32,9 +32,10 @@ const TreePath = ({ selectedNode, data, callApiAndAddToObject }) => {
     };
 
     return (
-        <ServiceTable explore={selectedNode ? false : true}>
+        <ServiceTable explore={selectedRoomId ? false : true}>
             { data.map((path, index) => {
                 if (!path[0]?.parent) return null;
+
                 return <ServiceTable.Row key={index}>
                     <Leaf selected
                         disabled={isFetching}

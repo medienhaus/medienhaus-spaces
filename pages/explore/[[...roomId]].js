@@ -60,15 +60,6 @@ export default function Explore() {
         return () => cancelled = true;
     }, [initialSetup]);
 
-    const getRoomContent = async (roomId) => {
-        let fetchMessage = matrix.roomContents.get(roomId);
-        if (!fetchMessage) {
-            fetchMessage = await matrix.hydrateRoomContent(roomId);
-        }
-        if (!fetchMessage) return;
-
-        return fetchMessage.body;
-    };
 
     const handleClicked = async (roomId, template, index, parentId) => {
         if (!roomId) return;
@@ -78,32 +69,26 @@ export default function Explore() {
             return [...prevState, roomId];
         });
 
-        let content = null;
-        if (template === 'chat') {
+        
+        if (template === 'chat-link') {
             setCurrentItemType(template);
-            content = `${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`;
+            router.push(`/explore/${parentId}/${roomId}`);
+            setSelectedRoomId(roomId)
         }
         if (template === 'studentproject') {
             setCurrentItemType(template);
-            content = roomId;
+            router.push(`/explore/${parentId}/${roomId}`);
+            setSelectedRoomId(roomId)
         }
-        if (template === 'sketch' || template === 'write') {
+        if (template === 'sketch-link' || template === 'write-link') {
             setCurrentItemType(template);
-            content = await getRoomContent(roomId);
+            router.push(`/explore/${parentId}/${roomId}`);
+            setSelectedRoomId(roomId)
+        } else {
+            router.push(`/explore/${roomId}`);
+            setSelectedRoomId(null)
         }
 
-        // if selected node is NOT undefined iframe loads the url (type string) from selectedRoomId
-        setSelectedRoomId(() => {
-            if (content) {
-                router.push(`/explore/${parentId}/${roomId}`);
-
-                return content;
-            } else {
-                router.push(`/explore/${roomId}`);
-
-                return null;
-            }
-        });
     };
 
     if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
@@ -126,37 +111,37 @@ export default function Explore() {
                     switch (currentItemType) {
                         case 'studentproject':
                             return <ProjectView content={selectedRoomId} />;
-                        case 'write':
+                        case 'write-link':
                             return (
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
-                                        content={selectedRoomId}
+                                        content={matrix.roomContents.get(selectedRoomId).body}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
-                                    <iframe src={selectedRoomId} />
+                                    <iframe src={matrix.roomContents.get(selectedRoomId).body} />
                                 </IframeLayout.IframeWrapper>
                             );
-                        case 'sketch':
+                        case 'sketch-link':
                             return (
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
-                                        content={selectedRoomId}
+                                        content={matrix.roomContents.get(selectedRoomId).body}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing sketch from parent')}
                                         removingLink={false} />
-                                    <iframe src={selectedRoomId} />
+                                    <iframe src={matrix.roomContents.get(selectedRoomId).body} />
                                 </IframeLayout.IframeWrapper>
                             );
                         default:
                             return (
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
-                                        content={selectedRoomId}
+                                        content={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${selectedRoomId}`}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
-                                    <ChatIframeView src={selectedRoomId} />
+                                    <ChatIframeView src={matrix.roomContents.get(selectedRoomId).body} />
                                 </IframeLayout.IframeWrapper>
                             );
                     }
