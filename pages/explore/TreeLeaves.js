@@ -39,6 +39,7 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
     };
 
     if (!data) return <LoadingSpinner />;
+
     return (<>
         { selectedRoomId && parent && <Leaf
             onClick={(e) => onClick(e, parent.room_id, row - 1, parent.template)}
@@ -54,6 +55,7 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
                 if (roomId === router.query.roomId[0]) return null;
                 // if an iframe is open we only want to show items in the list
                 if (selectedRoomId && child.type !== 'item') return null;
+
                 return <>
                     <ServiceTable.Row key={roomId} disabled={fetchingLeaves}>
                         <ServiceTable.Cell
