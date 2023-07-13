@@ -11,7 +11,6 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Bin from '../../assets/icons/bin.svg';
-import Clipboard from '../../assets/icons/clipboard.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import SketchLinkEntry from './SketchLinkEntry';
@@ -89,7 +88,6 @@ export default function Sketch() {
             getAllMatrixSketches(serviceSpaceId);
 
             const updateStructure = async (object, parent) => {
-                console.log('object');
                 for (const sketch of Object.values(object)) {
                     // if the element does not have an id key, we can safely assume it is a key of a folder from recursion and skip it.
                     if (!sketch.id) continue;
@@ -158,7 +156,7 @@ export default function Sketch() {
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
         if (process.env.NODE_ENV === 'development') console.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link').catch(() => {
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'sketch-link').catch(() => {
             setErrorMessage(t('Something went wrong when trying to create a new room'));
         });
         await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
