@@ -50,6 +50,7 @@ export default function Explore() {
             setActivePath([roomId, iframeRoomId]);
         } else router.push(`/explore/${roomId}`);
         setEntryPointId(roomId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -65,6 +66,7 @@ export default function Explore() {
             fetchMessage = await matrix.hydrateRoomContent(roomId);
         }
         if (!fetchMessage) return;
+
         return fetchMessage.body;
     };
 
@@ -72,6 +74,7 @@ export default function Explore() {
         if (!roomId) return;
         setActivePath(prevState => {
             prevState.splice(index < 0 ? 0 : index);
+
             return [...prevState, roomId];
         });
 
@@ -93,15 +96,18 @@ export default function Explore() {
         setSelectedRoomId(() => {
             if (content) {
                 router.push(`/explore/${parentId}/${roomId}`);
+
                 return content;
             } else {
                 router.push(`/explore/${roomId}`);
+
                 return null;
             }
         });
     };
 
     if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
+
     return (
         <>
             <IframeLayout.Sidebar width={!selectedRoomId && '100%'}>
