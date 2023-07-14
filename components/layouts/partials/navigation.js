@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 
@@ -7,9 +8,11 @@ const List = styled.ul`
   padding: 0;
   margin: 0 0 calc(var(--margin) * 3);
   list-style: none;
+  border-top: 1px solid rgb(0 0 0 / 5%);
 
   li {
-    margin-bottom: 0.55rem;
+    line-height: calc(var(--margin) * 3);
+    border-bottom: 1px solid rgb(0 0 0 / 5%);
   }
 `;
 
@@ -17,8 +20,8 @@ export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
 
     const Link = ({ href, children }) => (
-        <NextLink href={href} passHref>
-            <a onClick={closeNavigation}>{ children }</a>
+        <NextLink href={href} onClick={closeNavigation}>
+            { children }
         </NextLink>
     );
 
@@ -41,11 +44,12 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li><Link href="/">/dashboard</Link></li>
                 <li><Link href="/account">/account</Link></li>
-                <li><Link href="/explore">/explore</Link></li>
+                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
             <List>
-                <li><Link href="/">/chat</Link></li>
                 <li><Link href="/write">/write</Link></li>
+                <li><Link href="/chat">/chat</Link></li>
+                <li><Link href="/sketch">/sketch</Link></li>
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>

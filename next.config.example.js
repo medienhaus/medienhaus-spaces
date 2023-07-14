@@ -12,13 +12,14 @@ module.exports = {
             matrixContentStorage: {
                 baseUrl: 'https://second.matrixserver.org',
             },
-            write: {
+            etherpad: {
+                path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
-                api: 'https://pad.riseup.net/mypads/api',
+                // api: 'https://your.etherpadserver.org/mypads/api',
+                // spacesGroupName: '/spaces'
             },
-            write: {
-                baseUrl: 'https://pad.klasseklima.dev/p',
-                api: 'https://pad.klasseklima.dev/mypads/api',
+            sketch: {
+                baseUrl: 'https://sketch.yourserver.org',
             },
         },
         contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
@@ -28,6 +29,21 @@ module.exports = {
         account: {
             allowAddingNewEmails: true,
         },
+        chat: {
+            pathToElement: '//localhost/element',
+        },
+    },
+    async rewrites() {
+        return [
+            {
+                source: this.publicRuntimeConfig.authProviders.etherpad.path,
+                destination: '/etherpad',
+            },
+            {
+                source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
+                destination: '/etherpad/:roomId',
+            },
+        ];
     },
     webpack: WebpackConfig,
 };
