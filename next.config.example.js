@@ -18,19 +18,10 @@ module.exports = {
                 // api: 'https://your.etherpadserver.org/mypads/api',
                 // spacesGroupName: '/spaces'
             },
-            sketch: {
-                baseUrl: 'https://sketch.yourserver.org',
-            },
         },
-        contextRootSpaceRoomId: '!gzsKJXOMipzIxsoqYk:dev.medienhaus.udk-berlin.de',
-        templates: {
-            context: '!DKzCQzwwAaeXIVkLRh:dev.medienhaus.udk-berlin.de',
-        },
+        contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
             allowAddingNewEmails: true,
-        },
-        chat: {
-            pathToElement: '//localhost/element',
         },
     },
     async rewrites() {
