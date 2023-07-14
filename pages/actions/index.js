@@ -17,7 +17,7 @@ const ExploreSection = styled.div`
   }
 `;
 
-export default function Explore() {
+export default function ExploreActions() {
     const auth = useAuth();
     const { t } = useTranslation('explore');
 
