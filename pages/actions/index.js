@@ -7,7 +7,7 @@ import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 import { useAuth } from '../../lib/Auth';
 import Actions from './actions';
 
-const ExploreSection = styled.div`
+const ActionSection = styled.div`
   & > * + * {
     margin-top: var(--margin);
   }
@@ -17,9 +17,9 @@ const ExploreSection = styled.div`
   }
 `;
 
-export default function ExploreActions() {
+export default function ActionCollection() {
     const auth = useAuth();
-    const { t } = useTranslation('explore');
+    const { t } = useTranslation('actions');
 
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);
@@ -51,9 +51,9 @@ export default function ExploreActions() {
 
     return (
         <>
-            <h2>/explore</h2>
+            <h2>/actions</h2>
             <br />
-            <ExploreSection>
+            <ActionSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
                 { (contents && contents.length > 0) ? (
                     <div>
@@ -72,7 +72,7 @@ export default function ExploreActions() {
                 ) : (
                     <p>- { t('There are no contents for this context') } -</p>
                 ) }
-            </ExploreSection>
+            </ActionSection>
 
             <Actions
                 currentId={activeContexts[activeContexts.length - 1]}
