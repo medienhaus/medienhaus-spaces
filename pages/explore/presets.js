@@ -16,6 +16,7 @@ module.exports = {
             name: 'public',
             display: '🌐',
             description: 'public to everyone to join',
+            default: true,
         },
         {
             name: 'restricted',
@@ -38,6 +39,7 @@ module.exports = {
             name: 'world_readable',
             display: '🌐',
             description: 'some description',
+            default: true,
         },
         {
             name: 'shared',
@@ -60,6 +62,7 @@ module.exports = {
             name: 'public',
             display: '🌐',
             description: 'public (default); all members can add content.',
+            default: true,
             powerLevels: {
                 'users_default': 0,
                 'events': {
@@ -77,7 +80,7 @@ module.exports = {
                     'm.reaction': 50,
                     'dev.medienhaus.meta': 100,
                 },
-                'events_default': 50,
+                'events_default': 0,
                 'state_default': 50,
                 'ban': 50,
                 'kick': 50,
