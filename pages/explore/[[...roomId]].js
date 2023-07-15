@@ -50,8 +50,6 @@ export default function Explore() {
             setSelectedRoomId(iframeRoomId);
             setActivePath([roomId, iframeRoomId]);
         } else {
-            console.log('vbbbbbbingvbbbbbbingvbbbbbbingvbbbbbbingvbbbbbbing');
-            console.log(roomId);
             setActivePath([roomId]);
             router.push(`/explore/${roomId}`);
         }
