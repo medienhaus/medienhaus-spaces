@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 
-import TemplateSelect from '../TemplateSelect';
+import TemplateSelect from './functions/TemplateSelect';
 import UserHandle from '../UserHandle';
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
-import settingsPresets from '../presets';
+import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '../../lib/Matrix';
+import settingsPresets from './presets';
 
 const SettingsSection = styled.div`
   & {

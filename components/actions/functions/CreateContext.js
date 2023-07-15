@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
 import TemplateSelect from './TemplateSelect';
 import AdvancedRoomOptions from './AdvancedRoomOptions';
-import presets from './presets';
+import presets from '../presets';
 
 const AdvancesOptions = styled.details`
   & {
