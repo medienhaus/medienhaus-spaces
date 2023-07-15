@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
 
 /**
  * TEMPLATE SELECT COMPONENT

@@ -1,5 +1,17 @@
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line no-undef
+
+/**
+ * HELPERFILE 'presets' for actions
+ *
+ * @TODO
+ *  - changing all text to translatable entries.
+ *  - disucuss if the file makes sense at this position or should be shifted more to a settings folder, as all of this presets are more like default recomandations
+ *  - adding the option to use an own 'preset file' as part of a config
+ *
+ *
+*/
+
 module.exports = {
     name: {
         allowedCharacter: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',

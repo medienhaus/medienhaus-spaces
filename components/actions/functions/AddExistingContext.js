@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
+import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
+import ContextMultiLevelSelect from '../../../components/ContextMultiLevelSelect';
 
 const AddContextDialog = styled.div`
   & > * + * {

@@ -11,6 +11,7 @@ import WriteIframeHeader from '../etherpad/WriteIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import TableView from './TableView';
+import Actions from '../../components/actions';
 
 // height calculation is mostly guess work at the moment...
 const ExploreSection = styled.div`
@@ -48,7 +49,12 @@ export default function Explore() {
             router.push(`/explore/${roomId}/${iframeRoomId}`);
             setSelectedRoomId(iframeRoomId);
             setActivePath([roomId, iframeRoomId]);
-        } else router.push(`/explore/${roomId}`);
+        } else {
+            console.log('vbbbbbbingvbbbbbbingvbbbbbbingvbbbbbbingvbbbbbbing');
+            console.log(roomId);
+            setActivePath([roomId]);
+            router.push(`/explore/${roomId}`);
+        }
         setEntryPointId(roomId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -60,41 +66,44 @@ export default function Explore() {
         return () => cancelled = true;
     }, [initialSetup]);
 
-
     const handleClicked = async (roomId, template, index, parentId) => {
         if (!roomId) return;
-        setActivePath(prevState => {
-            prevState.splice(index < 0 ? 0 : index);
 
-            return [...prevState, roomId];
-        });
+        if (parentId === activePath[activePath.length-1]) { //user clicked on a child entry of the current selected level
+            const tmp = activePath;
+            tmp.push(roomId);
+            setActivePath(tmp);
+        } else if (roomId === activePath[activePath.length-2]) { // user went one level above
+            const tmp = activePath;
+            tmp.pop();
+            setActivePath(tmp);
+        } // @TODO: add `else if` for the case that the user went back several levels, find in array and splice from there on…
 
-        
         if (template === 'chat-link') {
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
         }
         if (template === 'studentproject') {
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
         }
         if (template === 'sketch-link' || template === 'write-link') {
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
         } else {
             router.push(`/explore/${roomId}`);
-            setSelectedRoomId(null)
+            setSelectedRoomId(null);
         }
-
     };
 
     if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
 
     return (
         <>
+
             <IframeLayout.Sidebar width={!selectedRoomId && '100%'}>
                 <h2 ref={dimensionsRef}>/explore</h2>
                 <ExploreSection selectedRoomId={!!selectedRoomId}>
@@ -106,6 +115,15 @@ export default function Explore() {
                     />
                 </ExploreSection>
             </IframeLayout.Sidebar>
+            <Actions
+                currentId={activePath[activePath.length - 1]}
+                parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
+                popActiveContexts={() => {
+                    const tmp = activePath;
+                    tmp.pop();
+                    setActivePath(tmp);
+                }}
+            />
             { selectedRoomId && (
                 (() => {
                     switch (currentItemType) {
