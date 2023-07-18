@@ -10,7 +10,7 @@ export default function Logout() {
     useEffect(() => {
         const logoutAndForward = async () => {
             await auth.signout();
-            router.push('/');
+            router.push('/login');
         };
 
         logoutAndForward();
