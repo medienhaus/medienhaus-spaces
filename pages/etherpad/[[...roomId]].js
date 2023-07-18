@@ -333,13 +333,13 @@ export default function Etherpad() {
             <IframeLayout.Sidebar>
                 { !serviceSpaceId ? (
                     <>
-                        <h2>{getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>
+                        <h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>
                         <LoadingSpinner />
                     </>
                 ) : (
                     <>
                         <ServiceSubmenu
-                                title={<h2>{getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
+                            title={<h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
