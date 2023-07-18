@@ -1,6 +1,7 @@
 import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
+import getConfig from 'next/config';
 
 import { useAuth } from '../../../lib/Auth';
 
@@ -47,9 +48,9 @@ export default function Navigation({ closeNavigation }) {
                 { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
             <List>
-                <li><Link href="/write">/write</Link></li>
                 <li><Link href="/chat">/chat</Link></li>
-                <li><Link href="/sketch">/sketch</Link></li>
+                <li><Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</Link></li>
+                <li><Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</Link></li>
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>
