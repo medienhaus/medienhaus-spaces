@@ -18,8 +18,9 @@ module.exports = {
                 // api: 'https://your.etherpadserver.org/mypads/api',
                 // spacesGroupName: '/spaces'
             },
-            sketch: {
-                baseUrl: 'https://sketch.yourserver.org',
+            spacedeck: {
+                path: '/sketch',
+                baseUrl: 'http://spacedeck.localhost',
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
@@ -36,6 +37,14 @@ module.exports = {
             {
                 source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
                 destination: '/etherpad/:roomId',
+            },
+            {
+                source: this.publicRuntimeConfig.authProviders.spacedeck.path,
+                destination: '/spacedeck',
+            },
+            {
+                source: this.publicRuntimeConfig.authProviders.spacedeck.path + '/:roomId',
+                destination: '/spacedeck/:roomId',
             },
         ];
     },
