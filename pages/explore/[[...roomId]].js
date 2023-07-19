@@ -7,7 +7,7 @@ import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import WriteIframeHeader from '../etherpad/WriteIframeHeader';
+import ServiceIframeHeader from '../etherpad/ServiceIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import TableView from './TableView';
@@ -126,7 +126,7 @@ export default function Explore() {
                         case 'write-link':
                             return (
                                 <IframeLayout.IframeWrapper>
-                                    <WriteIframeHeader
+                                    <ServiceIframeHeader
                                         content={roomContent}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
@@ -137,7 +137,7 @@ export default function Explore() {
                         case 'sketch-link':
                             return (
                                 <IframeLayout.IframeWrapper>
-                                    <WriteIframeHeader
+                                    <ServiceIframeHeader
                                         content={roomContent}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing sketch from parent')}
@@ -148,7 +148,7 @@ export default function Explore() {
                         default:
                             return (
                                 <IframeLayout.IframeWrapper>
-                                    <WriteIframeHeader
+                                    <ServiceIframeHeader
                                         content={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${selectedRoomId}`}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
