@@ -94,7 +94,7 @@ export default function Etherpad() {
                 await syncServerPadsAndSet();
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.api && populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.myPads.api && populatePadsfromServer();
 
         return () => {
             cancelled = true;
@@ -180,7 +180,7 @@ export default function Etherpad() {
             body: link,
         }).catch(console.log);
 
-        if (getConfig().publicRuntimeConfig.authProviders.etherpad.api) {
+        if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads.api) {
             await etherpad.syncAllPads();
             setServerPads(etherpad.getAllPads());
         }
@@ -315,8 +315,8 @@ export default function Etherpad() {
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
         { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
-        getConfig().publicRuntimeConfig.authProviders.etherpad.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
-        getConfig().publicRuntimeConfig.authProviders.etherpad.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
     ]);
 
     // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
@@ -340,7 +340,7 @@ export default function Etherpad() {
                             title={<h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.etherpad.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
                                 return <EtherpadListEntry

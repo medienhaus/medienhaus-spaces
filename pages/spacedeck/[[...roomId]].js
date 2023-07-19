@@ -18,7 +18,7 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
-export default function Sketch() {
+export default function Spacedeck() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -308,6 +308,6 @@ export default function Sketch() {
     );
 }
 
-Sketch.getLayout = () => {
+Spacedeck.getLayout = () => {
     return IframeLayout.Layout;
 };
