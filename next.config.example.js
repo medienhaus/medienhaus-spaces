@@ -28,25 +28,32 @@ module.exports = {
             allowAddingNewEmails: true,
         },
     },
-    async rewrites() {
-        return [
-            {
+    rewrites() {
+        const rewriteConfig = [];
+
+        if (this.publicRuntimeConfig.authProviders.etherpad) {
+            rewriteConfig.push({
                 source: this.publicRuntimeConfig.authProviders.etherpad.path,
                 destination: '/etherpad',
             },
             {
                 source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
                 destination: '/etherpad/:roomId',
-            },
-            {
-                source: this.publicRuntimeConfig.authProviders.spacedeck.path,
-                destination: '/spacedeck',
-            },
-            {
-                source: this.publicRuntimeConfig.authProviders.spacedeck.path + '/:roomId',
-                destination: '/spacedeck/:roomId',
-            },
-        ];
+            });
+        }
+        if (this.publicRuntimeConfig.authProviders.spacedeck) {
+            rewriteConfig.push(
+                {
+                    source: this.publicRuntimeConfig.authProviders.spacedeck.path,
+                    destination: '/spacedeck',
+                },
+                {
+                    source: this.publicRuntimeConfig.authProviders.spacedeck.path + '/:roomId',
+                    destination: '/spacedeck/:roomId',
+                });
+        }
+
+        return rewriteConfig;
     },
     webpack: WebpackConfig,
 };

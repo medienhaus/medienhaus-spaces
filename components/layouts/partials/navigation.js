@@ -48,8 +48,8 @@ export default function Navigation({ closeNavigation }) {
             </List>
             <List>
                 <li><Link href="/">/chat</Link></li>
-                <li><Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</Link></li>
-                <li><Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</Link></li>
+                { getConfig().publicRuntimeConfig.authProviders.etherpad && <li><Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</Link></li> }
+                { getConfig().publicRuntimeConfig.authProviders.spacedeck && <li><Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</Link></li> }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>
