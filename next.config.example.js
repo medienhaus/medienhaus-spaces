@@ -15,8 +15,12 @@ module.exports = {
             etherpad: {
                 path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
+                myPads: {
+                    api: 'http://etherpad.localhost/mypads/api',
+                    spacesGroupName: '/spaces', // optinal, defaults to publicRuntimeConfig.name
+
+                },
                 // api: 'https://your.etherpadserver.org/mypads/api',
-                // spacesGroupName: '/spaces'
             },
             spacedeck: {
                 path: '/sketch',
