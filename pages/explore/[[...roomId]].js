@@ -30,6 +30,7 @@ const ExploreSection = styled.div`
 export default function Explore() {
     const [entryPointId, setEntryPointId] = useState(null);
     const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [roomContent, setRoomContent] = useState();
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const dimensionsRef = useRef();
     const router = useRouter();
@@ -60,7 +61,6 @@ export default function Explore() {
         return () => cancelled = true;
     }, [initialSetup]);
 
-
     const handleClicked = async (roomId, template, index, parentId) => {
         if (!roomId) return;
         setActivePath(prevState => {
@@ -69,26 +69,38 @@ export default function Explore() {
             return [...prevState, roomId];
         });
 
-        
+        const getContent = async (roomId) => {
+            const cachedContent = matrix.roomContents.get(selectedRoomId)?.body;
+            if (cachedContent) setRoomContent(cachedContent);
+            // if the room is not yet cached we manually try to hydrate the content
+            else {
+                const content = await matrix.hydrateRoomContent(roomId);
+                if (content) setRoomContent(content.body);
+            }
+        };
+
         if (template === 'chat-link') {
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
+            await getContent(roomId);
         }
         if (template === 'studentproject') {
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
+            await getContent(roomId);
         }
         if (template === 'sketch-link' || template === 'write-link') {
+            console.log('object');
             setCurrentItemType(template);
             router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId)
+            setSelectedRoomId(roomId);
+            await getContent(roomId);
         } else {
             router.push(`/explore/${roomId}`);
-            setSelectedRoomId(null)
+            setSelectedRoomId(null);
         }
-
     };
 
     if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
@@ -115,22 +127,22 @@ export default function Explore() {
                             return (
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
-                                        content={matrix.roomContents.get(selectedRoomId).body}
+                                        content={roomContent}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
-                                    <iframe src={matrix.roomContents.get(selectedRoomId).body} />
+                                    <iframe src={roomContent} />
                                 </IframeLayout.IframeWrapper>
                             );
                         case 'sketch-link':
                             return (
                                 <IframeLayout.IframeWrapper>
                                     <WriteIframeHeader
-                                        content={matrix.roomContents.get(selectedRoomId).body}
+                                        content={roomContent}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing sketch from parent')}
                                         removingLink={false} />
-                                    <iframe src={matrix.roomContents.get(selectedRoomId).body} />
+                                    <iframe src={roomContent} />
                                 </IframeLayout.IframeWrapper>
                             );
                         default:
@@ -141,7 +153,7 @@ export default function Explore() {
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
                                         removeLink={() => console.log('removing pad from parent')}
                                         removingLink={false} />
-                                    <ChatIframeView src={matrix.roomContents.get(selectedRoomId).body} />
+                                    <ChatIframeView src={roomContent} />
                                 </IframeLayout.IframeWrapper>
                             );
                     }
