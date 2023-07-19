@@ -5,7 +5,7 @@ import BinIcon from '../../assets/icons/bin.svg';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
-const WriteIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -20,4 +20,4 @@ const WriteIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, c
         </IframeLayout.IframeHeader>
     );
 };
-export default WriteIframeHeader;
+export default ServiceIframeHeader;
