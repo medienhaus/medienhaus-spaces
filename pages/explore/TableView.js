@@ -26,7 +26,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
         };
     }, [callApiAndAddToObject, callApiWithInitalNode, currentItemType, id, selectedRoomId]);
 
-    const callApiWithInitalNode = useCallback(async(e, roomId, index, template, parentId) => {
+    const callApiWithInitalNode = useCallback(async (e, roomId, index, template, parentId) => {
         e && e.preventDefault();
         console.debug('call Api or matrix with initial id and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
@@ -58,10 +58,10 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
         }
         await handleClick(roomId, spaceHierarchy[0].template, index, parentId);
         setData([parentHierarchy, spaceHierarchy]);
-    }, [auth, handleClick, matrix])
+    }, [auth, handleClick, matrix]);
 
-   const callApiAndAddToObject = useCallback(async(e, roomId, index, template, parentId) => {
-       e && e.preventDefault();
+    const callApiAndAddToObject = useCallback(async (e, roomId, index, template, parentId) => {
+        e && e.preventDefault();
         console.log('call Api or matrix and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
             .catch(err => console.debug(err));
@@ -75,6 +75,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
                     console.debug(err);
                     obj.missingMetaEvent = true;
                 });
+
             if (metaEvent) {
                 obj.type = metaEvent.type;
                 obj.template = metaEvent.template;
@@ -92,7 +93,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
 
             return [...prevData, spaceHierarchy];
         });
-    },[auth, handleClick, matrix])
+    }, [auth, handleClick, matrix]);
 
     if (!data) return <LoadingSpinner />;
 
@@ -104,7 +105,7 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
                 callApiAndAddToObject={callApiAndAddToObject}
             />
             }
-            {data.map((leaf, index) => {
+            { data.map((leaf, index) => {
                 const numberOfRows = selectedRoomId ? 2 : 1;
                 if (index < data.length - numberOfRows) return null; // only show a defined maximum of rows.
                 if (selectedRoomId && index != data.length - 2) return null; // if an id is selected only show the selected row.
