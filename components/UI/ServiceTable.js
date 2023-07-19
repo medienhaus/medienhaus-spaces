@@ -32,7 +32,10 @@ const Table = styled.table`
 const TableRow = styled.tr`
   max-width: 100%;
   text-decoration: ${props => props.disabled && 'none'};
-  border-top: 1px dotted rgb(210 210 210);
+
+  &:not(:first-of-type) {
+    border-top: 1px dotted rgb(210 210 210);
+  }
 
   &:not(:last-of-type) {
     border-bottom: 1px dotted rgb(210 210 210);

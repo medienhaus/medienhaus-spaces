@@ -27,7 +27,7 @@ const Leaf = styled.button`
 
 `;
 
-const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selectedRoomId, activePath }) => {
+const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selectedRoomId, activePath, key }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
 
@@ -48,7 +48,10 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
         >
             ← { parent.name }
         </Leaf> }
-        <ServiceTable explore={selectedRoomId ? false : true}>
+        <ServiceTable
+            explore={selectedRoomId ? false : true}
+            key={key}
+        >
             { data.map((child) => {
                 const roomId = child.id || child.room_id;
                 // if the roomId is the selected space we skip it

@@ -363,7 +363,7 @@ export default function Etherpad() {
                         deletePad={deletePad}
                         isDeletingPad={isDeletingPad}
                         mypadsPadObject={mypadsPadObject} />
-                    <iframe src={iframeUrl.toString()}  />
+                    <iframe src={iframeUrl.toString()} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
