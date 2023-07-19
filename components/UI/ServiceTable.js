@@ -25,22 +25,12 @@ const Table = styled.table`
   @media (width > 51em) {
     ${props => props.explore && 'max-width: calc(33% - (3 * var(--margin)));'}
   }
-
-  border-top: 1px solid rgb(0 0 0 / 5%);
 `;
 
 const TableRow = styled.tr`
   max-width: 100%;
   text-decoration: ${props => props.disabled && 'none'};
-
-  &:not(:first-of-type) {
-    border-top: 1px dotted rgb(210 210 210);
-  }
-
-  &:not(:last-of-type) {
-    border-bottom: 1px dotted rgb(210 210 210);
-  }
-
+  border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);
 `;
 
