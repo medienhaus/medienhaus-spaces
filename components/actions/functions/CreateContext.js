@@ -38,31 +38,38 @@ const CreateContext = ({ currentId, userInfos }) => {
         //first of all some content checking otherwise displaying custom error messages
         if (!name) {
             setCreateNewContextErrorMessage('name not set');
+
             return;
         }
         if (name.length < 4) {
             setCreateNewContextErrorMessage('name must have at least 4 Character');
+
             return;
         }
         if (!template) {
             setCreateNewContextErrorMessage('template not selected');
+
             return;
         }
         // topic is optional. Advanced options as well if not selected will fall back to default
         if (topic?.length > 400) {
             setCreateNewContextErrorMessage('topic too long (max 400chars)');
+
             return;
         }
         if (!historyVisibility) {
             setHistoryVisibility('default');
+
             return;
         }
         if (!joinRules) {
             setJoinRules('default');
+
             return;
         }
         if (!powerLevels) {
             setPowerLevels('default');
+
             return;
         }
 
@@ -116,6 +123,7 @@ const CreateContext = ({ currentId, userInfos }) => {
         };
 
         await matrixClient.sendStateEvent(room.room_id, 'dev.medienhaus.meta', medienhausMetaEvent);
+
         return room;
     };
 
