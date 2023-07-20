@@ -11,12 +11,11 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceIframeHeader from '../etherpad/ServiceIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
-import TableView from './TableView';
-// import Actions from '../../components/actions';
-import ManageContextActions from './ManageContextActions';
+import Actions from '../../components/actions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
 import { breakpoints } from '../../components/_breakpoints';
+import TreePath from './TreePath';
 
 // height calculation is mostly guess work at the moment...
 const ExploreSection = styled.div`
@@ -153,13 +152,13 @@ export default function Explore() {
             <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
                 { !_.isEmpty(selectedSpaceChildren) &&
-                    <TableView
-                        handleClick={handleClicked}
-                        selectedRoomId={selectedRoomId}
-                        activePath={activePath}
-                        callApiAndAddToObject={callApiAndAddToObject}
-                        selectedSpaceChildren={selectedSpaceChildren}
-                    />
+                     !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
+                    selectedRoomId={selectedRoomId}
+                    data={selectedSpaceChildren}
+                    callApiAndAddToObject={callApiAndAddToObject}
+                    activePath={activePath}
+                />
+
                 }
             </IframeLayout.Sidebar>
             { selectedRoomId ? (
@@ -211,11 +210,14 @@ export default function Explore() {
                     hasManageContextActionRights={hasManageContextActionRights}
                     setManageContextActionToggle={setManageContextActionToggle}
                 />
-                { manageContextActionToggle && <ManageContextActions /> }
+                <ExploreSection>
+                    { manageContextActionToggle && <Actions
+                        currentId={activePath[activePath.length - 1]}
+                        parentId={activePath[activePath.length - 2]}
+                    /> }
 
-                { !manageContextActionToggle &&
+                    { !manageContextActionToggle &&
                         selectedSpaceChildren &&
-                        <ExploreSection>{
                             selectedSpaceChildren[selectedSpaceChildren.length - 1]
                                 .sort(function(a, b) {
                                     if (a.type === 'item' && b.type !== 'item') {
@@ -242,8 +244,9 @@ export default function Explore() {
                                         selectedRoomId={selectedRoomId}
                                         activePath={activePath}
                                     />;
-                                }) } </ExploreSection>
-                }
+                                })
+                    }
+                </ExploreSection>
                 { /* <Actions
                     currentId={activePath[activePath.length - 1]}
                     parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
