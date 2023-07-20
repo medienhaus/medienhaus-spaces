@@ -28,10 +28,6 @@ const Wrapper = styled.div`
 
     @media ${breakpoints.tabletAndAbove} {
       margin-bottom: calc(var(--margin) * 2);
-
-      @media ${breakpoints.laptopAndAbove} {
-        margin-bottom: calc(var(--margin) * 3);
-      }
     }
   }
 `;
@@ -52,10 +48,6 @@ const Header = styled.header`
     grid-row: 1;
     grid-column: 1;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
@@ -107,12 +99,6 @@ const Sidebar = styled.aside`
     row-gap: calc(var(--margin) * 1.5);
     min-width: 12em;
     padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      row-gap: calc(var(--margin) * 2);
-      min-width: 13em;
-      padding: 0 calc(var(--margin) * 2) calc(var(--margin) * 2);
-    }
   }
 `;
 
