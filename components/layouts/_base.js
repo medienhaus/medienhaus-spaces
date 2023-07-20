@@ -77,7 +77,7 @@ const Sidebar = styled.aside`
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
-    top: calc(var(--margin) * 3.5);
+    top: calc(var(--margin) * 3.3);
     right: 0;
     bottom: 0;
     left: 0;
