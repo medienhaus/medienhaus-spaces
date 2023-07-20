@@ -9,29 +9,10 @@ import SettingsAction from './SettingsAction';
 import InfoAction from './InfoAction';
 import AddAction from './AddAction';
 import RemoveAction from './RemoveAction';
+import { ServiceTable } from '../UI/ServiceTable';
 
-const ActionsSection = styled.details`
-  & {
-    margin-bottom: var(--margin);
-  }
-
-  & > summary {
-    width: 50px;
-    height: 35px;
-    font-weight: bold;
-    color: var(--color-bg);
-    text-align: center;
-    list-style: none;
-    background-color: var(--color-fg);
-  }
-
-  & > div > button {
-    width: 50px;
-    margin-top: var(--margin);
-    margin-right: var(--margin);
-    margin-bottom: var(--margin);
-  }
-
+const ActionsSection = styled.div`
+  height: 100%;
 `;
 
 const ButtonsSection = styled.div`
@@ -110,6 +91,7 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
                 * - could become a problem in the future if the ContextMulitLevelSelect Component will have the ability to start not from the root of the tree, so therefore the parent Events are not cached.
                 */
                 setParentIdMod(false);
+
                 return;
             }
             setParentIdMod(parentPowerLevel?.users[userInfos?.id] >= 50);
@@ -245,16 +227,16 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
 
     return (
         <ActionsSection>
-            <summary>…</summary>
-            <ButtonsSection>
-                <button onClick={() => {setShowActions(() => showActions === 'info' ? '' : 'info');}}> 🏷️</button>
-                <button onClick={() => {setShowActions(() => showActions === 'add' ? '' : 'add');}}> 📥</button>
-                <button disabled={!userParentIdMod} onClick={() => {setShowActions(() => showActions === 'remove' ? '' : 'remove');}}> 📤</button>
-                <button disabled={!userCurrentIdMod} onClick={() => {setShowActions(() => showActions === 'settings' ? '' : 'settings');}}> ⚙️</button>
-            </ButtonsSection>
+            { /* <summary>…</summary> */ }
+            { /* <ButtonsSection> */ }
+            <ServiceTable.Cell><button onClick={() => { setShowActions(() => showActions === 'info' ? '' : 'info'); }}> Display Info</button></ServiceTable.Cell>
+            <ServiceTable.Cell> <button onClick={() => {setShowActions(() => showActions === 'add' ? '' : 'add');}}> manage selected ID</button></ServiceTable.Cell>
+            <ServiceTable.Cell><button disabled={!userParentIdMod} onClick={() => {setShowActions(() => showActions === 'remove' ? '' : 'remove');}}> 📤</button></ServiceTable.Cell>
+            <ServiceTable.Cell> <button disabled={!userCurrentIdMod} onClick={() => {setShowActions(() => showActions === 'settings' ? '' : 'settings');}}> ⚙️</button></ServiceTable.Cell>
+            { /* </ButtonsSection> */ }
 
             <MenuSection>
-                { showActions === 'info' && //checks if this action got active via a button user input before rendering this component.
+                { showActions === 'info' && // checks if this action got active via a button user input before rendering this component.
                 <InfoAction
                     userInfos={userInfos}
                     currentId={currentId}
