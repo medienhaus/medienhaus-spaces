@@ -19,7 +19,7 @@ const ToggleButton = styled.button`
 `;
 
 const ServiceIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content, hasManageContextActionRights, setManageContextActionToggle }) => {
-    const [isManageContextMenuOpen, setIsManageContextMenuOpen] = useState(false);
+    const [isManageContextMenuOpen, setIsManageContextMenuOpen] = useState(true);
     const { t } = useTranslation('write');
 
     return (
