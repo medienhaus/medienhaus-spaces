@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
 
+import CloseIcon from '../../assets/icons/close.svg';
+import MenuIcon from '../../assets/icons/menu.svg';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -51,29 +53,17 @@ const Header = styled.header`
   }
 `;
 
-const HeaderButton = styled.button`
-  display: grid;
-  place-content: center;
-  width: calc(var(--margin) * 3.5);
-  height: calc(var(--margin) * 3.5);
-  margin: calc(var(--margin) * -1);
-  font-weight: bold;
-  color: var(--color-foreground);
-  text-align: center;
-  cursor: pointer;
-  background-color: transparent;
+const ToggleButton = styled.button`
+  /* unset globally defined button styles; set height to line-height */
+  width: unset;
+  height: calc(var(--margin) * 1.3);
+  padding: unset;
+  background-color: unset;
   border: unset;
-  transform: rotate(90deg);
 
   @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
-`;
-
-const HeaderButtonClose = styled(HeaderButton)`
-  font-size: 2.2rem;
-  font-weight: 300;
-  transform: translateY(-3px);
 `;
 
 const Sidebar = styled.aside`
@@ -129,9 +119,13 @@ export default function BaseLayout({ children }) {
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
+                        <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
+                            <CloseIcon fill="var(--color-foreground)" />
+                        </ToggleButton>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
+                        <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
+                            <MenuIcon fill="var(--color-foreground)" />
+                        </ToggleButton>
                     ) }
                 </Header>
                 <Sidebar isNavigationOpen={isNavigationOpen}>
