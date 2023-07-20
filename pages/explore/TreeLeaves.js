@@ -40,17 +40,9 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
 
     if (!data) return <LoadingSpinner />;
 
-    return (<>
-        { selectedRoomId && parent && <Leaf
-            onClick={(e) => onClick(e, parent.room_id, row - 1, parent.template)}
-            className="parent"
-            key={parent.room_id}
-        >
-            ← { parent.name }
-        </Leaf> }
+    return (<React.Fragment key={key}>
         <ServiceTable
             explore={selectedRoomId ? false : true}
-            key={key}
         >
             { data.map((child) => {
                 const roomId = child.id || child.room_id;
@@ -82,7 +74,7 @@ const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selected
             }
         </ServiceTable>
 
-    </>
+    </React.Fragment>
 
     );
 };

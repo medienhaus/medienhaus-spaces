@@ -21,10 +21,6 @@ const Table = styled.table`
   max-height: 100%;
   overflow-y: auto;
   border-collapse: collapse;
-
-  @media (width > 51em) {
-    ${props => props.explore && 'max-width: calc(33% - (3 * var(--margin)));'}
-  }
 `;
 
 const TableRow = styled.tr`

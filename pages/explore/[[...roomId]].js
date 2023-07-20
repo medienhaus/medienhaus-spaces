@@ -15,9 +15,6 @@ import Actions from '../../components/actions';
 
 // height calculation is mostly guess work at the moment...
 const ExploreSection = styled.div`
-  ${props => !props.selectedRoomId && 'display: flex;'}
-  ${props => !props.selectedRoomId && 'grid-template-columns: repeat(2, 1fr);'}
-
   gap: var(--margin);
   height: calc(100% - calc(var(--margin) * 4.8));
 
@@ -88,27 +85,17 @@ export default function Explore() {
             }
         };
 
-        if (template === 'chat-link') {
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
-        }
-        if (template === 'studentproject') {
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
-        }
-        if (template === 'sketch-link' || template === 'write-link') {
-            console.log('object');
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
-        } else {
+        if (template !== 'chat-link' &&
+            template !== 'studentproject' &&
+            template !== 'sketch-link' &&
+            template !== 'write-link') {
             router.push(`/explore/${roomId}`);
             setSelectedRoomId(null);
+        } else {
+            setCurrentItemType(template);
+            router.push(`/explore/${parentId}/${roomId}`);
+            setSelectedRoomId(roomId);
+            await getContent(roomId);
         }
     };
 
@@ -117,7 +104,7 @@ export default function Explore() {
     return (
         <>
 
-            <IframeLayout.Sidebar width={!selectedRoomId && '100%'}>
+            <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
                 <ExploreSection selectedRoomId={!!selectedRoomId}>
                     <TableView
@@ -128,16 +115,7 @@ export default function Explore() {
                     />
                 </ExploreSection>
             </IframeLayout.Sidebar>
-            <Actions
-                currentId={activePath[activePath.length - 1]}
-                parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
-                popActiveContexts={() => {
-                    const tmp = activePath;
-                    tmp.pop();
-                    setActivePath(tmp);
-                }}
-            />
-            { selectedRoomId && (
+            { selectedRoomId ? (
                 (() => {
                     switch (currentItemType) {
                         case 'studentproject':
@@ -170,14 +148,25 @@ export default function Explore() {
                                     <ServiceIframeHeader
                                         content={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${selectedRoomId}`}
                                         title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
-                                        removeLink={() => console.log('removing pad from parent')}
+                                        removeLink={() => console.log('removing chat from parent')}
                                         removingLink={false} />
-                                    <ChatIframeView src={roomContent} />
+                                    <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${selectedRoomId}`} />
                                 </IframeLayout.IframeWrapper>
                             );
                     }
                 })()
-            ) }
+            ) : <IframeLayout.IframeWrapper>
+                <ServiceIframeHeader
+                    content={roomContent}
+                    title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name || 'Header Text'}
+                    removeLink={() => console.log('removing sketch from parent')}
+                    removingLink={false} />
+                <Actions
+                    currentId={activePath[activePath.length - 1]}
+                    parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
+                    // popActiveContexts={() => setActivePath(prevState => prevState.pop())}
+                />
+            </IframeLayout.IframeWrapper> }
         </>
     );
 }

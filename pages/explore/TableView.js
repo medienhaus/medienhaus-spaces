@@ -99,10 +99,11 @@ function TableView({ handleClick, selectedRoomId, activePath, id, currentItemTyp
 
     return (
         <>
-            { !selectedRoomId && !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
+            { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
                 selectedRoomId={selectedRoomId}
                 data={data}
                 callApiAndAddToObject={callApiAndAddToObject}
+                activePath={activePath}
             />
             }
             { data.map((leaf, index) => {
