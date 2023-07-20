@@ -132,7 +132,6 @@ const CreateContext = ({ currentId, userInfos }) => {
                 currentId={currentId}
                 userInfos={userInfos}
                 currentTemplate={setTemplate}
-                templateDirectoryId={getConfig().publicRuntimeConfig.templates.context}
             />
 
             <AdvancesOptions>
