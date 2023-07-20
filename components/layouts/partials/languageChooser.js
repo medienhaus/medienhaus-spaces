@@ -1,18 +1,28 @@
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
+const LanguageSelect = styled.select`
+  display: inline;
+  width: unset;
+  height: 1.3rem;
+  padding-left: 1ch;
+  margin-bottom: 0;
+  background-color: unset;
+  border: unset;
+`;
 
 function LanguageChooser() {
     const { i18n } = useTranslation();
 
     return (
         <>
-            <select
+            <LanguageSelect
                 onChange={(e) => { i18n.changeLanguage(e.target.value); }}
                 value={i18n.language}
-                style={{ marginBottom: '0', width: '7ch' }}
             >
-                <option value="en">EN</option>
-                <option value="de">DE</option>
-            </select>
+                <option value="en">en</option>
+                <option value="de">de</option>
+            </LanguageSelect>
         </>
     );
 }

@@ -138,11 +138,9 @@ export default function BaseLayout({ children }) {
                     <Nav>
                         <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
-                    <div>
-                        <LanguageChooser />
-                    </div>
                     <Footer>
                         <Copyleft>🄯</Copyleft> medienhaus/
+                        <span><LanguageChooser /></span>
                     </Footer>
                 </Sidebar>
                 { children }
