@@ -8,7 +8,7 @@ import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ServiceIframeHeader from '../etherpad/ServiceIframeHeader';
+import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import Actions from '../../components/actions';
