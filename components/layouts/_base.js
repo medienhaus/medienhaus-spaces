@@ -134,7 +134,7 @@ export default function BaseLayout({ children }) {
                     </Nav>
                     <Footer>
                         <Copyleft>🄯</Copyleft> medienhaus/
-                        <span><LanguageChooser /></span>
+                        <LanguageChooser />
                     </Footer>
                 </Sidebar>
                 { children }
