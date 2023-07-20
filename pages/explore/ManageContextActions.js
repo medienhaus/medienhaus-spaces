@@ -2,30 +2,30 @@ import React from 'react';
 import styled from 'styled-components';
 import { t } from 'i18next';
 
-import CreateContext from '../../components/actions/functions/CreateContext';
-import AddExistingContext from '../../components/actions/functions/AddExistingContext';
+import CreateContext from './CreateContext';
+// import AddExistingContext from './AddExistingContext';
 
 const ManageContextActionsWrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-const ManageContextActions = ({ userInfos, currentId, currentName, setShowActions }) => {
+const ManageContextActions = ({ userInfos, parentId, currentId, currentName, setShowActions }) => {
     return <ManageContextActionsWrapper>
         <h2>{ t('Manage contexts and items within ') }{ currentName }</h2>
         <div>
             <details>
                 <summary>{ t('create new substructure') }</summary>
-                <CreateContext currentId={currentId} userInfos={userInfos} />
+                <CreateContext currentId={currentId} parentId={parentId} userInfos={userInfos} />
             </details>
 
-            <details>
-                <summary>{ t('add existing context from root') }</summary>
+            { /* <details>
+                <summary>{ t('add existing context') }</summary>
                 <AddExistingContext parentId={currentId} parentName={currentName} setShowActions={setShowActions} />
             </details>
 
             <details>
                 <summary>{ t('add existing item from application') }</summary>
-            </details>
+            </details> */ }
         </div>
 
     </ManageContextActionsWrapper>;

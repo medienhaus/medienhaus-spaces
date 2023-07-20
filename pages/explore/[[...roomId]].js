@@ -11,7 +11,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
-import Actions from '../../components/actions';
+import ExploreMatrixActions from './ExploreMatrixActions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
 import { breakpoints } from '../../components/_breakpoints';
@@ -73,7 +73,6 @@ export default function Explore() {
     }, [initialSetup]);
 
     const handleClicked = useCallback(async (roomId, template, index, parentId) => {
-        console.log(template);
         if (!roomId) return;
 
         setActivePath(prevState => {
@@ -113,7 +112,6 @@ export default function Explore() {
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
             .catch(err => console.debug(err));
         if (!spaceHierarchy) return;
-        console.log(spaceHierarchy);
         const parent = spaceHierarchy[0];
 
         const getMetaEvent = async (obj) => {
@@ -211,7 +209,7 @@ export default function Explore() {
                     setManageContextActionToggle={setManageContextActionToggle}
                 />
                 <ExploreSection>
-                    { manageContextActionToggle && <Actions
+                    { manageContextActionToggle && <ExploreMatrixActions
                         currentId={activePath[activePath.length - 1]}
                         parentId={activePath[activePath.length - 2]}
                     /> }
