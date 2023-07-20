@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
+import _ from 'lodash';
 
 import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -11,25 +12,35 @@ import ServiceIframeHeader from '../etherpad/ServiceIframeHeader';
 import ProjectView from './ProjectView';
 import ChatIframeView from '../chat/ChatIframeView';
 import TableView from './TableView';
-import Actions from '../../components/actions';
+// import Actions from '../../components/actions';
+import ManageContextActions from './ManageContextActions';
+import ErrorMessage from '../../components/UI/ErrorMessage';
+import TreeLeaves from './TreeLeaves';
+import { breakpoints } from '../../components/_breakpoints';
 
 // height calculation is mostly guess work at the moment...
 const ExploreSection = styled.div`
-  gap: var(--margin);
-  height: calc(100% - calc(var(--margin) * 4.8));
+  width: 100%;
+  height: 100%;
+  padding: var(--margin);
 
   .parent {
     color: var(--color-background);
     background: var(--color-foreground);
   }
 
+  @media ${breakpoints.tabletAndAbove} {
+    padding: 0 calc(var(--margin) * 1.5);
+  }
 `;
 
 export default function Explore() {
-    const [entryPointId, setEntryPointId] = useState(null);
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [roomContent, setRoomContent] = useState();
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
+    const [hasManageContextActionRights, setHasManageContextActionRights] = useState(true);
+    const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
+    const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const dimensionsRef = useRef();
     const router = useRouter();
     const [currentItemType, setCurrentItemType] = useState('');
@@ -51,7 +62,7 @@ export default function Explore() {
             setActivePath([roomId]);
             router.push(`/explore/${roomId}`);
         }
-        setEntryPointId(roomId);
+        callApiAndAddToObject(null, roomId, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -62,18 +73,15 @@ export default function Explore() {
         return () => cancelled = true;
     }, [initialSetup]);
 
-    const handleClicked = async (roomId, template, index, parentId) => {
+    const handleClicked = useCallback(async (roomId, template, index, parentId) => {
+        console.log(template);
         if (!roomId) return;
 
-        if (parentId === activePath[activePath.length-1]) { //user clicked on a child entry of the current selected level
-            const tmp = activePath;
-            tmp.push(roomId);
-            setActivePath(tmp);
-        } else if (roomId === activePath[activePath.length-2]) { // user went one level above
-            const tmp = activePath;
-            tmp.pop();
-            setActivePath(tmp);
-        } // @TODO: add `else if` for the case that the user went back several levels, find in array and splice from there on…
+        setActivePath(prevState => {
+            prevState.splice(index < 0 ? 0 : index + 1);
+
+            return [...prevState, roomId];
+        });
 
         const getContent = async (roomId) => {
             const cachedContent = matrix.roomContents.get(selectedRoomId)?.body;
@@ -97,23 +105,62 @@ export default function Explore() {
             setSelectedRoomId(roomId);
             await getContent(roomId);
         }
+    }, [matrix, router, selectedRoomId]);
+
+    const callApiAndAddToObject = async (e, roomId, index, template, parentId) => {
+        if (!selectedSpaceChildren) return;
+        e && e.preventDefault();
+        console.log('call Api or matrix and add');
+        const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+            .catch(err => console.debug(err));
+        if (!spaceHierarchy) return;
+        console.log(spaceHierarchy);
+        const parent = spaceHierarchy[0];
+
+        const getMetaEvent = async (obj) => {
+            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
+            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
+                .catch((err) => {
+                    console.debug(err);
+                    obj.missingMetaEvent = true;
+                });
+
+            if (metaEvent) {
+                obj.type = metaEvent.type;
+                obj.template = metaEvent.template;
+                obj.application = metaEvent.application;
+            }
+        };
+
+        for (const space of spaceHierarchy) {
+            space.parent = parent;
+            await getMetaEvent(space);
+        }
+        await handleClicked(roomId, template, index, parentId);
+        setSelectedSpaceChildren((prevState) => {
+            prevState.splice(index+1); // delete all entries after the selected row.
+
+            return [...prevState, spaceHierarchy];
+        });
     };
 
-    if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
+    if (typeof window === 'undefined') return <LoadingSpinner />;
+    // console.log(selectedSpaceChildren[selectedSpaceChildren.length -1]);
 
     return (
         <>
 
             <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
-                <ExploreSection selectedRoomId={!!selectedRoomId}>
+                { !_.isEmpty(selectedSpaceChildren) &&
                     <TableView
-                        id={entryPointId}
                         handleClick={handleClicked}
                         selectedRoomId={selectedRoomId}
                         activePath={activePath}
+                        callApiAndAddToObject={callApiAndAddToObject}
+                        selectedSpaceChildren={selectedSpaceChildren}
                     />
-                </ExploreSection>
+                }
             </IframeLayout.Sidebar>
             { selectedRoomId ? (
                 (() => {
@@ -155,17 +202,54 @@ export default function Explore() {
                             );
                     }
                 })()
-            ) : <IframeLayout.IframeWrapper>
+            ) : !_.isEmpty(selectedSpaceChildren) && <IframeLayout.IframeWrapper>
                 <ServiceIframeHeader
                     content={roomContent}
-                    title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name || 'Header Text'}
+                    title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || 'Header Text'}
                     removeLink={() => console.log('removing sketch from parent')}
-                    removingLink={false} />
-                <Actions
+                    removingLink={false}
+                    hasManageContextActionRights={hasManageContextActionRights}
+                    setManageContextActionToggle={setManageContextActionToggle}
+                />
+                { manageContextActionToggle && <ManageContextActions /> }
+
+                { !manageContextActionToggle &&
+                        selectedSpaceChildren &&
+                        <ExploreSection>{
+                            selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                .sort(function(a, b) {
+                                    if (a.type === 'item' && b.type !== 'item') {
+                                        return -1; // a comes before b
+                                    } else if (a.type !== 'item' && b.type === 'item') {
+                                        return 1; // a comes after b
+                                    } else {
+                                        return 0; // no sorting necessary
+                                    }
+                                }).map((leaf, index) => {
+                                    if (leaf.length <= 1) {
+                                        return <ErrorMessage key="error-message">
+                                            Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
+                                        </ErrorMessage>;
+                                    }
+
+                                    // we sort the array to display object of the type 'item' before others.
+                                    return <TreeLeaves
+                                        row={index}
+                                        leaf={leaf}
+                                        parent={parent}
+                                        key={leaf.room_id + '_' + index}
+                                        handleClick={callApiAndAddToObject}
+                                        selectedRoomId={selectedRoomId}
+                                        activePath={activePath}
+                                    />;
+                                }) } </ExploreSection>
+                }
+                { /* <Actions
                     currentId={activePath[activePath.length - 1]}
                     parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
                     // popActiveContexts={() => setActivePath(prevState => prevState.pop())}
-                />
+                /> */ }
+
             </IframeLayout.IframeWrapper> }
         </>
     );

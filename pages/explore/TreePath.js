@@ -33,7 +33,7 @@ const TreePath = ({ selectedRoomId, data, callApiAndAddToObject, activePath }) =
     };
 
     return (
-        <ServiceTable explore={selectedRoomId ? false : true}>
+        <ServiceTable>
             { data.map((path, index) => {
                 if (!path[0]?.parent) return null;
 
