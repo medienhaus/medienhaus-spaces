@@ -3,10 +3,6 @@ import styled from 'styled-components';
 import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
-import SettingsAction from './SettingsAction';
-import InfoAction from './InfoAction';
-import RemoveAction from './RemoveAction';
-import { ServiceTable } from '../UI/ServiceTable';
 import ManageContextActions from '../../pages/explore/ManageContextActions';
 
 const ActionsSection = styled.div`
@@ -50,11 +46,9 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     *
     */
 
-    const [showActions, setShowActions] = useState();
     const [userInfos, setUserInfos] = useState(); //stores information about the curren User
 
     const [isCurrentUserModerator, setIsisCurrentUserModerator] = useState(false);
-    const [isUserModeratorInParent, setIsUserModeratorInParent] = useState(false);
 
     /**
     * EFFECTS
@@ -67,27 +61,8 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
 
     useEffect(() => {
         fetchRoomName();
-        fetchRoomTopic();
-        fetchRoomJoinRule();
-        fetchRoomHistoryVisibility();
         fetchRoomPowerLevels();
     }, [currentId]);
-
-    useEffect(() => {
-        if (parentId) {
-            const parentPowerLevel = cachedRoomPowerLevels?.[parentId]?.powerLevels;
-            if (!parentPowerLevel) {
-                /** if a parentId exists but there is no cached record of the PowerLevel no parentMod rights are accesible to check and therefor set it to false.
-                * @TODO
-                * - could become a problem in the future if the ContextMulitLevelSelect Component will have the ability to start not from the root of the tree, so therefore the parent Events are not cached.
-                */
-                setIsUserModeratorInParent(false);
-
-                return;
-            }
-            setIsUserModeratorInParent(parentPowerLevel?.users[userInfos?.id] >= 50);
-        }
-    }, [parentId]);
 
     /**
     * CURRENT ROOM DATA STORAGE (VOLATILE)
@@ -101,12 +76,6 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     */
 
     const [roomName, setRoomName] = useState();
-    const [roomTopic, setRoomTopic] = useState();
-    const [roomJoinRule, setRoomJoinRule] = useState();
-    const [roomPowerLevels, setRoomPowerLevels] = useState();
-    const [roomMembers, setRoomMembers] = useState({ list: [], institutions: [] });
-    const [roomHistoryVisibility, setRoomHistoryVisibility] = useState();
-    const [roomMeta, setMetaRoom] = useState({ type: '', template: '', application: [] });
 
     /**
     * ALL ROOM DATA STORAGE (SESSION NON VOLATILE)
@@ -138,41 +107,7 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
         // send also to the sessions non volatile state storage
         setCachedRoomNames({ ...cachedRoomNames, [currentId]: { name: nameEvent?.name } });
     };
-    const fetchRoomTopic = async () => {
-        const topicEvent = await matrixClient.getStateEvent(
-            currentId,
-            'm.room.topic',
-        ).catch(() => {});
-        setRoomTopic(topicEvent?.topic);
-    };
-    const fetchRoomMembers = async () => {
-        const joinedMembers = await matrixClient.getJoinedRoomMembers(currentId).catch(() => {});
-        const members = { };
-        members.list = _.map(joinedMembers?.joined, (member, key) => {
-            return {
-                id: key,
-                displayname: member?.display_name,
-            };
-        });
-        members.institutions = _.uniq(_.map(members.list, member => member?.id.split(':')[1]));
-        //  institutions just holds the names of the matrix homeservers which the joined members orignated from.
-        //  will become more relevant in the future if federatable networks will be implemented. for now its just an non interactive list of strings
-        setRoomMembers(members);
-    };
-    const fetchRoomJoinRule = async () => {
-        const joinRulesEvent = await matrixClient.getStateEvent(
-            currentId,
-            'm.room.join_rules',
-        ).catch(() => {});
-        setRoomJoinRule(joinRulesEvent?.join_rule);
-    };
-    const fetchRoomHistoryVisibility = async () => {
-        const historyVisibilityEvent = await matrixClient.getStateEvent(
-            currentId,
-            'm.room.history_visibility',
-        ).catch(() => {});
-        setRoomHistoryVisibility(historyVisibilityEvent?.history_visibility);
-    };
+
     const fetchRoomPowerLevels = async () => {
         const userId = matrixClient?.credentials?.userId;
         const powerLevelsEvent = await matrixClient.getStateEvent(
@@ -180,19 +115,10 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
             'm.room.power_levels',
         ).catch(() => {});
         setIsisCurrentUserModerator(powerLevelsEvent?.users[userId] >= 50);  //check if the current user got is listed with a custom power level if true and >= 50 (mod default) mod flag is set true
-        setRoomPowerLevels(powerLevelsEvent);
         setUserInfos({ ...userInfos, id: userId });
 
         // send also to the sessions non volatile state storage
         setCachedRoomPowerLevels({ ...cachedRoomPowerLevels, [currentId]: { powerLevels: powerLevelsEvent } });
-    };
-
-    const fetchRoomMeta = async () => {
-        const metaEvent = await matrixClient.getStateEvent(
-            currentId,
-            'dev.medienhaus.meta',
-        ).catch(() => {});
-        setMetaRoom(metaEvent);
     };
 
     /**
@@ -218,68 +144,12 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
 
     return (
         <ActionsSection>
-            { /* <summary>…</summary> */ }
-            { /* <ButtonsSection> */ }
-            <ServiceTable.Cell><button onClick={() => { setShowActions(() => showActions === 'info' ? '' : 'info'); }}> Display Info</button></ServiceTable.Cell>
-            <ServiceTable.Cell><button disabled={!isUserModeratorInParent} onClick={() => {setShowActions(() => showActions === 'remove' ? '' : 'remove');}}> 📤</button></ServiceTable.Cell>
-            <ServiceTable.Cell><button disabled={!isCurrentUserModerator} onClick={() => {setShowActions(() => showActions === 'settings' ? '' : 'settings');}}> ⚙️</button></ServiceTable.Cell>
-            { /* </ButtonsSection> */ }
-
             <MenuSection>
-                { showActions === 'info' && // checks if this action got active via a button user input before rendering this component.
-                <InfoAction
-                    userInfos={userInfos}
-                    currentId={currentId}
-                    members={roomMembers}
-                    name={roomName}
-                    topic={roomTopic}
-                    join={roomJoinRule}
-                    historyVisibility={roomHistoryVisibility}
-                    meta={roomMeta}
-                    getMembers={fetchRoomMembers}
-                    getMeta={fetchRoomMeta}
-                /> }
                 { isCurrentUserModerator &&
                 <ManageContextActions
                     userInfos={userInfos}
                     currentId={currentId}
                     currentName={roomName}
-                    setShowActions={setShowActions}
-                /> }
-                { showActions === 'remove' &&
-                <RemoveAction
-                    userInfos={userInfos}
-                    currentId={currentId}
-                    parentId={parentId}
-                    setShowActions={setShowActions}
-                    showActions={showActions}
-                    name={roomName}
-                    activeAction={showActions}
-                    popActiveContexts={popActiveContexts}
-                /> }
-                { showActions === 'settings' &&
-                <SettingsAction
-                    userInfos={userInfos}
-                    onMemberChange={fetchRoomMembers}
-                    currentId={currentId}
-                    name={roomName}
-                    setName={setRoomName}
-                    refreshName={fetchRoomName}
-                    topic={roomTopic}
-                    setTopic={setRoomTopic}
-                    refreshTopic={fetchRoomTopic}
-                    join={roomJoinRule}
-                    setJoin={setRoomJoinRule}
-                    refreshJoin={fetchRoomJoinRule}
-                    historyVisibility={roomHistoryVisibility}
-                    setHistoryVisibility={setRoomHistoryVisibility}
-                    refreshHistoryVisibility={fetchRoomHistoryVisibility}
-                    powerLevels={roomPowerLevels}
-                    setPowerLevels={setRoomPowerLevels}
-                    refreshPowerLevels={fetchRoomPowerLevels}
-                    members={roomMembers}
-                    setMembers={setRoomMembers}
-                    refreshMembers={fetchRoomMembers}
                 /> }
             </MenuSection>
 
