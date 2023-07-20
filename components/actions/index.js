@@ -1,24 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import getConfig from 'next/config';
 import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
 import SettingsAction from './SettingsAction';
 import InfoAction from './InfoAction';
-import AddAction from './AddAction';
 import RemoveAction from './RemoveAction';
 import { ServiceTable } from '../UI/ServiceTable';
+import ManageContextActions from '../../pages/explore/ManageContextActions';
 
 const ActionsSection = styled.div`
   height: 100%;
-`;
-
-const ButtonsSection = styled.div`
-  & {
-    margin-bottom: var(--margin);
-  }
 `;
 
 const MenuSection = styled.div`
@@ -50,7 +42,6 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     */
 
     const auth = useAuth();
-    const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     /**
@@ -62,8 +53,8 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     const [showActions, setShowActions] = useState();
     const [userInfos, setUserInfos] = useState(); //stores information about the curren User
 
-    const [userCurrentIdMod, setUserCurrentIdMod] = useState(false);
-    const [userParentIdMod, setParentIdMod] = useState(false);
+    const [isCurrentUserModerator, setIsisCurrentUserModerator] = useState(false);
+    const [isUserModeratorInParent, setIsUserModeratorInParent] = useState(false);
 
     /**
     * EFFECTS
@@ -90,11 +81,11 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
                 * @TODO
                 * - could become a problem in the future if the ContextMulitLevelSelect Component will have the ability to start not from the root of the tree, so therefore the parent Events are not cached.
                 */
-                setParentIdMod(false);
+                setIsUserModeratorInParent(false);
 
                 return;
             }
-            setParentIdMod(parentPowerLevel?.users[userInfos?.id] >= 50);
+            setIsUserModeratorInParent(parentPowerLevel?.users[userInfos?.id] >= 50);
         }
     }, [parentId]);
 
@@ -188,7 +179,7 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
             currentId,
             'm.room.power_levels',
         ).catch(() => {});
-        setUserCurrentIdMod(powerLevelsEvent?.users[userId] >= 50);  //check if the current user got is listed with a custom power level if true and >= 50 (mod default) mod flag is set true
+        setIsisCurrentUserModerator(powerLevelsEvent?.users[userId] >= 50);  //check if the current user got is listed with a custom power level if true and >= 50 (mod default) mod flag is set true
         setRoomPowerLevels(powerLevelsEvent);
         setUserInfos({ ...userInfos, id: userId });
 
@@ -230,9 +221,8 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
             { /* <summary>…</summary> */ }
             { /* <ButtonsSection> */ }
             <ServiceTable.Cell><button onClick={() => { setShowActions(() => showActions === 'info' ? '' : 'info'); }}> Display Info</button></ServiceTable.Cell>
-            <ServiceTable.Cell> <button onClick={() => {setShowActions(() => showActions === 'add' ? '' : 'add');}}> manage selected ID</button></ServiceTable.Cell>
-            <ServiceTable.Cell><button disabled={!userParentIdMod} onClick={() => {setShowActions(() => showActions === 'remove' ? '' : 'remove');}}> 📤</button></ServiceTable.Cell>
-            <ServiceTable.Cell> <button disabled={!userCurrentIdMod} onClick={() => {setShowActions(() => showActions === 'settings' ? '' : 'settings');}}> ⚙️</button></ServiceTable.Cell>
+            <ServiceTable.Cell><button disabled={!isUserModeratorInParent} onClick={() => {setShowActions(() => showActions === 'remove' ? '' : 'remove');}}> 📤</button></ServiceTable.Cell>
+            <ServiceTable.Cell><button disabled={!isCurrentUserModerator} onClick={() => {setShowActions(() => showActions === 'settings' ? '' : 'settings');}}> ⚙️</button></ServiceTable.Cell>
             { /* </ButtonsSection> */ }
 
             <MenuSection>
@@ -249,11 +239,10 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
                     getMembers={fetchRoomMembers}
                     getMeta={fetchRoomMeta}
                 /> }
-                { showActions === 'add' &&
-                <AddAction
+                { isCurrentUserModerator &&
+                <ManageContextActions
                     userInfos={userInfos}
                     currentId={currentId}
-                    mod={userCurrentIdMod}
                     currentName={roomName}
                     setShowActions={setShowActions}
                 /> }
