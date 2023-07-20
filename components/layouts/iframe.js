@@ -29,14 +29,9 @@ const Sidebar = styled.div`
 
   // On bigger viewports ...
   @media ${breakpoints.tabletAndAbove} {
-    width: 21rem;
+    width: 36ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
-
-    @media ${breakpoints.laptopAndAbove} {
-      width: ${props => props.width ? props.width : '25rem'};
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
@@ -68,10 +63,6 @@ const IframeHeader = styled.header`
 
   @media ${breakpoints.tabletAndAbove} {
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 
   /* @TODO: re-factor quick-fix */

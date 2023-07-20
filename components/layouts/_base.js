@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
 
+import CloseIcon from '../../assets/icons/close.svg';
+import MenuIcon from '../../assets/icons/menu.svg';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -28,10 +30,6 @@ const Wrapper = styled.div`
 
     @media ${breakpoints.tabletAndAbove} {
       margin-bottom: calc(var(--margin) * 2);
-
-      @media ${breakpoints.laptopAndAbove} {
-        margin-bottom: calc(var(--margin) * 3);
-      }
     }
   }
 `;
@@ -52,35 +50,20 @@ const Header = styled.header`
     grid-row: 1;
     grid-column: 1;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
-const HeaderButton = styled.button`
-  display: grid;
-  place-content: center;
-  width: calc(var(--margin) * 3.5);
-  height: calc(var(--margin) * 3.5);
-  margin: calc(var(--margin) * -1);
-  font-weight: bold;
-  color: var(--color-foreground);
-  text-align: center;
-  cursor: pointer;
-  background-color: transparent;
+const ToggleButton = styled.button`
+  /* unset globally defined button styles; set height to line-height */
+  width: unset;
+  height: calc(var(--margin) * 1.3);
+  padding: unset;
+  background-color: unset;
   border: unset;
-  transform: rotate(90deg);
 
   @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
-`;
-
-const HeaderButtonClose = styled(HeaderButton)`
-  font-size: 2rem;
-  font-weight: 500;
 `;
 
 const Sidebar = styled.aside`
@@ -94,7 +77,7 @@ const Sidebar = styled.aside`
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
-    top: calc(var(--margin) * 3.5);
+    top: calc(var(--margin) * 3.3);
     right: 0;
     bottom: 0;
     left: 0;
@@ -104,14 +87,8 @@ const Sidebar = styled.aside`
 
   @media ${breakpoints.tabletAndAbove} {
     row-gap: calc(var(--margin) * 1.5);
-    min-width: 12em;
+    min-width: 21ch;
     padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      row-gap: calc(var(--margin) * 2);
-      min-width: 13em;
-      padding: 0 calc(var(--margin) * 2) calc(var(--margin) * 2);
-    }
   }
 `;
 
@@ -142,20 +119,22 @@ export default function BaseLayout({ children }) {
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setIsNavigationOpen(false); }}>×</HeaderButtonClose>
+                        <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
+                            <CloseIcon fill="var(--color-foreground)" />
+                        </ToggleButton>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setIsNavigationOpen(true); }}>|||</HeaderButton>
+                        <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
+                            <MenuIcon fill="var(--color-foreground)" />
+                        </ToggleButton>
                     ) }
                 </Header>
                 <Sidebar isNavigationOpen={isNavigationOpen}>
                     <Nav>
                         <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
-                    <div>
-                        <LanguageChooser />
-                    </div>
                     <Footer>
                         <Copyleft>🄯</Copyleft> medienhaus/
+                        <LanguageChooser />
                     </Footer>
                 </Sidebar>
                 { children }
