@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
-import ManageContextActions from '../../pages/explore/ManageContextActions';
+import ManageContextActions from './ManageContextActions';
 
 const ActionsSection = styled.div`
   height: 100%;
@@ -27,7 +27,7 @@ const MenuSection = styled.div`
  * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
 
-const Actions = ({ currentId, parentId, popActiveContexts }) => {
+const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
     /**
     * MATRIX
     * ------------------
@@ -149,6 +149,7 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
                 <ManageContextActions
                     userInfos={userInfos}
                     currentId={currentId}
+                    parentId={parentId}
                     currentName={roomName}
                 /> }
             </MenuSection>
@@ -157,4 +158,4 @@ const Actions = ({ currentId, parentId, popActiveContexts }) => {
     );
 };
 
-export default Actions;
+export default ExploreMatrixActions;

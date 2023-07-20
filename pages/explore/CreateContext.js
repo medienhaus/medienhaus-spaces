@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import getConfig from 'next/config';
 import _ from 'lodash';
+import getConfig from 'next/config';
 
-import { useAuth } from '../../../lib/Auth';
+import { useAuth } from '../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
-import presets from '../presets';
+import presets from './oldactions/presets';
+import { useMatrix } from '../../lib/Matrix';
+import ErrorMessage from '../../components/UI/ErrorMessage';
 
 const AdvancesOptions = styled.details`
   & {
@@ -17,15 +19,15 @@ const AdvancesOptions = styled.details`
   }
 `;
 
-const CreateContext = ({ currentId, userInfos }) => {
+const CreateContext = ({ currentId, parentId, userInfos }) => {
     const auth = useAuth();
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
     const [name, setName] = useState();
     const [topic, setTopic] = useState();
     const [template, setTemplate] = useState();
     const [historyVisibility, setHistoryVisibility] = useState();
-    const [joinRules, setJoinRules] = useState();
+    const [joinRule, setJoinRule] = useState();
     const [powerLevels, setPowerLevels] = useState();
 
     const [createNewContextErrorMessage, setCreateNewContextErrorMessage] = useState();
@@ -33,6 +35,7 @@ const CreateContext = ({ currentId, userInfos }) => {
     const createContext = async (e) => {
         e.preventDefault();
         //first of all some content checking otherwise displaying custom error messages
+
         if (!name) {
             setCreateNewContextErrorMessage('name not set');
 
@@ -54,74 +57,39 @@ const CreateContext = ({ currentId, userInfos }) => {
 
             return;
         }
-        if (!historyVisibility) {
-            setHistoryVisibility('default');
 
-            return;
-        }
-        if (!joinRules) {
-            setJoinRules('default');
-
-            return;
-        }
         if (!powerLevels) {
             setPowerLevels('default');
 
             return;
         }
 
-        const p = _.find(presets?.allowedPowerLevelPresets, { name: powerLevels });
-        const call = createMatrixRoom(
-            name,
+        // create the new context space
+        const createNewSubContext = await matrix.createRoom(name,
+            true,
             topic,
+            joinRule || 'public',
+            'context',
             template,
+            getConfig().publicRuntimeConfig.name,
+            'public',
             historyVisibility,
-            joinRules,
-            p?.powerLevels,
-        );
+            'public_chat').catch(async (err) => {
+            setCreateNewContextErrorMessage(err.message);
+            await new Promise(r => setTimeout(r, 3000));
+            setCreateNewContextErrorMessage('');
+        });
 
-        //console.log(p?.powerLevels);
-        console.log(await call);
-        //no error detected delete some leftovers
-        setCreateNewContextErrorMessage('');
-    };
-
-    const createMatrixRoom = async (name, topic = 'a', historyVisibility, joinRules, powerLevels) => {
-        const opts = {
-            name: name,
-            room_version: '9',
-            preset: 'public_chat',
-            topic: topic,
-            visibility: 'public',
-            creation_content: {
-                type: 'm.space',
+        // then add our new context to the parent.
+        if (createNewSubContext) {
+            auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
+                setCreateNewContextErrorMessage(err.message);
+                await new Promise(r => setTimeout(r, 3000));
+                setCreateNewContextErrorMessage('');
             },
-            initial_state: [{
-                type: 'm.room.history_visibility',
-                content: { history_visibility: historyVisibility },
-            },
-            {
-                type: 'm.room.join_rules',
-                content: { join_rule: joinRules },
-            }],
-        };
 
-        console.log(name);
-        console.log(topic);
-        console.log(historyVisibility);
-        console.log(joinRules);
-        console.log(powerLevels);
-
-        const room = await matrixClient.createRoom(opts);
-        const medienhausMetaEvent = {
-            type: 'context',
-            template: template,
-            version: '0.4',
-        };
-
-        await matrixClient.sendStateEvent(room.room_id, 'dev.medienhaus.meta', medienhausMetaEvent);
-
-        return room;
+            );
+        }
     };
 
     return (
@@ -142,7 +110,7 @@ const CreateContext = ({ currentId, userInfos }) => {
                         return <option key={key} value={option?.name}>{ option?.display } — { option?.description }</option>;
                     }) }
                 </select>
-                <select defaultValue={_.find(presets?.allowedJoinRules, { default: true })?.name} value={joinRules} onChange={(e) => {setJoinRules(e.target.value);}}>
+                <select defaultValue={_.find(presets?.allowedJoinRules, { default: true })?.name} value={joinRule} onChange={(e) => {setJoinRule(e.target.value);}}>
                     <option value="" disabled>join rules</option>
                     { _.map(presets?.allowedJoinRules, (option, key) => {
                         return <option key={key} value={option?.name}>{ option?.display } — { option?.description }</option>;
@@ -156,7 +124,7 @@ const CreateContext = ({ currentId, userInfos }) => {
                 </select>
             </AdvancesOptions>
             { (createNewContextErrorMessage) &&
-                <div>‼️ { createNewContextErrorMessage }</div> //error message container
+                <ErrorMessage>{ createNewContextErrorMessage }</ErrorMessage> //error message container
             }
             <button type="submit">create</button>
         </form>
