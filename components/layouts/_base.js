@@ -97,7 +97,7 @@ const Sidebar = styled.aside`
 
   @media ${breakpoints.tabletAndAbove} {
     row-gap: calc(var(--margin) * 1.5);
-    min-width: 12em;
+    min-width: 21ch;
     padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
   }
 `;

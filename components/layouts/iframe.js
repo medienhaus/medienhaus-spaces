@@ -28,7 +28,7 @@ const Sidebar = styled.div`
 
   // On bigger viewports ...
   @media ${breakpoints.tabletAndAbove} {
-    width: 21rem;
+    width: 36ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
   }
