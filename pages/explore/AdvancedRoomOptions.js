@@ -1,11 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import getConfig from 'next/config';
+import React from 'react';
 import _ from 'lodash';
-
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
-import TemplateSelect from './TemplateSelect';
 
 /**
  * ADVANCED ROOM MODERATE OPTIONS COMPONENT
@@ -24,10 +18,6 @@ import TemplateSelect from './TemplateSelect';
 */
 
 const AdvancedRoomOptions = ({ currentId, currentOptions, powerLevels, presets }) => {
-    const auth = useAuth();
-    const matrix = auth.getAuthenticationProvider('matrix');
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-
     return (
         <>
             <select>
