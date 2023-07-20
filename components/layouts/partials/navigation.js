@@ -2,6 +2,7 @@ import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 import getConfig from 'next/config';
 
+import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
@@ -13,6 +14,12 @@ const List = styled.ul`
   li {
     line-height: calc(var(--margin) * 3);
     border-bottom: 1px solid rgb(0 0 0 / 5%);
+  }
+
+  @media ${breakpoints.phoneOnly} {
+    li:first-of-type {
+      padding: 1.5px 0 2.5px;
+    }
   }
 `;
 
