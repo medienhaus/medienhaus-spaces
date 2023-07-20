@@ -79,8 +79,9 @@ const HeaderButton = styled.button`
 `;
 
 const HeaderButtonClose = styled(HeaderButton)`
-  font-size: 2rem;
-  font-weight: 500;
+  font-size: 2.2rem;
+  font-weight: 300;
+  transform: translateY(-3px);
 `;
 
 const Sidebar = styled.aside`
