@@ -1,7 +1,6 @@
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 import getConfig from 'next/config';
-import _ from 'lodash';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
