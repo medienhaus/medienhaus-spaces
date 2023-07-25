@@ -31,7 +31,7 @@ export default function Explore() {
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
     const initialSetup = useCallback(async () => {
-    // initial setup to check for entry points for the explore interface
+        // initial setup to check for entry points for the explore interface
         // we use the roomId from the adress bar if there is one, orherwise we start with the supplied root ID from the config file.
         const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
         // if there i a second query, we want to use it for the iframe
@@ -58,6 +58,8 @@ export default function Explore() {
 
     const handleClicked = useCallback(async (roomId, template, index, parentId) => {
         if (!roomId) return;
+        // exit the function if we clicked on the currently selected space
+        if (activePath[activePath.length - 1] === roomId) return;
 
         setActivePath(prevState => {
             prevState.splice(index < 0 ? 0 : index + 1);
@@ -87,7 +89,7 @@ export default function Explore() {
             setSelectedRoomId(roomId);
             await getContent(roomId);
         }
-    }, [matrix, router, selectedRoomId]);
+    }, [activePath, matrix, router, selectedRoomId]);
 
     const callApiAndAddToObject = async (e, roomId, index, template, parentId) => {
         if (!selectedSpaceChildren) return;
@@ -139,7 +141,6 @@ export default function Explore() {
     }, [activePath, matrix.spaces, matrixClient]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
-    // console.log(selectedSpaceChildren[selectedSpaceChildren.length -1]);
 
     return (
         <>
@@ -147,12 +148,13 @@ export default function Explore() {
             <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
                 { !_.isEmpty(selectedSpaceChildren) &&
-                     !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') && <TreePath
-                    selectedRoomId={selectedRoomId}
-                    data={selectedSpaceChildren}
-                    callApiAndAddToObject={callApiAndAddToObject}
-                    activePath={activePath}
-                />
+                    !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
+                    <TreePath
+                        selectedRoomId={selectedRoomId}
+                        data={selectedSpaceChildren}
+                        callApiAndAddToObject={callApiAndAddToObject}
+                        activePath={activePath}
+                    />
 
                 }
             </IframeLayout.Sidebar>
@@ -233,7 +235,7 @@ export default function Explore() {
 
                                     // we sort the array to display object of the type 'item' before others.
                                     return <TreeLeaves
-                                        row={index}
+                                        depth={selectedSpaceChildren.length}
                                         leaf={leaf}
                                         parent={parent}
                                         key={leaf.room_id + '_' + index}
