@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 
+import { ServiceTable } from '../../components/UI/ServiceTable';
 import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
@@ -14,24 +15,24 @@ import ChatIframeView from '../chat/ChatIframeView';
 import ExploreMatrixActions from './ExploreMatrixActions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
-import { breakpoints } from '../../components/_breakpoints';
+// import { breakpoints } from '../../components/_breakpoints';
 import TreePath from './TreePath';
 
 // height calculation is mostly guess work at the moment...
-const ExploreSection = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: var(--margin);
-
-  .parent {
-    color: var(--color-background);
-    background: var(--color-foreground);
-  }
-
-  @media ${breakpoints.tabletAndAbove} {
-    padding: 0 calc(var(--margin) * 1.5);
-  }
-`;
+// const ExploreSection = styled.div`
+//   width: 100%;
+//   height: 100%;
+//   padding: var(--margin);
+//
+//   .parent {
+//     color: var(--color-background);
+//     background: var(--color-foreground);
+//   }
+//
+//   @media ${breakpoints.tabletAndAbove} {
+//     padding: 0 calc(var(--margin) * 1.5);
+//   }
+// `;
 
 export default function Explore() {
     const [selectedRoomId, setSelectedRoomId] = useState(null);
@@ -208,7 +209,7 @@ export default function Explore() {
                     hasManageContextActionRights={hasManageContextActionRights}
                     setManageContextActionToggle={setManageContextActionToggle}
                 />
-                <ExploreSection>
+                <ServiceTable>
                     { manageContextActionToggle && <ExploreMatrixActions
                         currentId={activePath[activePath.length - 1]}
                         parentId={activePath[activePath.length - 2]}
@@ -244,7 +245,7 @@ export default function Explore() {
                                     />;
                                 })
                     }
-                </ExploreSection>
+                </ServiceTable>
                 { /* <Actions
                     currentId={activePath[activePath.length - 1]}
                     parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
