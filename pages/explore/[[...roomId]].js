@@ -237,7 +237,7 @@ export default function Explore() {
                                     return <TreeLeaves
                                         depth={selectedSpaceChildren.length}
                                         leaf={leaf}
-                                        parent={parent}
+                                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                         key={leaf.room_id + '_' + index}
                                         handleClick={callApiAndAddToObject}
                                         selectedRoomId={selectedRoomId}

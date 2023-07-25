@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-const TreeLeaves = ({ handleClick, depth, leaf, isParent, parent, selectedRoomId, activePath }) => {
+const TreeLeaves = ({ handleClick, depth, leaf, parent, selectedRoomId, activePath }) => {
     const [fetchingLeaves, setFetchingLeaves] = useState(false);
     const router = useRouter();
     const roomId = leaf.id || leaf.room_id;
@@ -29,10 +29,10 @@ const TreeLeaves = ({ handleClick, depth, leaf, isParent, parent, selectedRoomId
             <ServiceTable.Cell
                 disabled={fetchingLeaves}
                 selected={router.query.roomId[1] === roomId || activePath.indexOf(roomId) > -1}
-                onClick={(e) => onClick(e, roomId, depth, leaf.template, parent.room_id)}>
+                onClick={(e) => onClick(e, roomId, depth, leaf.template, parent)}>
                 { leaf.missingMetaEvent ?
-                    <em>{ isParent && parent && selectedRoomId ? '← ' : isParent && parent && '↓ ' } <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
-                    : <>{ isParent && parent && selectedRoomId ? '← ' : isParent && parent && '↓ ' } <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></>
+                    <em> <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
+                    : <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a>
                 }
             </ServiceTable.Cell>
             <ServiceTable.Cell title={leaf.template}>
