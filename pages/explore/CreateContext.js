@@ -9,6 +9,7 @@ import presets from './oldactions/presets';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import Form from '../../components/UI/Form';
 
 const AdvancesOptions = styled.details`
   & {
@@ -43,11 +44,6 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
 
             return;
         }
-        if (name.length < 4) {
-            setCreateNewContextErrorMessage('name must have at least 4 Character');
-
-            return;
-        }
         if (!template) {
             setCreateNewContextErrorMessage('template not selected');
 
@@ -64,7 +60,8 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
             setPowerLevels('default');
         }
         // create the new context space
-        const createNewSubContext = await matrix.createRoom(name,
+        const createNewSubContext = await matrix.createRoom(
+            name,
             true,
             topic,
             joinRule || 'public',
@@ -86,7 +83,6 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
                 await new Promise(r => setTimeout(r, 3000));
                 setCreateNewContextErrorMessage('');
             },
-
             );
         }
         setName('');
@@ -96,13 +92,14 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
     };
 
     return (
-        <form onSubmit={createContext}>
+        <Form onSubmit={createContext}>
             <input type="text" onChange={(e) => {setName(e?.target?.value);}} value={name} required placeholder="name" />
             <input type="text" onChange={(e) => {setTopic(e?.target?.value);}} value={topic} placeholder="topic (optional)" />
             <TemplateSelect
                 currentId={currentId}
                 userInfos={userInfos}
-                currentTemplate={setTemplate}
+                currentTemplate={template}
+                setTemplate={setTemplate}
             />
 
             <AdvancesOptions>
@@ -130,7 +127,7 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
                 <ErrorMessage>{ createNewContextErrorMessage }</ErrorMessage> //error message container
             }
             <button disabled={isLoading || !name || !template} type="submit">{ isLoading ? <LoadingSpinner inverted /> : 'create' }</button>
-        </form>
+        </Form>
 
     );
 };
