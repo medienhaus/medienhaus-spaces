@@ -36,12 +36,11 @@ const TableRow = styled.tr`
 const TableCell = styled.td`
   width: 100%;
   padding: 0;
+  line-height: calc(var(--margin) * 3);
   text-overflow: ellipsis;
 
   a {
-    display: block;
     width: 100%;
-    line-height: calc(var(--margin) * 3);
     color: ${props => props.selected && 'var(--color-disabled)'};
     text-decoration: ${props => props.selected && 'none'};
 

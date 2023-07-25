@@ -38,13 +38,12 @@ const TreePath = ({ selectedRoomId, data, callApiAndAddToObject, activePath }) =
                 if (!path[0]?.parent) return null;
 
                 return <ServiceTable.Row key={index}>
-                    <ServiceTable.Cell>
-                        <Leaf selected
-                            disabled={isFetching}
-                            onClick={(e) => handleClick(e, path[0].parent.room_id, index - 1, path[0].parent.template)}>
-                            <a>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetching === path[0].parent.room_id && <LoadingSpinnerInline /> }</a>
-                        </Leaf>
-                    </ServiceTable.Cell>
+                    <Leaf selected
+                        disabled={isFetching}
+                        onClick={(e) => handleClick(e, path[0].parent.room_id, index - 1, path[0].parent.template)}>
+                        <a>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetching === path[0].parent.room_id && <LoadingSpinnerInline /> }</a>
+                    </Leaf>
+
                     { /* <Actions
                         currentId={activePath[activePath.length - 1]}
                         parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
