@@ -8,6 +8,7 @@ import TemplateSelect from './TemplateSelect';
 import presets from './oldactions/presets';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const AdvancesOptions = styled.details`
   & {
@@ -25,6 +26,7 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
 
     const [name, setName] = useState();
     const [topic, setTopic] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [template, setTemplate] = useState();
     const [historyVisibility, setHistoryVisibility] = useState();
     const [joinRule, setJoinRule] = useState();
@@ -35,7 +37,7 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
     const createContext = async (e) => {
         e.preventDefault();
         //first of all some content checking otherwise displaying custom error messages
-
+        setIsLoading(true);
         if (!name) {
             setCreateNewContextErrorMessage('name not set');
 
@@ -52,18 +54,15 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
             return;
         }
         // topic is optional. Advanced options as well if not selected will fall back to default
-        if (topic?.length > 400) {
-            setCreateNewContextErrorMessage('topic too long (max 400chars)');
+        // if (topic?.length > 400) {
+        //     setCreateNewContextErrorMessage('topic too long (max 400chars)');
 
-            return;
-        }
+        //     return;
+        // }
 
         if (!powerLevels) {
             setPowerLevels('default');
-
-            return;
         }
-
         // create the new context space
         const createNewSubContext = await matrix.createRoom(name,
             true,
@@ -90,6 +89,10 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
 
             );
         }
+        setName('');
+        setTopic('');
+        setTemplate('');
+        setIsLoading(false);
     };
 
     return (
@@ -126,7 +129,7 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
             { (createNewContextErrorMessage) &&
                 <ErrorMessage>{ createNewContextErrorMessage }</ErrorMessage> //error message container
             }
-            <button type="submit">create</button>
+            <button disabled={isLoading || !name || !template} type="submit">{ isLoading ? <LoadingSpinner inverted /> : 'create' }</button>
         </form>
 
     );
