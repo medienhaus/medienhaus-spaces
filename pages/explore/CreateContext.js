@@ -21,7 +21,7 @@ const AdvancesOptions = styled.details`
   }
 `;
 
-const CreateContext = ({ currentId, parentId, userInfos }) => {
+const CreateContext = ({ currentId, parentId }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
@@ -97,7 +97,6 @@ const CreateContext = ({ currentId, parentId, userInfos }) => {
             <input type="text" onChange={(e) => {setTopic(e?.target?.value);}} value={topic} placeholder="topic (optional)" />
             <TemplateSelect
                 currentId={currentId}
-                userInfos={userInfos}
                 currentTemplate={template}
                 setTemplate={setTemplate}
             />

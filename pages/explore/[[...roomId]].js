@@ -20,13 +20,14 @@ export default function Explore() {
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [roomContent, setRoomContent] = useState();
     const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
-    const [hasManageContextActionRights, setHasManageContextActionRights] = useState(true);
+    const [isCurrentUserModerator, setIsCurrentUserModerator] = useState(false);
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const dimensionsRef = useRef();
     const router = useRouter();
     const [currentItemType, setCurrentItemType] = useState('');
     const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
     const initialSetup = useCallback(async () => {
@@ -117,12 +118,25 @@ export default function Explore() {
             await getMetaEvent(space);
         }
         await handleClicked(roomId, template, index, parentId);
+
         setSelectedSpaceChildren((prevState) => {
             prevState.splice(index+1); // delete all entries after the selected row.
 
             return [...prevState, spaceHierarchy];
         });
     };
+    useEffect(() => {
+        let cancelled = false;
+
+        if (!cancelled && matrixClient && matrix?.spaces && activePath) {
+            const userId = matrixClient?.credentials?.userId;
+            setIsCurrentUserModerator(matrix.spaces.get(activePath[activePath.length - 1])?.events?.get('m.room.power_levels').values().next().value.getContent().users[userId]);
+        }
+
+        return () => {
+            cancelled = true;
+        };
+    }, [activePath, matrix.spaces, matrixClient]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
     // console.log(selectedSpaceChildren[selectedSpaceChildren.length -1]);
@@ -188,14 +202,16 @@ export default function Explore() {
                     title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || 'Header Text'}
                     removeLink={() => console.log('removing sketch from parent')}
                     removingLink={false}
-                    hasManageContextActionRights={hasManageContextActionRights}
+                    isCurrentUserModerator={isCurrentUserModerator}
                     setManageContextActionToggle={setManageContextActionToggle}
                 />
                 <ServiceTable>
-                    { manageContextActionToggle && <ExploreMatrixActions
-                        currentId={activePath[activePath.length - 1]}
-                        parentId={activePath[activePath.length - 2]}
-                    /> }
+                    { manageContextActionToggle &&
+                            <ExploreMatrixActions
+                                isCurrentUserModerator={isCurrentUserModerator}
+                                currentId={activePath[activePath.length - 1]}
+                                parentId={activePath[activePath.length - 2]}
+                            /> }
 
                     { !manageContextActionToggle &&
                         selectedSpaceChildren &&

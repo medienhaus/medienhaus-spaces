@@ -18,7 +18,7 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content, hasManageContextActionRights, setManageContextActionToggle }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject, content, isCurrentUserModerator, setManageContextActionToggle }) => {
     const [isManageContextMenuOpen, setIsManageContextMenuOpen] = useState(true);
     const { t } = useTranslation('write');
 
@@ -30,7 +30,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deletePad, title, mypadsPadObject,
                 <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                 </button>
-                { hasManageContextActionRights && (
+                { isCurrentUserModerator && (
                     isManageContextMenuOpen ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
                             <ListSettingsIcon

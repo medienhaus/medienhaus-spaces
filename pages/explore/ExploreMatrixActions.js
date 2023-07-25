@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
 import ManageContextActions from './ManageContextActions';
@@ -22,12 +21,12 @@ const MenuSection = styled.div`
  * @param {String} currentId — the Id of the current observed Room
  * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
- *
+ * @param {Boolean} isCurrentUserModerator - true if the user has moderatoion rights for the currentId.
  * @TODO
  * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
 
-const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
+const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, popActiveContexts }) => {
     /**
     * MATRIX
     * ------------------
@@ -46,10 +45,6 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
     *
     */
 
-    const [userInfos, setUserInfos] = useState(); //stores information about the curren User
-
-    const [isCurrentUserModerator, setIsisCurrentUserModerator] = useState(false);
-
     /**
     * EFFECTS
     * ------------------
@@ -60,9 +55,11 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
     */
 
     useEffect(() => {
-        fetchRoomName();
-        fetchRoomPowerLevels();
-    }, [currentId]);
+        let cancelled = false;
+        if (!cancelled) fetchRoomName();
+
+        return () => cancelled = true;
+    }, [currentId, fetchRoomName]);
 
     /**
     * CURRENT ROOM DATA STORAGE (VOLATILE)
@@ -89,7 +86,6 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
     */
 
     const [cachedRoomNames, setCachedRoomNames] = useState({});
-    const [cachedRoomPowerLevels, setCachedRoomPowerLevels] = useState({});
 
     /**
     * FETCH FUNCTIONS
@@ -97,7 +93,7 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
     * fetch functions to get room specific informations from the current Id
     */
 
-    const fetchRoomName = async () => {
+    const fetchRoomName = useCallback(async () => {
         const nameEvent = await matrixClient.getStateEvent(
             currentId,
             'm.room.name',
@@ -106,20 +102,7 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
 
         // send also to the sessions non volatile state storage
         setCachedRoomNames({ ...cachedRoomNames, [currentId]: { name: nameEvent?.name } });
-    };
-
-    const fetchRoomPowerLevels = async () => {
-        const userId = matrixClient?.credentials?.userId;
-        const powerLevelsEvent = await matrixClient.getStateEvent(
-            currentId,
-            'm.room.power_levels',
-        ).catch(() => {});
-        setIsisCurrentUserModerator(powerLevelsEvent?.users[userId] >= 50);  //check if the current user got is listed with a custom power level if true and >= 50 (mod default) mod flag is set true
-        setUserInfos({ ...userInfos, id: userId });
-
-        // send also to the sessions non volatile state storage
-        setCachedRoomPowerLevels({ ...cachedRoomPowerLevels, [currentId]: { powerLevels: powerLevelsEvent } });
-    };
+    }, [cachedRoomNames, currentId, matrixClient]);
 
     /**
     * RENDER
@@ -147,7 +130,6 @@ const ExploreMatrixActions = ({ currentId, parentId, popActiveContexts }) => {
             <MenuSection>
                 { isCurrentUserModerator &&
                 <ManageContextActions
-                    userInfos={userInfos}
                     currentId={currentId}
                     parentId={parentId}
                     currentName={roomName}
