@@ -17,7 +17,7 @@ module.exports = {
                 baseUrl: 'https://pad.riseup.net/p',
                 myPads: {
                     api: 'http://etherpad.localhost/mypads/api',
-                    spacesGroupName: '/spaces', // optinal, defaults to publicRuntimeConfig.name
+                    spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
 
                 },
             },
