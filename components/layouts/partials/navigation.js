@@ -1,6 +1,7 @@
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 import getConfig from 'next/config';
+import _ from 'lodash';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
@@ -55,8 +56,17 @@ export default function Navigation({ closeNavigation }) {
             </List>
             <List>
                 <li><Link href="/">/chat</Link></li>
-                { getConfig().publicRuntimeConfig.authProviders.etherpad && <li><Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</Link></li> }
-                { getConfig().publicRuntimeConfig.authProviders.spacedeck && <li><Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</Link></li> }
+                { Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
+                    // we skip the matrix config since it's already displayed in chat
+                    // @TODO enabkle custom path name for chat
+                    if (authProvider === 'matrix') return null;
+
+                    return <li>
+                        <Link href={getConfig().publicRuntimeConfig.authProviders[authProvider].path}>
+                            { getConfig().publicRuntimeConfig.authProviders[authProvider].path }
+                        </Link>
+                    </li>;
+                }) }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>
