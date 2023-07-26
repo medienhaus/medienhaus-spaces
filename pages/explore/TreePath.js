@@ -4,7 +4,6 @@ import Link from 'next/link';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-// import Actions from '../../components/actions';
 
 const Leaf = styled(ServiceTable.Cell)`
   cursor: pointer;
@@ -35,12 +34,6 @@ const TreePath = ({ data, isFetchingContent }) => {
                     >
                         <Link disabled href={`/explore/${path[0].parent.room_id}`}>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetchingContent === path[0].parent.room_id && <LoadingSpinnerInline /> }</Link>
                     </Leaf>
-
-                    { /* <Actions
-                        currentId={activePath[activePath.length - 1]}
-                        parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
-                        // popActiveContexts={() => setActivePath(prevState => prevState.pop())}
-                    /> */ }
 
                 </ServiceTable.Row>;
             }) }
