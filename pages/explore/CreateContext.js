@@ -5,7 +5,7 @@ import getConfig from 'next/config';
 
 import { useAuth } from '../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
-import presets from './oldactions/presets';
+import presets from './presets';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
