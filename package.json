@@ -72,6 +72,21 @@
         "error",
         "prefer-double"
       ]
-    }
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "overrides": [
+      {
+        "files": [
+          "./*.js"
+        ],
+        "env": {
+          "node": true
+        }
+      }
+    ]
   }
 }
