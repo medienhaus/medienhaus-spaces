@@ -6,20 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-const AddExistingItemDialog = styled.div`
-  & > * + * {
-    margin-top: var(--margin);
-  }
-
-  & > select + select {
-    margin-top: calc(var(--margin) * 0.65);
-  }
-
-  & span {
-    background-color: var(--color-me);
-  }
-`;
-
 const SingleLevel = ({ level, setObservedIdPath, setAddable }) => {
     const { t } = useTranslation('explore');
 
@@ -36,7 +22,7 @@ const SingleLevel = ({ level, setObservedIdPath, setAddable }) => {
                     }
                 </option>
                 { level?.children && Object.entries(level?.children).map(([key, entry]) => (
-                    <option key={key} value={entry?.roomId}>
+                    <option key={entry?.roomId+' '+key} value={entry?.roomId}>
                         { entry?.name }
                     </option>
                 )) }
@@ -154,17 +140,15 @@ const AddExistingItem = ({ currentId }) => {
     };
 
     return (
-        <AddExistingItemDialog>
+        <>
             { observedIdPath.map((id) => { // loop trough all of the selected Levels
-                const level = <SingleLevel level={servicesCache.find(({ roomId }) => roomId === id)} setObservedIdPath={setObservedIdPath} setAddable={setAddable} />;
-
-                return level;
+                return <SingleLevel key={id} level={servicesCache.find(({ roomId }) => roomId === id)} setObservedIdPath={setObservedIdPath} setAddable={setAddable} />;
             })
             }
             { addable &&
             <button onClick={e => executeAddItemToContext(observedIdPath[observedIdPath.length-1], currentId)}>{ t('add') }</button> }
             { errorMessage && <pre>‼️ { errorMessage }</pre> }
-        </AddExistingItemDialog>
+        </>
     );
 };
 
