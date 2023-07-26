@@ -1,16 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import { t } from 'i18next';
 
 import CreateContext from './CreateContext';
-// import AddExistingContext from './AddExistingContext';
 
-const ManageContextActionsWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-`;
 const ManageContextActions = ({ userInfos, parentId, currentId, currentName, setShowActions }) => {
-    return <ManageContextActionsWrapper>
+    return <>
         <h2>{ t('Manage contexts and items within ') }{ currentName }</h2>
         <details>
             <summary>{ t('create new substructure') }</summary>
@@ -26,7 +20,7 @@ const ManageContextActions = ({ userInfos, parentId, currentId, currentName, set
                 <summary>{ t('add existing item from application') }</summary>
             </details> */ }
 
-    </ManageContextActionsWrapper>;
+    </>;
 };
 
 export default ManageContextActions;
