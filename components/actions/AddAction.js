@@ -8,6 +8,7 @@ import { useMatrix } from '../../lib/Matrix';
 import CreateContext from './functions/CreateContext';
 import TemplateSelect from './functions/TemplateSelect';
 import AddExistingContext from './functions/AddExistingContext';
+import AddExistingItem from './functions/AddExistingItem';
 
 const ModSection = styled.div`
   & {
@@ -67,7 +68,7 @@ const AddAction = ({ currentId, userInfos, mod, currentName, setShowActions }) =
 
                     <details>
                         <summary>add existing item from application</summary>
-                        <></>
+                        <AddExistingItem parentId={currentId} parentName={currentName} setShowActions={setShowActions} />
                     </details>
 
                 </ModSection>
