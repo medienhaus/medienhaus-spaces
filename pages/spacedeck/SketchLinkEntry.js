@@ -35,7 +35,7 @@ export default function SketchLinkEntry({ roomId, selected }) {
         const controller = new AbortController();
         const signal = controller.signal;
         const checkForRoomContent = async () => {
-            await matrix.hydrateRoomContent(roomId, 1, signal);
+            await matrix.hydrateRoomContent(roomId, signal);
         };
         checkForRoomContent();
 
