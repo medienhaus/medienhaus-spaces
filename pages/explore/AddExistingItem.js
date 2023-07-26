@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '../../lib/Matrix';
 
 const AddExistingItemDialog = styled.div`
   & > * + * {

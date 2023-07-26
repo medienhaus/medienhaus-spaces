@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { t } from 'i18next';
 
 import CreateContext from './CreateContext';
+import AddExistingItem from './AddExistingItem';
 // import AddExistingContext from './AddExistingContext';
 
 const ManageContextActionsWrapper = styled.div`
@@ -15,6 +16,10 @@ const ManageContextActions = ({ userInfos, parentId, currentId, currentName, set
         <details>
             <summary>{ t('create new substructure') }</summary>
             <CreateContext currentId={currentId} parentId={parentId} userInfos={userInfos} />
+        </details>
+        <details>
+            <summary>{ t('add existing item') }</summary>
+            <AddExistingItem parentId={currentId} parentName="bing" />
         </details>
 
         { /* <details>
