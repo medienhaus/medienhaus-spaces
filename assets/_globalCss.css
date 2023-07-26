@@ -11,6 +11,17 @@
   --color-background-beta: hsl(0deg 0% 94%);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: rgb(0 0 0);
+    --color-foreground: rgb(255 255 255);
+    --color-disabled: rgb(128 128 128);
+    --color-selection: rgb(255 240 170);
+    --color-background-alpha: hsl(0deg 0% 3%);
+    --color-background-beta: hsl(0deg 0% 6%);
+  }
+}
+
 *,
 *::before,
 *::after {
