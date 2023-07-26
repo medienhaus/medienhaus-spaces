@@ -32,7 +32,7 @@ const TableCell = styled.td`
     display: block;
     width: 100%;
     line-height: calc(var(--margin) * 3);
-    color: ${props => props.selected && 'rgb(0 0 0 / 50%)' };
+    color: ${props => props.selected && 'var(--color-disabled)' };
     text-decoration: ${props => props.selected && 'none' };
 
     &:hover {

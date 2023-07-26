@@ -34,7 +34,7 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
-  background: black;
+  background: var(--color-foreground);
 `;
 
 const SidebarListEntryWrapper = styled.a`
