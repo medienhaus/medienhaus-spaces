@@ -51,15 +51,14 @@ const SingleLevel = ({ level, setObservedIdPath, setAddable }) => {
  * 'ADD EXISTING ITEM' COMPONENT
  * ------------------
  *
- * @param {String} parentId — id of the current observed explore room
- * @param {String} parentName — name of the currently observed expore room. is just needed for error log
+ * @param {String} currentId — id of the current observed explore room
  *
  * @TODO
  *  - some functions regarding spaces of spaces in the application folders needs to be implemented in the future. But as this is not a featureset of our current stack for now it could not be tested fully.
  *
 */
 
-const AddExistingItem = ({ parentId, parentName }) => {
+const AddExistingItem = ({ currentId }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
@@ -134,15 +133,15 @@ const AddExistingItem = ({ parentId, parentName }) => {
         }
     }, [observedIdPath, matrix, servicesCache, setServicesCache]);
 
-    const executeAddItemToContext = async (itemId, parentId, parentName) => {
+    const executeAddItemToContext = async (itemId, currentId) => {
         cleanUp();
 
-        const call = await matrixAuthed.addSpaceChild(parentId, itemId);
+        const call = await matrixAuthed.addSpaceChild(currentId, itemId);
         if (call?.event_id) {
             // call worked as expected Dialog can be closed.
             cleanUp();
         } else {
-            setErrorMessage('matrix server refused to add '+itemId+' as a child to '+parentId);
+            setErrorMessage('matrix server refused to add '+itemId+' as a child to '+currentId);
         }
     };
 
@@ -163,7 +162,7 @@ const AddExistingItem = ({ parentId, parentName }) => {
             })
             }
             { addable &&
-            <button onClick={e => executeAddItemToContext(observedIdPath[observedIdPath.length-1], parentId, parentName)}>{ t('add') }</button> }
+            <button onClick={e => executeAddItemToContext(observedIdPath[observedIdPath.length-1], currentId)}>{ t('add') }</button> }
             { errorMessage && <pre>‼️ { errorMessage }</pre> }
         </AddExistingItemDialog>
     );
