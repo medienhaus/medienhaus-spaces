@@ -30,3 +30,4 @@ EXPOSE 3000
 
 #Allows you to configure a container that will run as an executable
 ENTRYPOINT ["npm", "run"]
+CMD ["start"]
