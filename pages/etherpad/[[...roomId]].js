@@ -360,7 +360,7 @@ export default function Etherpad() {
                     <ServiceIframeHeader
                         content={content.body}
                         title={matrix.rooms.get(roomId).name}
-                        deletePad={deletePad}
+                        deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
                         mypadsPadObject={mypadsPadObject} />
                     <iframe src={iframeUrl.toString()} />
