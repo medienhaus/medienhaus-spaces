@@ -55,7 +55,7 @@ export default function Navigation({ closeNavigation }) {
                 <li><Link href="/explore">/explore</Link></li>
             </List>
             <List>
-                <li><Link href="/">/chat</Link></li>
+                <li><Link href="/chat">/chat</Link></li>
                 { _.get(getConfig(), 'publicRuntimeConfig.authProviders.etherpad.path') && (
                     <li>
                         <Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>

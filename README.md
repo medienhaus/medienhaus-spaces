@@ -16,6 +16,8 @@ The application itself is written in JavaScript, we're using the Next.js framewo
 
 ## Development
 
+If you don't want to dive deep and just get started use Docker. The provided `docker-compose.yml` file will fetch and start all necessary containers to develop, including a copy of Element. Just run `docker-compose up -d` to start, and `docker-compose down` to stop & delete all containers.
+
 ### Installation
 
 #### `npm install`
