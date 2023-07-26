@@ -150,16 +150,13 @@ export default function Explore() {
                         isCurrentUserModerator={isCurrentUserModerator}
                         setManageContextActionToggle={setManageContextActionToggle}
                     />
-                    <ServiceTable>
-                        { manageContextActionToggle &&
-                            <ExploreMatrixActions
-                                isCurrentUserModerator={isCurrentUserModerator}
-                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                            /> }
-
-                        { !manageContextActionToggle &&
-                            selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                    { manageContextActionToggle ?
+                        <ExploreMatrixActions
+                            isCurrentUserModerator={isCurrentUserModerator}
+                            currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                            parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                        /> : <ServiceTable>
+                            { selectedSpaceChildren[selectedSpaceChildren.length - 1]
                                 .sort(function(a, b) {
                                     if (a.type === 'item' && b.type !== 'item') {
                                         return -1; // a comes before b
@@ -172,7 +169,7 @@ export default function Explore() {
                                 .map((leaf, index) => {
                                     if (leaf.length <= 1) {
                                         return <ErrorMessage key="error-message">
-                                            Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
+                                                        Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
                                         </ErrorMessage>;
                                     }
                                     if (index === 0) return null;
@@ -186,15 +183,9 @@ export default function Explore() {
                                         iframeRoomId={iframeRoomId}
                                         isFetchingContent={isFetchingContent}
                                     />;
-                                })
-                        }
-                    </ServiceTable>
-
-                    { /* <Actions
-                    currentId={activePath[activePath.length - 1]}
-                    parentId={activePath?.length >= 2 ? activePath[activePath.length - 2] : undefined}
-                    // popActiveContexts={() => setActivePath(prevState => prevState.pop())}
-                /> */ }
+                                }) }
+                        </ServiceTable>
+                    }
                 </>
                 }
             </IframeLayout.IframeWrapper> }
