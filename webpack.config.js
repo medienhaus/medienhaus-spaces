@@ -7,5 +7,6 @@ module.exports = (config, { buildId, dev, isServer, defaultLoaders, webpack }) =
         files: ['assets/*.css', 'components/**/*.js', 'pages/**/*.js'],
         failOnError: false,
     }));
+
     return config;
 };
