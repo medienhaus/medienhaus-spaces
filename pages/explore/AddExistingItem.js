@@ -12,10 +12,11 @@ const SingleLevel = ({ level, setObservedIdPath, setAddable }) => {
     return (
         <>
             { level &&
-            <select onChange={(e) => {
-                setObservedIdPath(current => [...current, e?.target?.value]);
-            }}>
-                <option selected="true" disabled="disabled">
+            <select defaultValue="default"
+                onChange={(e) => {
+                    setObservedIdPath(current => [...current, e?.target?.value]);
+                }}>
+                <option value="default" disabled="disabled">
                    -----{ t('select from') + ' '+ level?.name } -----
                     {
                         //adding name as default not selectable option. Needs to be checked if this type of structure makes  sense in each translation
