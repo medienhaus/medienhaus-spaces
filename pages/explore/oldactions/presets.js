@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line no-undef
 
 /**
@@ -50,23 +49,23 @@ module.exports = {
         {
             name: 'world_readable',
             display: '🌐',
-            description: 'some description',
+            description: 'world readable',
             default: true,
         },
         {
             name: 'shared',
             display: '📖',
-            description: 'some description',
+            description: 'shared',
         },
         {
             name: 'joined',
             display: '🔐',
-            description: 'some description',
+            description: 'joined',
         },
         {
             name: 'invited',
             display: '🔒',
-            description: 'some description',
+            description: 'invited',
         },
     ],
     allowedPowerLevelPresets: [
