@@ -12,10 +12,14 @@ module.exports = {
             matrixContentStorage: {
                 baseUrl: 'https://second.matrixserver.org',
             },
-            etherpadMyPads: {
+            etherpad: {
+                path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
-                // api: 'https://your.etherpadserver.org/mypads/api',
-                // spacesGroupName: '/spaces'
+                myPads: {
+                    api: 'http://etherpad.localhost/mypads/api',
+                    spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
+
+                },
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
@@ -25,6 +29,18 @@ module.exports = {
         chat: {
             pathToElement: '//localhost/element',
         },
+    },
+    async rewrites() {
+        return [
+            {
+                source: this.publicRuntimeConfig.authProviders.etherpad.path,
+                destination: '/etherpad',
+            },
+            {
+                source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
+                destination: '/etherpad/:roomId',
+            },
+        ];
     },
     webpack: WebpackConfig,
 };

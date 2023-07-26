@@ -48,7 +48,8 @@ export default function Login() {
         setIsTryingToSignIn(true);
         setErrorMessage(null);
         await auth.signin(name, password, homeserver).catch(/** @param {MatrixError} error */(error) => {
-            setErrorMessage(error.message);
+            if (error.errcode === 'M_LIMIT_EXCEEDED') setErrorMessage(t('{{error}}, please wait {{time}} seconds.', { error: error.data.error, time: Math.round(error.data.retry_after_ms / 1000) }));
+            else setErrorMessage(error.data?.error);
         });
         setIsTryingToSignIn(false);
     };
