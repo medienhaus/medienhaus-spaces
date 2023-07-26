@@ -12,7 +12,7 @@ import IframeLayout from '../../components/layouts/iframe';
 
 const sortRooms = function(room) {
     return [
-        room.notificationCount == 0,
+        room.notificationCount === 0,
         room.name,
     ];
 };
@@ -53,7 +53,7 @@ const RoomName = styled.span`
   white-space: nowrap;
 `;
 
-const SidebarListEntry = function({ room, onClick }) {
+const SidebarListEntry = function({ room }) {
     return (
         <Link href={`/chat/${room.roomId}`} passHref>
             <SidebarListEntryWrapper>
@@ -83,7 +83,8 @@ export default function RoomId() {
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
-        if (!iframe.current) return;
+        const iframeReference = iframe.current;
+        if (!iframeReference) return;
 
         const injectCss = () => {
             const styleTag = document.createElement('style');
@@ -101,13 +102,13 @@ export default function RoomId() {
                 .mx_RoomHeader_name { font-weight: bold }
             `);
             styleTag.appendChild(styleContent);
-            iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
+            iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
         };
 
-        iframe.current.addEventListener('load', injectCss);
+        iframeReference.addEventListener('load', injectCss);
 
         return () => {
-            iframe.current && iframe.current.removeEventListener('load', injectCss);
+            iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
 
