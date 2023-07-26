@@ -1,38 +1,30 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
+import getConfig from 'next/config';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-const TreeLeaves = ({ handleClick, depth, leaf, parent, selectedRoomId, activePath }) => {
-    const [fetchingLeaves, setFetchingLeaves] = useState(false);
+
+const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent }) => {
     const router = useRouter();
     const roomId = leaf.id || leaf.room_id;
-
-    const onClick = async (e, id, index, leafTemplate, parentId) => {
-        e.preventDefault();
-        setFetchingLeaves(id);
-        await handleClick(e, id || roomId, index, leafTemplate, parentId);
-        setFetchingLeaves(false);
-    };
+    const parentId = leaf.parent.id || leaf.parent.room_id;
 
     if (!leaf) return <LoadingSpinner />;
-
-    // if the roomId is the selected space we skip it
-    if (roomId === router.query.roomId[0]) return null;
-
     // if an iframe is open we only want to show items in the list
     if (selectedRoomId && leaf.type !== 'item') return null;
 
     return (
-        <ServiceTable.Row key={roomId} disabled={fetchingLeaves}>
+        <ServiceTable.Row key={roomId} disabled={isFetchingContent}>
             <ServiceTable.Cell
-                disabled={fetchingLeaves}
-                selected={router.query.roomId[1] === roomId || activePath.indexOf(roomId) > -1}
-                onClick={(e) => onClick(e, roomId, depth, leaf.template, parent)}>
+                disabled={isFetchingContent}
+                selected={router.query.roomId[1] === roomId|| router.query.roomId[0] === roomId}
+            >
                 { leaf.missingMetaEvent ?
-                    <em> <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
-                    : <a href="">{ leaf.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a>
+                    <em> <a href="">{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</a></em>
+                    :<Link disabled={isFetchingContent} href={getConfig().publicRuntimeConfig.templates.item.includes(leaf.template) ? `/explore/${parentId}/${roomId}` : `/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
                 }
             </ServiceTable.Cell>
             <ServiceTable.Cell title={leaf.template}>

@@ -19,54 +19,27 @@ import TreePath from './TreePath';
 export default function Explore() {
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [roomContent, setRoomContent] = useState();
-    const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [isCurrentUserModerator, setIsCurrentUserModerator] = useState(false);
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
+    const [isFetchingContent, setIsFetchingContent] = useState(false);
     const dimensionsRef = useRef();
     const router = useRouter();
-    const [currentItemType, setCurrentItemType] = useState('');
+    const [currentTemplate, setCurrentTemplate] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    const initialSetup = useCallback(async () => {
+    const onRouterChange = useCallback(async () => {
+        setIsFetchingContent(true);
         // initial setup to check for entry points for the explore interface
         // we use the roomId from the adress bar if there is one, orherwise we start with the supplied root ID from the config file.
         const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
+        const userId = matrixClient.credentials.userId;
+        setIsFetchingContent(roomId);
+        setIsCurrentUserModerator(matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[userId]);
         // if there i a second query, we want to use it for the iframe
         const iframeRoomId = router.query.roomId && router.query.roomId[1];
-
-        if (iframeRoomId) {
-            router.push(`/explore/${roomId}/${iframeRoomId}`);
-            setSelectedRoomId(iframeRoomId);
-            setActivePath([roomId, iframeRoomId]);
-        } else {
-            setActivePath([roomId]);
-            router.push(`/explore/${roomId}`);
-        }
-        callApiAndAddToObject(null, roomId, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        let cancelled = false;
-        !cancelled && initialSetup();
-
-        return () => cancelled = true;
-    }, [initialSetup]);
-
-    const handleClicked = useCallback(async (roomId, template, index, parentId) => {
-        if (!roomId) return;
-        // exit the function if we clicked on the currently selected space
-        if (activePath[activePath.length - 1] === roomId) return;
-
-        setActivePath(prevState => {
-            prevState.splice(index < 0 ? 0 : index + 1);
-
-            return [...prevState, roomId];
-        });
-
         const getContent = async (roomId) => {
             const cachedContent = matrix.roomContents.get(selectedRoomId)?.body;
             if (cachedContent) setRoomContent(cachedContent);
@@ -77,68 +50,78 @@ export default function Explore() {
             }
         };
 
-        if (template !== 'chat-link' &&
-            template !== 'studentproject' &&
-            template !== 'sketch-link' &&
-            template !== 'write-link') {
-            router.push(`/explore/${roomId}`);
-            setSelectedRoomId(null);
+        if (iframeRoomId) {
+            await callApiAndAddToObject(null, iframeRoomId);
+            await getContent(iframeRoomId);
+            setSelectedRoomId(iframeRoomId);
         } else {
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
+            await callApiAndAddToObject(null, roomId);
+            setSelectedRoomId(null);
         }
-    }, [activePath, matrix, router, selectedRoomId]);
+        setIsFetchingContent(false);
+    }, [callApiAndAddToObject, matrix, matrixClient.credentials.userId, router.query.roomId, selectedRoomId]);
 
-    const callApiAndAddToObject = async (e, roomId, index, template, parentId) => {
-        if (!selectedSpaceChildren) return;
-        e && e.preventDefault();
-        console.log('call Api or matrix and add');
-        const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
-            .catch(err => console.debug(err));
-        if (!spaceHierarchy) return;
-        const parent = spaceHierarchy[0];
-
-        const getMetaEvent = async (obj) => {
-            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
-            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
-                .catch((err) => {
-                    console.debug(err);
-                    obj.missingMetaEvent = true;
-                });
-
-            if (metaEvent) {
-                obj.type = metaEvent.type;
-                obj.template = metaEvent.template;
-                obj.application = metaEvent.application;
-            }
-        };
-
-        for (const space of spaceHierarchy) {
-            space.parent = parent;
-            await getMetaEvent(space);
-        }
-        await handleClicked(roomId, template, index, parentId);
-
-        setSelectedSpaceChildren((prevState) => {
-            prevState.splice(index+1); // delete all entries after the selected row.
-
-            return [...prevState, spaceHierarchy];
-        });
-    };
     useEffect(() => {
         let cancelled = false;
-
-        if (!cancelled && matrixClient && matrix?.spaces && activePath) {
-            const userId = matrixClient?.credentials?.userId;
-            setIsCurrentUserModerator(matrix.spaces.get(activePath[activePath.length - 1])?.events?.get('m.room.power_levels').values().next().value.getContent().users[userId]);
+        if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
+            console.log(router.query.roomId);
+            onRouterChange();
         }
 
         return () => {
             cancelled = true;
         };
-    }, [activePath, matrix.spaces, matrixClient]);
+    }, [router.query.roomId, matrix.initialSyncDone, onRouterChange]);
+
+    const getMetaEvent = useCallback(async (obj) => {
+        console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
+        const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
+            .catch((err) => {
+                console.debug(err);
+                obj.missingMetaEvent = true;
+            });
+
+        if (metaEvent) {
+            obj.type = metaEvent.type;
+            obj.template = metaEvent.template;
+            obj.application = metaEvent.application;
+            setCurrentTemplate(obj.template);
+        }
+    }, [auth]);
+
+    const callApiAndAddToObject = useCallback(async (e, roomId) => {
+        if (!selectedSpaceChildren) return;
+        e && e.preventDefault();
+        console.debug('call Api or matrix and add');
+        const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+            .catch(err => console.debug(err));
+        if (!spaceHierarchy) return;
+        const parent = spaceHierarchy[0];
+
+        for (const space of spaceHierarchy) {
+            space.parent = parent;
+            await getMetaEvent(space);
+        }
+
+        setSelectedSpaceChildren((prevState) => {
+            // we loop through the first entries of the state to see if the selected roomId is already inside the array
+            let indexOfParent = null;
+            for (const [index, children] of prevState.entries()) {
+                if (children[0].room_id === roomId) {
+                    // if we have a match we return the position and exit the loop
+                    indexOfParent = index;
+                    break;
+                }
+            }
+            // if indexOfParent is 0 we simply return the new spaceHierarchy
+            if (indexOfParent === 0) return [spaceHierarchy];
+            // otherwise we delete all entries starting with the found index
+            if (indexOfParent) prevState.splice(indexOfParent);
+
+            // if indexOfParent is still null we simply add the new spaceHierarchy to the end of the array.
+            return [...prevState, spaceHierarchy];
+        });
+    }, [getMetaEvent, matrix, selectedSpaceChildren]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
@@ -152,15 +135,14 @@ export default function Explore() {
                     <TreePath
                         selectedRoomId={selectedRoomId}
                         data={selectedSpaceChildren}
-                        callApiAndAddToObject={callApiAndAddToObject}
-                        activePath={activePath}
+                        isFetchingContent={isFetchingContent}
                     />
 
                 }
             </IframeLayout.Sidebar>
             { selectedRoomId ? (
                 (() => {
-                    switch (currentItemType) {
+                    switch (currentTemplate) {
                         case 'studentproject':
                             return <ProjectView content={selectedRoomId} />;
                         case 'write-link':
@@ -201,7 +183,7 @@ export default function Explore() {
             ) : !_.isEmpty(selectedSpaceChildren) && <IframeLayout.IframeWrapper>
                 <ServiceIframeHeader
                     content={roomContent}
-                    title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || 'Header Text'}
+                    title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
                     removeLink={() => console.log('removing sketch from parent')}
                     removingLink={false}
                     isCurrentUserModerator={isCurrentUserModerator}
@@ -211,12 +193,11 @@ export default function Explore() {
                     { manageContextActionToggle &&
                             <ExploreMatrixActions
                                 isCurrentUserModerator={isCurrentUserModerator}
-                                currentId={activePath[activePath.length - 1]}
-                                parentId={activePath[activePath.length - 2]}
+                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
                             /> }
 
                     { !manageContextActionToggle &&
-                        selectedSpaceChildren &&
                             selectedSpaceChildren[selectedSpaceChildren.length - 1]
                                 .sort(function(a, b) {
                                     if (a.type === 'item' && b.type !== 'item') {
@@ -226,12 +207,14 @@ export default function Explore() {
                                     } else {
                                         return 0; // no sorting necessary
                                     }
-                                }).map((leaf, index) => {
+                                })
+                                .map((leaf, index) => {
                                     if (leaf.length <= 1) {
                                         return <ErrorMessage key="error-message">
                                             Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
                                         </ErrorMessage>;
                                     }
+                                    if (index === 0) return null;
 
                                     // we sort the array to display object of the type 'item' before others.
                                     return <TreeLeaves
@@ -239,9 +222,8 @@ export default function Explore() {
                                         leaf={leaf}
                                         parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                         key={leaf.room_id + '_' + index}
-                                        handleClick={callApiAndAddToObject}
                                         selectedRoomId={selectedRoomId}
-                                        activePath={activePath}
+                                        isFetchingContent={isFetchingContent}
                                     />;
                                 })
                     }

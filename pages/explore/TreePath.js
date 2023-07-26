@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -22,16 +23,7 @@ const Leaf = styled(ServiceTable.Cell)`
   }
 
 `;
-const TreePath = ({ selectedRoomId, data, callApiAndAddToObject, activePath }) => {
-    const [isFetching, setIsFetching] = useState(false);
-
-    const handleClick = async (e, roomId, row, template) => {
-        e.preventDefault();
-        setIsFetching(roomId);
-        await callApiAndAddToObject(e, roomId, row, template);
-        setIsFetching(false);
-    };
-
+const TreePath = ({ data, isFetchingContent }) => {
     return (
         <ServiceTable>
             { data.map((path, index) => {
@@ -39,9 +31,9 @@ const TreePath = ({ selectedRoomId, data, callApiAndAddToObject, activePath }) =
 
                 return <ServiceTable.Row key={index}>
                     <Leaf selected
-                        disabled={isFetching}
-                        onClick={(e) => handleClick(e, path[0].parent.room_id, index - 1, path[0].parent.template)}>
-                        <a>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetching === path[0].parent.room_id && <LoadingSpinnerInline /> }</a>
+                        disabled={isFetchingContent}
+                    >
+                        <Link disabled href={`/explore/${path[0].parent.room_id}`}>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetchingContent === path[0].parent.room_id && <LoadingSpinnerInline /> }</Link>
                     </Leaf>
 
                     { /* <Actions
