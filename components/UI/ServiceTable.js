@@ -50,9 +50,9 @@ const TableCell = styled.td`
   }
 `;
 
-export function ServiceTable({ children, explore }) {
+export function ServiceTable({ children, selected }) {
     return (
-        <Table explore={explore}>
+        <Table selected={selected}>
             <tbody>{ children }</tbody>
         </Table>
     );
