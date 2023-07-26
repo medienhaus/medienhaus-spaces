@@ -12,13 +12,12 @@ const ManageContextActionsWrapper = styled.div`
 const ManageContextActions = ({ userInfos, parentId, currentId, currentName, setShowActions }) => {
     return <ManageContextActionsWrapper>
         <h2>{ t('Manage contexts and items within ') }{ currentName }</h2>
-        <div>
-            <details>
-                <summary>{ t('create new substructure') }</summary>
-                <CreateContext currentId={currentId} parentId={parentId} userInfos={userInfos} />
-            </details>
+        <details>
+            <summary>{ t('create new substructure') }</summary>
+            <CreateContext currentId={currentId} parentId={parentId} userInfos={userInfos} />
+        </details>
 
-            { /* <details>
+        { /* <details>
                 <summary>{ t('add existing context') }</summary>
                 <AddExistingContext parentId={currentId} parentName={currentName} setShowActions={setShowActions} />
             </details>
@@ -26,7 +25,6 @@ const ManageContextActions = ({ userInfos, parentId, currentId, currentName, set
             <details>
                 <summary>{ t('add existing item from application') }</summary>
             </details> */ }
-        </div>
 
     </ManageContextActionsWrapper>;
 };
