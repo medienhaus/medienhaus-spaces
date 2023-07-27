@@ -3,16 +3,7 @@ import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import ManageContextActions from './ManageContextActions';
-
-const ActionsSection = styled.div`
-  height: 100%;
-`;
-
-const MenuSection = styled.div`
-  & {
-    margin-bottom: var(--margin);
-  }
-`;
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 /**
  * ACTIONS COMPONENT
@@ -25,6 +16,13 @@ const MenuSection = styled.div`
  * @TODO
  * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
+
+const ExploreMatrixActionWrapper = styled.div`
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  border-collapse: collapse;
+`;
 
 const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, popActiveContexts }) => {
     /**
@@ -124,19 +122,17 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, pop
     *                       'settings' -> mod/admin rights required
     * 'MenuSection'     contains the actual user interfaces for the specific action
     */
+    if (!roomName) return <LoadingSpinner />;
 
     return (
-        <ActionsSection>
-            <MenuSection>
-                { isCurrentUserModerator &&
+        <ExploreMatrixActionWrapper>
+            { isCurrentUserModerator &&
                 <ManageContextActions
                     currentId={currentId}
                     parentId={parentId}
                     currentName={roomName}
                 /> }
-            </MenuSection>
-
-        </ActionsSection>
+        </ExploreMatrixActionWrapper>
     );
 };
 
