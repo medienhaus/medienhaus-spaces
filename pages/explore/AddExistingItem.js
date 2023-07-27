@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 
@@ -9,20 +7,6 @@ import { useMatrix } from '../../lib/Matrix';
 import CachedContextMultiLevelSelect from '../../components/CachedContextMultiLevelSelect';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-
-const AddExistingItemDialog = styled.div`
-  & > * + * {
-    margin-top: var(--margin);
-  }
-
-  & > select + select {
-    margin-top: calc(var(--margin) * 0.65);
-  }
-
-  & span {
-    background-color: var(--color-me);
-  }
-`;
 
 /**
  * 'ADD EXISTING ITEM' COMPONENT
@@ -55,15 +39,13 @@ const AddExistingItem = ({ currentId, currentName }) => {
         else setIsItem(false);
     };
 
-    const addItemToContext = async (itemId, currentId) => {
+    const addItemToContext = async (e, itemId, currentId) => {
+        e.preventDefault();
         setIsAddingContext(true);
 
         const addChildToParent = await matrixAuthed.addSpaceChild(currentId, itemId)
             .catch(console.debug);
-        if (addChildToParent?.event_id) {
-            // call worked as expected Dialog can be closed.
-            // cleanUp();
-        } else {
+        if (!addChildToParent?.event_id) {
             setErrorMessage(t('something went wrong when trying to add the item to ') + currentName);
         }
         setSelectedLevels([applicationsFolder]);
@@ -71,15 +53,15 @@ const AddExistingItem = ({ currentId, currentName }) => {
     };
 
     return (
-        <AddExistingItemDialog>
+        <>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} />
             { isItem && <button
                 disabled={isAddingContext}
-                onClick={e => addItemToContext(selectedLevels[selectedLevels.length - 1], currentId)}>
-                  isAddingContext ? <LoadingSpinnerInline /> : { t('add') }
+                onClick={e => addItemToContext(e, selectedLevels[selectedLevels.length - 1], currentId)}>
+                { isAddingContext ? <LoadingSpinnerInline /> : t('add') }
             </button> }
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        </AddExistingItemDialog>
+        </>
     );
 };
 

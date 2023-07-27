@@ -51,7 +51,8 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
         return () => {
             isSubscribed = false;
         };
-    }, [matrix.rooms, matrix.spaces, matrixClient, onFetchedChildren, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
     if (isLoading) {
         return <select key="loading" disabled><option><LoadingSpinnerInline /></option></select>;
