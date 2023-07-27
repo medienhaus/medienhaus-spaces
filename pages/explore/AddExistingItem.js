@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import getConfig from 'next/config';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
+import CachedContextMultiLevelSelect from '../../components/CachedContextMultiLevelSelect';
+import ErrorMessage from '../../components/UI/ErrorMessage';
 
 const AddExistingItemDialog = styled.div`
   & > * + * {
@@ -32,26 +34,44 @@ const AddExistingItemDialog = styled.div`
  *
 */
 
-const AddExistingItem = ({ currentId }) => {
+const AddExistingItem = ({ currentId, currentName }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
-    const serviceSpaces = matrix.serviceSpaces;
     const applicationsFolder = matrix.applicationsFolder;
+    // const templatesToDisplay = getConfig().publicRuntimeConfig.templates.item.concat(getConfig().publicRuntimeConfig.templates.context);
+    const [isItem, setIsItem] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const { t } = useTranslation('explore');
 
-    const [activeContexts, setActiveContexts] = useState([applicationsFolder]);
+    const [selectedLevels, setSelectedLevels] = useState([applicationsFolder]);
+
+    const onLevelSelect = (levels, isLeaf) => {
+        setSelectedLevels(levels);
+        const isItem = matrix.rooms.get(levels[levels.length - 1]);
+        if (isLeaf && getConfig().publicRuntimeConfig.templates.item.includes(isItem?.meta.template)) setIsItem(true);
+        else setIsItem(false);
+    };
+
+    const addItemToContext = async (itemId, currentId) => {
+        // cleanUp();
+
+        const addChildToParent = await matrixAuthed.addSpaceChild(currentId, itemId)
+            .catch(console.debug);
+        if (addChildToParent?.event_id) {
+            // call worked as expected Dialog can be closed.
+            // cleanUp();
+        } else {
+            setErrorMessage(t('something went wrong when trying to add the item to ') + currentName);
+        }
+    };
 
     return (
         <AddExistingItemDialog>
-
-            { /* { observedIdPath.map((id) => { // loop trough all of the selected Levels
-                return <SingleLevel level={servicesCache.find(({ roomId }) => roomId === id)} setObservedIdPath={setObservedIdPath} setAddable={setAddable} />;
-            })
-            } */ }
-            <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
-
+            <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} />
+            { isItem && <button onClick={e => addItemToContext(selectedLevels[selectedLevels.length - 1], currentId)}>{ t('add') }</button> }
+            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </AddExistingItemDialog>
     );
 };
