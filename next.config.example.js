@@ -1,6 +1,5 @@
 const WebpackConfig = require('./webpack.config.js');
 
-// eslint-disable-next-line no-undef
 module.exports = {
     publicRuntimeConfig: {
         name: '/spaces',
@@ -29,6 +28,9 @@ module.exports = {
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
             allowAddingNewEmails: true,
+        },
+        chat: {
+            pathToElement: '//localhost/element',
         },
     },
     rewrites() {
