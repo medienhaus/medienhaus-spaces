@@ -59,13 +59,9 @@ export default function Etherpad() {
 
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
-                try {
-                    // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
-                    // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
-                    setServiceSpaceId(matrix.serviceSpaces.etherpad);
-                } catch (err) {
-                    console.log(err);
-                }
+                // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
+                // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
+                setServiceSpaceId(matrix.serviceSpaces.etherpad);
             }
         };
         !cancelled && startLookingForFolders();
@@ -114,6 +110,7 @@ export default function Etherpad() {
             if (matrix?.spaces.get(serviceSpaceId).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
+                    if (!matrix.rooms.get(roomId) || !matrix.roomContents.get(roomId)) { continue; }
                     // in order to get the actual id of the pad we need to check the room content
                     const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                     matrixPads = Object.assign({}, matrixPads, {
