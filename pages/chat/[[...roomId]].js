@@ -173,11 +173,15 @@ export default function RoomId() {
                 </details>
                 <br />
             </IframeLayout.Sidebar>
-            { roomId && (
-                <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
-                </IframeLayout.IframeWrapper>
-            ) }
+
+            <IframeLayout.IframeWrapper>
+                <iframe src={roomId ?
+                    `${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`
+                    : `${getConfig().publicRuntimeConfig.chat.pathToElement}/#/home`
+                }
+                ref={iframe} />
+            </IframeLayout.IframeWrapper>
+
         </>
     );
 }
