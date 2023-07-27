@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import ManageContextActions from './ManageContextActions';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 /**
  * ACTIONS COMPONENT
@@ -121,6 +122,7 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, pop
     *                       'settings' -> mod/admin rights required
     * 'MenuSection'     contains the actual user interfaces for the specific action
     */
+    if (!roomName) return <LoadingSpinner />;
 
     return (
         <ExploreMatrixActionWrapper>
