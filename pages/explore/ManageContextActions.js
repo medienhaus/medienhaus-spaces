@@ -4,7 +4,6 @@ import { t } from 'i18next';
 
 import CreateContext from './CreateContext';
 import AddExistingItem from './AddExistingItem';
-// import AddExistingContext from './AddExistingContext';
 
 const ManageContextActionsWrapper = styled.div`
   width: 100%;
