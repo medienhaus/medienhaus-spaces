@@ -15,6 +15,7 @@ import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
+import logger from '../../lib/Logging';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -58,13 +59,9 @@ export default function Etherpad() {
 
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
-                try {
-                    // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
-                    // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
-                    setServiceSpaceId(matrix.serviceSpaces.etherpad);
-                } catch (err) {
-                    console.log(err);
-                }
+                // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
+                // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
+                setServiceSpaceId(matrix.serviceSpaces.etherpad);
             }
         };
         !cancelled && startLookingForFolders();
@@ -113,6 +110,7 @@ export default function Etherpad() {
             if (matrix?.spaces.get(serviceSpaceId).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
+                    if (!matrix.rooms.get(roomId) || !matrix.roomContents.get(roomId)) { continue; }
                     // in order to get the actual id of the pad we need to check the room content
                     const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                     matrixPads = Object.assign({}, matrixPads, {
@@ -170,15 +168,14 @@ export default function Etherpad() {
     };
 
     const createWriteRoom = useCallback(async (link, name) => {
-    // eslint-disable-next-line no-undef
-        if (process.env.NODE_ENV === 'development') console.log('creating room for ' + name);
+        logger.debug('Creating new Matrix room for pad', { link, name });
+
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'write-link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room).catch(console.log);
-        await new Promise(r => setTimeout(r, 1000)); // quick rate limit hack
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
-        }).catch(console.log);
+        });
 
         if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
             await etherpad.syncAllPads();
@@ -232,7 +229,6 @@ export default function Etherpad() {
         const handleExistingPadSubmit = async () => {
             const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
             const checkForPasswordProtection = await etherpad.checkPadForPassword(apiUrl);
-            console.log(checkForPasswordProtection);
             setIsLoading(true);
             const roomId = await createWriteRoom(padLink, padName);
             router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
@@ -287,9 +283,7 @@ export default function Etherpad() {
 
         const createAuthoredPad = async () => {
             setIsLoading(true);
-            const padId = await etherpad.createPad(padName, 'public').catch((err) => {
-                console.log(err);
-            });
+            const padId = await etherpad.createPad(padName, 'public');
             if (!padId) {
                 setIsLoading(false);
 

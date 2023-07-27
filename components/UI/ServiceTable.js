@@ -41,8 +41,9 @@ const TableCell = styled.td`
 
   a {
     width: 100%;
-    color: ${props => props.selected && 'var(--color-disabled)'};
-    text-decoration: ${props => props.selected && 'none'};
+    line-height: calc(var(--margin) * 3);
+    color: ${props => props.selected && 'var(--color-disabled)' };
+    text-decoration: ${props => props.selected && 'none' };
 
     &:hover {
       cursor: ${props => props.selected && 'not-allowed'};

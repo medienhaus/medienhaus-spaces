@@ -3,8 +3,6 @@
 
 :root {
   --color-background: rgb(255 255 255);
-  --color-background-sidebar: rgb(248 248 248);
-  --color-background-navbar: rgb(240 240 240);
   --color-foreground: rgb(0 0 0);
   --color-disabled: rgb(128 128 128);
   --color-selection: rgb(255 240 170);
@@ -12,17 +10,6 @@
   --color-background-alpha: hsl(0deg 0% 97%);
   --color-background-beta: hsl(0deg 0% 94%);
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: rgb(25 25 25);
-    --color-background-sidebar: rgb(10 10 10);
-    --color-background-navbar: rgb(5 5 5);
-    --color-foreground: rgb(255 255 255);
-    --color-disabled: rgb(128 128 128);
-    --color-selection: rgb(255 240 170);
-  }
-} */
 
 *,
 *::before,
