@@ -53,7 +53,7 @@ export default function Explore() {
 
     const onRouterChange = useCallback(async () => {
         setIsFetchingContent(roomId);
-
+        setManageContextActionToggle(false);
         await callApiAndAddToObject(null, roomId);
         setIsFetchingContent(false);
     }, [roomId, callApiAndAddToObject]);
