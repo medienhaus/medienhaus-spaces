@@ -145,7 +145,7 @@ export default function RoomId() {
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
         // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.type !== 'chat')
+        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.template !== 'chat')
         .sortBy(sortRooms)
         .value();
 
