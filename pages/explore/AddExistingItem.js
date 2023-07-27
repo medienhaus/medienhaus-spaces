@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import SingleLevel from './SingleLevel';
 import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
 
 const AddExistingItemDialog = styled.div`
