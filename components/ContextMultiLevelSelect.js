@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../lib/Auth';
+import { useMatrix } from '../lib/Matrix';
 
 const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics }) => {
     const auth = useAuth();
-    const matrix = auth.getAuthenticationProvider('matrix');
-    const matrixClient = matrix.getMatrixClient();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const [isLoading, setIsLoading] = useState(true);
     const [parentSpaceMetaEvent, setParentSpaceMetaEvent] = useState();
     const [childContexts, setChildContexts] = useState();
+    const { t } = useTranslation();
 
     useEffect(() => {
         let isSubscribed = true;
@@ -23,31 +26,51 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
         // Fetch all child contexts
         const fetchChildContexts = async () => {
             let newChildContexts = [];
-            let roomHierarchy = await matrixClient.getRoomHierarchy(parentSpaceRoomId, undefined, 1)
-                .catch(/** @param {MatrixError} error */(error) => {
-                    // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
-                    // In every other case this is really an unexpected error and we want to throw.
-                    if (error.errcode !== 'M_FORBIDDEN') throw error;
-                });
-            if (!roomHierarchy) roomHierarchy = { rooms: [] };
 
-            // Remove the first entry, which is the context we retrieved the children for
-            roomHierarchy.rooms.shift();
-            // Ensure we're looking at contexts, and not spaces/rooms of other types
-            for (const room of roomHierarchy.rooms) {
-                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
-                // If this space/room does not have a meta event we do not care about it
-                if (!metaEvent) continue;
-                // If this is not a context, ignore this space child
-                if (metaEvent && metaEvent.type !== 'context') continue;
-                // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
-                if (templatePrefixFilter && metaEvent && !_.startsWith(metaEvent.template, templatePrefixFilter)) continue;
-                // ... otherwise show this space child:
-                newChildContexts.push(room);
+            const spaceCache = await matrix.spaces.get(parentSpaceRoomId);
+            console.log(parentSpaceRoomId);
+            if (spaceCache) {
+                setParentSpaceMetaEvent(spaceCache.meta);
+                for (const room of spaceCache.children) {
+                    console.log(room);
+                    const roomObject = matrix.spaces.get(room) || matrix.rooms.get(room);
+                    console.log(roomObject);
+                    roomObject.room_id = roomObject.roomId;
+                    // // If this is not a context, ignore this space child
+                    // // if (metaEvent && metaEvent.type !== 'context') continue;
+                    // // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
+                    if (templatePrefixFilter &&roomObject.meta && !_.startsWith(roomObject.meta.template, templatePrefixFilter)) continue;
+                    // // ... otherwise show this space child:
+                    newChildContexts.push(roomObject);
+                }
+            } else {
+                let roomHierarchy = await matrixClient.getRoomHierarchy(parentSpaceRoomId, undefined, 1)
+                    .catch(/** @param {MatrixError} error */(error) => {
+                        // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
+                        // In every other case this is really an unexpected error and we want to throw.
+                        if (error.errcode !== 'M_FORBIDDEN') throw error;
+                    });
+                if (!roomHierarchy) roomHierarchy = { rooms: [] };
+
+                // Remove the first entry, which is the context we retrieved the children for
+                roomHierarchy.rooms.shift();
+                // Ensure we're looking at contexts, and not spaces/rooms of other types
+                for (const room of roomHierarchy.rooms) {
+                    const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
+                    // If this space/room does not have a meta event we do not care about it
+                    if (!metaEvent) continue;
+                    // If this is not a context, ignore this space child
+                    // if (metaEvent && metaEvent.type !== 'context') continue;
+                    // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
+                    if (templatePrefixFilter && metaEvent && !_.startsWith(metaEvent.template, templatePrefixFilter)) continue;
+                    // ... otherwise show this space child:
+                    newChildContexts.push(room);
+                }
             }
             if (sortAlphabetically) {
                 newChildContexts = _.sortBy(newChildContexts, 'name');
             }
+
             if (!isSubscribed) return;
             onFetchedChildren(newChildContexts.length > 0);
             setChildContexts(newChildContexts);
@@ -69,6 +92,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
+    useEffect(() => console.log(childContexts), [childContexts]);
     if (isLoading) {
         return <select key="loading" disabled><option>loading...</option></select>;
     }
@@ -89,7 +113,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
                 // If we have a template-specific placeholder, show that...
                     ? <option disabled value="">{ templatePlaceholderMapping[parentSpaceMetaEvent.template] }</option>
                 // ... otherwise just show an empty placeholder
-                    : <option disabled value="" />
+                    : <option disabled value="">-- { t('select {{option}}', { option: parentSpaceMetaEvent?.type }) } --</option>
                 )
             }
             { Object.entries(childContexts).map(([key, room]) => (
@@ -118,6 +142,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
 const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
         const newActiveContexts = [...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1)];
+
         if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
         onChange(newActiveContexts, undefined);
     }, [activeContexts, onChange]);
