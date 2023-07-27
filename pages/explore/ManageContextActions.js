@@ -19,7 +19,7 @@ const ManageContextActions = ({ userInfos, parentId, currentId, currentName, set
         </details>
         <details>
             <summary>{ t('add existing item') }</summary>
-            <AddExistingItem currentId={currentId} />
+            <AddExistingItem currentId={currentId} currentName={currentName} />
         </details>
 
         { /* <details>
