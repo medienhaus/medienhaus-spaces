@@ -26,12 +26,14 @@ module.exports = {
                 baseUrl: 'http://spacedeck.localhost',
             },
         },
+        templates: {
+            context: ['seminar'],
+            item: ['chat-link', 'write-link', 'sketch-link', 'studentproject'],
+        },
+
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
             allowAddingNewEmails: true,
-        },
-        chat: {
-            pathToElement: '//localhost/element',
         },
     },
     rewrites() {

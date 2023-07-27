@@ -1,164 +1,194 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
+import _ from 'lodash';
 
+import { ServiceTable } from '../../components/UI/ServiceTable';
 import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ServiceIframeHeader from '../etherpad/ServiceIframeHeader';
-import ProjectView from './ProjectView';
-import ChatIframeView from '../chat/ChatIframeView';
-import TableView from './TableView';
-
-// height calculation is mostly guess work at the moment...
-const ExploreSection = styled.div`
-  ${props => !props.selectedRoomId && 'display: flex;'}
-  ${props => !props.selectedRoomId && 'grid-template-columns: repeat(2, 1fr);'}
-
-  gap: var(--margin);
-  height: calc(100% - calc(var(--margin) * 4.8));
-
-  .parent {
-    color: var(--color-background);
-    background: var(--color-foreground);
-  }
-
-`;
+import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
+import ExploreMatrixActions from './ExploreMatrixActions';
+import ErrorMessage from '../../components/UI/ErrorMessage';
+import TreeLeaves from './TreeLeaves';
+import TreePath from './TreePath';
+import ExploreIframeViews from './ExploreIframeViews';
 
 export default function Explore() {
-    const [entryPointId, setEntryPointId] = useState(null);
-    const [selectedRoomId, setSelectedRoomId] = useState(null);
-    const [roomContent, setRoomContent] = useState();
-    const [activePath, setActivePath] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
+    const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
+    const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
+    const [isFetchingContent, setIsFetchingContent] = useState(false);
     const dimensionsRef = useRef();
     const router = useRouter();
-    const [currentItemType, setCurrentItemType] = useState('');
     const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    const initialSetup = useCallback(async () => {
-    // initial setup to check for entry points for the explore interface
-        // we use the roomId from the adress bar if there is one, orherwise we start with the supplied root ID from the config file.
-        const roomId = router.query.roomId ? router.query.roomId[0] : getConfig().publicRuntimeConfig.contextRootSpaceRoomId;
-        // if there i a second query, we want to use it for the iframe
-        const iframeRoomId = router.query.roomId && router.query.roomId[1];
+    /**
+     * A roomId is set when the route is /explore/<roomId>, otherwise it's undefined
+     * @type {String|undefined}
+     */
 
-        if (iframeRoomId) {
-            router.push(`/explore/${roomId}/${iframeRoomId}`);
-            setSelectedRoomId(iframeRoomId);
-            setActivePath([roomId, iframeRoomId]);
-        } else router.push(`/explore/${roomId}`);
-        setEntryPointId(roomId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const roomId = _.get(router, 'query.roomId.0');
+    const iframeRoomId = _.get(router, 'query.roomId.1');
+    const isCurrentUserModerator = matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[matrixClient.getUserId()];
+    const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length -1]?.find(space => space.room_id === iframeRoomId).template;
+
+    if (!roomId) {
+        // we use the roomId from the adress bar if there is one, orherwise we start with the supplied root ID from the config file.
+        router.push(`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`);
+    }
+
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const checkForRoomContent = async () => {
+            await matrix.hydrateRoomContent(iframeRoomId, signal);
+        };
+        iframeRoomId && checkForRoomContent();
+
+        return () => controller.abort;
+    }, [iframeRoomId, matrix]);
+
+    const onRouterChange = useCallback(async () => {
+        setIsFetchingContent(roomId);
+        setManageContextActionToggle(false);
+        await callApiAndAddToObject(null, roomId);
+        setIsFetchingContent(false);
+    }, [roomId, callApiAndAddToObject]);
 
     useEffect(() => {
         let cancelled = false;
-        !cancelled && initialSetup();
+        if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
+            onRouterChange();
+        }
 
-        return () => cancelled = true;
-    }, [initialSetup]);
+        return () => {
+            cancelled = true;
+        };
+    }, [router.query?.roomId, matrix.initialSyncDone, onRouterChange]);
 
-    const handleClicked = async (roomId, template, index, parentId) => {
-        if (!roomId) return;
-        setActivePath(prevState => {
-            prevState.splice(index < 0 ? 0 : index);
+    const callApiAndAddToObject = useCallback(async (e, roomId) => {
+        if (!selectedSpaceChildren) return;
+        e && e.preventDefault();
+        console.debug('call Api or matrix and add');
+        const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+            .catch(err => console.debug(err));
+        if (!spaceHierarchy) return;
+        const parent = spaceHierarchy[0];
 
-            return [...prevState, roomId];
-        });
+        const getMetaEvent = async (obj) => {
+            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
+            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
+                .catch((err) => {
+                    console.debug(err);
+                    obj.missingMetaEvent = true;
+                });
 
-        const getContent = async (roomId) => {
-            const cachedContent = matrix.roomContents.get(selectedRoomId)?.body;
-            if (cachedContent) setRoomContent(cachedContent);
-            // if the room is not yet cached we manually try to hydrate the content
-            else {
-                const content = await matrix.hydrateRoomContent(roomId);
-                if (content) setRoomContent(content.body);
+            if (metaEvent) {
+                obj.type = metaEvent.type;
+                obj.template = metaEvent.template;
+                obj.application = metaEvent.application;
             }
         };
 
-        if (template === 'chat-link') {
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
+        for (const space of spaceHierarchy) {
+            space.parent = parent;
+            await getMetaEvent(space);
         }
-        if (template === 'studentproject') {
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
-        }
-        if (template === 'sketch-link' || template === 'write-link') {
-            console.log('object');
-            setCurrentItemType(template);
-            router.push(`/explore/${parentId}/${roomId}`);
-            setSelectedRoomId(roomId);
-            await getContent(roomId);
-        } else {
-            router.push(`/explore/${roomId}`);
-            setSelectedRoomId(null);
-        }
-    };
 
-    if (!entryPointId || typeof window === 'undefined') return <LoadingSpinner />;
+        setSelectedSpaceChildren((prevState) => {
+            // we loop through the first entries of the state to see if the selected roomId is already inside the array
+            let indexOfParent = null;
+            for (const [index, children] of prevState.entries()) {
+                if (children[0].room_id === roomId) {
+                    // if we have a match we return the position and exit the loop
+                    indexOfParent = index;
+                    break;
+                }
+            }
+            // if indexOfParent is 0 or our context root id, which is defined in the config, we simply return the new spaceHierarchy
+            if (indexOfParent === 0 || roomId === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return [spaceHierarchy];
+            // otherwise we delete all entries starting with the found index
+            if (indexOfParent) prevState.splice(indexOfParent);
+
+            // if indexOfParent is still null we simply add the new spaceHierarchy to the end of the array.
+            return [...prevState, spaceHierarchy];
+        });
+    }, [auth, matrix, selectedSpaceChildren]);
+
+    if (typeof window === 'undefined') return <LoadingSpinner />;
 
     return (
         <>
-            <IframeLayout.Sidebar width={!selectedRoomId && '100%'}>
+            <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
-                <ExploreSection selectedRoomId={!!selectedRoomId}>
-                    <TableView
-                        id={entryPointId}
-                        handleClick={handleClicked}
-                        selectedRoomId={selectedRoomId}
-                        activePath={activePath}
+                { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
+                    !_.isEmpty(selectedSpaceChildren) &&
+                    <TreePath
+                        data={selectedSpaceChildren}
+                        isFetchingContent={isFetchingContent}
                     />
-                </ExploreSection>
+
+                }
             </IframeLayout.Sidebar>
-            { selectedRoomId && (
-                (() => {
-                    switch (currentItemType) {
-                        case 'studentproject':
-                            return <ProjectView content={selectedRoomId} />;
-                        case 'write-link':
-                            return (
-                                <IframeLayout.IframeWrapper>
-                                    <ServiceIframeHeader
-                                        content={roomContent}
-                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
-                                        removeLink={() => console.log('removing pad from parent')}
-                                        removingLink={false} />
-                                    <iframe src={roomContent} />
-                                </IframeLayout.IframeWrapper>
-                            );
-                        case 'sketch-link':
-                            return (
-                                <IframeLayout.IframeWrapper>
-                                    <ServiceIframeHeader
-                                        content={roomContent}
-                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
-                                        removeLink={() => console.log('removing sketch from parent')}
-                                        removingLink={false} />
-                                    <iframe src={roomContent} />
-                                </IframeLayout.IframeWrapper>
-                            );
-                        default:
-                            return (
-                                <IframeLayout.IframeWrapper>
-                                    <ServiceIframeHeader
-                                        content={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${selectedRoomId}`}
-                                        title={matrix.spaces.get(router.query.roomId[1])?.name || matrix.rooms.get(router.query.roomId[1])?.name}
-                                        removeLink={() => console.log('removing pad from parent')}
-                                        removingLink={false} />
-                                    <ChatIframeView src={roomContent} />
-                                </IframeLayout.IframeWrapper>
-                            );
+            { !_.isEmpty(selectedSpaceChildren) &&
+            <IframeLayout.IframeWrapper>
+
+                { iframeRoomId ? (
+                    <ExploreIframeViews
+                        currentTemplate={currentTemplate}
+                        iframeRoomId={iframeRoomId}
+                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
+                    />
+                ) : <>
+                    <ServiceIframeHeader
+                        content={window.location.href}
+                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
+                        removingLink={false}
+                        isCurrentUserModerator={isCurrentUserModerator}
+                        setManageContextActionToggle={setManageContextActionToggle}
+                    />
+                    { manageContextActionToggle ?
+                        <ExploreMatrixActions
+                            isCurrentUserModerator={isCurrentUserModerator}
+                            currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                            parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                        /> : <ServiceTable>
+                            { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                .sort(function(a, b) {
+                                    if (a.type === 'item' && b.type !== 'item') {
+                                        return -1; // a comes before b
+                                    } else if (a.type !== 'item' && b.type === 'item') {
+                                        return 1; // a comes after b
+                                    } else {
+                                        return 0; // no sorting necessary
+                                    }
+                                })
+                                .map((leaf, index) => {
+                                    if (leaf.length <= 1) {
+                                        return <ErrorMessage key="error-message">
+                                                        Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
+                                        </ErrorMessage>;
+                                    }
+                                    if (index === 0) return null;
+
+                                    // we sort the array to display object of the type 'item' before others.
+                                    return <TreeLeaves
+                                        depth={selectedSpaceChildren.length}
+                                        leaf={leaf}
+                                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                        key={leaf.room_id + '_' + index}
+                                        iframeRoomId={iframeRoomId}
+                                        isFetchingContent={isFetchingContent}
+                                    />;
+                                }) }
+                        </ServiceTable>
                     }
-                })()
-            ) }
+                </>
+                }
+            </IframeLayout.IframeWrapper> }
         </>
     );
 }

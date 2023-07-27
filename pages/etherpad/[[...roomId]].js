@@ -14,7 +14,7 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import ServiceIframeHeader from './ServiceIframeHeader';
+import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -360,7 +360,7 @@ export default function Etherpad() {
                     <ServiceIframeHeader
                         content={content.body}
                         title={matrix.rooms.get(roomId).name}
-                        deletePad={deletePad}
+                        deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
                         mypadsPadObject={mypadsPadObject} />
                     <iframe src={iframeUrl.toString()} />

@@ -1,89 +1,40 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React from 'react';
+import Link from 'next/link';
+import getConfig from 'next/config';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
-const Leaf = styled.button`
-  display: ${props => [props.display]};
-  grid-row: ${props => props.className === 'parent' ? '1 / ' + props.childrenLength : props.index + 1};
-  font: inherit;
-  color: var(--color-foreground);
-  text-align: left;
-  text-transform: unset;
-  cursor: pointer;
-  background: none;
-  border-style: solid;
-  ${props => props.className !== 'parent' && 'transition: background-color 1s;'}
-
-  animation: fade-in 1s;
-
-  @keyframes fade-in {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-
-`;
-
-const TreeLeaves = ({ handleClick, row, data, roomId, isParent, parent, selectedRoomId, activePath, key }) => {
-    const [fetchingLeaves, setFetchingLeaves] = useState(false);
+const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent }) => {
     const router = useRouter();
+    const roomId = leaf.id || leaf.room_id;
+    const parentId = leaf.parent.id || leaf.parent.room_id;
 
-    const onClick = async (e, id, index, childTemplate, parentId) => {
-        e.preventDefault();
-        setFetchingLeaves(id);
-        await handleClick(e, id || roomId, index, childTemplate, parentId);
-        setFetchingLeaves(false);
-    };
+    if (!leaf) return <LoadingSpinner />;
+    // if an iframe is open we only want to show items in the list
+    if (selectedRoomId && leaf.type !== 'item') return null;
 
-    if (!data) return <LoadingSpinner />;
-
-    return (<>
-        { selectedRoomId && parent && <Leaf
-            onClick={(e) => onClick(e, parent.room_id, row - 1, parent.template)}
-            className="parent"
-            key={parent.room_id}
-        >
-            ← { parent.name }
-        </Leaf> }
-        <ServiceTable
-            explore={selectedRoomId ? false : true}
-            key={key}
-        >
-            { data.map((child) => {
-                const roomId = child.id || child.room_id;
-                // if the roomId is the selected space we skip it
-                if (roomId === router.query.roomId[0]) return null;
-                // if an iframe is open we only want to show items in the list
-                if (selectedRoomId && child.type !== 'item') return null;
-
-                return <>
-                    <ServiceTable.Row key={roomId} disabled={fetchingLeaves}>
-                        <ServiceTable.Cell
-                            disabled={fetchingLeaves}
-                            selected={router.query.roomId[1] === roomId || activePath.indexOf(roomId) > -1}
-                            onClick={(e) => onClick(e, roomId, row, child.template, parent.room_id)}>
-                            { child.missingMetaEvent ?
-                                <em>{ isParent && parent && selectedRoomId ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></em>
-                                : <>{ isParent && parent && selectedRoomId ? '← ' : isParent && parent && '↓ ' } <a href="">{ child.name }{ fetchingLeaves === roomId && <LoadingSpinnerInline /> }</a></> }
-                        </ServiceTable.Cell>
-                        <ServiceTable.Cell title={child.template}>
-                            { child.template === 'write-link' ? '📝'
-                                : child.template === 'chat-link' ? '💬'
-                                    : child.template === 'sketch-link' ? '🎨'
-                                        : child.template === 'studentproject' && '🎓' }
-                        </ServiceTable.Cell>
-                    </ServiceTable.Row>
-                </>;
-            },
-            )
-            }
-        </ServiceTable>
-
-    </>
-
+    return (
+        <ServiceTable.Row key={roomId} disabled={isFetchingContent}>
+            <ServiceTable.Cell
+                disabled={isFetchingContent}
+                selected={router.query.roomId[1] === roomId|| router.query.roomId[0] === roomId}
+            >
+                { leaf.missingMetaEvent ?
+                    <em> <a href="">{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</a></em>
+                    :<Link disabled={isFetchingContent} href={getConfig().publicRuntimeConfig.templates.item.includes(leaf.template) ? `/explore/${parentId}/${roomId}` : `/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
+                }
+            </ServiceTable.Cell>
+            <ServiceTable.Cell title={leaf.template}>
+                { leaf.template === 'write-link' ? '📝'
+                    : leaf.template === 'chat-link' ? '💬'
+                        : leaf.template === 'sketch-link' ? '🎨'
+                            : leaf.template === 'studentproject' && '🎓'
+                }
+            </ServiceTable.Cell>
+        </ServiceTable.Row>
     );
 };
 export default TreeLeaves;
