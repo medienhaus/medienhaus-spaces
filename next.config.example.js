@@ -19,6 +19,7 @@ module.exports = {
                     spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
 
                 },
+                templates: ['etherpad-link'],
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
