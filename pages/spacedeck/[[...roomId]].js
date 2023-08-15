@@ -32,7 +32,7 @@ export default function Spacedeck() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
-    const [isSketchServerDown, setIsSketchServerDown] = useState(false);
+    const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -114,7 +114,7 @@ export default function Spacedeck() {
             const syncSketches = await spacedeck.syncAllSketches()
                 .catch((error) => {
                     console.debug(error);
-                    setIsSketchServerDown(true);
+                    setIsSpacedeckServerDown(true);
                 });
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
@@ -266,7 +266,7 @@ export default function Spacedeck() {
                                 return <SketchLinkEntry roomId={roomId} key={roomId} />;
                             }) }
                         </ServiceTable>
-                        { isSketchServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                        { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
 
                 }
