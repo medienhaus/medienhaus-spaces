@@ -175,14 +175,9 @@ export default function Spacedeck() {
     const removeLink = async () => {
         setRemovingLink(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
-        if (!remove) {
+        if (!remove || remove.ok) {
             setRemovingLink(false);
-
-            return;
-        }
-        if (!remove.ok) {
-        // @TODO callback function to give user feedback when removing on the server fails
-            setRemovingLink(false);
+            alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
             return;
         }
