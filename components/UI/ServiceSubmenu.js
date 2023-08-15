@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
-import MenuAdd from '../../assets/icons/menu-add.svg';
+import MenuAddIcon from '../../assets/icons/menu-add.svg';
 
 const Header = styled.header`
   display: grid;
@@ -52,7 +52,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
             <Header>
                 { title && title }
                 <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
+                    { icon ? icon : <MenuAddIcon fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
             { isOpen && (
@@ -62,7 +62,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                     >
-                        <option disabled value="">-- { t('select action') } --</option>
+                        <option disabled value="">-- { t('Select action') } --</option>
                         { items.map(({ value, label }) => (
                             <option key={value} value={value}>{ label }</option>
                         )) }

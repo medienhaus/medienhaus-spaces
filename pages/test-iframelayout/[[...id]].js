@@ -6,6 +6,8 @@ import IframeLayout from '../../components/layouts/iframe';
 
 /**
  * This is an example page on how to make use of the two-columns layout with an iframe on the right.
+ *
+ * @returns {React.ReactElement}
  */
 export default function TestIframeLayout() {
     const router = useRouter();

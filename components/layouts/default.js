@@ -14,10 +14,6 @@ export const Main = styled.main`
     height: 100vh;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
