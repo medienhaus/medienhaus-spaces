@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import _, { debounce } from 'lodash';
+import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -10,11 +10,11 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Bin from '../../assets/icons/bin.svg';
 import TextButton from '../../components/UI/TextButton';
+import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { breakpoints } from '../../components/_breakpoints';
 
 const sortRooms = function(room) {
@@ -42,11 +42,6 @@ const Avatar = styled.img`
   height: 2rem;
   margin-right: 0.6rem;
   background: var(--color-foreground);
-`;
-
-const Checkbox = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const SidebarListEntry = function({ room }) {
@@ -101,8 +96,25 @@ export default function RoomId() {
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const [deviceType, setDeviceType] = useState(null);
+    const [isRoomListVisible, setIsRoomListVisible] = useState(true);
 
-    // Injecting custom CSS into the Element <iframe>
+    // check and store user platform
+
+    useEffect(() => {
+        const platform = navigator.platform;
+
+        setDeviceType(
+            /iphone|ipad|ipod|android|webos|blackberry|windows phone/.test(
+                platform,
+            )
+                ? 'mobile'
+                : 'desktop',
+        );
+        setDeviceType('mobile');
+    }, []);
+
+    // Injecting custom CSS into the Element <iframe> and detecting platform
     useEffect(() => {
         const iframeReference = iframe.current;
         if (!iframeReference) return;
@@ -152,6 +164,15 @@ export default function RoomId() {
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset }
+
+                    /* moda overlay when creating rooms */
+
+                    .mx_Dialog { width: 80% }
+                    .mx_CreateRoomDialog.mx_Dialog_fixedWidth { width: 100% }
+                    .mx_Dialog_fixedWidth { width: 100% }
+                    .mx_Dropdown_menu { max-width: 100% }
+                    #mx_JoinRuleDropdown__public { display: none }
+
                 }
             `);
             styleTag.appendChild(styleContent);
@@ -176,46 +197,18 @@ export default function RoomId() {
         .sortBy(sortRooms)
         .value();
 
-    const ActionNewRoom = ({ callbackDone }) => {
-        const [roomName, setRoomName] = useState('');
-        const [topic, setTopic] = useState('');
-        const [encrypted, setEncrypted] = useState(false);
-        const [isLoading, setIsLoading] = useState(false);
-
-        const createNewRoom = async () => {
-            setIsLoading(true);
-            // eslint-disable-next-line no-undef
-            if (process.env.NODE_ENV === 'development') console.log('creating room for ' + roomName);
-            await matrix.createRoom(roomName, false, topic, 'invite', 'item', 'chat', getConfig().publicRuntimeConfig.name, 'private', 'shared', encrypted)
-                .catch((error => console.debug(error)));
-            // router.push(`/chat/${roomId}`);
-
-            callbackDone && callbackDone();
-            setIsLoading(false);
-        };
-
-        return (
-            <Form onSubmit={(e) => { e.preventDefault(); createNewRoom(); }}>
-                <input type="text" placeholder={t('room name')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
-                <input type="text" placeholder={t('topic (optional)')} value={topic} onChange={(e) => setTopic(e.target.value)} />
-                <Checkbox><label htmlFor="encrypted">Encrypted</label><input type="checkbox" name="encrypted" checked={encrypted} onChange={() => setEncrypted(prevState => !prevState)} /></Checkbox>
-                <button type="submit" disabled={!roomName}>{ isLoading ?<LoadingSpinnerInline inverted /> : t('Create room') }</button>
-            </Form>
-        );
+    const toggleRoomListViewOnMobile = () => {
+        router.push('/chat');
+        setIsRoomListVisible(prevState => !prevState);
     };
-
-    const submenuItems = _.filter([
-        { value: 'newRoom', actionComponentToRender: ActionNewRoom, label: t('New room') },
-
-    ]);
 
     return (
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
-                    subheadline={t('What would you like to do?')}
-                    items={submenuItems} />
+                    onClick={toggleRoomListViewOnMobile}
+                />
                 { matrix.invites.size > 0 && (
                     <>
                         <details open>
@@ -239,9 +232,21 @@ export default function RoomId() {
                 <br />
             </IframeLayout.Sidebar>
 
-            <IframeLayout.IframeWrapper>
+            { (deviceType !== 'mobile' || (deviceType === 'mobile' && roomId) || (deviceType === 'mobile' && !isRoomListVisible)) && <IframeLayout.IframeWrapper>
+                <IframeLayout.IframeHeader>
+                    <h2>{ matrix.rooms.get(roomId)?.name }</h2>
+                    <IframeLayout.IframeHeaderButtonWrapper>
+                        { roomId && <button title={t('Copy pad link to clipboard')} onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
+                            <ClipboardIcon fill="var(--color-foreground)" />
+                        </button> }
+                        { /* <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                            { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
+                        </button> */ }
+                        { deviceType === 'mobile' && !roomId && <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton> }
+                    </IframeLayout.IframeHeaderButtonWrapper>
+                </IframeLayout.IframeHeader>
                 <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home' }`} ref={iframe} />
-            </IframeLayout.IframeWrapper>
+            </IframeLayout.IframeWrapper> }
         </>
     );
 }
