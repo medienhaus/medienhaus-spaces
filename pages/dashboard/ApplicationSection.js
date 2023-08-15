@@ -2,6 +2,8 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import getConfig from 'next/config';
+import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -44,10 +46,8 @@ const ApplicationSection = ({ name, applicationId }) => {
     const [applicationInvites, setApplicationInvites] = useState({});
     const [applicationChildren, setApplicationChildren] = useState([]);
 
-    const applicationsTemplates = {
-        'etherpad': ['write-link', 'etherpad-link'],
-        'spacedeck': ['spacedeck-link', 'sketch-link'],
-    };
+    const applicationsTemplates = _.map(matrix.serviceSpaces, (id, name) => {if (getConfig().publicRuntimeConfig.authProviders[name]?.templates) {return { name: name, content: getConfig().publicRuntimeConfig.authProviders[name]?.templates };}}).reduce((ac, { ['name']: x, content: c }) => (ac[x] = c, ac), {});
+    // such a lovely compact oneliner. it works like this: gets current applications from the matrix serviceSpaces, checks with the name for the config file and checks if templates are given. if this is the case it will return this. in the end it will convert the array into an object. JS a gift that keeps on giving…
 
     // get the children of each application and set them in the current cached storage 'applicationChildren
     useEffect(() => {
@@ -66,12 +66,14 @@ const ApplicationSection = ({ name, applicationId }) => {
             for await (const [, space] of matrix.invites.entries()) {
                 space.meta = await matrixClient.http.authedRequest('GET', `/rooms/${space.roomId}/state/dev.medienhaus.meta`, { }, undefined, { });
                 if (!space?.meta?.template) return; //invite does not hold any metaevent and will not be processed further
+                console.log(space);
                 Object.keys(matrix.serviceSpaces).forEach(applicationName => {
                     const applicationTemplates = applicationsTemplates[applicationName];
                     if (!applicationTemplates) return; // no templates which are claimed from this application could be found
                     if (applicationTemplates.includes(space.meta.template)) {
-                        if (applicationInvites.applicationName) { //application exists lets append
+                        if (applicationInvites[applicationName]) { //application exists lets append
                             const newApplicationInvites = applicationInvites;
+                            if (newApplicationInvites[applicationName].includes({ roomId: space.roomId })) return; // do not add if already existing
                             newApplicationInvites[applicationName].push(space);
                             setApplicationInvites(newApplicationInvites);
                         } else { // application does not exist for now lets create and append
@@ -84,20 +86,32 @@ const ApplicationSection = ({ name, applicationId }) => {
                 });
             }
         };
-        getMetaEventAndSort(); // needs to be wraped in a function as a useEffect cant return a promise
+        getMetaEventAndSort(); // needs to be wrapped in a function as a useEffect cant return a promise
     }, [matrix.invites, matrix.serviceSpaces, matrixClient, applicationsTemplates, applicationInvites, setApplicationInvites]);
+
+    // functions which interact with matrix server
+    const rejectMatrixInvite = async (roomId) => {
+        await matrixClient.leave(roomId);
+        _.remove(applicationInvites, (c) => {return c.roomId === roomId; });
+    };
+
+    const acceptMatrixInvite = async (roomId) => {
+        await matrixClient.joinRoom(roomId);
+        _.remove(applicationInvites, (c) => {return c.roomId === roomId; });
+    };
 
     return (
         <Application>
+            { console.log(applicationInvites) }
             <h3>{ name }</h3>
-            { applicationChildren && <LatestSegment latestApplicationChildren={applicationChildren.slice(0, 5)} /> }
-            { applicationInvites[name] && <InviteSegment invites={applicationInvites[name]} /> }
+            { applicationChildren && <LatestSegment latestApplicationChildren={applicationChildren.slice(0, 5)} applicationUrlName={getConfig().publicRuntimeConfig.authProviders[name].path.replace(/[^a-zA-Z0-9 ]/g, '')} /> }
+            { applicationInvites[name] && <InviteSegment invites={applicationInvites[name]} rejectMatrixInvite={rejectMatrixInvite} acceptMatrixInvite={acceptMatrixInvite} /> }
 
         </Application>
     );
 };
 
-const InviteSegment = ({ invites }) => {
+const InviteSegment = ({ invites, acceptMatrixInvite, rejectMatrixInvite }) => {
     const AcceptIconResized = styled(AcceptIcon)`display: block;transform: scale(0.9);`;
     const RejectIconResized = styled(RejectIcon)`display: block;transform: scale(0.9);`;
 
@@ -107,16 +121,18 @@ const InviteSegment = ({ invites }) => {
         <ApplicationSegment>
             <h4>{ t('invites') }</h4>
             <ServiceTable>
+
                 {
-                    _.map(invites, (invite) => {
-                        return <ServiceTable.Row>
+                    _.map(invites, (invite, i) => {
+                        return <ServiceTable.Row key={invite.roomId + '' + i}>
                             <ServiceTable.Cell>
                                 { invite.name }
                             </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('accecpt')}>
+                            <ServiceTable.Cell title={t('accecpt')} onClick={() => {acceptMatrixInvite(invite.roomId);}}>
                                 <AcceptIconResized />
                             </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('deny')}>
+                            <ServiceTable.Cell title={t('deny')} onClick={() => {rejectMatrixInvite(invite.roomId);}}>
+
                                 <RejectIconResized />
                             </ServiceTable.Cell>
                         </ServiceTable.Row>;
@@ -127,7 +143,7 @@ const InviteSegment = ({ invites }) => {
     );
 };
 
-const LatestSegment = ({ latestApplicationChildren }) => {
+const LatestSegment = ({ latestApplicationChildren, applicationUrlName }) => {
     const { t } = useTranslation('dashboard');
 
     return (
@@ -135,8 +151,8 @@ const LatestSegment = ({ latestApplicationChildren }) => {
             <h4>{ t('latest') }</h4>
             <ServiceTable>
                 {
-                    _.map(latestApplicationChildren, (child) => {
-                        return <ServiceTable.Row><ServiceTable.Cell>{ child.name } </ServiceTable.Cell></ServiceTable.Row>;
+                    _.map(latestApplicationChildren, (child, i) => {
+                        return <ServiceTable.Row key={child.roomId + '' + i}><ServiceTable.Cell><Link disabled href={`/${applicationUrlName}/${child.roomId}`}>{ child.name } </Link> </ServiceTable.Cell></ServiceTable.Row>;
                     })
                 }
             </ServiceTable>
