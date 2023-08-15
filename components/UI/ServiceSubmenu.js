@@ -38,7 +38,7 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, subheadline, items }) {
+export function ServiceSubmenu({ title, icon, subheadline, items, onClick }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -51,7 +51,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
         <>
             <Header>
                 { title && title }
-                <ToggleButton onClick={handleMenuToggle}>
+                <ToggleButton onClick={onClick || handleMenuToggle}>
                     { icon ? icon : <MenuAddIcon fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
