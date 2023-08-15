@@ -232,7 +232,8 @@ export default function Spacedeck() {
         const handleSubmit = async (e) => {
             setLoading(true);
             e.preventDefault();
-            await createSketchRoom(sketchLink, sketchName);
+            const roomId = await createSketchRoom(sketchLink, sketchName);
+            router.push(`/${getConfig().publicRuntimeConfig.authProviders.spacedeck.path}/${roomId}`);
             callbackDone && callbackDone();
             setLoading(false);
         };
