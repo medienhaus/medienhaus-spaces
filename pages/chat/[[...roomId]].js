@@ -111,7 +111,6 @@ export default function RoomId() {
                 ? 'mobile'
                 : 'desktop',
         );
-        setDeviceType('mobile');
     }, []);
 
     // Injecting custom CSS into the Element <iframe> and detecting platform
