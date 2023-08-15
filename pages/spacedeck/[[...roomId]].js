@@ -22,7 +22,7 @@ export default function Spacedeck() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const { t } = useTranslation('sketch');
+    const { t } = useTranslation('spacedeck');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
 
