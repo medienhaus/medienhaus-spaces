@@ -234,6 +234,7 @@ export default function Spacedeck() {
             e.preventDefault();
             const roomId = await createSketchRoom(sketchLink, sketchName);
             router.push(`/${getConfig().publicRuntimeConfig.authProviders.spacedeck.path}/${roomId}`);
+            setSketchLink('');
             callbackDone && callbackDone();
             setLoading(false);
         };
