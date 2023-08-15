@@ -241,7 +241,7 @@ export default function Spacedeck() {
             <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                { !validLink && sketchLink !=='' && <ErrorMessage>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }</ErrorMessage> }
+                { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
 
                 <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
