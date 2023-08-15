@@ -197,6 +197,7 @@ export default function RoomId() {
         .value();
 
     const toggleRoomListViewOnMobile = () => {
+        // pushing /chat to router so, elements home screen is displayed on desktop browsers
         router.push('/chat');
         setIsRoomListVisible(prevState => !prevState);
     };
@@ -238,9 +239,6 @@ export default function RoomId() {
                         { roomId && <button title={t('Copy pad link to clipboard')} onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
                             <ClipboardIcon fill="var(--color-foreground)" />
                         </button> }
-                        { /* <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                            { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
-                        </button> */ }
                         { deviceType === 'mobile' && !roomId && <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton> }
                     </IframeLayout.IframeHeaderButtonWrapper>
                 </IframeLayout.IframeHeader>
