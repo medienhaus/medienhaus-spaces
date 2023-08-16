@@ -47,6 +47,7 @@ const ApplicationSection = ({ name, applicationId, invitations, acceptMatrixInvi
                 applicationUrlName={getConfig().publicRuntimeConfig.authProviders[name].path.replace(/[^a-zA-Z0-9 ]/g, '')} /> }
             { invitations && <InviteSegment
                 invites={invitations}
+                serviceName={name}
                 rejectMatrixInvite={rejectMatrixInvite}
                 acceptMatrixInvite={acceptMatrixInvite} /> }
 
@@ -54,7 +55,7 @@ const ApplicationSection = ({ name, applicationId, invitations, acceptMatrixInvi
     );
 };
 
-const InviteSegment = ({ invites, acceptMatrixInvite, rejectMatrixInvite }) => {
+const InviteSegment = ({ invites, serviceName, acceptMatrixInvite, rejectMatrixInvite }) => {
     const { t } = useTranslation('dashboard');
 
     return (
@@ -68,10 +69,10 @@ const InviteSegment = ({ invites, acceptMatrixInvite, rejectMatrixInvite }) => {
                             <ServiceTable.Cell>
                                 <a href="">{ invite.name }</a>
                             </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => {acceptMatrixInvite(e, invite.roomId);}}>
+                            <ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => {acceptMatrixInvite(e, invite.roomId, serviceName);}}>
                                 <AcceptIcon />
                             </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {rejectMatrixInvite(e, invite.roomId);}}>
+                            <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {rejectMatrixInvite(e, invite.roomId, serviceName);}}>
                                 <BinIcon />
                             </ServiceTable.Cell>
                         </ServiceTable.Row>;
