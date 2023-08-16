@@ -9,7 +9,7 @@ import ApplicationSection from './ApplicationSection';
 export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const invites = useMemo(() => [...matrix.invites.values()], [matrix.invites]);
+    const invites = matrix.invites;
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [applicationInvites, setApplicationInvites] = useState({});
@@ -25,16 +25,14 @@ export default function Dashboard() {
 
         const getMetaEventAndSort = async () => {
             const allInvitations = { ...applicationInvites };
-
-            for (const space of invites) {
-                const meta = await matrixClient.http.authedRequest('GET', `/rooms/${space.roomId}/state/dev.medienhaus.meta`, {}, undefined, {});
-                if (!meta) continue;
+            for (const space of [...invites.values()]) {
+                if (!space.meta) continue;
 
                 Object.keys(serviceSpaces).forEach(applicationName => {
                     const applicationTemplates = providersWithTemplates[applicationName]?.templates;
                     if (!applicationTemplates) return;
 
-                    if (applicationTemplates.includes(meta.template)) {
+                    if (applicationTemplates.includes(space.meta.template)) {
                         if (!allInvitations[applicationName]) {
                             allInvitations[applicationName] = [];
                         }
@@ -51,19 +49,24 @@ export default function Dashboard() {
 
         getMetaEventAndSort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrix.initialSyncDone, matrixClient.http, serviceSpaces, invites, providersWithTemplates]);
+    }, [matrix.initialSyncDone, serviceSpaces, invites, providersWithTemplates]);
 
     // functions which interact with matrix server
-    const rejectMatrixInvite = async (e, roomId) => {
+    const rejectMatrixInvite = async (e, roomId, serviceName) => {
         e.preventDefault();
-        await matrixClient.leave(roomId);
-        setApplicationInvites(prevState => _.remove(prevState, (c) => {return c.roomId === roomId; }));
+        console.log('rejecting ' + roomId);
+        const leave = await matrixClient.leave(roomId);
+        console.log(leave);
+        // @TODO theoretically the applicationInvites state should be updated when accepting or rejecting an invitation since matrix.invites should change and trigger a rerender of the useEffect
+        // setApplicationInvites(prevState => prevState[serviceName].filter(item => item.roomId !== roomId));
     };
 
-    const acceptMatrixInvite = async (e, roomId) => {
+    const acceptMatrixInvite = async (e, roomId, serviceName) => {
         e.preventDefault();
-        await matrixClient.joinRoom(roomId);
-        _.remove(applicationInvites, (c) => {return c.roomId === roomId; });
+        await matrixClient.joinRoom(roomId).catch(() => {
+            return;
+        });
+        // setApplicationInvites(prevState => prevState[serviceName].filter(item => item.roomId !== roomId));
     };
 
     return (
@@ -71,9 +74,6 @@ export default function Dashboard() {
             <h2>/dashboard</h2>
             {
                 _.map(serviceSpaces, (id, name) => {
-                    if (!applicationInvites[name]) return null; // if there is no key fot the space within the invitation object. We
-                    console.log(name);
-
                     return <ApplicationSection
                         key={id}
                         applicationId={id}
