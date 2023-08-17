@@ -153,6 +153,8 @@ export default function Etherpad() {
     };
 
     const createWriteRoom = useCallback(async (link, name) => {
+        if (!link || !name) return;
+
         logger.debug('Creating new Matrix room for pad', { link, name });
 
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'write-link');
