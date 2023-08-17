@@ -27,7 +27,6 @@ export default function Etherpad() {
 
     const { t } = useTranslation('etherpad');
     const router = useRouter();
-    const [serviceSpaceId, setServiceSpaceId] = useState();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
@@ -54,23 +53,6 @@ export default function Etherpad() {
      * @type {{name: string, group: string, users: [], visibility: string, readonly, _id: string, ctime: number}|undefined}
      */
     const mypadsPadObject = roomId && content && content.body && serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const startLookingForFolders = async () => {
-            if (matrix.initialSyncDone) {
-                // @TODO: This seems unnecessary. Here we store the `matrix.serviceSpaces.write` room ID,
-                // which lives in a `useState` in Matrix.js, in yet another `useState` here in this component?!?
-                setServiceSpaceId(matrix.serviceSpaces.etherpad);
-            }
-        };
-        !cancelled && startLookingForFolders();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [matrix.initialSyncDone, matrix.serviceSpaces.etherpad]);
 
     useEffect(() => {
         let cancelled = false;
@@ -108,9 +90,9 @@ export default function Etherpad() {
         let cancelled = false;
         const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
-            if (matrix?.spaces.get(serviceSpaceId).children) {
+            if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
                 // if there are rooms within the space id we grab the names of those room
-                for (const roomId of matrix.spaces.get(serviceSpaceId).children) {
+                for (const roomId of matrix.spaces.get(matrix.serviceSpaces.etherpad).children) {
                     if (!matrix.rooms.get(roomId) || !matrix.roomContents.get(roomId)) { continue; }
                     // in order to get the actual id of the pad we need to check the room content
                     const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
@@ -129,13 +111,13 @@ export default function Etherpad() {
             }
         };
 
-        !cancelled && serviceSpaceId && serverPads && syncServerPadsWithMatrix();
+        !cancelled && matrix.serviceSpaces.etherpad && serverPads && syncServerPadsWithMatrix();
 
         return () => { cancelled = true; };
         // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
         // therefore we need to disable the linter for the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [serviceSpaceId, serverPads, createWriteRoom]);
+    }, [matrix.serviceSpaces.etherpad, serverPads, createWriteRoom]);
 
     const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
@@ -161,7 +143,7 @@ export default function Etherpad() {
             await etherpad.deletePadById(mypadsPadObject._id);
         }
 
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(matrix.serviceSpaces.etherpad, roomId);
         await matrix.leaveRoom(roomId);
 
         await syncServerPadsAndSet();
@@ -174,7 +156,7 @@ export default function Etherpad() {
         logger.debug('Creating new Matrix room for pad', { link, name });
 
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'write-link');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(serviceSpaceId, room);
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
@@ -186,7 +168,7 @@ export default function Etherpad() {
         }
 
         return room;
-    }, [auth, matrix, matrixClient, serviceSpaceId, etherpad]);
+    }, [auth, matrix, matrixClient, etherpad]);
 
     const ActionNewAnonymousPad = ({ callbackDone }) => {
         const [padName, setPadName] = useState('');
@@ -326,7 +308,7 @@ export default function Etherpad() {
     return (
         <>
             <IframeLayout.Sidebar>
-                { !serviceSpaceId ? (
+                { !matrix.serviceSpaces.etherpad ? (
                     <>
                         <h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>
                         <LoadingSpinner />
@@ -339,7 +321,7 @@ export default function Etherpad() {
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
+                            { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
                                 return <EtherpadListEntry
                                     key={writeRoomId}
                                     roomId={writeRoomId}
