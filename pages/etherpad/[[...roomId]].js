@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
@@ -53,6 +53,13 @@ export default function Etherpad() {
      * @type {{name: string, group: string, users: [], visibility: string, readonly, _id: string, ctime: number}|undefined}
      */
     const mypadsPadObject = roomId && content && content.body && serverPads[content.body.substring(content.body.lastIndexOf('/') + 1)];
+
+    // Whenever the roomId changes (e.g. after a new pad was created), automatically focus that element.
+    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    const selectedPadRef = useRef(null);
+    useEffect(() => {
+        selectedPadRef.current?.focus();
+    }, [roomId]);
 
     useEffect(() => {
         let cancelled = false;
@@ -330,6 +337,7 @@ export default function Etherpad() {
                                     padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
                                     passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
+                                    ref={writeRoomId === roomId ? selectedPadRef : null}
                                 />;
                             }) }
                         </ServiceTable>
