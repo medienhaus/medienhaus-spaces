@@ -43,7 +43,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
 
-    const handleMenuToggle = () => setIsOpen(!isOpen);
+    const handleMenuToggle = () => { setIsOpen(!isOpen); setValue(''); };
 
     const ActionComponent = value && _.get(_.find(items, { value: value }), 'actionComponentToRender');
 
