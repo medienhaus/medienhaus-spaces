@@ -5,6 +5,8 @@ import _ from 'lodash';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
+import NotificationBubble from '../../UI/NotificationBubble';
 
 const List = styled.ul`
   padding: 0;
@@ -26,6 +28,8 @@ const List = styled.ul`
 
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const invites = matrix.invites;
 
     const Link = ({ href, children }) => (
         <NextLink href={href} onClick={closeNavigation}>
@@ -50,7 +54,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/">/dashboard</Link></li>
+                <li><Link href="/dashboard">/dashboard { invites.size > 0 && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>
