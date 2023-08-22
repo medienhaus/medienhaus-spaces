@@ -1,14 +1,13 @@
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 import getConfig from 'next/config';
-import Link from 'next/link';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+// import { useAuth } from '../../lib/Auth';
+// import { useMatrix } from '../../lib/Matrix';
+import DisplayInvitations from './DisplayInvitations';
+// import DisplayLatestLinks from './DisplayLatestLinks';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import AcceptIcon from '../../assets/icons/accept.svg';
-import BinIcon from '../../assets/icons/bin.svg';
 
 const ApplicationSegment = styled.div`
   margin-top: var(--margin);
@@ -28,80 +27,44 @@ const ApplicationSegment = styled.div`
  * @param {String} id — id of the application
 */
 
-const ApplicationSection = ({ name, applicationId, invitations, acceptMatrixInvite, rejectMatrixInvite }) => {
-    console.log(invitations);
-    const auth = useAuth();
+const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, rejectMatrixInvite }) => {
+    // const auth = useAuth();
     // const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const applicationSpace = matrix.spaces.get(applicationId);
+    // const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    // const applicationSpace = matrix.spaces.get(id);
+    const { t } = useTranslation('dashboard');
+    const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
+    const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
 
-    const applicationChildren = applicationSpace?.children.map((childId) => {
-        return matrix.spaces.get(childId) || matrix.rooms.get(childId);
-    });
+    // const applicationChildren = applicationSpace?.children.map((childId) => {
+    //     return matrix.spaces.get(childId) || matrix.rooms.get(childId);
+    // });
 
     return (
         <section>
-            <h3>{ name }</h3>
-            { applicationChildren && <LatestSegment
-                latestApplicationChildren={applicationChildren.slice(0, 5)}
-                applicationUrlName={getConfig().publicRuntimeConfig.authProviders[name].path.replace(/[^a-zA-Z0-9 ]/g, '')} /> }
-            { invitations && <InviteSegment
-                invites={invitations}
-                serviceName={name}
-                rejectMatrixInvite={rejectMatrixInvite}
-                acceptMatrixInvite={acceptMatrixInvite} /> }
+            { /* { applicationChildren && <ApplicationSegment>
+                <DisplayLatestLinks
+                    latestApplicationChildren={applicationChildren.slice(0, 5)}
+                    applicationUrlName={name.replace(/[^a-zA-Z0-9 ]/g, '')} />
+            </ApplicationSegment> } */ }
+            { invitations.size > 0 && <ApplicationSegment>
+                <h2>{ t('Invitations') }</h2>
+                <ServiceTable>
+                    { _.map([...invitations.values()], (invite) => {
+                        if (!serviceTemplates.includes(invite.meta.template)) return null; // only display invitations from the current service
+
+                        return <DisplayInvitations
+                            key={invite.roomId}
+                            service={service}
+                            name={name}
+                            invite={invite}
+                            rejectMatrixInvite={rejectMatrixInvite}
+                            acceptMatrixInvite={acceptMatrixInvite} />;
+                    }) }
+                </ServiceTable>
+            </ApplicationSegment> }
 
         </section>
-    );
-};
-
-const InviteSegment = ({ invites, serviceName, acceptMatrixInvite, rejectMatrixInvite }) => {
-    const { t } = useTranslation('dashboard');
-
-    return (
-        <ApplicationSegment>
-            <h2>{ t('invites') }</h2>
-            <ServiceTable>
-
-                {
-                    _.map(invites, (invite, i) => {
-                        return <ServiceTable.Row key={invite.roomId + '' + i}>
-                            <ServiceTable.Cell>
-                                <a href="">{ invite.name }</a>
-                            </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => {acceptMatrixInvite(e, invite.roomId, serviceName);}}>
-                                <AcceptIcon />
-                            </ServiceTable.Cell>
-                            <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {rejectMatrixInvite(e, invite.roomId, serviceName);}}>
-                                <BinIcon />
-                            </ServiceTable.Cell>
-                        </ServiceTable.Row>;
-                    })
-                }
-            </ServiceTable>
-        </ApplicationSegment>
-    );
-};
-
-const LatestSegment = ({ latestApplicationChildren, applicationUrlName }) => {
-    const { t } = useTranslation('dashboard');
-
-    return (
-        <ApplicationSegment>
-            <h2>{ t('latest') }</h2>
-            <ServiceTable>
-                {
-                    _.map(latestApplicationChildren, (child, i) => {
-                        return <ServiceTable.Row key={child.roomId + '' + i}>
-                            <ServiceTable.Cell>
-                                <Link disabled href={`/${applicationUrlName}/${child.roomId}`}>{ child.name }
-                                </Link>
-                            </ServiceTable.Cell>
-                        </ServiceTable.Row>;
-                    })
-                }
-            </ServiceTable>
-        </ApplicationSegment>
     );
 };
 
