@@ -28,10 +28,12 @@ const TableCell = styled.td`
   padding: 0;
   text-overflow: ellipsis;
 
-  a {
+  > * {
     display: block;
-    width: 100%;
     line-height: calc(var(--margin) * 3);
+  }
+
+  > a {
     color: ${props => props.selected && 'var(--color-disabled)' };
     text-decoration: ${props => props.selected && 'none' };
 
