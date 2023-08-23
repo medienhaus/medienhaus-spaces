@@ -22,6 +22,15 @@ const ServicePath = styled.span`
   color: var(--color-disabled);
 `;
 
+const InviterName = styled(ServicePath)`
+  display: inline-block;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+`;
+
 const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectMatrixInvite }) => {
     const { t } = useTranslation('dashboard');
     const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +54,7 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectM
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell>
-                <span><ServicePath>{ name }/</ServicePath>{ invite.name }</span>
+                <span><ServicePath>{ name }/</ServicePath>{ invite.name } <InviterName>{ invite.inviterName }</InviterName></span>
             </ServiceTable.Cell>
             { isLoading ? <ServiceTable.Cell>
                 <LoadingSpinnerInline />
