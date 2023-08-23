@@ -11,18 +11,20 @@ const DisplayLatestLinks = ({ latestApplicationChildren, applicationUrlName }) =
         <>
             <h2>{ t('newest pads') }</h2>
             <ServiceTable>
-                {
-                    _.map(latestApplicationChildren, (child, i) => {
-                        if (!child) return null;
+                <ServiceTable.Body>
+                    {
+                        _.map(latestApplicationChildren, (child, i) => {
+                            if (!child) return null;
 
-                        return <ServiceTable.Row key={child.roomId + '' + i}>
-                            <ServiceTable.Cell>
-                                <Link disabled href={`/${applicationUrlName}/${child.roomId}`}>{ child.name }
-                                </Link>
-                            </ServiceTable.Cell>
-                        </ServiceTable.Row>;
-                    })
-                }
+                            return <ServiceTable.Row key={child.roomId + '' + i}>
+                                <ServiceTable.Cell>
+                                    <Link disabled href={`/${applicationUrlName}/${child.roomId}`}>{ child.name }
+                                    </Link>
+                                </ServiceTable.Cell>
+                            </ServiceTable.Row>;
+                        })
+                    }
+                </ServiceTable.Body>
             </ServiceTable>
         </>
     );

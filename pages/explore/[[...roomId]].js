@@ -155,35 +155,39 @@ export default function Explore() {
                             isCurrentUserModerator={isCurrentUserModerator}
                             currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                             parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                        /> : <ServiceTable>
-                            { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                .sort(function(a, b) {
-                                    if (a.type === 'item' && b.type !== 'item') {
-                                        return -1; // a comes before b
-                                    } else if (a.type !== 'item' && b.type === 'item') {
-                                        return 1; // a comes after b
-                                    } else {
-                                        return 0; // no sorting necessary
-                                    }
-                                })
-                                .map((leaf, index) => {
-                                    if (leaf.length <= 1) {
-                                        return <ErrorMessage key="error-message">
+                        />
+                        :
+                        <ServiceTable>
+                            <ServiceTable.Body>
+                                { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                    .sort(function(a, b) {
+                                        if (a.type === 'item' && b.type !== 'item') {
+                                            return -1; // a comes before b
+                                        } else if (a.type !== 'item' && b.type === 'item') {
+                                            return 1; // a comes after b
+                                        } else {
+                                            return 0; // no sorting necessary
+                                        }
+                                    })
+                                    .map((leaf, index) => {
+                                        if (leaf.length <= 1) {
+                                            return <ErrorMessage key="error-message">
                                                         Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
-                                        </ErrorMessage>;
-                                    }
-                                    if (index === 0) return null;
+                                            </ErrorMessage>;
+                                        }
+                                        if (index === 0) return null;
 
-                                    // we sort the array to display object of the type 'item' before others.
-                                    return <TreeLeaves
-                                        depth={selectedSpaceChildren.length}
-                                        leaf={leaf}
-                                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                        key={leaf.room_id + '_' + index}
-                                        iframeRoomId={iframeRoomId}
-                                        isFetchingContent={isFetchingContent}
-                                    />;
-                                }) }
+                                        // we sort the array to display object of the type 'item' before others.
+                                        return <TreeLeaves
+                                            depth={selectedSpaceChildren.length}
+                                            leaf={leaf}
+                                            parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                            key={leaf.room_id + '_' + index}
+                                            iframeRoomId={iframeRoomId}
+                                            isFetchingContent={isFetchingContent}
+                                        />;
+                                    }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                     }
                 </>

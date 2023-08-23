@@ -25,18 +25,20 @@ const Leaf = styled(ServiceTable.Cell)`
 const TreePath = ({ data, isFetchingContent }) => {
     return (
         <ServiceTable>
-            { data.map((path, index) => {
-                if (!path[0]?.parent) return null;
+            <ServiceTable.Body>
+                { data.map((path, index) => {
+                    if (!path[0]?.parent) return null;
 
-                return <ServiceTable.Row key={index}>
-                    <Leaf selected
-                        disabled={isFetchingContent}
-                    >
-                        <Link disabled href={`/explore/${path[0].parent.room_id}`}>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetchingContent === path[0].parent.room_id && <LoadingSpinnerInline /> }</Link>
-                    </Leaf>
+                    return <ServiceTable.Row key={index}>
+                        <Leaf selected
+                            disabled={isFetchingContent}
+                        >
+                            <Link disabled href={`/explore/${path[0].parent.room_id}`}>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetchingContent === path[0].parent.room_id && <LoadingSpinnerInline /> }</Link>
+                        </Leaf>
 
-                </ServiceTable.Row>;
-            }) }
+                    </ServiceTable.Row>;
+                }) }
+            </ServiceTable.Body>
         </ServiceTable>
     );
 };
