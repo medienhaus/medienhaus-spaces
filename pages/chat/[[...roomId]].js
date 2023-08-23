@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
+import ChatIframeView from './ChatIframeView';
 import { breakpoints } from '../../components/_breakpoints';
 
 const sortRooms = function(room) {
@@ -76,7 +77,6 @@ const SidebarListEntry = function({ room }) {
 
 export default function RoomId() {
     const auth = useAuth();
-    const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
@@ -175,7 +175,7 @@ export default function RoomId() {
             </IframeLayout.Sidebar>
             { roomId && (
                 <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
+                    <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>

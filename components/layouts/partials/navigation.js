@@ -1,7 +1,6 @@
+import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
-import getConfig from 'next/config';
-import _ from 'lodash';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
@@ -56,17 +55,22 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li><Link href="/dashboard">/dashboard { invites.size > 0 && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
-                <li><Link href="/explore">/explore</Link></li>
+                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
             <List>
-                <li><Link href="/chat">/chat</Link></li>
-                { _.get(getConfig(), 'publicRuntimeConfig.authProviders.etherpad.path') && (
-                    <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>
-                            { getConfig().publicRuntimeConfig.authProviders.etherpad.path }
+                <li><Link href="/">/chat</Link></li>
+                { Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
+                    // we skip the matrix config since it's already displayed in chat
+                    // @TODO enabkle custom path name for chat
+                    if (authProvider === 'matrix') return null;
+                    const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
+
+                    return <li key={path}>
+                        <Link href={path}>
+                            { path }
                         </Link>
-                    </li>
-                ) }
+                    </li>;
+                }) }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>
