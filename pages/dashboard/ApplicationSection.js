@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import _ from 'lodash';
 import getConfig from 'next/config';
-
 // import { useAuth } from '../../lib/Auth';
 // import { useMatrix } from '../../lib/Matrix';
 import { useTranslation } from 'react-i18next';
@@ -29,18 +28,13 @@ const ApplicationSegment = styled.div`
 */
 
 const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
-    // const auth = useAuth();
-    // const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    // const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    // const applicationSpace = matrix.spaces.get(id);
     const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
     const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
+    const serviceInvitations = [...invitations.values()].filter(invite => serviceTemplates.includes(invite.meta.template)); // filter invitations for the current service
 
     const { t } = useTranslation('dashboard');
 
-    // const applicationChildren = applicationSpace?.children.map((childId) => {
-    //     return matrix.spaces.get(childId) || matrix.rooms.get(childId);
-    // });
+    if (_.isEmpty(serviceInvitations)) return null;
 
     return (
         <section>
@@ -68,9 +62,7 @@ const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, decl
                         </ServiceTable.Row>
                     </ServiceTable.Head>
                     <ServiceTable.Body>
-                        { _.map([...invitations.values()], (invite) => {
-                            if (!serviceTemplates.includes(invite.meta.template)) return null; // only display invitations from the current service
-
+                        { _.map(serviceInvitations, (invite) => {
                             return <DisplayInvitations
                                 key={invite.roomId}
                                 service={service}
