@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import EtherpadListEntry from './EtherpadListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
@@ -17,6 +16,7 @@ import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
+import ServiceLink from '../../components/UI/ServiceLink';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -340,10 +340,11 @@ export default function Etherpad() {
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(writeRoomId => {
-                                return <EtherpadListEntry
+                                return <ServiceLink
                                     key={writeRoomId}
                                     roomId={writeRoomId}
-                                    padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                    name={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                    path={getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad'}  // sanitizing the string just in case of any forbidden url characters
                                     passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
                                 />;
