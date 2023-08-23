@@ -1,16 +1,31 @@
-// This component returns a styled table with optional table head(<th />).
+// This component returns a styled table with optional table head/headers.
 // Example usage:
 //
 // <ServiceTable>
-//   <ServiceTable.Row>
-//     <ServiceTable.Cell>
-//       This content will be aligned left and take up all remaining space
-//     </ServiceTable.Cell>
-//     <ServiceTable.Cell>
-//       Any following cell will be aligned right and fit the exact size of its content
-//     </ServiceTable.Cell>
-//     ...
-//   </ServiceTable.Row>
+//   <ServiceTable.Head>
+//     <ServiceTable.Row>
+//       <ServiceTable.Header align="left">
+//         This content will be aligned left
+//       </ServiceTable.Header>
+//       <ServiceTable.Header align="center">
+//         This content will be aligned centered
+//       </ServiceTable.Header>
+//       <ServiceTable.Header align="right">
+//         This content will be aligned right
+//       </ServiceTable.Header>
+//     </ServiceTable.Row>
+//   </ServiceTable.Head>
+//   <ServiceTable.Body>
+//     <ServiceTable.Row>
+//       <ServiceTable.Cell>
+//         This content will be aligned left
+//       </ServiceTable.Cell>
+//       <ServiceTable.Cell>
+//         Any following cell will be aligned left
+//       </ServiceTable.Cell>
+//       ...
+//     </ServiceTable.Row>
+//   </ServiceTable.Body>
 // </ServiceTable>
 
 import React from 'react';
@@ -26,11 +41,30 @@ const Table = styled.table`
   border-collapse: collapse;
 `;
 
+const TableBody = styled.tbody`
+  width: 100%;
+`;
+
+const TableHead = styled.thead`
+  width: 100%;
+`;
+
 const TableRow = styled.tr`
   max-width: 100%;
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);
+`;
+
+const TableHeader = styled.th`
+  max-width: 100%;
+  padding: 0;
+  text-align: ${props => props.align && props.align};
+
+  > * {
+    display: inline-block;
+    line-height: calc(var(--margin) * 3);
+  }
 `;
 
 const TableCell = styled.td`
@@ -52,13 +86,16 @@ const TableCell = styled.td`
   }
 `;
 
-export function ServiceTable({ children, selected }) {
+export function ServiceTable({ children, selected, align }) {
     return (
         <Table selected={selected}>
-            <tbody>{ children }</tbody>
+            { children }
         </Table>
     );
 }
 
+ServiceTable.Head = TableHead;
+ServiceTable.Body = TableBody;
 ServiceTable.Row = TableRow;
+ServiceTable.Header = TableHeader;
 ServiceTable.Cell = TableCell;
