@@ -13,10 +13,13 @@ import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import BinIcon from '../../assets/icons/bin.svg';
 import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
+import CreateAnonymousPad from './actions/CreateAnonymousPad';
+import AddExistingPad from './actions/AddExistingPad';
+import CreateAuthoredPad from './actions/CreateAuthoredPad';
+import CreatePasswordPad from './actions/CreatePasswordPad';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -179,132 +182,11 @@ export default function Etherpad() {
         return room;
     }, [auth, matrix, matrixClient, etherpad]);
 
-    const ActionNewAnonymousPad = ({ callbackDone }) => {
-        const [padName, setPadName] = useState('');
-        const [isLoading, setIsLoading] = useState(false);
-
-        const createAnonymousPad = async () => {
-            setIsLoading(true);
-            let string = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-            const charactersLength = characters.length;
-            for (let i = 0; i < 20; i++) {
-                string += characters.charAt(Math.floor(Math.random() * charactersLength));
-            }
-            const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + string;
-            const roomId = await createWriteRoom(link, padName);
-            router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
-
-            callbackDone && callbackDone();
-            setIsLoading(false);
-            setPadName('');
-        };
-
-        return (
-            <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
-                <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
-            </Form>
-        );
-    };
-
-    const ActionExistingPad = ({ callbackDone }) => {
-        const [padName, setPadName] = useState('');
-        const [padLink, setPadLink] = useState('');
-        const [validLink, setValidLink] = useState(false);
-        const [isLoading, setIsLoading] = useState(false);
-
-        const validatePadUrl = (e) => {
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl)) setValidLink(true);
-            else setValidLink(false);
-            setPadLink(e.target.value);
-        };
-
-        const handleExistingPadSubmit = async () => {
-            const apiUrl = padLink.replace('/p/', '/mypads/api/pad/');
-            const checkForPasswordProtection = await etherpad.checkPadForPassword(apiUrl);
-            setIsLoading(true);
-            const roomId = await createWriteRoom(padLink, padName);
-            router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
-
-            callbackDone && callbackDone();
-            setPadLink('');
-            setIsLoading(false);
-        };
-
-        return (
-            <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
-                <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
-                { !validLink && padLink && (
-                    <ErrorMessage>
-                        { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl }) }
-                    </ErrorMessage>
-                ) }
-                <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
-            </Form>);
-    };
-
-    const ActionPasswordPad = ({ callbackDone }) => {
-        const [padName, setPadName] = useState('');
-        const [password, setPassword] = useState('');
-        const [validatePassword, setValidatePassword] = useState('');
-        const [isLoading, setIsLoading] = useState(false);
-
-        const createPasswordPad = async () => {
-            setIsLoading(true);
-            const padId = await etherpad.createPad(padName, 'private', password);
-            const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
-            const roomId = await createWriteRoom(link, padName);
-            router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
-
-            callbackDone && callbackDone();
-            setPadName('');
-            setIsLoading(false);
-        };
-
-        return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-            <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-            <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-            <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
-        </Form>);
-    };
-
-    const ActionAuthoredPad = ({ callbackDone }) => {
-        const [padName, setPadName] = useState('');
-        const [isLoading, setIsLoading] = useState(false);
-
-        const createAuthoredPad = async () => {
-            setIsLoading(true);
-            const padId = await etherpad.createPad(padName, 'public');
-            if (!padId) {
-                setIsLoading(false);
-
-                return;
-            }
-            const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
-            const roomId = await createWriteRoom(link, padName);
-            router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
-
-            callbackDone && callbackDone();
-            setPadName('');
-            setIsLoading(false);
-        };
-
-        return (
-            <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
-                <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-                <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
-            </Form>
-        );
-    };
-
     const submenuItems = _.filter([
-        { value: 'existingPad', actionComponentToRender: ActionExistingPad, label: t('Add existing pad') },
-        { value: 'anonymousPad', actionComponentToRender: ActionNewAnonymousPad, label: t('Create new anonymous pad') },
-        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'authoredPad', actionComponentToRender: ActionAuthoredPad, label: t('Create new authored pad') },
-        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'passwordPad', actionComponentToRender: ActionPasswordPad, label: t('Create password protected pad') },
+        { value: 'existingPad', actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />, label: t('Add existing pad') },
+        { value: 'anonymousPad', actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />, label: t('Create new anonymous pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createWriteRoom={createWriteRoom} />, label: t('Create new authored pad') },
+        getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createWriteRoom={createWriteRoom} />, label: t('Create password protected pad') },
     ]);
 
     // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
