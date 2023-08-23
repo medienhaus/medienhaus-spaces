@@ -23,12 +23,11 @@ const ServicePath = styled.span`
 `;
 
 const InviterName = styled(ServicePath)`
-  display: inline-block;
-  max-width: 50%;
-  overflow: hidden;
+  display: block;
+  max-width: 24ch;
+  overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
 `;
 
 const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectMatrixInvite }) => {
@@ -54,7 +53,10 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectM
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell>
-                <span><ServicePath>{ name }/</ServicePath>{ invite.name } <InviterName>{ invite.inviterName }</InviterName></span>
+                <ServicePath>{ name }/</ServicePath>{ invite.name }
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
+                <InviterName>{ invite.inviterName }</InviterName>
             </ServiceTable.Cell>
             { isLoading ? <ServiceTable.Cell>
                 <LoadingSpinnerInline />
