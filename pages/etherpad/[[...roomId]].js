@@ -235,7 +235,7 @@ export default function Etherpad() {
                             <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
                                 <ClipboardIcon fill="var(--color-foreground)" />
                             </button>
-                            <InviteUserToMatrixRoom roomId={roomId} />
+                            <InviteUserToMatrixRoom roomId={roomId} name={matrix.rooms.get(roomId).name} />
                             <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </button>
