@@ -1,38 +1,31 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import Link from 'next/link';
 import styled from 'styled-components';
 
-export const ServiceLink = styled.li`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-right: var(--margin);
-  padding-left: var(--margin);
+import LockIcon from '../../assets/icons/lock.svg';
+import { ServiceTable } from './ServiceTable';
 
-  .group {
-    display: inherit;
-  }
-
-  svg {
-    margin-left: 0.5em;
-    cursor: pointer;
-  }
-
-  button {
-    padding: 0;
-    margin: 0;
-    background: none;
-    border: none;
-  }
-
-  button svg {
-    fill: var(--color-fg);
-  }
-
-  button[disabled] svg {
-    cursor: initial;
-    fill: var(--color-me);
-  }
-
-  &:nth-of-type(even) {
-    background-color: var(--color-lo);
-  }
+const LockIconResized = styled(LockIcon)`
+  display: block;
+  transform: scale(0.9);
 `;
+
+const ServiceLink = ({ roomId, name, selected, path, passwordProtected }) => {
+    const { t } = useTranslation();
+
+    return (
+        <ServiceTable.Row>
+            <ServiceTable.Cell selected={selected}>
+                <Link disabled href={`/${path}/${roomId}`}>{ name }</Link>
+            </ServiceTable.Cell>
+            { /* Show a lock icon if this is a password protected pad */ }
+            { passwordProtected && (
+                <ServiceTable.Cell title={t('password protected')}>
+                    <LockIconResized />
+                </ServiceTable.Cell>
+            ) }
+        </ServiceTable.Row>
+    );
+};
+export default ServiceLink;

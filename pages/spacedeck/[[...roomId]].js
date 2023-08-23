@@ -13,10 +13,10 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
-import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import ServiceLink from '../../components/UI/ServiceLink';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -262,8 +262,13 @@ export default function Spacedeck() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                                return <SketchLinkEntry roomId={roomId} key={roomId} />;
+                            { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
+                                return <ServiceLink
+                                    roomId={spacedeckRoomId}
+                                    name={matrix.rooms.get(spacedeckRoomId).name}
+                                    path={getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck'}  // sanitizing the string just in case of any forbidden url characters
+                                    selected={roomId === spacedeckRoomId}
+                                    key={spacedeckRoomId} />;
                             }) }
                         </ServiceTable>
                         { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
