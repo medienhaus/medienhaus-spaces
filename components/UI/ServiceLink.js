@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -11,13 +11,13 @@ const LockIconResized = styled(LockIcon)`
   transform: scale(0.9);
 `;
 
-const ServiceLink = ({ roomId, name, selected, path, passwordProtected }) => {
+const ServiceLink = forwardRef(({ roomId, name, selected, path, passwordProtected }, ref) => {
     const { t } = useTranslation();
 
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell selected={selected}>
-                <Link disabled href={`/${path}/${roomId}`}>{ name }</Link>
+                <Link ref={ref} disabled href={`/${path}/${roomId}`}>{ name }</Link>
             </ServiceTable.Cell>
             { /* Show a lock icon if this is a password protected pad */ }
             { passwordProtected && (
@@ -27,5 +27,6 @@ const ServiceLink = ({ roomId, name, selected, path, passwordProtected }) => {
             ) }
         </ServiceTable.Row>
     );
-};
+});
+
 export default ServiceLink;
