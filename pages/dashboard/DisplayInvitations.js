@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import TextButton from '../../components/UI/TextButton';
 import AcceptIcon from '../../assets/icons/accept.svg';
 import CloseIcon from '../../assets/icons/close.svg';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -58,16 +59,20 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectM
             <ServiceTable.Cell>
                 <InviterName>{ invite.inviterName }</InviterName>
             </ServiceTable.Cell>
-            { isLoading ? <ServiceTable.Cell>
-                <LoadingSpinnerInline />
-            </ServiceTable.Cell>
-                : <><ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
-                    <AcceptIcon />
+            { isLoading ?
+                <ServiceTable.Cell>
+                    <LoadingSpinnerInline />
                 </ServiceTable.Cell>
-                <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {handleReject(e, invite.roomId);}}>
-                    <CloseIcon />
-                </ServiceTable.Cell>
-                </> }
+                :
+                <>
+                    <ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
+                        <TextButton><AcceptIcon /></TextButton>
+                    </ServiceTable.Cell>
+                    <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {handleReject(e, invite.roomId);}}>
+                        <TextButton><CloseIcon /></TextButton>
+                    </ServiceTable.Cell>
+                </>
+            }
         </ServiceTable.Row>
 
     );
