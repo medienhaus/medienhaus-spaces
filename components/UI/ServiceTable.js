@@ -24,12 +24,11 @@ const TableRow = styled.tr`
 `;
 
 const TableCell = styled.td`
-  width: 100%;
+  max-width: 100%;
   padding: 0;
-  text-overflow: ellipsis;
 
   > * {
-    display: block;
+    display: inline-block;
     line-height: calc(var(--margin) * 3);
   }
 
