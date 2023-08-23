@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -9,6 +10,7 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const MatrixAuthProvider = auth.getAuthenticationProvider('matrix');
+    const { t } = useTranslation('dashboard');
 
     const invites = matrix.invites;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -20,7 +22,7 @@ export default function Dashboard() {
     // }, [authProviders]);
 
     // functions which interact with matrix server
-    const rejectMatrixInvite = async (e, roomId) => {
+    const declineMatrixInvite = async (e, roomId) => {
         e.preventDefault();
         console.log('rejecting ' + roomId);
         await matrix.leaveRoom(roomId);
@@ -47,23 +49,28 @@ export default function Dashboard() {
                             key={invite.roomId}
                             // service={service}
                             invite={invite}
-                            rejectMatrixInvite={rejectMatrixInvite}
+                            declineMatrixInvite={declineMatrixInvite}
                             acceptMatrixInvite={acceptMatrixInvite} />;
                     }) }
                 </ServiceTable>
             </ApplicationSegment>
             } */ }
-            { _.map(serviceSpaces, (id, service) => {
-                return <ApplicationSection
-                    key={id}
-                    id={id}
-                    service={service}
-                    invitations={invites}
-                    acceptMatrixInvite={acceptMatrixInvite}
-                    rejectMatrixInvite={rejectMatrixInvite}
-                />;
-            }) }
-
+            { invites.size > 0 &&
+                <>
+                    <h2>{ t('Invitations') }</h2>
+                    { _.map(serviceSpaces, (id, service) => {
+                        return <ApplicationSection
+                            key={id}
+                            id={id}
+                            service={service}
+                            invitations={invites}
+                            acceptMatrixInvite={acceptMatrixInvite}
+                            declineMatrixInvite={declineMatrixInvite}
+                        />;
+                    })
+                    }
+                </>
+            }
         </>
     );
 }
