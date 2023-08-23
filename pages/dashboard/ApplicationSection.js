@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import getConfig from 'next/config';
 
@@ -27,12 +26,11 @@ const ApplicationSegment = styled.div`
  * @param {String} id — id of the application
 */
 
-const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, rejectMatrixInvite }) => {
+const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
     // const auth = useAuth();
     // const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     // const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     // const applicationSpace = matrix.spaces.get(id);
-    const { t } = useTranslation('dashboard');
     const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
     const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
 
@@ -47,8 +45,7 @@ const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, reje
                     latestApplicationChildren={applicationChildren.slice(0, 5)}
                     applicationUrlName={name.replace(/[^a-zA-Z0-9 ]/g, '')} />
             </ApplicationSegment> } */ }
-            { invitations.size > 0 && <ApplicationSegment>
-                <h2>{ t('Invitations') }</h2>
+            <ApplicationSegment>
                 <ServiceTable>
                     { _.map([...invitations.values()], (invite) => {
                         if (!serviceTemplates.includes(invite.meta.template)) return null; // only display invitations from the current service
@@ -58,11 +55,11 @@ const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, reje
                             service={service}
                             name={name}
                             invite={invite}
-                            rejectMatrixInvite={rejectMatrixInvite}
+                            declineMatrixInvite={declineMatrixInvite}
                             acceptMatrixInvite={acceptMatrixInvite} />;
                     }) }
                 </ServiceTable>
-            </ApplicationSegment> }
+            </ApplicationSegment>
 
         </section>
     );

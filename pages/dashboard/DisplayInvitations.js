@@ -31,14 +31,14 @@ const InviterName = styled(ServicePath)`
   white-space: nowrap;
 `;
 
-const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectMatrixInvite }) => {
+const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, declineMatrixInvite }) => {
     const { t } = useTranslation('dashboard');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const handleReject = async (e, roomId) => {
+    const handleDecline = async (e, roomId) => {
         setIsLoading(true);
-        await rejectMatrixInvite(e, roomId);
+        await declineMatrixInvite(e, roomId);
         setIsLoading(false);
     };
 
@@ -68,7 +68,7 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, rejectM
                     <ServiceTable.Cell title={t('accecpt invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
                         <TextButton><AcceptIcon /></TextButton>
                     </ServiceTable.Cell>
-                    <ServiceTable.Cell title={t('reject invitation')} onClick={(e) => {handleReject(e, invite.roomId);}}>
+                    <ServiceTable.Cell title={t('decline invitation')} onClick={(e) => {handleDecline(e, invite.roomId);}}>
                         <TextButton><CloseIcon /></TextButton>
                     </ServiceTable.Cell>
                 </>
