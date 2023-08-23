@@ -1,5 +1,5 @@
 import getConfig from 'next/config';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isEmpty } from 'lodash';
 import _ from 'lodash';
@@ -36,6 +36,13 @@ export default function Spacedeck() {
     const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
+
+    // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
+    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    const selectedPadRef = useRef(null);
+    useEffect(() => {
+        selectedPadRef.current?.focus();
+    }, [roomId]);
 
     useEffect(() => {
         let cancelled = false;
@@ -269,7 +276,9 @@ export default function Spacedeck() {
                                     name={matrix.rooms.get(spacedeckRoomId).name}
                                     path={path}
                                     selected={roomId === spacedeckRoomId}
-                                    key={spacedeckRoomId} />;
+                                    key={spacedeckRoomId}
+                                    ref={spacedeckRoomId === roomId ? selectedPadRef : null}
+                                />;
                             }) }
                         </ServiceTable>
                         { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
