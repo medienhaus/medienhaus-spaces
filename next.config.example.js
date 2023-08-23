@@ -14,16 +14,16 @@ module.exports = {
             etherpad: {
                 path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
-                myPads: {
-                    api: 'http://etherpad.localhost/mypads/api',
-                    spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
+                // myPads: {
+                //     api: 'http://etherpad.localhost/mypads/api',
+                //     spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
 
-                },
+                // },
             },
-            spacedeck: {
-                path: '/sketch',
-                baseUrl: 'http://spacedeck.localhost',
-            },
+            // spacedeck: {
+            //     path: '/sketch',
+            //     baseUrl: 'http://spacedeck.localhost',
+            // },
         },
         templates: {
             context: ['seminar'],
