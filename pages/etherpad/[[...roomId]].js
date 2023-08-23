@@ -10,13 +10,13 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import BinIcon from '../../assets/icons/bin.svg';
-import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
 import ServiceLink from '../../components/UI/ServiceLink';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -136,8 +136,6 @@ export default function Etherpad() {
         // therefore we need to disable the linter for the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverPads, createWriteRoom]);
-
-    const copyToClipboard = () => navigator.clipboard.writeText(content.body);
 
     /**
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
@@ -358,9 +356,7 @@ export default function Etherpad() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <ClipboardIcon fill="var(--color-foreground)" />
-                            </button>
+                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={content.body} />
                             <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </button>
