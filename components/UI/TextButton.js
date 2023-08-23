@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const TextButton = styled.button`
+  height: unset;
   padding: 0;
   font: inherit;
   color: var(--color-foreground);
