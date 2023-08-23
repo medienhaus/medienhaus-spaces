@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ApplicationSection from './ApplicationSection';
+import ServiceInvitations from './ServiceInvitations';
 
 export default function Dashboard() {
     const auth = useAuth();
@@ -56,7 +56,7 @@ export default function Dashboard() {
             { invites.size > 0 &&
                 <>
                     { _.map(serviceSpaces, (id, service) => {
-                        return <ApplicationSection
+                        return <ServiceInvitations
                             key={id}
                             id={id}
                             service={service}

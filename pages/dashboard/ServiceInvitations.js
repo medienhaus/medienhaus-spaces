@@ -27,7 +27,7 @@ const ApplicationSegment = styled.div`
  * @param {String} id — id of the application
 */
 
-const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
+const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
     const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
     const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
     const serviceInvitations = [...invitations.values()].filter(invite => serviceTemplates.includes(invite.meta.template)); // filter invitations for the current service
@@ -79,4 +79,4 @@ const ApplicationSection = ({ service, id, invitations, acceptMatrixInvite, decl
     );
 };
 
-export default ApplicationSection;
+export default ServiceInvitations;
