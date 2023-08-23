@@ -33,6 +33,7 @@ export default function Spacedeck() {
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -183,7 +184,7 @@ export default function Spacedeck() {
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
-        router.push('/sketch');
+        router.push(`/${path}`);
         setRemovingLink(false);
     };
 
@@ -197,7 +198,7 @@ export default function Spacedeck() {
             const create = await spacedeck.createSpace(sketchName);
             const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + create._id;
             const roomId = await createSketchRoom(link, sketchName);
-            router.push(`/sketch/${roomId}`);
+            router.push(`/${path}/${roomId}`);
 
             callbackDone && callbackDone();
             setLoading(false);
@@ -266,7 +267,7 @@ export default function Spacedeck() {
                                 return <ServiceLink
                                     roomId={spacedeckRoomId}
                                     name={matrix.rooms.get(spacedeckRoomId).name}
-                                    path={getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck'}  // sanitizing the string just in case of any forbidden url characters
+                                    path={path}
                                     selected={roomId === spacedeckRoomId}
                                     key={spacedeckRoomId} />;
                             }) }
