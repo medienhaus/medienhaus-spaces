@@ -284,7 +284,7 @@ export default function Spacedeck() {
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <button title={t('Delete sketch from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
