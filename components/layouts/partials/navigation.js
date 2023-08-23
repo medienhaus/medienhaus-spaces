@@ -59,10 +59,11 @@ export default function Navigation({ closeNavigation }) {
                     // we skip the matrix config since it's already displayed in chat
                     // @TODO enabkle custom path name for chat
                     if (authProvider === 'matrix') return null;
+                    const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
 
-                    return <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders[authProvider].path}>
-                            { getConfig().publicRuntimeConfig.authProviders[authProvider].path }
+                    return <li key={path}>
+                        <Link href={path}>
+                            { path }
                         </Link>
                     </li>;
                 }) }
