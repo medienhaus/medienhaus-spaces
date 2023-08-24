@@ -19,18 +19,6 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
  * @param {String} id — id of the application
 */
 
-const ServicePath = styled.span`
-  color: var(--color-disabled);
-`;
-
-const InviterName = styled(ServicePath)`
-  display: block;
-  max-width: 24ch;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, declineMatrixInvite }) => {
     const { t } = useTranslation('dashboard');
     const [isLoading, setIsLoading] = useState(false);
@@ -54,10 +42,13 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell>
-                <ServicePath>{ name }/</ServicePath>{ invite.name }
+                { name }
             </ServiceTable.Cell>
             <ServiceTable.Cell>
-                <InviterName>{ invite.inviterName }</InviterName>
+                { invite.name }
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
+                { invite.inviterName }
             </ServiceTable.Cell>
             { isLoading ?
                 <ServiceTable.Cell>
