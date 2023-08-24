@@ -41,18 +41,24 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
             </ApplicationSegment> } */ }
             <ServiceTable>
                 <ServiceTable.Head>
+                    <ServiceTable.Caption>
+                        { t('Invitations') }
+                    </ServiceTable.Caption>
                     <ServiceTable.Row>
                         <ServiceTable.Header align="left">
-                            <span>{ t('Invitations') }</span>
+                            { t('App') }
                         </ServiceTable.Header>
                         <ServiceTable.Header align="left">
-                            <span>{ t('From') }</span>
+                            { t('Item') }
+                        </ServiceTable.Header>
+                        <ServiceTable.Header align="left">
+                            { t('From') }
                         </ServiceTable.Header>
                         <ServiceTable.Header align="center">
-                            <span>{ t('Accept') }</span>
+                            { t('Accept') }
                         </ServiceTable.Header>
                         <ServiceTable.Header align="center">
-                            <span>{ t('Decline') }</span>
+                            { t('Decline') }
                         </ServiceTable.Header>
                     </ServiceTable.Row>
                 </ServiceTable.Head>
