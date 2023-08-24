@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -34,7 +33,7 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
         setIsLoading(true);
         await acceptMatrixInvite(e, roomId, service, name);
         setIsLoading(false);
-        if (confirm('You‘ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted ' + name + ' item?')) {
+        if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted ' + name + ' item?')) {
             router.push(`${name}/${roomId}`);
         }
     };
