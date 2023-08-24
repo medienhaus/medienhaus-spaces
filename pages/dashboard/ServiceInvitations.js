@@ -40,10 +40,10 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
                     applicationUrlName={name.replace(/[^a-zA-Z0-9 ]/g, '')} />
             </ApplicationSegment> } */ }
             <ServiceTable>
+                <ServiceTable.Caption>
+                    { t('Invitations') }
+                </ServiceTable.Caption>
                 <ServiceTable.Head>
-                    <ServiceTable.Caption>
-                        { t('Invitations') }
-                    </ServiceTable.Caption>
                     <ServiceTable.Row>
                         <ServiceTable.Header align="left">
                             { t('App') }
