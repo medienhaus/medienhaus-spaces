@@ -6,6 +6,12 @@
  * @param {string} name (name of the matrix room)
  *
  * @return {React.ReactElement}
+ *
+ * @TODO
+ * - create seperate component for the invitation dialogue so it can be used without the button and maybe wthout the modal view.
+ * - maybe swap datalist for a different UI element. datalist handleing is far from optimal, since we have to manually get the userId and displayName after a user has selected the user to invite.
+ *   Even though we already have it from the `matrixClient.searchUserDirectory` call. The problem is that afaik there is no way to parse the object from the <option>.
+ *
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
@@ -102,8 +108,10 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             setSearchInput('');
             setIsInviting(false);
         }
+
         await matrix.inviteUserToMatrixRoom(roomId, validUserObject.userId)
             .catch(async err => {
+                // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
                 await new Promise(() => setTimeout(() => {
                     clearInputs();
@@ -112,6 +120,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                 return;
             });
 
+        // if everything is okay, we let the user know and exit the modal view.
         setUserFeedback('✓ ' + validUserObject.displayName + t(' was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
@@ -120,7 +129,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
 
     useEffect(() => {
         let cancelled = false;
-        if (cancelled || searchInput === '') return;
+        if (cancelled || searchInput === '') return; // no need to verify the user for empty strings.
         verifyUser(searchInput);
 
         return () => {
