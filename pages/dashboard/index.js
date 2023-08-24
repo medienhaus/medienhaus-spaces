@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import getConfig from 'next/config';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -56,6 +57,8 @@ export default function Dashboard() {
             { invites.size > 0 &&
                 <>
                     { _.map(serviceSpaces, (id, service) => {
+                        if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
+
                         return <ServiceInvitations
                             key={id}
                             id={id}
