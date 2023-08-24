@@ -59,7 +59,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     const [userFeedback, setUserFeedback] = useState('');
     const [validUserObject, setValidUserObject] = useState(false);
 
-    const customStyles = {
+    const customModalStyles = {
         content: {
             top: '50%',
             right: 'auto',
@@ -157,7 +157,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                 isOpen={isInviteDialogueOpen}
                 onRequestClose={() => setIsInviteDialogueOpen(false)}
                 contentLabel="Invite Users"
-                style={customStyles}
+                style={customModalStyles}
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
