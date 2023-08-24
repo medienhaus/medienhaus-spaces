@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import _ from 'lodash';
 import getConfig from 'next/config';
 // import { useAuth } from '../../lib/Auth';
@@ -19,6 +20,10 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
  * @param {String} id — id of the application
 */
 
+const TableSection = styled.section`
+  overflow-x: scroll;
+`;
+
 const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
     const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
     const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
@@ -29,7 +34,7 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
     if (_.isEmpty(serviceInvitations)) return null;
 
     return (
-        <section>
+        <TableSection>
             { /* { applicationChildren && <ApplicationSegment>
                 <DisplayLatestLinks
                     latestApplicationChildren={applicationChildren.slice(0, 5)}
@@ -64,7 +69,7 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
                     }) }
                 </ServiceTable.Body>
             </ServiceTable>
-        </section>
+        </TableSection>
     );
 };
 
