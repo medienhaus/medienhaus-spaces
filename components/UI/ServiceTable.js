@@ -51,22 +51,18 @@ const TableCaption = styled.caption`
 `;
 
 const TableHead = styled.thead`
-  width: 100%;
 `;
 
 const TableBody = styled.tbody`
-  width: 100%;
 `;
 
 const TableRow = styled.tr`
-  max-width: 100%;
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);
 `;
 
 const TableHeader = styled.th`
-  max-width: 100%;
   padding: 0;
   text-align: ${props => props.align && props.align};
 
@@ -77,7 +73,6 @@ const TableHeader = styled.th`
 `;
 
 const TableCell = styled.td`
-  max-width: 100%;
   padding: 0;
   line-height: calc(var(--margin) * 3);
 
