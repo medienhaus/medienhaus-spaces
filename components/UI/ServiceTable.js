@@ -2,6 +2,9 @@
 // Example usage:
 //
 // <ServiceTable>
+//   <ServiceTable.Caption>
+//     This caption (here: heading) will be aligned left
+//   </ServiceTable.Caption>
 //   <ServiceTable.Head>
 //     <ServiceTable.Row>
 //       <ServiceTable.Header align="left">
@@ -41,11 +44,17 @@ const Table = styled.table`
   border-collapse: collapse;
 `;
 
-const TableBody = styled.tbody`
-  width: 100%;
+const TableCaption = styled.caption`
+  font-weight: bold;
+  line-height: calc(var(--margin) * 3);
+  text-align: left;
 `;
 
 const TableHead = styled.thead`
+  width: 100%;
+`;
+
+const TableBody = styled.tbody`
   width: 100%;
 `;
 
@@ -94,6 +103,7 @@ export function ServiceTable({ children, selected, align }) {
     );
 }
 
+ServiceTable.Caption = TableCaption;
 ServiceTable.Head = TableHead;
 ServiceTable.Body = TableBody;
 ServiceTable.Row = TableRow;
