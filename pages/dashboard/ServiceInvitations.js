@@ -21,6 +21,10 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 
 const TableSection = styled.section`
   overflow-x: auto;
+
+  tbody tr:hover {
+    background-color: var(--color-background-alpha);
+  }
 `;
 
 const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
