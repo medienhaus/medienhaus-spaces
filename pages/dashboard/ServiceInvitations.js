@@ -9,14 +9,6 @@ import DisplayInvitations from './DisplayInvitations';
 // import DisplayLatestLinks from './DisplayLatestLinks';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
-const ApplicationSegment = styled.div`
-  margin-top: var(--margin);
-
-  h2 {
-    text-decoration: underline;
-  }
-`;
-
 /**
  * COMPONENT 'ApplicationSection'
  *
@@ -43,38 +35,35 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
                     latestApplicationChildren={applicationChildren.slice(0, 5)}
                     applicationUrlName={name.replace(/[^a-zA-Z0-9 ]/g, '')} />
             </ApplicationSegment> } */ }
-            <ApplicationSegment>
-                <ServiceTable>
-                    <ServiceTable.Head>
-                        <ServiceTable.Row>
-                            <ServiceTable.Header align="left">
-                                <span>{ t('Invitations') }</span>
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="left">
-                                <span>{ t('From') }</span>
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="center">
-                                <span>{ t('Accept') }</span>
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="center">
-                                <span>{ t('Decline') }</span>
-                            </ServiceTable.Header>
-                        </ServiceTable.Row>
-                    </ServiceTable.Head>
-                    <ServiceTable.Body>
-                        { _.map(serviceInvitations, (invite) => {
-                            return <DisplayInvitations
-                                key={invite.roomId}
-                                service={service}
-                                name={name}
-                                invite={invite}
-                                declineMatrixInvite={declineMatrixInvite}
-                                acceptMatrixInvite={acceptMatrixInvite} />;
-                        }) }
-                    </ServiceTable.Body>
-                </ServiceTable>
-            </ApplicationSegment>
-
+            <ServiceTable>
+                <ServiceTable.Head>
+                    <ServiceTable.Row>
+                        <ServiceTable.Header align="left">
+                            <span>{ t('Invitations') }</span>
+                        </ServiceTable.Header>
+                        <ServiceTable.Header align="left">
+                            <span>{ t('From') }</span>
+                        </ServiceTable.Header>
+                        <ServiceTable.Header align="center">
+                            <span>{ t('Accept') }</span>
+                        </ServiceTable.Header>
+                        <ServiceTable.Header align="center">
+                            <span>{ t('Decline') }</span>
+                        </ServiceTable.Header>
+                    </ServiceTable.Row>
+                </ServiceTable.Head>
+                <ServiceTable.Body>
+                    { _.map(serviceInvitations, (invite) => {
+                        return <DisplayInvitations
+                            key={invite.roomId}
+                            service={service}
+                            name={name}
+                            invite={invite}
+                            declineMatrixInvite={declineMatrixInvite}
+                            acceptMatrixInvite={acceptMatrixInvite} />;
+                    }) }
+                </ServiceTable.Body>
+            </ServiceTable>
         </section>
     );
 };
