@@ -46,8 +46,8 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
             <ServiceTable.Cell>
                 { invite.name }
             </ServiceTable.Cell>
-            <ServiceTable.Cell>
-                { invite.inviterName }
+            <ServiceTable.Cell title={invite.inviter.userId}>
+                { invite.inviter.displayName }
             </ServiceTable.Cell>
             { isLoading ?
                 <ServiceTable.Cell>
