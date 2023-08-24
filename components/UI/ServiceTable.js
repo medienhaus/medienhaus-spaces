@@ -79,6 +79,7 @@ const TableHeader = styled.th`
 const TableCell = styled.td`
   max-width: 100%;
   padding: 0;
+  line-height: calc(var(--margin) * 3);
 
   > * {
     display: inline-block;
