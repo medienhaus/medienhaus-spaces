@@ -20,7 +20,7 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 */
 
 const TableSection = styled.section`
-  overflow-x: scroll;
+  overflow-x: auto;
 `;
 
 const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
