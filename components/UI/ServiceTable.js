@@ -63,8 +63,9 @@ const TableRow = styled.tr`
 `;
 
 const TableHeader = styled.th`
-  padding: 0;
+  line-height: calc(var(--margin) * 3);
   text-align: ${props => props.align && props.align};
+  white-space: nowrap;
 
   > * {
     display: inline-block;
@@ -73,8 +74,8 @@ const TableHeader = styled.th`
 `;
 
 const TableCell = styled.td`
-  padding: 0;
   line-height: calc(var(--margin) * 3);
+  white-space: nowrap;
 
   > * {
     display: inline-block;
