@@ -140,9 +140,9 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const verifyUser = useCallback(
         debounce(user => {
-            const id = user.substring(user.lastIndexOf(' ') + 1);
-            const getUser = matrixClient.getUser(id);
-            if (getUser) setValidUserObject(getUser);
+            const userId = user.substring(user.lastIndexOf(' ') + 1);
+            const displayName = user.substring(0, user.lastIndexOf(' '));
+            if (userId.startsWith('@')) setValidUserObject({ userId: userId, displayName: displayName });
             else setValidUserObject(false);
         }, 200),
         [],
