@@ -20,19 +20,20 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, declineMatrixInvite }) => {
     const { t } = useTranslation('dashboard');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
+    const [isDecliningInvite, setisDecliningInvite] = useState(false);
     const router = useRouter();
 
     const handleDecline = async (e, roomId) => {
-        setIsLoading(true);
+        setisDecliningInvite(true);
         await declineMatrixInvite(e, roomId);
-        setIsLoading(false);
+        setisDecliningInvite(false);
     };
 
     const handleAccept = async (e, roomId) => {
-        setIsLoading(true);
+        setIsAcceptingInvite(true);
         await acceptMatrixInvite(e, roomId, service, name);
-        setIsLoading(false);
+        setIsAcceptingInvite(false);
         if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted ' + name + ' item?')) {
             router.push(`${name}/${roomId}`);
         }
@@ -49,20 +50,15 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
             <ServiceTable.Cell title={invite.inviter.userId}>
                 { invite.inviter.displayName }
             </ServiceTable.Cell>
-            { isLoading ?
-                <ServiceTable.Cell>
-                    <LoadingSpinnerInline />
+            <>
+                <ServiceTable.Cell title={t('accept invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
+                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <TextButton><AcceptIcon /></TextButton> }
                 </ServiceTable.Cell>
-                :
-                <>
-                    <ServiceTable.Cell title={t('accept invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
-                        <TextButton><AcceptIcon /></TextButton>
-                    </ServiceTable.Cell>
-                    <ServiceTable.Cell title={t('decline invitation')} onClick={(e) => {handleDecline(e, invite.roomId);}}>
-                        <TextButton><CloseIcon /></TextButton>
-                    </ServiceTable.Cell>
-                </>
-            }
+                <ServiceTable.Cell title={t('decline invitation')} onClick={(e) => {handleDecline(e, invite.roomId);}}>
+                    { isDecliningInvite ? <LoadingSpinnerInline /> : <TextButton><CloseIcon /></TextButton> }
+                </ServiceTable.Cell>
+            </>
+
         </ServiceTable.Row>
 
     );
