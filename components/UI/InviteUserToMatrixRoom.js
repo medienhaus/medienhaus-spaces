@@ -29,7 +29,7 @@ import CloseIcon from '../../assets/icons/close.svg';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from './ErrorMessage';
 
-Modal.setAppElement(document.body);
+if (typeof window !== 'undefined') Modal.setAppElement(document.body);
 
 const Header = styled.header`
   display: grid;
