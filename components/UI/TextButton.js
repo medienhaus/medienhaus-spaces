@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const TextButton = styled.button`
+  display: grid;
+  place-content: center;
   height: unset;
   padding: 0;
   font: inherit;
