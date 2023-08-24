@@ -1,10 +1,10 @@
-import styled from 'styled-components';
 import _ from 'lodash';
 import getConfig from 'next/config';
 // import { useAuth } from '../../lib/Auth';
 // import { useMatrix } from '../../lib/Matrix';
 import { useTranslation } from 'react-i18next';
 
+import styles from './style.module.css';
 import DisplayInvitations from './DisplayInvitations';
 // import DisplayLatestLinks from './DisplayLatestLinks';
 import { ServiceTable } from '../../components/UI/ServiceTable';
