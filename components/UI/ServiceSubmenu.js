@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { cloneElement, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
@@ -45,7 +45,10 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
 
     const handleMenuToggle = () => { setIsOpen(!isOpen); setValue(''); };
 
-    const ActionComponent = value && _.get(_.find(items, { value: value }), 'actionComponentToRender');
+    // We clone the passed in React element to add the callback function prop to it:
+    const ActionComponent = value && cloneElement(_.get(_.find(items, { value: value }), 'actionComponentToRender'), {
+        callbackDone: handleMenuToggle,
+    });
 
     return (
         <>
@@ -67,7 +70,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                             <option key={value} value={value}>{ label }</option>
                         )) }
                     </select>
-                    { value && <ActionComponent callbackDone={handleMenuToggle} /> }
+                    { value && ActionComponent }
                 </Submenu>
             ) }
         </>
