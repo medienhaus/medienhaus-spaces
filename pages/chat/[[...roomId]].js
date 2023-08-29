@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,6 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import IframeLayout from '../../components/layouts/iframe';
 import ChatIframeView from './ChatIframeView';
@@ -76,11 +75,11 @@ const SidebarListEntry = function({ room }) {
 };
 
 export default function RoomId() {
-    const auth = useAuth();
+    const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
