@@ -52,10 +52,14 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
             </ServiceTable.Cell>
             <>
                 <ServiceTable.Cell title={t('accept invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
-                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <TextButton><AcceptIcon /></TextButton> }
+                    <TextButton disabled={isDecliningInvite || isAcceptingInvite}>
+                        { isAcceptingInvite ? <LoadingSpinnerInline /> : <AcceptIcon /> }
+                    </TextButton>
                 </ServiceTable.Cell>
                 <ServiceTable.Cell title={t('decline invitation')} onClick={(e) => {handleDecline(e, invite.roomId);}}>
-                    { isDecliningInvite ? <LoadingSpinnerInline /> : <TextButton><CloseIcon /></TextButton> }
+                    <TextButton disabled={isDecliningInvite || isAcceptingInvite}>
+                        { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon /> }
+                    </TextButton>
                 </ServiceTable.Cell>
             </>
 
