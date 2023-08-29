@@ -2,6 +2,7 @@ import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import styled from 'styled-components';
 
+import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
 
 const List = styled.ul`
@@ -13,6 +14,12 @@ const List = styled.ul`
   li {
     line-height: calc(var(--margin) * 3);
     border-bottom: 1px solid rgb(0 0 0 / 5%);
+  }
+
+  @media ${breakpoints.phoneOnly} {
+    li:first-of-type {
+      padding: 1.5px 0 2.5px;
+    }
   }
 `;
 
@@ -47,9 +54,19 @@ export default function Navigation({ closeNavigation }) {
                 { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
             <List>
-                <li><Link href="/write">/write</Link></li>
-                <li><Link href="/chat">/chat</Link></li>
-                <li><Link href="/sketch">/sketch</Link></li>
+                <li><Link href="/">/chat</Link></li>
+                { Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
+                    // we skip the matrix config since it's already displayed in chat
+                    // @TODO enabkle custom path name for chat
+                    if (authProvider === 'matrix') return null;
+                    const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
+
+                    return <li key={path}>
+                        <Link href={path}>
+                            { path }
+                        </Link>
+                    </li>;
+                }) }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>

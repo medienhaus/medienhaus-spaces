@@ -29,14 +29,9 @@ const Sidebar = styled.div`
 
   // On bigger viewports ...
   @media ${breakpoints.tabletAndAbove} {
-    width: 21rem;
+    width: 36ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
-
-    @media ${breakpoints.laptopAndAbove} {
-      width: ${props => props.width ? props.width : '25rem'};
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
@@ -45,8 +40,14 @@ const IframeWrapper = styled.div`
   flex: 1 0;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+
+  /* justify-content: center; */
   height: 100%;
+  padding: var(--margin);
+
+  @media ${breakpoints.tabletAndAbove} {
+    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+  }
 
   iframe {
     width: 100%;
@@ -64,19 +65,18 @@ const IframeHeader = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
   width: 100%;
+
+  /*
   padding: var(--margin);
 
   @media ${breakpoints.tabletAndAbove} {
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
+  */
 
   /* @TODO: re-factor quick-fix */
   h2 {
-    margin: 0 !important;
+    margin-bottom: calc(var(--margin) * 2);
   }
 `;
 

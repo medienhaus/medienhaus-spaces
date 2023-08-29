@@ -1,5 +1,5 @@
 import getConfig from 'next/config';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isEmpty } from 'lodash';
 import _ from 'lodash';
@@ -13,17 +13,17 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
-import SketchLinkEntry from './SketchLinkEntry';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Form from '../../components/UI/Form';
 import AddBookmark from '../../components/UI/AddBookmark';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import ServiceLink from '../../components/UI/ServiceLink';
 
-export default function Sketch() {
+export default function Spacedeck() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const { t } = useTranslation('sketch');
+    const { t } = useTranslation('spacedeck');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
 
@@ -33,9 +33,17 @@ export default function Sketch() {
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
-    const [isSketchServerDown, setIsSketchServerDown] = useState(false);
+    const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
-    const sketch = auth.getAuthenticationProvider('sketch');
+    const spacedeck = auth.getAuthenticationProvider('spacedeck');
+
+    // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
+    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    const selectedPadRef = useRef(null);
+    useEffect(() => {
+        selectedPadRef.current?.focus();
+    }, [roomId]);
 
     useEffect(() => {
         let cancelled = false;
@@ -43,7 +51,7 @@ export default function Sketch() {
         const startLookingForFolders = async () => {
             if (matrix.initialSyncDone) {
                 try {
-                    setServiceSpaceId(matrix.serviceSpaces.sketch);
+                    setServiceSpaceId(matrix.serviceSpaces.spacedeck);
                 } catch (err) {
                     console.log(err);
                 }
@@ -54,7 +62,7 @@ export default function Sketch() {
 
         return () => cancelled = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrix.initialSyncDone, matrix.serviceSpaces.sketch]);
+    }, [matrix.initialSyncDone, matrix.serviceSpaces.spacedeck]);
 
     useEffect(() => {
         let cancelled = false;
@@ -108,16 +116,16 @@ export default function Sketch() {
                         continue;
                     }
                     // otherwise we create a room for the sketch
-                    const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + sketch.id;
+                    const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + sketch.id;
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
-            const syncSketches = await sketch.syncAllSketches()
+            const syncSketches = await spacedeck.syncAllSketches()
                 .catch((error) => {
                     console.debug(error);
-                    setIsSketchServerDown(true);
+                    setIsSpacedeckServerDown(true);
                 });
-            syncSketches && await updateStructure(sketch.getStructure());
+            syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
         };
 
@@ -132,19 +140,19 @@ export default function Sketch() {
     useEffect(() => {
         let cancelled = false;
         const populateSketchesfromServer = async (recursion) => {
-            if (!isEmpty(sketch.getStructure())) {
-                setServerSketches(sketch.getStructure());
+            if (!isEmpty(spacedeck.getStructure())) {
+                setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
-                await sketch.syncAllSketches();
+                await spacedeck.syncAllSketches();
                 populateSketchesfromServer(true);
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl && populateSketchesfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesfromServer();
 
         return () => {
             cancelled = true;
         };
-    }, [sketch]);
+    }, [spacedeck]);
 
     useEffect(() => {
         let cancelled = false;
@@ -175,21 +183,16 @@ export default function Sketch() {
 
     const removeLink = async () => {
         setRemovingLink(true);
-        const remove = await sketch.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
-        if (!remove) {
+        const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
+        if (!remove || remove.ok) {
             setRemovingLink(false);
-
-            return;
-        }
-        if (!remove.ok) {
-        // @TODO callback function to give user feedback when removing on the server fails
-            setRemovingLink(false);
+            alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
             return;
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
-        router.push('/sketch');
+        router.push(`/${path}`);
         setRemovingLink(false);
     };
 
@@ -200,10 +203,10 @@ export default function Sketch() {
         const createNewSketchRoom = async () => {
             setLoading(true);
 
-            const create = await sketch.createSpace(sketchName);
-            const link = getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl + '/spaces/' + create._id;
+            const create = await spacedeck.createSpace(sketchName);
+            const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + create._id;
             const roomId = await createSketchRoom(link, sketchName);
-            router.push(`/sketch/${roomId}`);
+            router.push(`/${path}/${roomId}`);
 
             callbackDone && callbackDone();
             setLoading(false);
@@ -239,8 +242,8 @@ export default function Sketch() {
                 if (isValidUrl(e.target.value)) setValidLink(true);
                 else setValidLink(false);
             } else {
-            // we check if the link is valid for the service (has the same base url)
-                if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl)) setValidLink(true);
+                // we check if the link is valid for the service (has the same base url)
+                if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl)) setValidLink(true);
                 else setValidLink(false);
             }
             setSketchLink(e.target.value);
@@ -249,7 +252,9 @@ export default function Sketch() {
         const handleSubmit = async (e) => {
             setLoading(true);
             e.preventDefault();
-            await createSketchRoom(sketchLink, sketchName);
+            const roomId = await createSketchRoom(sketchLink, sketchName);
+            router.push(`/${getConfig().publicRuntimeConfig.authProviders.spacedeck.path}/${roomId}`);
+            setSketchLink('');
             callbackDone && callbackDone();
             setLoading(false);
         };
@@ -258,7 +263,7 @@ export default function Sketch() {
             <Form onSubmit={handleSubmit}>
                 <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
                 <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                { !validLink && sketchLink !=='' && <ErrorMessage>{ t('Make sure your link includes') }:  { getConfig().publicRuntimeConfig.authProviders.sketch.baseUrl }</ErrorMessage> }
+                { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
 
                 <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
@@ -271,7 +276,7 @@ export default function Sketch() {
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
-                    title={<h2>/sketch</h2>}
+                    title={<h2>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</h2>}
                     subheadline={t('What would you like to do?')}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: ActionExistingSketch, label: t('Add existing sketch') },
@@ -282,11 +287,18 @@ export default function Sketch() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(roomId => {
-                                return <SketchLinkEntry roomId={roomId} key={roomId} />;
+                            { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
+                                return <ServiceLink
+                                    roomId={spacedeckRoomId}
+                                    name={matrix.rooms.get(spacedeckRoomId).name}
+                                    path={path}
+                                    selected={roomId === spacedeckRoomId}
+                                    key={spacedeckRoomId}
+                                    ref={spacedeckRoomId === roomId ? selectedPadRef : null}
+                                />;
                             }) }
                         </ServiceTable>
-                        { isSketchServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                        { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
 
                 }
@@ -299,7 +311,7 @@ export default function Sketch() {
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <AddBookmark name={matrix.rooms.get(roomId).name} />
                             <button title={t('Delete sketch from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinner /> : <Bin fill="var(--color-foreground)" /> }
+                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
@@ -310,6 +322,6 @@ export default function Sketch() {
     );
 }
 
-Sketch.getLayout = () => {
+Spacedeck.getLayout = () => {
     return IframeLayout.Layout;
 };
