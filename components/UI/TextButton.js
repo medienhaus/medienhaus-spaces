@@ -10,6 +10,8 @@ const TextButton = styled.button`
   font: inherit;
   cursor: pointer;
   background: none;
+  border: none;
+  outline: inherit;
 
   &:disabled {
     color: var(--color-disabled);
