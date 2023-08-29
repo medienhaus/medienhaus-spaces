@@ -24,7 +24,7 @@ import InviteUserToMatrixRoom from '../../components/UI/InviteUserToMatrixRoom';
 
 export default function Etherpad() {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');

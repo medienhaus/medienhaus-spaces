@@ -8,16 +8,12 @@ module.exports = {
                 baseUrl: 'https://matrix.org',
                 allowCustomHomeserver: true,
             },
-            matrixContentStorage: {
-                baseUrl: 'https://second.matrixserver.org',
-            },
             etherpad: {
                 path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
                 myPads: {
                     api: 'http://etherpad.localhost/mypads/api',
                     spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
-
                 },
             },
         },
