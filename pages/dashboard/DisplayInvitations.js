@@ -47,8 +47,8 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
             <ServiceTable.Cell>
                 { invite.name }
             </ServiceTable.Cell>
-            <ServiceTable.Cell title={invite.inviter.userId}>
-                { invite.inviter.displayName }
+            <ServiceTable.Cell title={invite.inviter?.userId}>
+                { invite.inviter?.displayName }
             </ServiceTable.Cell>
             <>
                 <ServiceTable.Cell title={t('accept invitation')} onClick={(e) => { handleAccept(e, invite.roomId); }}>
