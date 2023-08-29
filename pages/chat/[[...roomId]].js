@@ -136,7 +136,7 @@ export default function RoomId() {
         };
     });
 
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms);
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms).filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
@@ -151,7 +151,7 @@ export default function RoomId() {
         <>
             <IframeLayout.Sidebar>
                 <h2>/chat</h2>
-                { matrix.invites.size > 0 && (
+                { invites.length > 0 && (
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
