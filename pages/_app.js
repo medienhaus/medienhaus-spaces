@@ -10,6 +10,7 @@ import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '/assets/_globalCss.css';
 import { DefaultLayout } from '../components/layouts/default';
 import MatrixAuthProvider from '../lib/auth/MatrixAuthProvider';
+import DisplayLostConnection from '../components/DisplayLostConnection';
 
 const guestRoutes = ['/', '/login'];
 
@@ -43,6 +44,7 @@ export default function App({ Component, pageProps }) {
             </Head>
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
+                    <DisplayLostConnection />
                     <Layout>
                         { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
