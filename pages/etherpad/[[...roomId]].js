@@ -212,16 +212,18 @@ export default function Etherpad() {
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
                         <ServiceTable>
-                            { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
-                                return <EtherpadListEntry
-                                    key={writeRoomId}
-                                    roomId={writeRoomId}
-                                    padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
-                                    selected={writeRoomId === roomId}
-                                    ref={writeRoomId === roomId ? selectedPadRef : null}
-                                />;
-                            }) }
+                            <ServiceTable.Body>
+                                { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
+                                    return <EtherpadListEntry
+                                        key={writeRoomId}
+                                        roomId={writeRoomId}
+                                        padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
+                                        selected={writeRoomId === roomId}
+                                        ref={writeRoomId === roomId ? selectedPadRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                     </>
                 ) }
