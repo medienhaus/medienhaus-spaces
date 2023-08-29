@@ -124,6 +124,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         setUserFeedback('✓ ' + validUserObject.displayName + t(' was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
+            setIsInviteDialogueOpen(false);
         }, 3000));
     };
 
