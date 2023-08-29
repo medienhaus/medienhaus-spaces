@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../lib/Auth';
-import { useMatrix } from '../lib/Matrix';
-import LoadingSpinnerInline from './UI/LoadingSpinnerInline';
+import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '../../lib/Matrix';
+import LoadingSpinnerInline from './LoadingSpinnerInline';
 
 const NoConnectionView = styled.div`
   position: absolute;
@@ -21,9 +21,9 @@ const NoConnectionView = styled.div`
   border-radius: 4px;
 
 `;
-const DisplayLostConnection = (params) => {
+const DisplayLostConnection = () => {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix =useMatrix(auth.getAuthenticationProvider('matrix'));
     const { t } = useTranslation();
 
     if (matrix.isConnectedToServer) return null;
