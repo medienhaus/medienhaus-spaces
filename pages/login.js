@@ -65,8 +65,6 @@ export default function Login() {
     const logAuthenticationStatus = () => {
         console.log('matrix authentication provider status:');
         console.log(auth.getAuthenticationProvider('matrix'));
-        console.log('matrixContentStorage authentication provider status:');
-        console.log(auth.getAuthenticationProvider('matrixContentStorage'));
         console.log('peerTube authentication provider status:');
         console.log(auth.getAuthenticationProvider('peerTube'));
     };
