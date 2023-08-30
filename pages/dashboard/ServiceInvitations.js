@@ -4,19 +4,23 @@ import getConfig from 'next/config';
 import DisplayInvitations from './DisplayInvitations';
 
 /**
- * COMPONENT 'ApplicationSection'
+ * Displays single invitations of a given service
+ * @date 30/08/2023 - 17:07:55
  *
- * @TODO
- *
- *
- * @param {String} name — name of the Application
- * @param {String} id — id of the application
-*/
-
-const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
+ * @param {String} service
+ * @param {Array} invitations
+ * @callback acceptMatrixInvite
+ *  * @param e - event triggered by the button
+ *  * @param roomId - matrix roomId
+ *  * @param service - name of the service (parsed to the function)
+ * @callback declineMatrixInvite
+ *  * @param e - event triggered by the button
+ *  * @param roomId - matrix roomId
+ * @returns {React.ReactComponent}
+ */
+const ServiceInvitations = ({ service, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
     const name = getConfig().publicRuntimeConfig.authProviders[service].path || service;
-    const serviceTemplates = getConfig().publicRuntimeConfig.authProviders[service].templates;
-    const serviceInvitations = invitations.filter(invite => serviceTemplates.includes(invite.meta?.template)); // filter invitations for the current service
+    const serviceInvitations = invitations.filter(invite => invite.meta?.template === service); // filter invitations for the current service
 
     if (_.isEmpty(serviceInvitations)) return null;
 
