@@ -89,13 +89,7 @@ const TableCell = styled.td`
 
 `;
 
-export function ServiceTable({ children, selected, align }) {
-    return (
-        <Table selected={selected}>
-            { children }
-        </Table>
-    );
-}
+export const ServiceTable = Table;
 
 ServiceTable.Caption = TableCaption;
 ServiceTable.Head = TableHead;
