@@ -135,7 +135,8 @@ export default function RoomId() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-
+    // filtering invites for all invitations without a dev.medienhaus.meta event.
+    // for now normal chat rooms don't have this event. If we add this in the future we need to also change the filtering here.
     const invites = _.sortBy([...matrix.invites.values()], sortRooms).filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
