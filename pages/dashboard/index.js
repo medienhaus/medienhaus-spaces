@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
 import styled from 'styled-components';
@@ -9,13 +9,6 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceInvitations from './ServiceInvitations';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
-
-const sortRooms = function(room) {
-    return [
-        room.notificationCount === 0,
-        room.name,
-    ];
-};
 
 const TableSection = styled.section`
   overflow-x: auto;
@@ -30,11 +23,47 @@ export default function Dashboard() {
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const MatrixAuthProvider = auth.getAuthenticationProvider('matrix');
     const { t } = useTranslation('dashboard');
+    const [serviceInvitations, setServiceInvitations] = useState([]);
 
-    const invites = matrix.invites;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const serviceSpaces = matrix.serviceSpaces;
-    const chatInvitations = _.sortBy([...matrix.invites.values()], sortRooms).filter(invite => !invite.meta);
+    const [chatInvitations, setChatInvitations] = useState([]);
+
+    useEffect(() => {
+        let cancelled = false;
+        const hydrateInvitationMetaEvents = async () => {
+            const serviceInvitationsArray = [];
+            const chatInvitationsArray = [];
+
+            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
+                const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
+                    .catch(() => {});
+                const room = matrixClient.getRoom(invitation.roomId);
+                const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
+                const inviter = matrixClient.getUser(inviterName);
+
+                invitation.inviter = inviter;
+
+                if (metaEvent) {
+                    invitation.meta = metaEvent;
+                    serviceInvitationsArray.push(invitation);
+                } else {
+                    chatInvitationsArray.push(invitation);
+                }
+            });
+
+            await Promise.all(sortAndHydrateInvitations);
+
+            setServiceInvitations(serviceInvitationsArray);
+            setChatInvitations(chatInvitationsArray);
+        };
+
+        if (!cancelled) hydrateInvitationMetaEvents();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [matrix, matrix.invites, matrixClient]);
 
     // functions which interact with matrix server
     const declineMatrixInvite = async (e, roomId) => {
@@ -57,7 +86,7 @@ export default function Dashboard() {
         <>
             <h2>/dashboard</h2>
 
-            { invites.size > 0 &&
+            { matrix.invites.size > 0 &&
                        <TableSection>
                            <ServiceTable>
                                <ServiceTable.Caption>
@@ -90,7 +119,7 @@ export default function Dashboard() {
                                            key={id}
                                            id={id}
                                            service={service}
-                                           invitations={invites}
+                                           invitations={serviceInvitations}
                                            acceptMatrixInvite={acceptMatrixInvite}
                                            declineMatrixInvite={declineMatrixInvite}
                                        />;

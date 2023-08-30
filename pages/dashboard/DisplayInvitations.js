@@ -29,7 +29,6 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 */
 
 const DisplayInvitations = ({ invite, name, service, acceptMatrixInvite, declineMatrixInvite }) => {
-    console.log(invite);
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setisDecliningInvite] = useState(false);
