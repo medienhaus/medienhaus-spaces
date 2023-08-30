@@ -10,15 +10,25 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 /**
  * COMPONENT 'DisplayInvitations'
+ * Displays an invitation for a matrix room/space within a <ServiceTable> component.
  *
- * @TODO
+ * @param {Object} invite — object of the room the user was invited to
+ * @param {String} service — name of the service (i.e. the object key names of the 'authProvider' object in the config)
+ * @param {String} name — name of the Application (i.e. the 'path' variable in the config)
  *
+ * @callback acceptMatrixInvite - callback function to accept invitations to a matrix room or space
+ * @param e - event triggered by the button
+ * @param roomId - matrix roomId
+ * @param service - name of the service (parsed to the function)
+ * @param name - name of the Application (parsed to the function)
  *
- * @param {String} name — name of the Application
- * @param {String} id — id of the application
+ * @callback declineMatrixInvite - callback function to decline invitations to a matrix room or space
+ * @param e - event triggered by the button
+ * @param roomId - matrix roomId
 */
 
 const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, declineMatrixInvite }) => {
+    console.log(invite);
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setisDecliningInvite] = useState(false);
