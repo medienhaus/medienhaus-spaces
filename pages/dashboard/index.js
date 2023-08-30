@@ -33,6 +33,8 @@ export default function Dashboard() {
         let cancelled = false;
         const hydrateInvitationMetaEvents = async () => {
             const serviceInvitationsArray = [];
+            // fetch information about pedning invitations
+            // i.e. who sent it, what are we being invited to (service, chat)
             const chatInvitationsArray = [];
 
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
