@@ -35,11 +35,6 @@ export default function Dashboard() {
     const serviceSpaces = matrix.serviceSpaces;
     const chatInvitations = _.sortBy([...matrix.invites.values()], sortRooms).filter(invite => !invite.meta);
 
-    // const authProviders = getConfig().publicRuntimeConfig.authProviders; // get the authProvider object from the config
-    // const providersWithTemplates = useMemo(() => {
-    //     return _.pickBy(authProviders, provider => _.has(provider, 'templates')); // only return authProviders which have a templates key
-    // }, [authProviders]);
-
     // functions which interact with matrix server
     const declineMatrixInvite = async (e, roomId) => {
         e.preventDefault();
@@ -59,28 +54,8 @@ export default function Dashboard() {
         <>
             <h2>/dashboard</h2>
 
-            { /* { invites.size > 0 && <ApplicationSegment>
-                <h2>{ t('Invitations') }</h2>
-                <ServiceTable>
-                    { _.map([...invites.values()], (invite) => {
-                        // if (!serviceTemplates.includes(invite.meta.template)) return null; // only display invitations from the current service
-                        return <DisplayInvitations
-                            key={invite.roomId}
-                            // service={service}
-                            invite={invite}
-                            declineMatrixInvite={declineMatrixInvite}
-                            acceptMatrixInvite={acceptMatrixInvite} />;
-                    }) }
-                </ServiceTable>
-            </ApplicationSegment>
-            } */ }
             { invites.size > 0 &&
                        <TableSection>
-                           { /* { applicationChildren && <ApplicationSegment>
-                <DisplayLatestLinks
-                    latestApplicationChildren={applicationChildren.slice(0, 5)}
-                    applicationUrlName={name.replace(/[^a-zA-Z0-9 ]/g, '')} />
-            </ApplicationSegment> } */ }
                            <ServiceTable>
                                <ServiceTable.Caption>
                                    { t('Invitations') }
