@@ -31,7 +31,7 @@ export default function Spacedeck() {
     const serviceSpaceId = matrix.serviceSpaces.spacedeck;
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
-    const [content, setContent] = useState(matrix.roomContents.get(roomId));
+    const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
     const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
@@ -40,9 +40,9 @@ export default function Spacedeck() {
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
     // This makes the sidebar scroll to the element if it is outside of the current viewport.
-    const selectedPadRef = useRef(null);
+    const selectedSketchRef = useRef(null);
     useEffect(() => {
-        selectedPadRef.current?.focus();
+        selectedSketchRef.current?.focus();
     }, [roomId]);
 
     useEffect(() => {
@@ -135,14 +135,6 @@ export default function Spacedeck() {
         };
     }, [spacedeck]);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        !cancelled && setContent(matrix.roomContents.get(roomId));
-
-        return () => cancelled = true;
-    }, [matrix.roomContents, roomId]);
-
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
         logger.debug('creating room for ' + name);
@@ -202,7 +194,7 @@ export default function Spacedeck() {
                                     path={path}
                                     selected={roomId === spacedeckRoomId}
                                     key={spacedeckRoomId}
-                                    ref={spacedeckRoomId === roomId ? selectedPadRef : null}
+                                    ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
                                 />;
                             }) }
                         </ServiceTable>
