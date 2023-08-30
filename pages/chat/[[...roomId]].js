@@ -34,7 +34,14 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
+
+  /*
   background: var(--color-foreground);
+  */
+
+  &.placeholder {
+    backdrop-filter: invert(100%);
+  }
 `;
 
 const SidebarListEntryWrapper = styled.a`
@@ -62,7 +69,7 @@ const SidebarListEntry = function({ room }) {
                     <Avatar src={room.avatar} alt={room.name} />
                 ) : (
                     // Render an empty GIF if we don't have an avatar
-                    <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                 ) }
                 <RoomName>{ room.name }</RoomName>
                 { room.notificationCount > 0 && (
