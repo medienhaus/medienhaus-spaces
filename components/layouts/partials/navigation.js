@@ -29,7 +29,6 @@ const List = styled.ul`
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
     const matrix = useMatrix();
-    const invites = matrix.invites;
 
     const Link = ({ href, children }) => (
         <NextLink href={href} onClick={closeNavigation}>
@@ -54,7 +53,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/dashboard">/dashboard { invites.size > 0 && <NotificationBubble /> }</Link></li>
+                <li><Link href="/dashboard">/dashboard { matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>
