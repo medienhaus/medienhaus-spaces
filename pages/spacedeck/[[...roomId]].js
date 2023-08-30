@@ -14,9 +14,10 @@ import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import Form from '../../components/UI/Form';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import ServiceLink from '../../components/UI/ServiceLink';
+import CreateNewSketch from './actions/CreateNewSketch';
+import AddExistingSketch from './actions/AddExistingSketch';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -25,7 +26,6 @@ export default function Spacedeck() {
     const { t } = useTranslation('spacedeck');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
-
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
     const [removingLink, setRemovingLink] = useState(false);
@@ -195,64 +195,6 @@ export default function Spacedeck() {
         setRemovingLink(false);
     };
 
-    const ActionNewSketch = ({ callbackDone }) => {
-        const [sketchName, setSketchName] = useState('');
-        const [loading, setLoading] = useState(false);
-
-        const createNewSketchRoom = async () => {
-            setLoading(true);
-
-            const create = await spacedeck.createSpace(sketchName);
-            const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + create._id;
-            const roomId = await createSketchRoom(link, sketchName);
-            router.push(`/${path}/${roomId}`);
-
-            callbackDone && callbackDone();
-            setLoading(false);
-        };
-
-        return (
-            <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
-                <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-                <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </Form>);
-    };
-
-    const ActionExistingSketch = ({ callbackDone }) => {
-        const [sketchName, setSketchName] = useState('');
-        const [sketchLink, setSketchLink] = useState('');
-        const [validLink, setValidLink] = useState(false);
-        const [loading, setLoading] = useState(false);
-
-        const handleExistingSketch = (e) => {
-            // we check if the link is valid for the service (has the same base url)
-            if (e.target.value.includes(getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl)) setValidLink(true);
-            else setValidLink(false);
-            setSketchLink(e.target.value);
-        };
-
-        const handleSubmit = async (e) => {
-            setLoading(true);
-            e.preventDefault();
-            const roomId = await createSketchRoom(sketchLink, sketchName);
-            router.push(`/${getConfig().publicRuntimeConfig.authProviders.spacedeck.path}/${roomId}`);
-            setSketchLink('');
-            callbackDone && callbackDone();
-            setLoading(false);
-        };
-
-        return (
-            <Form onSubmit={handleSubmit}>
-                <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-                <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-                { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
-
-                <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </Form>);
-    };
-
     if (!serviceSpaceId) return <LoadingSpinner />;
 
     return (
@@ -262,10 +204,11 @@ export default function Spacedeck() {
                     title={<h2>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</h2>}
                     subheadline={t('What would you like to do?')}
                     items={[
-                        { value: 'existingSketch', actionComponentToRender: ActionExistingSketch, label: t('Add existing sketch') },
-                        { value: 'newSketch', actionComponentToRender: ActionNewSketch, label: t('Create sketch') },
+                        { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
+                        { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create sketch') },
                     ]}
                 />
+                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
                 { syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>
