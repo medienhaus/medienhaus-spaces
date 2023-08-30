@@ -20,19 +20,17 @@ const ServiceInvitations = ({ service, id, invitations, acceptMatrixInvite, decl
 
     if (_.isEmpty(serviceInvitations)) return null;
 
-    return (
+    return _.map(serviceInvitations, (invite) => {
+        return <DisplayInvitations
+            key={invite.roomId}
+            service={service}
+            name={name}
+            invite={invite}
+            declineMatrixInvite={declineMatrixInvite}
+            acceptMatrixInvite={acceptMatrixInvite} />;
+    })
 
-        _.map(serviceInvitations, (invite) => {
-            return <DisplayInvitations
-                key={invite.roomId}
-                service={service}
-                name={name}
-                invite={invite}
-                declineMatrixInvite={declineMatrixInvite}
-                acceptMatrixInvite={acceptMatrixInvite} />;
-        })
-
-    );
+    ;
 };
 
 export default ServiceInvitations;
