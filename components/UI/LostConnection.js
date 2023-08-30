@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 
 const NoConnectionView = styled.div`
@@ -22,11 +20,7 @@ const NoConnectionView = styled.div`
 
 `;
 const LostConnection = () => {
-    const auth = useAuth();
-    const matrix =useMatrix(auth.getAuthenticationProvider('matrix'));
     const { t } = useTranslation();
-
-    if (matrix.isConnectedToServer) return null;
 
     return (
         <NoConnectionView>

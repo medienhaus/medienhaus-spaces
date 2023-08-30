@@ -8,7 +8,7 @@ import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '../lib/Internationalization';
 import '/assets/_globalCss.css';
-import DisplayLostConnection from '../components/UI/DisplayLostConncetion';
+import LostConnection from '../components/UI/LostConnection';
 
 const guestRoutes = ['/', '/login'];
 
@@ -43,7 +43,7 @@ export default function App({ Component, pageProps }) {
             </Head>
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
-                    <DisplayLostConnection />
+                    { !matrixData.isConnectedToServer && <LostConnection /> }
                     <Layout>
                         { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
