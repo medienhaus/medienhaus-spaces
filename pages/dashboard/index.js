@@ -38,16 +38,19 @@ export default function Dashboard() {
             const chatInvitationsArray = [];
 
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
-                const room = matrixClient.getRoom(invitation.roomId);
-                const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
-                    .catch(() => {});
+                const room = await matrixClient.getRoom(invitation.roomId);
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
                 const inviter = matrixClient.getUser(inviterName);
-
                 invitation.inviter = inviter;
 
-                if (metaEvent) {
+                if (!invitation.meta) {
+                    // if there is no meta key yet, we manually check for one
+                    const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
+                        .catch(() => { });
                     invitation.meta = metaEvent;
+                }
+
+                if (invitation.meta) {
                     serviceInvitationsArray.push(invitation);
                 } else {
                     chatInvitationsArray.push(invitation);
