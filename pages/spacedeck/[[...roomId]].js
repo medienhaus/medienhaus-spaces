@@ -154,7 +154,7 @@ export default function Spacedeck() {
         return room;
     }
 
-    const removeLink = async () => {
+    const removeSketch = async () => {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
         if (!remove || remove.ok) {
@@ -209,7 +209,7 @@ export default function Spacedeck() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
-                            <button title={t('Delete sketch')} onClick={removeLink}>
+                            <button title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
