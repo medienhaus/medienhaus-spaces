@@ -24,6 +24,7 @@ const TableSection = styled.section`
     background-color: var(--color-background-alpha);
   }
 `;
+
 export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -42,11 +43,13 @@ export default function Dashboard() {
         await matrix.leaveRoom(roomId);
     };
 
-    const acceptMatrixInvite = async (e, roomId, service, name) => {
+    const acceptMatrixInvite = async (e, roomId, service) => {
         e.preventDefault();
         await matrixClient.joinRoom(roomId).catch(() => {
             return;
         });
+        // if an invation for a chat room was accepeted we don't need to add it to a space and return out of the function
+        if (service === 'chat') return;
         await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId);
     };
 

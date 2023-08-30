@@ -20,14 +20,15 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
  * @param e - event triggered by the button
  * @param roomId - matrix roomId
  * @param service - name of the service (parsed to the function)
- * @param name - name of the Application (parsed to the function)
  *
  * @callback declineMatrixInvite - callback function to decline invitations to a matrix room or space
  * @param e - event triggered by the button
  * @param roomId - matrix roomId
+ *
+ * @returns {React.ReactComponent}
 */
 
-const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, declineMatrixInvite }) => {
+const DisplayInvitations = ({ invite, name, service, acceptMatrixInvite, declineMatrixInvite }) => {
     console.log(invite);
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
@@ -42,7 +43,7 @@ const DisplayInvitations = ({ invite, service, name, acceptMatrixInvite, decline
 
     const handleAccept = async (e, roomId) => {
         setIsAcceptingInvite(true);
-        await acceptMatrixInvite(e, roomId, service, name);
+        await acceptMatrixInvite(e, roomId, service);
         setIsAcceptingInvite(false);
         if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted ' + name + ' item?')) {
             router.push(`${name}/${roomId}`);
