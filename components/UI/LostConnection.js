@@ -21,7 +21,7 @@ const NoConnectionView = styled.div`
   border-radius: 4px;
 
 `;
-const DisplayLostConnection = () => {
+const LostConnection = () => {
     const auth = useAuth();
     const matrix =useMatrix(auth.getAuthenticationProvider('matrix'));
     const { t } = useTranslation();
@@ -38,4 +38,4 @@ const DisplayLostConnection = () => {
     );
 };
 
-export default DisplayLostConnection;
+export default LostConnection;
