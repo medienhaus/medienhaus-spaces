@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { isEmpty } from 'lodash';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import { logger } from 'matrix-js-sdk/lib/logger';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -27,7 +28,7 @@ export default function Spacedeck() {
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
-    const [serviceSpaceId, setServiceSpaceId] = useState();
+    const serviceSpaceId = matrix.serviceSpaces.spacedeck;
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
@@ -43,25 +44,6 @@ export default function Spacedeck() {
     useEffect(() => {
         selectedPadRef.current?.focus();
     }, [roomId]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const startLookingForFolders = async () => {
-            if (matrix.initialSyncDone) {
-                try {
-                    setServiceSpaceId(matrix.serviceSpaces.spacedeck);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-        };
-
-        !cancelled && startLookingForFolders();
-
-        return () => cancelled = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrix.initialSyncDone, matrix.serviceSpaces.spacedeck]);
 
     useEffect(() => {
         let cancelled = false;
@@ -104,7 +86,7 @@ export default function Spacedeck() {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
                         if (sketch.name !== matrixSketches[sketch.id].name) {
                             // eslint-disable-next-line no-undef
-                            if (process.env.NODE_ENV === 'development') console.log('changing name for ' + matrixSketches[sketch.id]);
+                            logger.debug('changing name for ' + matrixSketches[sketch.id]);
                             await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
                         continue;
@@ -121,7 +103,7 @@ export default function Spacedeck() {
             };
             const syncSketches = await spacedeck.syncAllSketches()
                 .catch((error) => {
-                    console.debug(error);
+                    logger.debug(error);
                     setIsSpacedeckServerDown(true);
                 });
             syncSketches && await updateStructure(spacedeck.getStructure());
@@ -163,7 +145,7 @@ export default function Spacedeck() {
 
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
-        if (process.env.NODE_ENV === 'development') console.debug('creating room for ' + name);
+        logger.debug('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'sketch-link').catch(() => {
             setErrorMessage(t('Something went wrong when trying to create a new room'));
         });
@@ -182,7 +164,7 @@ export default function Spacedeck() {
 
     const removeLink = async () => {
         setIsDeletingSketch(true);
-        const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
+        const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
         if (!remove || remove.ok) {
             setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
