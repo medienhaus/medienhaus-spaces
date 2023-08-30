@@ -28,7 +28,7 @@ export default function Spacedeck() {
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
     const [serviceSpaceId, setServiceSpaceId] = useState();
-    const [removingLink, setRemovingLink] = useState(false);
+    const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
@@ -181,10 +181,10 @@ export default function Spacedeck() {
     }
 
     const removeLink = async () => {
-        setRemovingLink(true);
+        setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => console.log(e));
         if (!remove || remove.ok) {
-            setRemovingLink(false);
+            setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
             return;
@@ -192,7 +192,7 @@ export default function Spacedeck() {
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
         router.push(`/${path}`);
-        setRemovingLink(false);
+        setIsDeletingSketch(false);
     };
 
     if (!serviceSpaceId) return <LoadingSpinner />;
@@ -235,8 +235,8 @@ export default function Spacedeck() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
-                            <button title={t('Delete sketch from my library')} onClick={removeLink}>
-                                { removingLink ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                            <button title={t('Delete sketch')} onClick={removeLink}>
+                                { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
