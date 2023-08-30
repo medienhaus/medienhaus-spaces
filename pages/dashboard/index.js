@@ -38,9 +38,9 @@ export default function Dashboard() {
             const chatInvitationsArray = [];
 
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
+                const room = matrixClient.getRoom(invitation.roomId);
                 const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
                     .catch(() => {});
-                const room = matrixClient.getRoom(invitation.roomId);
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
                 const inviter = matrixClient.getUser(inviterName);
 
