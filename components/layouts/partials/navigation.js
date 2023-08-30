@@ -28,7 +28,7 @@ const List = styled.ul`
 
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const invites = matrix.invites;
 
     const Link = ({ href, children }) => (
