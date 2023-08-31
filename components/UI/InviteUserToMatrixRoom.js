@@ -26,7 +26,6 @@ import Form from './Form';
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import CloseIcon from '../../assets/icons/close.svg';
-import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from './ErrorMessage';
 
 if (typeof window !== 'undefined') Modal.setAppElement(document.body);
