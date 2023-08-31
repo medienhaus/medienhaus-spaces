@@ -14,7 +14,7 @@ const LockIconResized = styled(LockIcon)`
 
 const EtherpadListEntry = forwardRef(({ roomId, padName, passwordProtected, selected }, ref) => {
     const { t } = useTranslation('write');
-    // we check if there is a custom path name defined and if so remove any forbidden url characyers from the string
+    // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
     const path = getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad';
 
     return (

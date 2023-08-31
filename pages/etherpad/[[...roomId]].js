@@ -27,7 +27,7 @@ export default function Etherpad() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
-    // we check if there is a custom path name defined and if so remove any forbidden url characyers from the string
+    // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
     const path = getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad';
 
     const { t } = useTranslation('etherpad');
