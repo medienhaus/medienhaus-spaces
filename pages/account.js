@@ -11,6 +11,7 @@ const ProfileSection = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-gap: calc(var(--margin) * 1.3);
+  max-width: 55ch;
 
   & > form {
     grid-row: 2 / 3;
