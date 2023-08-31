@@ -22,7 +22,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 
 export default function Spacedeck() {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation('spacedeck');
     const router = useRouter();
