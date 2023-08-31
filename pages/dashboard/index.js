@@ -72,7 +72,6 @@ export default function Dashboard() {
 
     // functions which interact with matrix server
     const declineMatrixInvite = async (roomId) => {
-        console.log('rejecting ' + roomId);
         await matrix.leaveRoom(roomId);
     };
 
