@@ -14,7 +14,7 @@ const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parse
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState(parsedError);
-    const { t } = useTranslation();
+    const { t } = useTranslation('spacedeck');
     const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const handleExistingSketch = (e) => {
