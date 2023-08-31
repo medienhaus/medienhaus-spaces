@@ -49,7 +49,6 @@ const CloseButton = styled(TextButton)`
 
 export default function InviteUserToMatrixRoom({ roomId, name }) {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
@@ -109,7 +108,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             setIsInviting(false);
         }
 
-        await matrix.inviteUserToMatrixRoom(roomId, validUserObject.userId)
+        await matrixClient.invite(roomId, validUserObject.userId)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
@@ -119,7 +118,6 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
 
                 return;
             });
-
         // if everything is okay, we let the user know and exit the modal view.
         setUserFeedback('✓ ' + validUserObject.displayName + t(' was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
