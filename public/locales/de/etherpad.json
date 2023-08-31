@@ -15,5 +15,5 @@
     "Pad name": "Name",
     "Confirm password": "Passwort bestätigen",
     "Link to pad": "Link zum Pad",
-    "Can't connect to the provided /write server. Please try again later.": "Es kann keine Verbindung zum /write Server hergestellt werden. Bitte probiere es später nochmal."
+    "Can't connect to the provided {{path}} server. Please try again later.": "Es kann keine Verbindung zum {{path}} Server hergestellt werden. Bitte probiere es später nochmal."
 }
