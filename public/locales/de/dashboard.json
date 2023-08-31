@@ -1,3 +1,5 @@
 {
-"You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?": "Du hast die Einladung erfolgreich angenommen!\n\nMöchtst du zu dem {{name}} Item weitergeleitet werden?"
+"You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?": "Du hast die Einladung erfolgreich angenommen!\n\nMöchtst du zu dem {{name}} Item weitergeleitet werden?",
+"accept invitation": "Einladung annehmen",
+"decline invitation": "Einladung ablehnen"
 }
