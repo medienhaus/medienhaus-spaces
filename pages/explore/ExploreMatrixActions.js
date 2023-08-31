@@ -13,6 +13,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
  * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  * @param {Boolean} isCurrentUserModerator - true if the user has moderatoion rights for the currentId.
+ * @callback callApiAndAddToObject
  * @TODO
  * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
@@ -24,7 +25,7 @@ const ExploreMatrixActionWrapper = styled.div`
   border-collapse: collapse;
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, popActiveContexts }) => {
+const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, children, callApiAndAddToObject }) => {
     /**
     * MATRIX
     * ------------------
@@ -131,6 +132,8 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, pop
                     currentId={currentId}
                     parentId={parentId}
                     currentName={roomName}
+                    children={children}
+                    callApiAndAddToObject={callApiAndAddToObject}
                 /> }
         </ExploreMatrixActionWrapper>
     );

@@ -156,6 +156,8 @@ export default function Explore() {
                             isCurrentUserModerator={isCurrentUserModerator}
                             currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                             parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                            children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                            callApiAndAddToObject={callApiAndAddToObject}
                         /> : <ServiceTable>
                             { selectedSpaceChildren[selectedSpaceChildren.length - 1]
                                 .sort(function(a, b) {
