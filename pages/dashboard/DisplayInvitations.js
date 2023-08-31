@@ -44,7 +44,7 @@ const DisplayInvitations = ({ invite, name, service, acceptMatrixInvite, decline
         setIsAcceptingInvite(true);
         await acceptMatrixInvite(e, roomId, service);
         setIsAcceptingInvite(false);
-        if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted ' + name + ' item?')) {
+        if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?', { name: name })) {
             router.push(`${name}/${roomId}`);
         }
     };
