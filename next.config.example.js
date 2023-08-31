@@ -15,7 +15,6 @@ module.exports = {
                     api: 'http://etherpad.localhost/mypads/api',
                     spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
                 },
-                templates: ['etherpad-link'],
             },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
