@@ -26,7 +26,6 @@ import Form from './Form';
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import CloseIcon from '../../assets/icons/close.svg';
-import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from './ErrorMessage';
 
 if (typeof window !== 'undefined') Modal.setAppElement(document.body);
@@ -49,7 +48,6 @@ const CloseButton = styled(TextButton)`
 
 export default function InviteUserToMatrixRoom({ roomId, name }) {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
@@ -109,7 +107,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             setIsInviting(false);
         }
 
-        await matrix.inviteUserToMatrixRoom(roomId, validUserObject.userId)
+        await matrixClient.invite(roomId, validUserObject.userId)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
