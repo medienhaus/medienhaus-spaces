@@ -10,7 +10,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 /**
  * COMPONENT 'DisplayInvitations'
- * Displays an invitation for a matrix room/space within a <ServiceTable> component.
+ * Displays an invitation for a matrix room/space within a <ServiceTable> component and gives users the option to accept or decline them.
  *
  * @param {Object} invite — object of the room the user was invited to
  * @param {String} service — name of the service (i.e. the object key names of the 'authProvider' object in the config)
