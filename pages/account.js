@@ -35,10 +35,17 @@ const Avatar = styled.img`
   grid-column: 1;
   width: calc(var(--margin) * 7.3);
   aspect-ratio: 1;
+
+  /*
   background: var(--color-foreground);
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
+  */
+
+  &.placeholder {
+    backdrop-filter: invert(100%);
+  }
 
   @media (min-width: 40em) {
     grid-row: 1 / 3;
@@ -192,7 +199,13 @@ export default function Account() {
         <>
             <h2>/account</h2>
             <ProfileSection>
-                <Avatar src={profileInfo.avatar_url ? matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop') : 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='} />
+                { profileInfo.avatar_url ? (
+                    // Render the avatar if we have one
+                    <Avatar src={matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop')} />
+                ) : (
+                    // Render an empty GIF if we don't have an avatar
+                    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                ) }
                 <AvatarButtonContainer>
                     <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
                     <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload') } …</button>
