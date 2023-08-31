@@ -25,7 +25,7 @@ const LostConnection = () => {
     return (
         <NoConnectionView>
             <small>
-                { t('Waiting for server') }
+                { t('Connection lost') }
             </small>
             <LoadingSpinnerInline inverted />
         </NoConnectionView>
