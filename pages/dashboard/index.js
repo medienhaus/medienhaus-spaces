@@ -20,7 +20,7 @@ const TableSection = styled.section`
 
 export default function Dashboard() {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const MatrixAuthProvider = auth.getAuthenticationProvider('matrix');
     const { t } = useTranslation('dashboard');
     const [serviceInvitations, setServiceInvitations] = useState([]);
@@ -71,20 +71,23 @@ export default function Dashboard() {
     }, [matrix, matrix.invites, matrixClient]);
 
     // functions which interact with matrix server
-    const declineMatrixInvite = async (e, roomId) => {
-        e.preventDefault();
+    const declineMatrixInvite = async (roomId) => {
         console.log('rejecting ' + roomId);
         await matrix.leaveRoom(roomId);
     };
 
-    const acceptMatrixInvite = async (e, roomId, service) => {
-        e.preventDefault();
+    const acceptMatrixInvite = async (roomId, path, service) => {
         await matrixClient.joinRoom(roomId).catch(() => {
             return;
         });
-        // if an invation for a chat room was accepeted we don't need to add it to a space and return out of the function
-        if (service === 'chat') return;
-        await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId);
+        // if an invation for a chat room was accepeted we don't need to add it to a space
+        if (service !== 'chat') {
+            await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId).catch(() => {
+                return;
+            });
+        }
+
+        return `${path}/${roomId}`;
     };
 
     return (
@@ -133,7 +136,7 @@ export default function Dashboard() {
                                    { chatInvitations && _.map(chatInvitations, (invite) => {
                                        return <DisplayInvitations
                                            key={invite.roomId}
-                                           name="/chat"
+                                           path="/chat"
                                            invite={invite}
                                            declineMatrixInvite={declineMatrixInvite}
                                            acceptMatrixInvite={acceptMatrixInvite} />;
