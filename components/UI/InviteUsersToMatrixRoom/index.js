@@ -14,7 +14,7 @@
  *
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import Modal from 'react-modal';
@@ -25,7 +25,6 @@ import TextButton from '../TextButton';
 import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
-import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
 import { ServiceTable } from '../ServiceTable';
