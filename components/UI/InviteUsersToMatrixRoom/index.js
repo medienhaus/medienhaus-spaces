@@ -8,8 +8,8 @@
  * @return {React.ReactElement}
  *
  * @TODO
- * - create seperate component for the invitation dialogue so it can be used without the button and maybe wthout the modal view.
- * - maybe swap datalist for a different UI element. datalist handleing is far from optimal, since we have to manually get the userId and displayName after a user has selected the user to invite.
+ * - create separate component for the invitation dialogue so it can be used without the button and maybe without the modal view.
+ * - maybe swap datalist for a different UI element. datalist handling is far from optimal, since we have to manually get the userId and displayName after a user has selected the user to invite.
  *   Even though we already have it from the `matrixClient.searchUserDirectory` call. The problem is that afaik there is no way to parse the object from the <option>.
  *
  */
@@ -58,6 +58,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
+    const { t } = useTranslation('invitationModal');
 
     const customModalStyles = {
         content: {
@@ -92,7 +93,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
             users.results.length > 0 && setSearchResults(users.results);
         } catch (err) {
-            logger.error('Error while trying to fetch users: ' + err);
+            logger.error(t('Error while trying to fetch users: ') + err);
         }
     }, [matrixClient]);
 
@@ -115,7 +116,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             });
 
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + displayName + t(' was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + displayName + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             setIsInviteDialogueOpen(false);
@@ -123,7 +124,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     };
 
     return <>
-        <button title={t('Invite a user to ' + name)} onClick={handleClick}>
+        <button title={t('Invite users to' + ' ' + name)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
         </button>
         { isInviteDialogueOpen && (
