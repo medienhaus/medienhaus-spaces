@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 
-const NoConnectionView = styled.div`
+const LostConnectionView = styled.div`
   position: absolute;
   right: var(--margin);
   bottom: var(--margin);
@@ -17,18 +17,18 @@ const NoConnectionView = styled.div`
   text-transform: uppercase;
   background-color: #ff2f4f;
   border-radius: 4px;
-
 `;
+
 const LostConnection = () => {
     const { t } = useTranslation();
 
     return (
-        <NoConnectionView>
+        <LostConnectionView>
             <small>
                 { t('Connection lost') }
             </small>
             <LoadingSpinnerInline inverted />
-        </NoConnectionView>
+        </LostConnectionView>
     );
 };
 
