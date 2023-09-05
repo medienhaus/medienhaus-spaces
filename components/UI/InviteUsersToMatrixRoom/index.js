@@ -100,6 +100,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         function clearInputs() {
             setUserFeedback('');
             setSearchInput('');
+            setSearchResults([]);
         }
 
         await matrixClient.invite(roomId, userId)
