@@ -17,7 +17,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
-import Modal from 'react-modal';
 import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
@@ -29,8 +28,7 @@ import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
 import { ServiceTable } from '../ServiceTable';
 import UserListEntry from './UserListEntry';
-
-if (typeof window !== 'undefined') Modal.setAppElement(document.body);
+import DefaultModal from '../Modal';
 
 const Header = styled.header`
   display: grid;
@@ -60,19 +58,6 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     const [userFeedback, setUserFeedback] = useState('');
     const { t } = useTranslation('invitationModal');
 
-    const customModalStyles = {
-        content: {
-            top: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            left: '50%',
-            minWidth: '60%',
-            padding: 'calc(var(--margin) * 2)',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-        },
-    };
-
     const handleClick = () => {
         setIsInviteDialogueOpen(prevState => !prevState);
     };
@@ -93,7 +78,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         } catch (err) {
             logger.error(t('Error while trying to fetch users: ') + err);
         }
-    }, [matrixClient]);
+    }, [matrixClient, t]);
 
     const handleInvite = async (userId, displayName) => {
         function clearInputs() {
@@ -126,11 +111,10 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             <UserAddIcon fill="var(--color-foreground)" />
         </button>
         { isInviteDialogueOpen && (
-            <Modal
+            <DefaultModal
                 isOpen={isInviteDialogueOpen}
                 onRequestClose={() => setIsInviteDialogueOpen(false)}
                 contentLabel="Invite Users"
-                style={customModalStyles}
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
@@ -160,7 +144,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                         </SearchResults>
                     </Form>
                 }
-            </Modal>
+            </DefaultModal>
         ) }
     </>;
 }
