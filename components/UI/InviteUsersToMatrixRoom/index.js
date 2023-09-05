@@ -73,8 +73,6 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         },
     };
 
-    const { t } = useTranslation();
-
     const handleClick = () => {
         setIsInviteDialogueOpen(prevState => !prevState);
     };
