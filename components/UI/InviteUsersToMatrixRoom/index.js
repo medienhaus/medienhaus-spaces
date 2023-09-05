@@ -16,18 +16,20 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
-import TextButton from '../UI/TextButton';
-import UserAddIcon from '../../assets/icons/user-add.svg';
-import Form from './Form';
-import { useAuth } from '../../lib/Auth';
-import LoadingSpinnerInline from './LoadingSpinnerInline';
-import CloseIcon from '../../assets/icons/close.svg';
-import ErrorMessage from './ErrorMessage';
+import TextButton from '../TextButton';
+import UserAddIcon from '../../../assets/icons/user-add.svg';
+import Form from '../Form';
+import { useAuth } from '../../../lib/Auth';
+import LoadingSpinnerInline from '../LoadingSpinnerInline';
+import CloseIcon from '../../../assets/icons/close.svg';
+import ErrorMessage from '../ErrorMessage';
+import { ServiceTable } from '../ServiceTable';
+import UserListEntry from './UserListEntry';
 
 if (typeof window !== 'undefined') Modal.setAppElement(document.body);
 
@@ -47,16 +49,18 @@ const CloseButton = styled(TextButton)`
   border: unset;
 `;
 
+const SearchResults = styled.div`
+  height: 250px;
+  overflow-y: auto;
+`;
+
 export default function InviteUserToMatrixRoom({ roomId, name }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
     const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [isInviting, setIsInviting] = useState(false);
-    const [isFetchingSearchResults, setIsFetchingSearchResults] = useState(false);
     const [userFeedback, setUserFeedback] = useState('');
-    const [validUserObject, setValidUserObject] = useState(false);
 
     const customModalStyles = {
         content: {
@@ -86,29 +90,22 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     const debouncedFetchUsersForContributorSearch = useCallback(debounce((val) => fetchUsersForContributorSearch(val), 300), []);
 
     const fetchUsersForContributorSearch = useCallback(async (a) => {
-        setIsFetchingSearchResults(true);
         try {
             const users = await matrixClient.searchUserDirectory({ term: a });
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
             users.results.length > 0 && setSearchResults(users.results);
         } catch (err) {
             logger.error('Error while trying to fetch users: ' + err);
-        } finally {
-            setIsFetchingSearchResults(false);
         }
     }, [matrixClient]);
 
-    const handleInvite = async (e) => {
-        setIsInviting(true);
-        e?.preventDefault();
-
+    const handleInvite = async (userId, displayName) => {
         function clearInputs() {
             setUserFeedback('');
             setSearchInput('');
-            setIsInviting(false);
         }
 
-        await matrixClient.invite(roomId, validUserObject.userId)
+        await matrixClient.invite(roomId, userId)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
@@ -120,33 +117,12 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             });
 
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + validUserObject.displayName + t(' was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + displayName + t(' was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             setIsInviteDialogueOpen(false);
         }, 3000));
     };
-
-    useEffect(() => {
-        let cancelled = false;
-        if (cancelled || searchInput === '') return; // no need to verify the user for empty strings.
-        verifyUser(searchInput);
-
-        return () => {
-            cancelled = true;
-        };
-    }, [searchInput, verifyUser]);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const verifyUser = useCallback(
-        debounce(user => {
-            const userId = user.substring(user.lastIndexOf(' ') + 1);
-            const displayName = user.substring(0, user.lastIndexOf(' '));
-            if (userId.startsWith('@')) setValidUserObject({ userId: userId, displayName: displayName });
-            else setValidUserObject(false);
-        }, 200),
-        [],
-    );
 
     return <>
         <button title={t('Invite a user to ' + name)} onClick={handleClick}>
@@ -161,12 +137,12 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
-                    { t('Invite user to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
+                    { t('Invite users to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
                         <CloseIcon />
                     </CloseButton>
                 </Header>
                 { userFeedback ? <div>{ userFeedback }</div> :
-                    <Form onSubmit={handleInvite}>
+                    <Form>
                         <input
                             type="text"
                             list="userSearch"
@@ -175,15 +151,16 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                             onChange={handleChange}
                             autoComplete="off"
                         />
-                        <datalist id="userSearch">
-                            { searchResults.map((user, i) => {
-                                return <option key={i} value={user.display_name + ' ' + user.user_id}>{ user.display_name } ({ user.user_id })</option>;
-                            }) }
-                        </datalist>
-                        <button type="submit"
-                            disabled={!searchInput || isInviting || isFetchingSearchResults || !validUserObject}
-                        >{ isInviting || isFetchingSearchResults ? <LoadingSpinnerInline /> || '✓' : t('Invite') }
-                        </button>
+                        <SearchResults>
+                            <ServiceTable>
+                                { searchResults.map((user, i) => {
+                                    return <UserListEntry
+                                        user={user}
+                                        handleInvite={handleInvite}
+                                        key={i} />;
+                                }) }
+                            </ServiceTable>
+                        </SearchResults>
                     </Form>
                 }
             </Modal>
