@@ -36,7 +36,6 @@ const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
   margin-bottom: calc(var(--margin) * 2);
-
 `;
 
 const CloseButton = styled(TextButton)`
@@ -45,7 +44,6 @@ const CloseButton = styled(TextButton)`
   height: calc(var(--margin) * 1.3);
   padding: unset;
   background-color: unset;
-  border: unset;
 `;
 
 const SearchResults = styled.div`
