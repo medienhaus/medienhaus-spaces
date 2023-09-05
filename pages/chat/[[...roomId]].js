@@ -143,15 +143,17 @@ export default function RoomId() {
         };
     });
     // filtering invites for all invitations without a dev.medienhaus.meta event.
-    // for now normal chat rooms don't have this event. If we add this in the future we need to also change the filtering here.
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms).filter(invite => !invite.meta);
+    // for now normal chat rooms don't have this event.
+    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
+        .filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.template !== 'chat')
+        // ... contain a dev.medienhaus.meta state event)
+        .reject(room => room.events.get('dev.medienhaus.meta'))
         .sortBy(sortRooms)
         .value();
 
