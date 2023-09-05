@@ -142,7 +142,7 @@ export default function Account() {
 
             // If the request was successful, a confirmation email will be sent to the user.
             setInputNewEmail('');
-            setFeedbackMessage(t('We have sent an email to the provided address. Please click the link in it in order to verify that you really own the given address.'));
+            setFeedbackMessage(t('We have sent a confirmation email to the provided address.'));
         }
     };
 
@@ -200,7 +200,7 @@ export default function Account() {
         return (
             <>
                 <h2>/account</h2>
-                <p>{ t('Please enter your account password to confirm adding the given email address to your account:') }</p>
+                <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
                 <br />
                 <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
                     <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
