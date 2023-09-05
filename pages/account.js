@@ -6,6 +6,8 @@ import { filter, map } from 'lodash';
 import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
+import ErrorMessage from '../components/UI/ErrorMessage';
+import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 
 const ProfileSection = styled.div`
   display: grid;
@@ -127,12 +129,26 @@ export default function Account() {
         // Add new email if provided
         if (inputNewEmail) {
             const secretResponse = await matrixClient.generateClientSecret();
-            await matrixClient.requestAdd3pidEmailToken(inputNewEmail, secretResponse, 1, `${window.location}?secret=${secretResponse}`);
-            // Now an email will be sent to the user, in which they have to click on a validation link
+            const emailToken = await matrixClient.requestAdd3pidEmailToken(inputNewEmail, secretResponse, 1, `${window.location}?secret=${secretResponse}`)
+                .catch(/** @param {MatrixError} error */(error) => {
+                    setFeedbackMessage(error.data.error);
+                });
+
+            // Request is done, so we can set the state to false.
+            setIsSavingChanges(false);
+
+            // If the request was not successful, we return out of the function.
+            if (!emailToken) return;
+
+            // If the request was successful, a confirmation email will be sent to the user.
             setInputNewEmail('');
             setFeedbackMessage(t('We have sent an email to the provided address. Please click the link in it in order to verify that you really own the given address.'));
         }
-        setIsSavingChanges(false);
+    };
+
+    const handleCancel = () => {
+        setInputDisplayname(profileInfo.displayname);
+        setInputNewEmail('');
     };
 
     const confirmNewEmail = async () => {
@@ -160,7 +176,7 @@ export default function Account() {
                 router.push('/account');
             })
             .catch(/** @param {MatrixError} error */(error) => {
-                setFeedbackMessage(error.message);
+                setFeedbackMessage(error.data.error);
             })
             .finally(() => {
                 setIsSavingChanges(false);
@@ -188,7 +204,7 @@ export default function Account() {
                 <br />
                 <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
                     <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
-                    <button type="submit" disabled={isSavingChanges}>{ t('Confirm') }</button>
+                    <ConfirmCancelButtons disabled={isSavingChanges} onCancel={() => setInputPassword('')} />
                 </form>
                 { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
             </>
@@ -237,7 +253,7 @@ export default function Account() {
                         profileInfo.displayname !== inputDisplayname ||
                         inputNewEmail
                     ) && (
-                        <button type="submit" disabled={isSavingChanges}>{ t('Save changes') }</button>
+                        <ConfirmCancelButtons disabled={isSavingChanges} onCancel={handleCancel}>{ t('Save changes') }</ConfirmCancelButtons>
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </form>
