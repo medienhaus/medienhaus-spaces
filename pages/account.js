@@ -6,7 +6,6 @@ import { filter, map } from 'lodash';
 import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
-import ErrorMessage from '../components/UI/ErrorMessage';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 
 const ProfileSection = styled.div`
