@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import { logger } from 'matrix-js-sdk/lib/logger';
 
 import TextButton from '../UI/TextButton';
 import UserAddIcon from '../../assets/icons/user-add.svg';
@@ -91,7 +92,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
             users.results.length > 0 && setSearchResults(users.results);
         } catch (err) {
-            console.error('Error whhile trying to fetch users: ' + err);
+            logger.error('Error while trying to fetch users: ' + err);
         } finally {
             setIsFetchingSearchResults(false);
         }
