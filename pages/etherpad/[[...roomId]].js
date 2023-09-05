@@ -18,7 +18,7 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
-import InviteUserToMatrixRoom from '../../components/UI/InviteUserToMatrixRoom';
+import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 
 export default function Etherpad() {
     const auth = useAuth();
