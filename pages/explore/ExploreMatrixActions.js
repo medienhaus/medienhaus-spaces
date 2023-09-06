@@ -167,7 +167,10 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
                     />
                     <PreviousNextButtons
                         disabled={!selectedRadioButton}
-                        onCancel={() => setSelectedAction('')}
+                        onCancel={() => {
+                            setSelectedRadioButton('');
+                            setSelectedAction('');
+                        }}
                     />
 
                 </Form>)
