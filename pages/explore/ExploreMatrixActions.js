@@ -10,6 +10,7 @@ import AddExistingContext from './AddExistingContext';
 import AddExistingItem from './AddExistingItem';
 import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 
 /**
  * ACTIONS COMPONENT
@@ -19,6 +20,7 @@ import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
  * @param {String} parentId — the Id of the parent of the currently observed Room. Matrix background: parentId lists currentId as an m.space.child stateevent. currentId got no information about the parentId.
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  * @param {Boolean} isCurrentUserModerator - true if the user has moderatoion rights for the currentId.
+ * @callback callApiAndAddToObject
  * @TODO
  * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
@@ -38,7 +40,7 @@ const RadioWrapper = styled.div`
   justify-content: start;
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, popActiveContexts }) => {
+const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, children, callApiAndAddToObject }) => {
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     /**
@@ -160,6 +162,8 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, pop
                         currentId={currentId}
                         parentId={parentId}
                         roomName={roomName}
+                        children={children}
+                        callApiAndAddToObject={callApiAndAddToObject}
                     />
                     <PreviousNextButtons
                         disabled={!selectedRadioButton}
@@ -174,7 +178,7 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, pop
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
+const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children, callApiAndAddToObject }) => {
     const { t } = useTranslation();
 
     switch (selectedAction) {
@@ -184,6 +188,8 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
             return <AddExistingItem currentId={currentId} currentName={roomName} />;
         case 'existingContext':
             return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} />;
+        case 'removeSpace':
+            return <RemoveSpaceFromParent parentId={currentId}parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
         default:
             return <>
                 <RadioWrapper>
@@ -199,6 +205,11 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
                 <RadioWrapper>
                     <input type="radio" id="existingContext" name="action" value="existingContext" />
                     <label htmlFor="existingContext">{ t('add existing context') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="removeSpace" name="action" value="removeSpace" />
+                    <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
                 </RadioWrapper>
             </>;
     }
