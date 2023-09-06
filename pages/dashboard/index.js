@@ -33,7 +33,7 @@ export default function Dashboard() {
         let cancelled = false;
         const hydrateInvitationMetaEvents = async () => {
             const serviceInvitationsArray = [];
-            // fetch information about pedning invitations
+            // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
             const chatInvitationsArray = [];
 
@@ -79,7 +79,7 @@ export default function Dashboard() {
         await matrixClient.joinRoom(roomId).catch(() => {
             return;
         });
-        // if an invation for a chat room was accepeted we don't need to add it to a space
+        // if an invitation for a chat room was accepted we don't need to add it to a space
         if (service !== 'chat') {
             await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId).catch(() => {
                 return;
