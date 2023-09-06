@@ -27,7 +27,17 @@ const PreviousButton = styled.button`
   }
 `;
 
-const PreviousNextButtons = ({ children, disabled, onClick, onCancel }) => {
+/**
+ * React Component which returns
+ *
+ * @param {Boolean} disabled disables both buttons if true
+ * @param {function} onClick onClick function to execute when clicking 'next'
+ * @param {function} onCancel function to execute when clicking 'previous'
+ * @param {Boolean} disableNext disables 'next' button if true
+ * @param {Boolean} disablePrev disables 'previous' button if true
+ * @returns {React.ReactComponent} two inline buttons.  'previous' and 'next'
+ */
+const PreviousNextButtons = (disabled, onClick, onCancel, disableNext, disablePrev) => {
     const { t } = useTranslation();
 
     const handlePrevious = (e) => {
@@ -38,8 +48,8 @@ const PreviousNextButtons = ({ children, disabled, onClick, onCancel }) => {
 
     return (
         <PreviousNextButtonsWrapper>
-            <PreviousButton type="button" disabled={disabled} onClick={handlePrevious}>{ t('Previous') }</PreviousButton>
-            <NextButton type="submit" disabled={disabled}>{ children ? children : t('Next') }</NextButton>
+            <PreviousButton type="button" disabled={disabled || disablePrev} onClick={handlePrevious}>{ t('Previous') }</PreviousButton>
+            <NextButton type="submit" disabled={disabled || disableNext}> { t('Next') }</NextButton>
         </PreviousNextButtonsWrapper>
     );
 };
