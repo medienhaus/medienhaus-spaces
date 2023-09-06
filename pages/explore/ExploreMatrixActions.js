@@ -170,7 +170,10 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
                         disabled={!selectedRadioButton}
                         disableNext={selectedAction}
                         disablePrev={!selectedAction}
-                        onCancel={() => setSelectedAction('')}
+                        onCancel={() => {
+                            setSelectedRadioButton('');
+                            setSelectedAction('');
+                        }}
                     />
 
                 </Form>)
