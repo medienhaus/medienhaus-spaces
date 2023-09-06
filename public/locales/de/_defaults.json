@@ -1,8 +1,12 @@
 {
+  "Accept": "Annehemen",
   "Cancel": "Abbrechen",
   "Confirm": "Bestätigen",
   "Copy link to clipboard": "Link kopieren",
+  "Decline": "Ablehnen",
   "Delete": "Löschen",
+  "From": "Von",
+  "Invitations": "Einladungen",
   "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
   "Next": "Weiter",
   "Password": "Passwort",
