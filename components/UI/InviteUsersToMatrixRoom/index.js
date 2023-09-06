@@ -3,7 +3,7 @@
  * `activeContexts` is the array of room IDs for the currently set context spaces.
  *
  * @param {string} roomId (valid matrix roomId)
- * @param {string} name (name of the matrix room)
+ * @param {string} roomName (name of the matrix room)
  *
  * @return {React.ReactElement}
  *
@@ -16,7 +16,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import _, { debounce } from 'lodash';
+import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
@@ -49,7 +49,7 @@ const SearchResults = styled.div`
   overflow-y: auto;
 `;
 
-export default function InviteUserToMatrixRoom({ roomId, name }) {
+export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     };
 
     return <>
-        <button title={t('Invite users to' + ' ' + name)} onClick={handleClick}>
+        <button title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
         </button>
         { isInviteDialogueOpen && (
@@ -117,7 +117,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
-                    { t('Invite users to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
+                    { t('Invite users to') } { roomName } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
                         <CloseIcon />
                     </CloseButton>
                 </Header>
@@ -136,6 +136,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                                 { searchResults.map((user, i) => {
                                     return <UserListEntry
                                         user={user}
+                                        roomName={roomName}
                                         handleInvite={handleInvite}
                                         key={i} />;
                                 }) }

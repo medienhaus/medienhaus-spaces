@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 
 import { ServiceTable } from '../ServiceTable';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
+import TextButton from '../TextButton';
+import UserAddIcon from '../../../assets/icons/user-add.svg';
 
-const UserListEntry = ({ user, handleInvite }) => {
+const UserListEntry = ({ user, handleInvite, roomName }) => {
     const [isInviting, setIsInviting] = useState(false);
     const { t } = useTranslation();
 
@@ -18,11 +20,12 @@ const UserListEntry = ({ user, handleInvite }) => {
     return <ServiceTable.Row>
         <ServiceTable.Cell>{ user.display_name } ({ user.user_id })</ServiceTable.Cell>
         <ServiceTable.Cell>
-            <button type="submit"
+            <TextButton
+                title={t('invite {{user}} to join {{room}}', { user: user.display_name, room: roomName })}
                 onClick={handleClick}
                 disabled={isInviting}
-            >{ isInviting ? <LoadingSpinnerInline /> || '✓' : t('Invite') }
-            </button>
+            >{ isInviting ? <LoadingSpinnerInline /> || '✓' : <UserAddIcon fill="var(--color-foreground)" /> }
+            </TextButton>
         </ServiceTable.Cell>
 
     </ServiceTable.Row>;

@@ -12,7 +12,6 @@ const DefaultModal = ({ children, isOpen, onRequestClose }) => {
             left: '50%',
             minWidth: '60%',
             padding: 'calc(var(--margin) * 2)',
-            marginRight: '-50%',
             transform: 'translate(-50%, -50%)',
         },
     };
