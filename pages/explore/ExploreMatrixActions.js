@@ -11,6 +11,7 @@ import AddExistingItem from './AddExistingItem';
 import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
+import UserManagement from './UserManagement';
 
 /**
  * ACTIONS COMPONENT
@@ -167,6 +168,8 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
                     />
                     <PreviousNextButtons
                         disabled={!selectedRadioButton}
+                        disableNext={selectedAction}
+                        disablePrev={!selectedAction}
                         onCancel={() => setSelectedAction('')}
                     />
 
@@ -189,7 +192,9 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children,
         case 'existingContext':
             return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} />;
         case 'removeSpace':
-            return <RemoveSpaceFromParent parentId={currentId}parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
+            return <RemoveSpaceFromParent parentId={currentId} parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
+        case 'manageUsers':
+            return <UserManagement roomId={currentId} roomName={roomName} />;
         default:
             return <>
                 <RadioWrapper>
@@ -210,6 +215,11 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children,
                 <RadioWrapper>
                     <input type="radio" id="removeSpace" name="action" value="removeSpace" />
                     <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="manageUsers" name="action" value="manageUsers" />
+                    <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
                 </RadioWrapper>
             </>;
     }
