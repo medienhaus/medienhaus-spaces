@@ -10,6 +10,7 @@ import AddExistingContext from './AddExistingContext';
 import AddExistingItem from './AddExistingItem';
 import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 
 /**
  * ACTIONS COMPONENT
@@ -161,6 +162,8 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
                         currentId={currentId}
                         parentId={parentId}
                         roomName={roomName}
+                        children={children}
+                        callApiAndAddToObject={callApiAndAddToObject}
                     />
                     <PreviousNextButtons
                         disabled={!selectedRadioButton}
@@ -175,7 +178,7 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
+const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children, callApiAndAddToObject }) => {
     const { t } = useTranslation();
 
     switch (selectedAction) {
@@ -185,6 +188,8 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
             return <AddExistingItem currentId={currentId} currentName={roomName} />;
         case 'existingContext':
             return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} />;
+        case 'removeSpace':
+            return <RemoveSpaceFromParent parentId={currentId}parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
         default:
             return <>
                 <RadioWrapper>
@@ -200,6 +205,11 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName }) => {
                 <RadioWrapper>
                     <input type="radio" id="existingContext" name="action" value="existingContext" />
                     <label htmlFor="existingContext">{ t('add existing context') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="removeSpace" name="action" value="removeSpace" />
+                    <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
                 </RadioWrapper>
             </>;
     }
