@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import BinIcon from '../../assets/icons/bin.svg';
+import EraserIcon from '../../assets/icons/eraser.svg';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
@@ -119,7 +119,7 @@ function RemoveListEntry({ child, isRemovingChild, parentName, removeChildFromPa
                 title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}>
                 { isDeletingCurrentChild ?
                     <LoadingSpinnerInline /> :
-                    <BinIcon fill="var(--color-foreground)" /> }
+                    <EraserIcon fill="var(--color-foreground)" /> }
             </TextButton>
         </ServiceTable.Cell>
     </ServiceTable.Row>;
