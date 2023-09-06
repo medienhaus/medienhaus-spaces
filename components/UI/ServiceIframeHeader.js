@@ -8,7 +8,7 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import FolderIcon from '../../assets/icons/folder.svg';
 import ListSettingsIcon from '../../assets/icons/list-settings.svg';
-import InviteUserToMatrixRoom from './InviteUserToMatrixRoom';
+import InviteUsersToMatrixRoom from './InviteUsersToMatrixRoom';
 
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
@@ -31,7 +31,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypa
                 { deleteContent && <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                 </button> }
-                <InviteUserToMatrixRoom roomId={roomId} name={title} />
+                <InviteUsersToMatrixRoom roomId={roomId} name={title} />
                 { isCurrentUserModerator && (
                     isManageContextMenuOpen ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
