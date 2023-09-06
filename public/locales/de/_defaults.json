@@ -1,10 +1,14 @@
 {
-    "Password": "Passwort",
-    "Select action": "Aktion wählen",
-    "What would you like to do?": "Was möchtest Du tun?",
-    "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
-    "Copy link to clipboard": "Link kopieren",
-    "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
-    "password protected": "Passwortgeschützt"
-
+  "Cancel": "Abbrechen",
+  "Confirm": "Bestätigen",
+  "Copy link to clipboard": "Link kopieren",
+  "Delete": "Löschen",
+  "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
+  "Password": "Passwort",
+  "password protected": "Passwortgeschützt",
+  "Upload": "Hochladen",
+  "Save changes": "Änderungen speichern",
+  "Select action": "Aktion wählen",
+  "What would you like to do?": "Was möchtest Du tun?",
+  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."
 }
