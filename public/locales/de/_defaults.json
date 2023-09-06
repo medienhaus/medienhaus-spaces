@@ -1,8 +1,11 @@
 {
+  "Accept": "Annehemen",
   "Cancel": "Abbrechen",
   "Confirm": "Bestätigen",
   "Copy link to clipboard": "Link kopieren",
+  "Decline": "Ablehnen",
   "Delete": "Löschen",
+  "Invitations": "Einladungen",
   "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
   "Next": "Weiter",
   "Password": "Passwort",
@@ -13,5 +16,6 @@
   "select {{option}}": "{{option}} wählen",
   "Select action": "Aktion wählen",
   "What would you like to do?": "Was möchtest Du tun?",
-  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."
+  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
+  "From": "Von"
 }
