@@ -35,7 +35,7 @@ const RemoveSection = styled.div`
  * @callback callApiAndAddToObject
 */
 
-const RemoveAction = ({
+const RemoveSpaceFromParent = ({
     parentId,
     parentName,
     children,
@@ -84,7 +84,7 @@ const RemoveAction = ({
     );
 };
 
-export default RemoveAction;
+export default RemoveSpaceFromParent;
 
 /**
  * Description placeholder
