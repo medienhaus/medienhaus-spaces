@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import styled from 'styled-components';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import { useAuth } from '../../lib/Auth';
@@ -9,6 +10,14 @@ import TextButton from '../../components/UI/TextButton';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import presets from './presets';
+
+//@TODO refine styled component
+const RoleSelect = styled.select`
+  padding-left: 0;
+  background-color: unset;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMHB4IiB3aWR0aD0iMzAwcHgiIGZpbGw9InZhcigtLWNvbG9yLWZvcmVncm91bmQpIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4PSIwcHgiIHk9IjBweCI+PHBvbHlnb24gcG9pbnRzPSI1MCA1Ny4xMyAyMy4xOSAzMC40NiAxNi4xMyAzNy41NSA1MCA3MS4yMyA4My44NiAzNy41NSA3Ni44MSAzMC40NiA1MCA1Ny4xMyI+PC9wb2x5Z29uPjwvc3ZnPg==');
+  border: unset;
+`;
 
 const UserManagement = ({ roomId, roomName }) => {
     const [errorMessage, setErrorMessage] = useState('');
@@ -111,7 +120,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
             { userId }
         </ServiceTable.Cell>
         <ServiceTable.Cell title={t('Role')}>
-            <select
+            <RoleSelect
                 defaultValue={powerLevel}
                 disabled={powerLevel >= selfPowerLevel || selfPowerLevel === powerLevel || isChangingPowerLevel}
                 onChange={(e) => onPowerLevelChange(e, e.target.value)}
@@ -119,7 +128,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
                 { presets.powerLevels.map((role => {
                     return <option key={role.level} value={role.level} disabled={role.level <= powerLevel || role.level > selfPowerLevel}>{ role.label }</option>;
                 })) }
-            </select>
+            </RoleSelect>
         </ServiceTable.Cell>
         <ServiceTable.Cell>
             <TextButton
