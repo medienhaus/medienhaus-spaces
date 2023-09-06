@@ -3,7 +3,7 @@
  * `activeContexts` is the array of room IDs for the currently set context spaces.
  *
  * @param {string} roomId (valid matrix roomId)
- * @param {string} name (name of the matrix room)
+ * @param {string} roomName (name of the matrix room)
  *
  * @return {React.ReactElement}
  *
@@ -16,8 +16,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import _, { debounce } from 'lodash';
-import Modal from 'react-modal';
+import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
@@ -29,8 +28,7 @@ import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
 import { ServiceTable } from '../ServiceTable';
 import UserListEntry from './UserListEntry';
-
-if (typeof window !== 'undefined') Modal.setAppElement(document.body);
+import DefaultModal from '../Modal';
 
 const Header = styled.header`
   display: grid;
@@ -51,7 +49,7 @@ const SearchResults = styled.div`
   overflow-y: auto;
 `;
 
-export default function InviteUserToMatrixRoom({ roomId, name }) {
+export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
@@ -59,19 +57,6 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
     const { t } = useTranslation('invitationModal');
-
-    const customModalStyles = {
-        content: {
-            top: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            left: '50%',
-            minWidth: '60%',
-            padding: 'calc(var(--margin) * 2)',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-        },
-    };
 
     const handleClick = () => {
         setIsInviteDialogueOpen(prevState => !prevState);
@@ -93,7 +78,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         } catch (err) {
             logger.error(t('Error while trying to fetch users: ') + err);
         }
-    }, [matrixClient]);
+    }, [matrixClient, t]);
 
     const handleInvite = async (userId, displayName) => {
         function clearInputs() {
@@ -121,19 +106,18 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
     };
 
     return <>
-        <button title={t('Invite users to' + ' ' + name)} onClick={handleClick}>
+        <button title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
         </button>
         { isInviteDialogueOpen && (
-            <Modal
+            <DefaultModal
                 isOpen={isInviteDialogueOpen}
                 onRequestClose={() => setIsInviteDialogueOpen(false)}
                 contentLabel="Invite Users"
-                style={customModalStyles}
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
-                    { t('Invite users to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
+                    { t('Invite users to') } { roomName } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
                         <CloseIcon />
                     </CloseButton>
                 </Header>
@@ -152,6 +136,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                                 { searchResults.map((user, i) => {
                                     return <UserListEntry
                                         user={user}
+                                        roomName={roomName}
                                         handleInvite={handleInvite}
                                         key={i} />;
                                 }) }
@@ -159,7 +144,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                         </SearchResults>
                     </Form>
                 }
-            </Modal>
+            </DefaultModal>
         ) }
     </>;
 }
