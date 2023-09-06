@@ -34,7 +34,7 @@ const AddBookmark = ({ name }) => {
         await new Promise(r => setTimeout(r, 2000));
         setContentCopied(false);
     };
-    console.log(router);
+
     return (
         <TextButton title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
             { contentCopied ?
