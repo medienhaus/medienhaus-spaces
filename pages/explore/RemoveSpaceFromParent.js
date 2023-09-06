@@ -62,23 +62,23 @@ const RemoveSpaceFromParent = ({
         setIsRemovingChild(false);
     };
 
+    if (!children || !matrix) return;
+
     return (
         <>
-            { (children && parentName) &&
-                (<RemoveSection>
-                    <ServiceTable>
-                        { children.map(child => {
-                            return <RemoveListEntry
-                                child={child}
-                                isRemovingChild={isRemovingChild}
-                                removeChildFromParent={removeChildFromParent}
-                                parentName={parentName}
-                            />;
-                        }) }
+            <RemoveSection>
+                <ServiceTable>
+                    { children.map(child => {
+                        return <RemoveListEntry
+                            child={child}
+                            isRemovingChild={isRemovingChild}
+                            removeChildFromParent={removeChildFromParent}
+                            parentName={parentName}
+                        />;
+                    }) }
+                </ServiceTable>
+            </RemoveSection>
 
-                    </ServiceTable>
-                </RemoveSection>)
-            }
         </>
 
     );
