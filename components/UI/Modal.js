@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 
-const DefaultModal = ({ children, isOpen, onRequestClose }) => {
+const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayClick = true }) => {
     if (typeof window !== 'undefined') ReactModal.setAppElement(document.body);
 
     const customStyles = {
@@ -22,7 +22,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose }) => {
         onRequestClose={() => onRequestClose(false)}
         contentLabel="Invite Users"
         style={customStyles}
-        shouldCloseOnOverlayClick={true}>
+        shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}>
         { children }
     </ReactModal>;
 };
