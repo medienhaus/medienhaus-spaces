@@ -73,6 +73,7 @@ export default function TreeView({ parsedData, onClick, parent, parsedWidth, par
     useEffect(() => {
         console.log(treeRef);
     }, [treeRef]);
+
     return (
         <Tree ref={treeRef}
             height={data.inactive ? 'unset' : activeRoomId === data.id ? 'calc(100% - var(--margin) * 5)' : '100%'}
@@ -85,6 +86,7 @@ export default function TreeView({ parsedData, onClick, parent, parsedWidth, par
             />
             { data.children && <Leaf> { data.children.map((child, index) => {
                 if (child.inactive) return null;
+
                 return <TreeView parsedData={child}
                     // activeRoomId={currentRoomId}
                     // callback={onClick}

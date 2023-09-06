@@ -147,6 +147,7 @@ export default function Explore() {
                         content={window.location.href}
                         title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
                         removingLink={false}
+                        roomId={roomId}
                         isCurrentUserModerator={isCurrentUserModerator}
                         setManageContextActionToggle={setManageContextActionToggle}
                     />

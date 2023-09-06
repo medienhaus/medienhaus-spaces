@@ -163,7 +163,7 @@ export default function Etherpad() {
 
         logger.debug('Creating new Matrix room for pad', { link, name });
 
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'write-link');
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
         await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
@@ -228,6 +228,7 @@ export default function Etherpad() {
                     <ServiceIframeHeader
                         content={content.body}
                         title={matrix.rooms.get(roomId).name}
+                        roomId={roomId}
                         deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
                         mypadsPadObject={mypadsPadObject} />

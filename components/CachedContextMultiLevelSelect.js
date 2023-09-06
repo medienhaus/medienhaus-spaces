@@ -78,6 +78,10 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
                 )
             }
             { Object.entries(childContexts).map(([key, room]) => {
+                // if room is undefined we jumop to the next one
+                // this can happen when for example a room was not removed as a space child from its parent but is already deleted
+                if (!room) return;
+
                 return <option key={key} value={room.roomId}>
                     { room.name }
                     { showTopics && room.topic && (` (${room.topic})`) }
