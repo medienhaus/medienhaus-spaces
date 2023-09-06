@@ -1,10 +1,15 @@
 {
-    "Password": "Passwort",
-    "Select action": "Aktion wählen",
-    "What would you like to do?": "Was möchtest Du tun?",
-    "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} sekunden.",
-    "Invitations": "Einladungen",
-    "From": "Von",
-    "Accept": "Annehemen",
-    "Decline": "Ablehnen"
+  "Cancel": "Abbrechen",
+  "Confirm": "Bestätigen",
+  "Delete": "Löschen",
+  "Password": "Passwort",
+  "Upload": "Hochladen",
+  "Save changes": "Änderungen speichern",
+  "Select action": "Aktion wählen",
+  "What would you like to do?": "Was möchtest Du tun?",
+  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
+  "Invitations": "Einladungen",
+  "From": "Von",
+  "Accept": "Annehemen",
+  "Decline": "Ablehnen"
 }
