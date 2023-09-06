@@ -19,7 +19,7 @@ const ServiceLink = forwardRef(({ roomId, name, selected, path, passwordProtecte
             <ServiceTable.Cell selected={selected}>
                 <Link ref={ref} disabled href={`/${path}/${roomId}`}>{ name }</Link>
             </ServiceTable.Cell>
-            { /* Show a lock icon if this is a password protected pad */ }
+            { /* Show a lock icon if this Link is password protected */ }
             { passwordProtected && (
                 <ServiceTable.Cell title={t('password protected')}>
                     <LockIconResized />
