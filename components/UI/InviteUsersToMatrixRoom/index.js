@@ -16,7 +16,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import _, { debounce } from 'lodash';
+import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
