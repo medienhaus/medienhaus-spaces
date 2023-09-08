@@ -29,6 +29,7 @@ import ErrorMessage from '../ErrorMessage';
 import { ServiceTable } from '../ServiceTable';
 import UserListEntry from './UserListEntry';
 import DefaultModal from '../Modal';
+import Datalist from '../Datalist';
 
 const Header = styled.header`
   display: grid;
@@ -97,7 +98,6 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
 
                 return;
             });
-
         // if everything is okay, we let the user know and exit the modal view.
         setUserFeedback('✓ ' + displayName + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
@@ -143,6 +143,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                                 }) }
                             </ServiceTable>
                         </SearchResults>
+                        <Datalist options={searchResults} callback={handleChange} />
                     </Form>
                 }
             </DefaultModal>
