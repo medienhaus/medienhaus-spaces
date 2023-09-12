@@ -27,6 +27,8 @@ export default function Etherpad() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
+    // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
+    const path = getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad';
 
     const { t } = useTranslation('etherpad');
     const router = useRouter();
@@ -35,7 +37,7 @@ export default function Etherpad() {
     const [content, setContent] = useState(matrix.roomContents.get(roomId));
 
     /**
-     * A roomId is set when the route is /write/<roomId>, otherwise it's undefined
+     * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
      * @type {String|undefined}
      */
     const roomId = _.get(router, 'query.roomId.0');
@@ -158,7 +160,7 @@ export default function Etherpad() {
 
         await syncServerPadsAndSet();
 
-        router.push(getConfig().publicRuntimeConfig.authProviders.etherpad.path);
+        router.push(path);
         setIsDeletingPad(false);
     };
 
@@ -210,7 +212,7 @@ export default function Etherpad() {
                             title={<h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided /write server. Please try again later.') }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: path }) }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
                                 return <EtherpadListEntry
