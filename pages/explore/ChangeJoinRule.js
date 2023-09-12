@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import Form from '../../components/UI/Form';
@@ -11,6 +12,7 @@ const JoinRuleChanger = ({ roomId, roomName }) => {
     const [joinRule, setJoinRule] = useState(currentJoinRule);
     const [changingJoinRule, setChangingJoinRule] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const { t } = useTranslation('explore');
 
     const handleChangeJoinRule = async () => {
         setChangingJoinRule(true);
@@ -24,7 +26,7 @@ const JoinRuleChanger = ({ roomId, roomName }) => {
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
-            <h1>Change Join Rule for { roomName }</h1>
+            <h1>{ t('Change Join Rule for') } { roomName }</h1>
             <select
                 id="joinRule"
                 value={joinRule}
