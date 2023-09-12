@@ -20,7 +20,15 @@ const Table = styled.table`
 
 const TableRow = styled.tr`
   max-width: 100%;
+  color: ${props => props.selected && 'var(--color-disabled)' };
   border-bottom: 1px solid rgb(0 0 0 / 5%);
+
+  /* set attributes for every td which is a direct child of tr, and all of their direct children as well */
+  > td,
+  > td > * {
+    line-height: calc(var(--margin) * 3);
+  }
+
 `;
 
 const TableCell = styled.td`
@@ -31,7 +39,6 @@ const TableCell = styled.td`
   a {
     display: block;
     width: 100%;
-    line-height: calc(var(--margin) * 3);
     color: ${props => props.selected && 'var(--color-disabled)' };
     text-decoration: ${props => props.selected && 'none' };
 
