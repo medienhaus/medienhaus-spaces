@@ -11,13 +11,13 @@ const LockIconResized = styled(LockIcon)`
   transform: scale(0.9);
 `;
 
-const ServiceLink = forwardRef(({ roomId, name, selected, path, passwordProtected }, ref) => {
+const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref) => {
     const { t } = useTranslation();
 
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell selected={selected}>
-                <Link ref={ref} disabled href={`/${path}/${roomId}`}>{ name }</Link>
+                <Link ref={ref} href={href}>{ name }</Link>
             </ServiceTable.Cell>
             { /* Show a lock icon if this Link is password protected */ }
             { passwordProtected && (

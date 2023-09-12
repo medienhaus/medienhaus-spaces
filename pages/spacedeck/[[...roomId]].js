@@ -189,11 +189,10 @@ export default function Spacedeck() {
                         <ServiceTable>
                             { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
                                 return <ServiceLink
-                                    roomId={spacedeckRoomId}
-                                    name={matrix.rooms.get(spacedeckRoomId).name}
-                                    path={path}
-                                    selected={roomId === spacedeckRoomId}
                                     key={spacedeckRoomId}
+                                    name={matrix.rooms.get(spacedeckRoomId).name}
+                                    href={`/${path}/${spacedeckRoomId}`}
+                                    selected={roomId === spacedeckRoomId}
                                     ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
                                 />;
                             }) }
