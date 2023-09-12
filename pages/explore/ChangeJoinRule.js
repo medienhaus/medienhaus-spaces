@@ -6,6 +6,15 @@ import Form from '../../components/UI/Form';
 import presets from './presets';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 
+/**
+ * JoinRuleChanger component for changing the join rule of a room.
+ *
+ * @component
+ * @param {string} roomId - The ID of the room or space for which the join rule is being changed.
+ * @param {string} roomName - The name of the room or space.
+ * @returns {JSX.Element} - The rendered component.
+ */
+
 const JoinRuleChanger = ({ roomId, roomName }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const currentJoinRule = matrixClient.getRoom(roomId).getJoinRule();
