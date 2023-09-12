@@ -8,6 +8,15 @@ import { useAuth } from '../../lib/Auth';
 import EditIcon from '../../assets/icons/edit.svg';
 import DefaultModal from './Modal';
 
+/**
+ * EditRoomName component for changing the name of a matrix room or space.
+ *
+ * @component
+ * @param {string} title - The current title of the room.
+ * @param {string} roomId - The ID of the room to edit.
+ * @returns {JSX.Element} - The rendered component.
+ */
+
 const EditRoomName = ({ title, roomId }) => {
     const [inputValue, setInputValue] = useState(title);
     const [isChangingName, setIsChangingName] = useState(false);
