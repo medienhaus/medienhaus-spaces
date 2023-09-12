@@ -20,6 +20,16 @@ const CloseButton = styled(TextButton)`
   padding: unset;
   background-color: unset;
 `;
+/**
+ * DefaultModal component for rendering a modal dialog with a custom header and close functionality.
+ *
+ * @component
+ * @param {ReactNode} children - The content to be displayed inside the modal.
+ * @param {string} [headline] - The headline text to be displayed in the modal header (optional).
+ * @param {boolean} isOpen - Indicates whether the modal is open or closed.
+ * @param {Function} onRequestClose - A callback function to close the modal when triggered.
+ * @returns {JSX.Element} - The rendered component.
+ */
 
 const DefaultModal = ({ children, headline, isOpen, onRequestClose }) => {
     if (typeof window !== 'undefined') ReactModal.setAppElement(document.body);
