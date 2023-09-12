@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
@@ -30,7 +29,6 @@ const DisplayInvitations = ({ invite, path, service, acceptMatrixInvite, decline
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
-    const router = useRouter();
 
     const handleDecline = async (e, roomId) => {
         e.preventDefault();
@@ -44,11 +42,7 @@ const DisplayInvitations = ({ invite, path, service, acceptMatrixInvite, decline
         setIsAcceptingInvite(true);
         const forwardingUrl = await acceptMatrixInvite(roomId, service);
         setIsAcceptingInvite(false);
-        if (forwardingUrl) {
-            if (confirm('You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?', { name: path })) {
-                router.push(forwardingUrl);
-            }
-        } else {
+        if (!forwardingUrl) {
             alert(t('Something went wrong! Please try again.'));
         }
     };
