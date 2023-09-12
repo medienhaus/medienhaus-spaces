@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 
@@ -7,26 +8,30 @@ import { ServiceTable } from './ServiceTable';
  *
  * @component
  * @param {string[]} options - An array of Objects for the datalist.
+ * @callback onChange - function to execute when input changes
+ * @callback onSelect - function to execute when a result from the datalist was selected
+ * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results
  * @returns {React.JSX.Element} The Datalist component.
  */
 
-function Datalist({ options, callback }) {
+function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const inputRef = useRef(null);
-    const datalistRef = useRef(null);
 
     const handleChange = async (e) => {
         setIsLoading(true);
         setValue(e.target.value);
-        await callback(e);
+        onSelect(null);
+        await onChange(e);
         if (e.target.value !== '') setIsOpen(true);
         setIsLoading(false);
     };
 
     const handleKeyDown = (e) => {
+        // Handle keyboard navigation
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             if (!isOpen) {
@@ -43,10 +48,12 @@ function Datalist({ options, callback }) {
             }
         } else if (e.key === 'Enter' && isOpen && selectedIndex !== -1) {
             e.preventDefault();
-            const selectedOption = options[selectedIndex].display_name;
-            setValue(selectedOption);
-            setIsOpen(false);
+            const selectedOption = options[selectedIndex];
+
+            setValue(stringifySelection(selectedOption));
+            onSelect(selectedOption);
             setSelectedIndex(-1);
+            setIsOpen(false);
             inputRef.current.focus();
         }
     };
@@ -59,10 +66,24 @@ function Datalist({ options, callback }) {
     };
 
     const handleListItemClick = (selectedOption) => {
-        setValue(selectedOption);
+        // Handle mouse interaction
+        setValue(stringifySelection(selectedOption));
+        onSelect(selectedOption);
         setIsOpen(false);
         setSelectedIndex(-1);
         inputRef.current.focus();
+    };
+
+    const stringifySelection = (selectedOption) => {
+        // maps over all entries in the keysToDisplay array and returns the corresponding values as a string if the key is found in the selected options
+        let displayValue = _.map(selectedOption, (value, key) => {
+            if (!keysToDisplay.includes(key)) return;
+
+            return value;
+        });
+        displayValue = displayValue.filter((value) => value !== undefined).reverse().toString();
+
+        return displayValue;
     };
 
     return (
@@ -76,22 +97,22 @@ function Datalist({ options, callback }) {
                 ref={inputRef}
                 disabled={isLoading}
             />
-            { isOpen && (
-                <ServiceTable className="datalist" ref={datalistRef}>
-                    <ServiceTable.Body>
-                        { options.map((option, index) => (
-                            <ServiceTable.Row>
-                                <ServiceTable.Cell
-                                    key={index}
-                                    selected={selectedIndex === index}
-                                    // selected={true}
-                                    onClick={() => handleListItemClick(option.display_name)}
-                                >
-                                    { option.display_name }
-                                </ServiceTable.Cell>
-                            </ServiceTable.Row>
-                        )) }
-                    </ServiceTable.Body>
+            { options.length > 0 && isOpen && (
+                <ServiceTable>
+                    { options.map((option, index) => (
+                        <ServiceTable.Row
+                            key={index}
+                            selected={selectedIndex === index}
+                            onClick={() => handleListItemClick(option)}>
+                            { keysToDisplay.map(key => {
+                                return <ServiceTable.Cell
+                                    key={key}>
+                                    { option[key] }
+                                </ServiceTable.Cell>;
+                            }) }
+
+                        </ServiceTable.Row>
+                    )) }
                 </ServiceTable>
             ) }
         </div>

@@ -26,8 +26,6 @@ import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
-import { ServiceTable } from '../ServiceTable';
-import UserListEntry from './UserListEntry';
 import DefaultModal from '../Modal';
 import Datalist from '../Datalist';
 
@@ -45,18 +43,13 @@ const CloseButton = styled(TextButton)`
   background-color: unset;
 `;
 
-const SearchResults = styled.div`
-  height: 250px;
-  overflow-y: auto;
-`;
-
 export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
-    const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
+    const [selectedUser, setSelectedUser] = useState();
     const { t } = useTranslation('invitationModal');
 
     const handleClick = () => {
@@ -64,7 +57,6 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     };
 
     const handleChange = (event) => {
-        setSearchInput(event.target.value);
         debouncedFetchUsersForContributorSearch(event.target.value);
     };
 
@@ -84,7 +76,6 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const handleInvite = async (userId, displayName) => {
         function clearInputs() {
             setUserFeedback('');
-            setSearchInput('');
             setSearchResults([]);
         }
 
@@ -123,27 +114,14 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                     </CloseButton>
                 </Header>
                 { userFeedback ? <div>{ userFeedback }</div> :
-                    <Form>
-                        <input
-                            type="text"
-                            list="userSearch"
-                            placeholder={t('user name')}
-                            value={searchInput}
+                    <Form onSubmit={handleInvite}>
+                        <Datalist
+                            options={searchResults}
                             onChange={handleChange}
-                            autoComplete="off"
+                            keysToDisplay={['display_name', 'user_id']}
+                            onSelect={setSelectedUser}
                         />
-                        <SearchResults>
-                            <ServiceTable>
-                                { searchResults.map((user, i) => {
-                                    return <UserListEntry
-                                        user={user}
-                                        roomName={roomName}
-                                        handleInvite={handleInvite}
-                                        key={i} />;
-                                }) }
-                            </ServiceTable>
-                        </SearchResults>
-                        <Datalist options={searchResults} callback={handleChange} />
+                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
                     </Form>
                 }
             </DefaultModal>
