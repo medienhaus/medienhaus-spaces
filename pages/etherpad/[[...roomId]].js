@@ -21,6 +21,7 @@ import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
+import EditRoomName from '../../components/UI/EditRoomName';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -227,6 +228,7 @@ export default function Etherpad() {
                                 <ClipboardIcon fill="var(--color-foreground)" />
                             </button>
                             <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                            <EditRoomName roomId={roomId} title={matrix.rooms.get(roomId).name} />
                             <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </button>
