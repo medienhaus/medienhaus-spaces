@@ -17,7 +17,7 @@ import DisplayInvitations from './DisplayInvitations';
  */
 const ServiceInvitations = ({ service, invitations, acceptMatrixInvite, declineMatrixInvite }) => {
     // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
-    const path = getConfig().publicRuntimeConfig.authProviders[service].path?.replace(/[<>\s/:]/g, '') || service;
+    const path = getConfig().publicRuntimeConfig.authProviders[service].path || service;
     const serviceInvitations = invitations.filter(invite => invite.meta?.template === service); // filter invitations for the current service
 
     if (_.isEmpty(serviceInvitations)) return null;
