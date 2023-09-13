@@ -11,6 +11,7 @@ import AddExistingItem from './AddExistingItem';
 import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
+import DeleteRoom from './DeleteSpace';
 
 /**
  * ACTIONS COMPONENT
@@ -194,7 +195,9 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children,
         case 'existingContext':
             return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} />;
         case 'removeSpace':
-            return <RemoveSpaceFromParent parentId={currentId}parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
+            return <RemoveSpaceFromParent parentId={currentId} parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
+        case 'deleteSpace':
+            return <DeleteRoom roomId={currentId} roomName={roomName} parentId={parentId} />;
         default:
             return <>
                 <RadioWrapper>
@@ -215,6 +218,11 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children,
                 <RadioWrapper>
                     <input type="radio" id="removeSpace" name="action" value="removeSpace" />
                     <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="deleteSpace" name="action" value="deleteSpace" />
+                    <label htmlFor="deleteSpace">{ t('delete items or contexts') }</label>
                 </RadioWrapper>
             </>;
     }
