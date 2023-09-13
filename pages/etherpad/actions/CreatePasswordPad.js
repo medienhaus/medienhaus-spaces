@@ -24,7 +24,7 @@ export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
         const padId = await etherpad.createPad(padName, 'private', password);
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
         const roomId = await createWriteRoom(link, padName);
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}${roomId}`);
+        router.push(`${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
 
         callbackDone && callbackDone();
         setPadName('');

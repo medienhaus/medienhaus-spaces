@@ -30,7 +30,7 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
         setPadLink('');
         setIsLoading(false);
 
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}${roomId}`);
+        router.push(`${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
     };
 
     return (
