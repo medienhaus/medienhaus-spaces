@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '../../../lib/Etherpad';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -30,7 +31,7 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
         setPadLink('');
         setIsLoading(false);
 
-        router.push(`${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`${etherpadPath}/${roomId}`);
     };
 
     return (
