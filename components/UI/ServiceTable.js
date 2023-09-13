@@ -56,6 +56,10 @@ const TableRow = styled.tr`
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);
+
+  > * + * {
+    padding-left: var(--margin);
+  }
 `;
 
 const TableHeader = styled.th`
