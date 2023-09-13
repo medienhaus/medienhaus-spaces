@@ -58,21 +58,17 @@ const DisplayInvitations = ({ invite, path, service, acceptMatrixInvite, decline
             <ServiceTable.Cell title={invite.inviter?.userId}>
                 { invite.inviter?.displayName }
             </ServiceTable.Cell>
-            <>
-                <ServiceTable.Cell title={t('accept invitation')}>
-                    <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite}>
-                        { isAcceptingInvite ? <LoadingSpinnerInline /> : <AcceptIcon /> }
-                    </TextButton>
-                </ServiceTable.Cell>
-                <ServiceTable.Cell title={t('decline invitation')}>
-                    <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite}>
-                        { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon /> }
-                    </TextButton>
-                </ServiceTable.Cell>
-            </>
-
+            <ServiceTable.Cell title={t('accept invitation')}>
+                <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite}>
+                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <AcceptIcon /> }
+                </TextButton>
+            </ServiceTable.Cell>
+            <ServiceTable.Cell title={t('decline invitation')}>
+                <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite}>
+                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon /> }
+                </TextButton>
+            </ServiceTable.Cell>
         </ServiceTable.Row>
-
     );
 };
 export default DisplayInvitations;

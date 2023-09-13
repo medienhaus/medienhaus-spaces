@@ -30,9 +30,7 @@ const ServiceInvitations = ({ service, invitations, acceptMatrixInvite, declineM
             invite={invite}
             declineMatrixInvite={declineMatrixInvite}
             acceptMatrixInvite={acceptMatrixInvite} />;
-    })
-
-    ;
+    });
 };
 
 export default ServiceInvitations;
