@@ -48,7 +48,7 @@ const ChangeRoomAvatar = ({ roomId }) => {
         setErrorMessage('');
     };
 
-    if (!canChangeAvatar) return t('You don’t have the needed permissions to change the room avatar');
+    if (!canChangeAvatar) return `${t('You don’t have the required permissions')} ...`;
 
     return (
         <>

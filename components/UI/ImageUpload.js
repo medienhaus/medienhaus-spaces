@@ -68,7 +68,7 @@ const ImageUpload = ({ preview, callback }) => {
         <>
             { preview && previewUrl && <ImagePreview src={previewUrl} /> }
             <input type="file" accept="image/*" ref={imageUploadRef} style={{ display: 'none' }} onChange={handleUpload} />
-            <button disabled={isUploadingImage} type="button" onClick={() => { imageUploadRef.current.click(); }}>{ isUploadingImage ? t('Uploading ...') : t('Upload') }</button>
+            <button disabled={isUploadingImage} type="button" onClick={() => { imageUploadRef.current.click(); }}>{ isUploadingImage ? `${t('Uploading')} ...` : t('Upload') }</button>
         </>
     );
 };
