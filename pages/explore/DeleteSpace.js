@@ -1,29 +1,19 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Form from '../../components/UI/Form';
+import Checkbox from '../../components/UI/Checkbox';
 
-const Checkbox = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-
-  input {
-    width: calc(var(--margin) * 2);
-    height: calc(var(--margin) * 2);
-    cursor: pointer;
-    border: unset;
-    border-color: var(--color-fg);
-    border-style: solid;
-    border-width: calc(var(--margin) * 0.2);
-    border-radius: unset;
-    box-shadow: none;
-    appearance: none;
-  }
-`;
-
+/**
+ * DeleteRoom component for deleting a Matrix room.
+ *
+ * @param {string} roomId - The ID of the room to delete.
+ * @param {string} parentId - The ID of the parent room or space (if applicable).
+ * @param {string} roomName - The name of the room to be deleted.
+ * @returns {JSX.Element} - The rendered component.
+ */
 const DeleteRoom = ({ roomId, parentId, roomName }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -59,16 +49,10 @@ const DeleteRoom = ({ roomId, parentId, roomName }) => {
     return (
         <Form>
             <h2>{ t('Delete') } { roomName }?</h2>
-            <Checkbox>
-                <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => setIsChecked(!isChecked)}
-                />
-                <label
-                    htmlFor="checkbox">
-                    { t('Are you sure you want to irreversibly delete {{name}}?', { name: roomName }) }
-                </label>
+            <Checkbox
+                isChecked={isChecked}
+                onClick={setIsChecked}>
+                { t('Are you sure you want to irreversibly delete {{name}}?', { name: roomName }) }
             </Checkbox>
 
             <button
