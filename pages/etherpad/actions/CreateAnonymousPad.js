@@ -29,7 +29,7 @@ export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
         setPadName('');
 
         // Forward the user and show the newly created pad
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}${roomId}`);
     };
 
     return (
