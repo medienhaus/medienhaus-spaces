@@ -21,7 +21,6 @@ const TableSection = styled.section`
 export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
-    const MatrixAuthProvider = auth.getAuthenticationProvider('matrix');
     const { t } = useTranslation('dashboard');
     const [serviceInvitations, setServiceInvitations] = useState([]);
 
@@ -75,16 +74,11 @@ export default function Dashboard() {
         await matrix.leaveRoom(roomId);
     };
 
-    const acceptMatrixInvite = async (roomId, path, service) => {
-        await matrixClient.joinRoom(roomId).catch(() => {
-            return;
-        });
-        // if an invitation for a chat room was accepted we don't need to add it to a space
-        if (service !== 'chat') {
-            await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId).catch(() => {
+    const acceptMatrixInvite = async (roomId, path) => {
+        await matrixClient.joinRoom(roomId)
+            .catch(() => {
                 return;
             });
-        }
 
         return `${path}/${roomId}`;
     };
