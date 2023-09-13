@@ -19,5 +19,6 @@ RUN npm install
 EXPOSE 3000
 
 ENTRYPOINT ["npm", "run"]
+
 # Use this command as a default (can be overridden via "command" option in docker-compose.yml)
 CMD ["dev"]
