@@ -40,7 +40,7 @@ const DisplayInvitations = ({ invite, path, service, acceptMatrixInvite, decline
     const handleAccept = async (e, roomId) => {
         e.preventDefault();
         setIsAcceptingInvite(true);
-        const forwardingUrl = await acceptMatrixInvite(roomId, service);
+        const forwardingUrl = await acceptMatrixInvite(roomId, path, service);
         setIsAcceptingInvite(false);
         if (!forwardingUrl) {
             alert(t('Something went wrong! Please try again.'));
