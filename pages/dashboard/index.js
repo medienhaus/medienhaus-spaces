@@ -12,10 +12,6 @@ import DisplayInvitations from './DisplayInvitations';
 
 const TableSection = styled.section`
   overflow-x: auto;
-
-  tbody tr:hover {
-    background-color: var(--color-background-alpha);
-  }
 `;
 
 export default function Dashboard() {
@@ -38,6 +34,7 @@ export default function Dashboard() {
 
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
                 const room = await matrixClient.getRoom(invitation.roomId);
+                // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
                 const inviter = matrixClient.getUser(inviterName);
                 invitation.inviter = inviter;
