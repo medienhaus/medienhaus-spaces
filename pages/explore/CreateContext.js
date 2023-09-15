@@ -23,7 +23,7 @@ const AdvancesOptions = styled.details`
 
 const CreateContext = ({ currentId, parentId }) => {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     const [name, setName] = useState();
     const [topic, setTopic] = useState();
@@ -75,7 +75,7 @@ const CreateContext = ({ currentId, parentId }) => {
             await new Promise(r => setTimeout(r, 3000));
             setCreateNewContextErrorMessage('');
         });
-
+        console.log(createNewSubContext);
         // then add our new context to the parent.
         if (createNewSubContext) {
             auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
@@ -100,7 +100,6 @@ const CreateContext = ({ currentId, parentId }) => {
                 currentTemplate={template}
                 setTemplate={setTemplate}
             />
-
             <AdvancesOptions>
                 <summary>Advanced</summary>
                 <select defaultValue={_.find(presets?.allowedHistoryVisibility, { default: true })?.name} value={historyVisibility} onChange={(e) => {setHistoryVisibility(e.target.value); }}>
