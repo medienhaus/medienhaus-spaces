@@ -49,7 +49,7 @@ const PreviousNextButtons = ({ disabled, onClick, onCancel, disableNext, disable
     return (
         <PreviousNextButtonsWrapper>
             <PreviousButton type="button" disabled={disabled || disablePrev} onClick={handlePrevious}>{ t('Previous') }</PreviousButton>
-            <NextButton type="submit" disabled={disabled || disableNext}> { t('Next') }</NextButton>
+            <NextButton type="submit" onClick={onClick} disabled={disabled || disableNext}> { t('Next') }</NextButton>
         </PreviousNextButtonsWrapper>
     );
 };
