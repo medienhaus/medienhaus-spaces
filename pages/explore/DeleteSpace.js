@@ -5,6 +5,8 @@ import { useAuth } from '../../lib/Auth';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Form from '../../components/UI/Form';
 import Checkbox from '../../components/UI/Checkbox';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 
 /**
  * DeleteRoom component for deleting a Matrix room.
@@ -12,9 +14,10 @@ import Checkbox from '../../components/UI/Checkbox';
  * @param {string} roomId - The ID of the room to delete.
  * @param {string} parentId - The ID of the parent room or space (if applicable).
  * @param {string} roomName - The name of the room to be deleted.
+ * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} - The rendered component.
  */
-const DeleteRoom = ({ roomId, parentId, roomName }) => {
+const DeleteRoom = ({ roomId, parentId, roomName, onCancel }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +50,8 @@ const DeleteRoom = ({ roomId, parentId, roomName }) => {
     };
 
     return (
-        <Form>
+        <Form
+            onSubmit={handleDeleteRoom}>
             <h2>{ t('Delete') } { roomName }?</h2>
             <Checkbox
                 isChecked={isChecked}
@@ -61,6 +65,12 @@ const DeleteRoom = ({ roomId, parentId, roomName }) => {
             >
                 { isDeleting ? `${t('Deleting')} ...` : t('Delete') }
             </button>
+
+            <PreviousNextButtons
+                disableNext={isDeleting || !isChecked}
+                onCancel={onCancel}>{ isDeleting ? <LoadingSpinnerInline inverted /> : t('Delete') }
+            </PreviousNextButtons>
+
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>
     );
