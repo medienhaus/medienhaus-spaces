@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import getConfig from 'next/config';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
@@ -10,8 +11,8 @@ import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Form from '../../components/UI/Form';
-import PreviousNextButtons from "../../components/UI/PreviousNextButtons";
-import {useTranslation} from "react-i18next";
+import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const AdvancedOptions = styled.details`
   & {
@@ -36,7 +37,7 @@ const CreateContext = ({ currentId, onCancel }) => {
     const [powerLevels, setPowerLevels] = useState();
     const [createNewContextErrorMessage, setCreateNewContextErrorMessage] = useState();
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const createContext = async (e) => {
         e.preventDefault();
@@ -77,7 +78,8 @@ const CreateContext = ({ currentId, onCancel }) => {
             setCreateNewContextErrorMessage(err.message);
             await new Promise(r => setTimeout(r, 3000));
             setCreateNewContextErrorMessage('');
-            return
+
+            return;
         });
 
         // then add our new context to the parent.
@@ -86,7 +88,8 @@ const CreateContext = ({ currentId, onCancel }) => {
                 setCreateNewContextErrorMessage(err.message);
                 await new Promise(r => setTimeout(r, 3000));
                 setCreateNewContextErrorMessage('');
-                return
+
+                return;
             },
             );
         }
@@ -94,7 +97,7 @@ const CreateContext = ({ currentId, onCancel }) => {
         setTopic('');
         setTemplate('');
         setIsLoading(false);
-        onCancel()
+        onCancel();
     };
 
     return (
@@ -133,7 +136,7 @@ const CreateContext = ({ currentId, onCancel }) => {
             }
             <PreviousNextButtons
                 disableNext={isLoading || !name || !template}
-                onCancel={onCancel}>{ isLoading ? <LoadingSpinner inverted /> : t('create')}
+                onCancel={onCancel}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
             </PreviousNextButtons>
         </Form>
 

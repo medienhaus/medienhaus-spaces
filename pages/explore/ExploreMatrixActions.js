@@ -123,9 +123,7 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
         setCachedRoomNames({ ...cachedRoomNames, [currentId]: { name: nameEvent?.name } });
     }, [cachedRoomNames, currentId, matrixClient]);
 
-
     // callbacks
-
 
     /**
     * RENDER
@@ -155,13 +153,13 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
             <h2>{ t('Manage contexts and items within ') }{ roomName }</h2>
 
             { isCurrentUserModerator && (
-                    <RenderSwitch
-                        currentId={currentId}
-                        parentId={parentId}
-                        roomName={roomName}
-                        children={children}
-                        callApiAndAddToObject={callApiAndAddToObject}
-                    />
+                <RenderSwitch
+                    currentId={currentId}
+                    parentId={parentId}
+                    roomName={roomName}
+                    children={children}
+                    callApiAndAddToObject={callApiAndAddToObject}
+                />
             )
             }
         </ExploreMatrixActionWrapper>
@@ -177,35 +175,47 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
 
     switch (selectedAction) {
         case 'substructure':
-            return <CreateContext currentId={currentId} parentId={parentId} onCancel={() => {
-                setSelectedRadioButton('')
-                setSelectedAction('')
-            }}/>;
+            return <CreateContext currentId={currentId}
+                parentId={parentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'existingItem':
-            return <AddExistingItem currentId={currentId} currentName={roomName} onCancel={() => {
-                setSelectedRadioButton('')
-                setSelectedAction('')
-            }}/>;
+            return <AddExistingItem currentId={currentId}
+                currentName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'existingContext':
-            return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} onCancel={() => {
-                setSelectedRadioButton('')
-                setSelectedAction('')
-            }}/>;
+            return <AddExistingContext parentId={currentId}
+                parentName={roomName}
+                contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'removeSpace':
-            return <RemoveSpaceFromParent parentId={currentId} parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} onCancel={() => {
-                setSelectedRadioButton('')
-                setSelectedAction('')
-            }}/>;
+            return <RemoveSpaceFromParent parentId={currentId}
+                parentName={roomName}
+                children={children}
+                callApiAndAddToObject={callApiAndAddToObject}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
-            return  <Form
+            return <Form
                 onSubmit={(e) => {
                 //@TODO check type submit thing
-                e.preventDefault();
-                setSelectedAction(selectedRadioButton);}
-            }
+                    e.preventDefault();
+                    setSelectedAction(selectedRadioButton);
+                }
+                }
                 onChange={(e) => setSelectedRadioButton(e.target.value)}
             >
-            <RadioWrapper>
+                <RadioWrapper>
                     <input type="radio" id="substructure" name="action" value="substructure" />
                     <label htmlFor="substructure">{ t('create new substructure') }</label>
                 </RadioWrapper>
