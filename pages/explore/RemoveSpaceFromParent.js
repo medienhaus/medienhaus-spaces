@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import EraserIcon from '../../assets/icons/eraser.svg';
-import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import Form from '../../components/UI/Form';
+import ErrorMessage from '../../components/UI/ErrorMessage';
 
 const RemoveSection = styled.div`
   & {
@@ -25,61 +26,78 @@ const RemoveSection = styled.div`
 `;
 
 /**
- * COMPONENT 'RemoveAction'
+ * Component for removing a space from its parent.
  *
- * @TODO
- *
- * @param {String} parentId — the Id of the current observed Room
- * @param {String} parentName – x
- * @param {function} activeAction – x
- * @callback callApiAndAddToObject
-*/
-
+ * @param {Function} children - children to display.
+ * @param {String} parentId - The ID of the current observed Room.
+ * @param {String} parentName - The name of the parent space.
+ * @param {Function} callApiAndAddToObject - Callback function to update the list of children.
+ * @param {Function} onCancel - Callback function to cancel the operation.
+ * @returns {JSX.Element} JSX element representing the "Remove Space From Parent" component.
+ */
 const RemoveSpaceFromParent = ({
+    children,
     parentId,
     parentName,
-    children,
     callApiAndAddToObject,
+    onCancel,
 }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const [isRemovingChild, setIsRemovingChild] = useState(false);
+    const [itemsToRemove, setItemsToRemove] = useState([]);
+    const [errorMessages, setErrorMessages] = useState([]);
 
     const { t } = useTranslation('explore');
 
-    const removeChildFromParent = async (e, name, roomId) => {
+    const removeChildFromParent = async (e) => {
+        e.preventDefault();
         setIsRemovingChild(true);
-        const deleteDialogue = confirm(t('Are you sure you want to remove {{child}} from {{parent}}', { child: name, parent: parentName }));
-        if (deleteDialogue) {
-            const call = await matrix.removeSpaceChild(parentId, roomId)
+        for (const roomId of itemsToRemove) {
+            await matrix.removeSpaceChild(parentId, roomId)
                 .catch(error => {
-                    alert(error.data?.error);
+                    setErrorMessages(prevState => [...prevState, error.data?.error]);
                 });
-            if (call?.event_id) { //if an event_id is provided as an response the call were accepted and the currentId removed from the parentId as a m.room.spaceChild
-                await callApiAndAddToObject(e, parentId);
-            }
         }
+        await callApiAndAddToObject(e, parentId);
+        setItemsToRemove([]);
         setIsRemovingChild(false);
     };
 
+    const handleSelect = (roomId) => {
+        setItemsToRemove(prevState => {
+            if (prevState.includes(roomId)) {
+                return prevState.filter(item => item !== roomId);
+            } else return [...prevState, roomId];
+        });
+    };
     if (!children || !matrix) return;
 
     return (
-        <>
+        <Form
+            onSubmit={removeChildFromParent}>
             <RemoveSection>
                 <ServiceTable>
                     { children.map(child => {
                         return <RemoveListEntry
                             child={child}
-                            isRemovingChild={isRemovingChild}
-                            removeChildFromParent={removeChildFromParent}
+                            handleSelect={handleSelect}
+                            checked={itemsToRemove.includes(child.room_id)}
                             parentName={parentName}
                         />;
                     }) }
                 </ServiceTable>
+                { errorMessages && errorMessages.map((errorMessage, index) => {
+                    return <ErrorMessage key={index}>{ errorMessage } </ErrorMessage>;
+                }) }
             </RemoveSection>
 
-        </>
+            <PreviousNextButtons
+                disableNext={itemsToRemove.length === 0}
+                onCancel={onCancel}>{ isRemovingChild ? <LoadingSpinnerInline inverted /> : `${t('remove') } ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` }
+            </PreviousNextButtons>
+
+        </Form>
 
     );
 };
@@ -87,40 +105,25 @@ const RemoveSpaceFromParent = ({
 export default RemoveSpaceFromParent;
 
 /**
- * Description placeholder
+ * Component representing a list entry for removing a child space.
  *
- * @param {Object} child - object of child containing name and room_id keys
- * @param {Boolean} isRemovingChild
- * @param {String} parentName - name of parent space
- * @callback removeChildFromParent
- *   @param {Event} e
- *   @param {String} name
- *   @param {String} roomId - matrix room id of room to remove
- * @returns {React.ReactComponent}
+ * @param {Object} child - An object representing a child space containing name and room_id keys.
+ * @param {Boolean} checked - Whether the child space is selected for removal.
+ * @param {String} parentName - The name of the parent space.
+ * @param {Function} handleSelect - Callback function to handle child space selection.
+ * @returns {JSX.Element} JSX element representing a list entry for removing a child space.
  */
 
-function RemoveListEntry({ child, isRemovingChild, parentName, removeChildFromParent }) {
-    const [isDeletingCurrentChild, setIsDeletingCurrentChild] = useState(false);
+function RemoveListEntry({ child, parentName, handleSelect, checked }) {
     const { t } = useTranslation();
-
-    const handleClick = async (e) => {
-        e.preventDefault();
-        setIsDeletingCurrentChild(true);
-        await removeChildFromParent(e, child.name, child.room_id);
-        setIsDeletingCurrentChild(false);
-    };
 
     return <ServiceTable.Row>
         <ServiceTable.Cell>{ child.name }</ServiceTable.Cell>
         <ServiceTable.Cell>
-            <TextButton
-                disabled={isRemovingChild}
-                onClick={(e) => handleClick(e)}
-                title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}>
-                { isDeletingCurrentChild ?
-                    <LoadingSpinnerInline /> :
-                    <EraserIcon fill="var(--color-foreground)" /> }
-            </TextButton>
+            <input type="checkbox"
+                checked={checked}
+                title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}
+                onClick={() => handleSelect(child.room_id)} />
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 }

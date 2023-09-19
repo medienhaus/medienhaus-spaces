@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import getConfig from 'next/config';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import CachedContextMultiLevelSelect from '../../components/CachedContextMultiLevelSelect';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import Form from '../../components/UI/Form';
 
 /**
- * 'ADD EXISTING ITEM' COMPONENT
- * ------------------
+ * Component for adding an existing item to a context.
  *
- * @param {String} currentId — id of the current observed explore room
+ * @param {String} currentId - The id of the current observed explore room.
+ * @param {Function} onCancel - Callback function to cancel the operation.
  *
- * @TODO
- *  - some functions regarding spaces of spaces in the application folders needs to be implemented in the future. But as this is not a featureset of our current stack for now it could not be tested fully.
- *
-*/
+ * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
+ */
 
-const AddExistingItem = ({ currentId, currentName }) => {
+const AddExistingItem = ({ currentId, onCancel }) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
@@ -32,36 +31,40 @@ const AddExistingItem = ({ currentId, currentName }) => {
 
     const [selectedLevels, setSelectedLevels] = useState([applicationsFolder]);
 
-    const onLevelSelect = (levels, isLeaf) => {
+    const onLevelSelect = (levels) => {
         setSelectedLevels(levels);
-        const isItem = matrix.rooms.get(levels[levels.length - 1]);
-        if (isLeaf && getConfig().publicRuntimeConfig.templates.item.includes(isItem?.meta.template)) setIsItem(true);
-        else setIsItem(false);
+        const item = matrix.rooms.get(levels[levels.length - 1]);
+        setIsItem(!!item);
+        // if (isLeaf && getConfig().publicRuntimeConfig.templates.item.includes(item?.meta.template)) setIsItem(true);
+        // else setIsItem(false);
     };
 
-    const addItemToContext = async (e, itemId, currentId) => {
+    const addItemToContext = async (e) => {
         e.preventDefault();
         setIsAddingContext(true);
 
-        const addChildToParent = await matrixAuthed.addSpaceChild(currentId, itemId)
-            .catch(console.debug);
-        if (!addChildToParent?.event_id) {
-            setErrorMessage(t('something went wrong when trying to add the item to ') + currentName);
-        }
-        setSelectedLevels([applicationsFolder]);
+        const addChildToParent = await matrixAuthed.addSpaceChild(currentId, selectedLevels[selectedLevels.length - 1])
+            .catch((error) => [
+                setErrorMessage((error.data?.error || t('something went wrong, please try again'))),
+            ]);
         setIsAddingContext(false);
+        if (addChildToParent?.event_id) {
+            setSelectedLevels([applicationsFolder]);
+            setErrorMessage('');
+            onCancel();
+        }
     };
 
     return (
-        <>
+        <Form
+            onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} />
-            { isItem && <button
-                disabled={isAddingContext}
-                onClick={e => addItemToContext(e, selectedLevels[selectedLevels.length - 1], currentId)}>
-                { isAddingContext ? <LoadingSpinnerInline /> : t('add') }
-            </button> }
+            <PreviousNextButtons
+                disableNext={isAddingContext || !isItem}
+                onCancel={onCancel}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
+            </PreviousNextButtons>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        </>
+        </Form>
     );
 };
 
