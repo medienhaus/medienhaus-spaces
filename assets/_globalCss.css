@@ -6,6 +6,7 @@
   --color-foreground: rgb(0 0 0);
   --color-disabled: rgb(128 128 128);
   --color-selection: rgb(255 240 170);
+  --color-notification: rgb(255 96 96);
   --margin: 1rem;
   --color-background-alpha: hsl(0deg 0% 97%);
   --color-background-beta: hsl(0deg 0% 94%);

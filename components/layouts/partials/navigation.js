@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
+import NotificationBubble from '../../UI/NotificationBubble';
 
 const List = styled.ul`
   padding: 0;
@@ -25,6 +27,7 @@ const List = styled.ul`
 
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
+    const matrix = useMatrix();
 
     const Link = ({ href, children }) => (
         <NextLink href={href} onClick={closeNavigation}>
@@ -49,7 +52,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/">/dashboard</Link></li>
+                <li><Link href="/dashboard">/dashboard { matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>

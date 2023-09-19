@@ -5,8 +5,9 @@ import getConfig from 'next/config';
 import CreateContext from './CreateContext';
 import AddExistingItem from './AddExistingItem';
 import AddExistingContext from './AddExistingContext';
+import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 
-const ManageContextActions = ({ userInfos, parentId, currentId, currentName, setShowActions }) => {
+const ManageContextActions = ({ userInfos, parentId, currentId, currentName, children, callApiAndAddToObject }) => {
     return <>
         <h2>{ t('Manage contexts and items within ') }{ currentName }</h2>
         <details>
@@ -26,6 +27,15 @@ const ManageContextActions = ({ userInfos, parentId, currentId, currentName, set
             <details>
                 <summary>{ t('add existing item from application') }</summary>
             </details> */ }
+
+        <details>
+            <summary>{ t('remove items or contexts') }</summary>
+            <RemoveSpaceFromParent
+                parentId={currentId}
+                parentName={currentName}
+                children={children}
+                callApiAndAddToObject={callApiAndAddToObject} />
+        </details>
 
     </>;
 };

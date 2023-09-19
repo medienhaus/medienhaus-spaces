@@ -19,36 +19,34 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypadsPadObject, content, isCurrentUserModerator, setManageContextActionToggle }) => {
-    const [isManageContextMenuOpen, setIsManageContextMenuOpen] = useState(true);
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypadsPadObject, content, isCurrentUserModerator, setManageContextActionToggle, manageContextActionToggle }) => {
     const { t } = useTranslation('write');
 
     return (
         <IframeLayout.IframeHeader>
             <h2>{ title }</h2>
-            <IframeLayout.IframeHeaderButtonWrapper isManageContextMenuOpen={isManageContextMenuOpen}>
+            <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />
                 { isCurrentUserModerator && (
-                    isManageContextMenuOpen ? (
-                        <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
-                            <ListSettingsIcon
-                                title={t('Manage the selected context')}
-                                fill="var(--color-foreground)"
-                                onClick={() => { setIsManageContextMenuOpen(false); }}
-                            />
-                        </ToggleButton>
-                    ) : (
+                    manageContextActionToggle ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(false); }}>
                             <FolderIcon
                                 title={t('Browse the selected context')}
                                 fill="var(--color-foreground)"
-                                onClick={() => { setIsManageContextMenuOpen(true); }}
                             />
                         </ToggleButton>
+                    ) : (
+                        <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
+                            <ListSettingsIcon
+                                title={t('Manage the selected context')}
+                                fill="var(--color-foreground)"
+                            />
+                        </ToggleButton>
+
                     )
                 ) }
             </IframeLayout.IframeHeaderButtonWrapper>
