@@ -33,7 +33,7 @@ const AddExistingItem = ({ currentId, onCancel }) => {
 
     const [selectedLevels, setSelectedLevels] = useState([applicationsFolder]);
 
-    const onLevelSelect = (levels, isLeaf) => {
+    const onLevelSelect = (levels) => {
         setSelectedLevels(levels);
         const item = matrix.rooms.get(levels[levels.length - 1]);
         setIsItem(!!item);
