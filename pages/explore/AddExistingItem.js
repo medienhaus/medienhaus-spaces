@@ -10,15 +10,13 @@ import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 import Form from '../../components/UI/Form';
 
 /**
- * 'ADD EXISTING ITEM' COMPONENT
- * ------------------
+ * Component for adding an existing item to a context.
  *
- * @param {String} currentId — id of the current observed explore room
+ * @param {String} currentId - The id of the current observed explore room.
+ * @param {Function} onCancel - Callback function to cancel the operation.
  *
- * @TODO
- *  - some functions regarding spaces of spaces in the application folders needs to be implemented in the future. But as this is not a featureset of our current stack for now it could not be tested fully.
- *
-*/
+ * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
+ */
 
 const AddExistingItem = ({ currentId, onCancel }) => {
     const auth = useAuth();
