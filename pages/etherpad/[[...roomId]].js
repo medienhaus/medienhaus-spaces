@@ -204,7 +204,7 @@ export default function Etherpad() {
                                 return <ServiceLink
                                     key={writeRoomId}
                                     name={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    href={`/${path}/${writeRoomId}`}
+                                    href={`${etherpadPath}/${writeRoomId}`}
                                     passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
                                     ref={writeRoomId === roomId ? selectedPadRef : null}

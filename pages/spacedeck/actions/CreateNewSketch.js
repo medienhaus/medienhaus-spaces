@@ -7,16 +7,16 @@ import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { path } from '../../../lib/Spacedeck';
 
 const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const [sketchName, setSketchName] = useState('');
     const [loading, setLoading] = useState(false);
-    const auth =useAuth();
+    const auth = useAuth();
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation();
-    const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const createNewSketchRoom = async () => {
         setLoading(true);
@@ -30,7 +30,7 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
 
                 return;
             }));
-        router.push(`/${path}/${roomId}`);
+        router.push(`${path}/${roomId}`);
 
         callbackDone && callbackDone();
         setLoading(false);

@@ -19,6 +19,7 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
+import { path as spacedeckPath } from '../../lib/Spacedeck';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -34,7 +35,6 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
-    const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -165,7 +165,7 @@ export default function Spacedeck() {
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
-        router.push(`/${path}`);
+        router.push(`${spacedeckPath}`);
         setIsDeletingSketch(false);
     };
 
@@ -175,7 +175,7 @@ export default function Spacedeck() {
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
-                    title={<h2>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</h2>}
+                    title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
@@ -191,7 +191,7 @@ export default function Spacedeck() {
                                 return <ServiceLink
                                     key={spacedeckRoomId}
                                     name={matrix.rooms.get(spacedeckRoomId).name}
-                                    href={`/${path}/${spacedeckRoomId}`}
+                                    href={`${spacedeckPath}/${spacedeckRoomId}`}
                                     selected={roomId === spacedeckRoomId}
                                     ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
                                 />;
