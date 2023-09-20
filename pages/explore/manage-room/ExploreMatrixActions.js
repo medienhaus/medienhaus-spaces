@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useAuth } from '../../../lib/Auth';
+import LoadingSpinner from '../../../components/UI/LoadingSpinner';
 import CreateContext from './CreateContext';
-import AddExistingContext from './AddExistingContext';
-import AddExistingItem from './AddExistingItem';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import AddExistingContext from '../../etherpad/actions/AddExistingContext';
+import AddExistingItem from '../../etherpad/actions/AddExistingItem';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 
 /**

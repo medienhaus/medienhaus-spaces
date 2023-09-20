@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from "../../components/UI/PreviousNextButtons";
-import LoadingSpinnerInline from "../../components/UI/LoadingSpinnerInline";
+import { useAuth } from '../../../lib/Auth';
+import ContextMultiLevelSelect from '../../../components/ContextMultiLevelSelect';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
 /**
  * 'ADD EXISTING CONTEXT' COMPONENT
@@ -32,7 +31,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
     const [selectedContextName, setSelectedContextName] = useState('');
     const [isAddingAllowed, setIsAddingAllowed] = useState();
     const [errorMessage, setErrorMessage] = useState();
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation('explore');
 
     useEffect(() => {
@@ -64,8 +63,8 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
     }, [activeContexts, contextRootId, parentId, parentName, selectedContextName, t]);
 
     const addContextToParent = async (e) => {
-        e.preventDefault()
-        setIsLoading(true)
+        e.preventDefault();
+        setIsLoading(true);
         const call = await matrix.addSpaceChild(parentId, activeContexts[activeContexts.length - 1])
             .catch(error => {
                 setErrorMessage(error.data?.error);
@@ -77,8 +76,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
             alert(t('{{selectedContextName}} was successfully added to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }));
             cleanUp();
         }
-        setIsLoading(false)
-
+        setIsLoading(false);
     };
 
     // resetting all states back to start for a fresh new interaction.
@@ -87,18 +85,18 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
         setSelectedContextName('');
         setIsAddingAllowed(false);
         setErrorMessage('');
-        onCancel()
+        onCancel();
     };
 
     return (
         <Form
-        onSubmit={addContextToParent}>
+            onSubmit={addContextToParent}>
             <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} setSelectedContextName={setSelectedContextName} />
             { selectedContextName && isAddingAllowed && <p> { t('You are about to add {{ selectedContextName }} to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }) }</p> }
             { isAddingAllowed && <>
                 <PreviousNextButtons
                     disableNext={!isAddingAllowed}
-                    onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add')}
+                    onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
                 </PreviousNextButtons>
             </> }
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }

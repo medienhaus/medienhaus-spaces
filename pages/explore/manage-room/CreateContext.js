@@ -4,15 +4,14 @@ import _ from 'lodash';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
+import { useAuth } from '../../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
-import presets from './presets';
-import { useMatrix } from '../../lib/Matrix';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import presets from '../presets';
+import { useMatrix } from '../../../lib/Matrix';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
 const AdvancedOptions = styled.details`
   & {
