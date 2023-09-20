@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
+import styled from 'styled-components';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import IframeLayout from '../../components/layouts/iframe';
@@ -15,6 +16,11 @@ import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import DefaultModal from '../../components/UI/Modal';
+
+const ServiceTableWrapper = styled.div`
+  width: 100%;
+  overflow: auto;
+`;
 
 export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
@@ -125,14 +131,16 @@ export default function Explore() {
         <>
             <IframeLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore</h2>
-                { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
+                <ServiceTableWrapper>
+                    { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
                     !_.isEmpty(selectedSpaceChildren) &&
                     <TreePath
                         data={selectedSpaceChildren}
                         isFetchingContent={isFetchingContent}
                     />
 
-                }
+                    }
+                </ServiceTableWrapper>
             </IframeLayout.Sidebar>
             { !_.isEmpty(selectedSpaceChildren) &&
             <IframeLayout.IframeWrapper>
@@ -165,37 +173,38 @@ export default function Explore() {
                             callApiAndAddToObject={callApiAndAddToObject}
                         />
                     </DefaultModal>
-                    <ServiceTable>
-                        { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                            .sort(function(a, b) {
-                                if (a.type === 'item' && b.type !== 'item') {
-                                    return -1; // a comes before b
-                                } else if (a.type !== 'item' && b.type === 'item') {
-                                    return 1; // a comes after b
-                                } else {
-                                    return 0; // no sorting necessary
-                                }
-                            })
-                            .map((leaf, index) => {
-                                if (leaf.length <= 1) {
-                                    return <ErrorMessage key="error-message">
+                    <ServiceTableWrapper>
+                        <ServiceTable>
+                            { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                .sort(function(a, b) {
+                                    if (a.type === 'item' && b.type !== 'item') {
+                                        return -1; // a comes before b
+                                    } else if (a.type !== 'item' && b.type === 'item') {
+                                        return 1; // a comes after b
+                                    } else {
+                                        return 0; // no sorting necessary
+                                    }
+                                })
+                                .map((leaf, index) => {
+                                    if (leaf.length <= 1) {
+                                        return <ErrorMessage key="error-message">
                                                         Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
-                                    </ErrorMessage>;
-                                }
-                                if (index === 0) return null;
+                                        </ErrorMessage>;
+                                    }
+                                    if (index === 0) return null;
 
-                                // we sort the array to display object of the type 'item' before others.
-                                return <TreeLeaves
-                                    depth={selectedSpaceChildren.length}
-                                    leaf={leaf}
-                                    parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                    key={leaf.room_id + '_' + index}
-                                    iframeRoomId={iframeRoomId}
-                                    isFetchingContent={isFetchingContent}
-                                />;
-                            }) }
-                    </ServiceTable>
-
+                                    // we sort the array to display object of the type 'item' before others.
+                                    return <TreeLeaves
+                                        depth={selectedSpaceChildren.length}
+                                        leaf={leaf}
+                                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                        key={leaf.room_id + '_' + index}
+                                        iframeRoomId={iframeRoomId}
+                                        isFetchingContent={isFetchingContent}
+                                    />;
+                                }) }
+                        </ServiceTable>
+                    </ServiceTableWrapper>
                 </>
                 }
             </IframeLayout.IframeWrapper> }
