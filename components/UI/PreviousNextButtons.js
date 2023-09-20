@@ -8,9 +8,10 @@ const PreviousNextButtonsWrapper = styled.div`
 `;
 
 const NextButton = styled.button`
-  color: var(--color-background);
-  background-color: var(--color-foreground);
-
+  color:var(--color-background);
+  background-color:  ${props => props.warning ? 'var(--color-notification)' :'var(--color-foreground)' };
+  border-color:  ${props => props.warning && 'var(--color-notification)' };
+  
   &:disabled {
     color: var(--color-background);
     background-color: var(--color-disabled);
@@ -37,7 +38,7 @@ const PreviousButton = styled.button`
  * @param {Boolean} disablePrev disables 'previous' button if true
  * @returns {React.JSX} two inline buttons.  'previous' and 'next'
  */
-const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev }) => {
+const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
     const { t } = useTranslation();
 
     const handlePrevious = (e) => {
@@ -49,7 +50,7 @@ const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disabl
     return (
         <PreviousNextButtonsWrapper>
             <PreviousButton type="button" disabled={disabled || disablePrev} onClick={handlePrevious}>{ t('Previous') }</PreviousButton>
-            <NextButton type="submit" disabled={disabled || disableNext}> { children || t('Next') }</NextButton>
+            <NextButton type="submit" disabled={disabled || disableNext} warning={warning}> { children || t('Next') }</NextButton>
         </PreviousNextButtonsWrapper>
     );
 };
