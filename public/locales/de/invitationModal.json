@@ -1,5 +1,6 @@
 {
   "was invited and needs to accept your invitation": "wurde eingeladen und muss die Einladung annehmen",
   "Error while trying to fetch users. ": "Error beim Abruf der User.",
-  "Invite users to": "Lade User ein zu"
+  "Invite users to": "Lade User ein zu",
+  "invite {{user}} to {{room}}": "Lade {{user}} zu {{room}}"
 }

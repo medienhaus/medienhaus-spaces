@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 
-const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayClick = true }) => {
+const DefaultModal = ({ children, isOpen, onRequestClose }) => {
     if (typeof window !== 'undefined') ReactModal.setAppElement(document.body);
 
     const customStyles = {
-    /* stylelint-disable*/
+        /* stylelint-disable */
         content: {
             top: '50%',
             right: 'auto',
@@ -15,7 +15,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayCl
             padding: 'calc(var(--margin) * 2)',
             transform: 'translate(-50%, -50%)',
         },
-        /* stylelint-enable*/
+        /* stylelint-enable */
     };
 
     return <ReactModal
@@ -23,7 +23,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayCl
         onRequestClose={() => onRequestClose(false)}
         contentLabel="Invite Users"
         style={customStyles}
-        shouldCloseOnOverlayClick={shouldCloseOnOverlayClick}>
+        shouldCloseOnOverlayClick={true}>
         { children }
     </ReactModal>;
 };
