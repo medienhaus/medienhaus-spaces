@@ -204,7 +204,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
-        case 'deleteSpace':
+        case 'leaveRoom':
             return <LeaveRoom roomId={currentId}
                 roomName={roomName}
                 parentId={parentId}
@@ -243,8 +243,8 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 </RadioWrapper>
 
                 <RadioWrapper>
-                    <input type="radio" id="deleteSpace" name="action" value="deleteSpace" />
-                    <label htmlFor="deleteSpace">{ t('Leave') } { roomName }</label>
+                    <input type="radio" id="leaveRoom" name="action" value="leaveRoom" />
+                    <label htmlFor="leaveRoom">{ t('Leave') } { roomName }</label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
