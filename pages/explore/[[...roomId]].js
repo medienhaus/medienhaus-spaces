@@ -9,7 +9,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
-import ExploreMatrixActions from './ExploreMatrixActions';
+import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';

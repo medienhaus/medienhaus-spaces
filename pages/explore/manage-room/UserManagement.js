@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import { useAuth } from '../../lib/Auth';
-import BinIcon from '../../assets/icons/bin.svg';
-import TextButton from '../../components/UI/TextButton';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import presets from './presets';
+import { ServiceTable } from '../../../components/UI/ServiceTable';
+import { useAuth } from '../../../lib/Auth';
+import BinIcon from '../../../assets/icons/bin.svg';
+import TextButton from '../../../components/UI/TextButton';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import presets from '../presets';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
