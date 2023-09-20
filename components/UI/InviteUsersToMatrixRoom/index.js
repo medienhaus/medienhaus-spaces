@@ -56,8 +56,8 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
         setIsInviteDialogueOpen(prevState => !prevState);
     };
 
-    const handleChange = (event) => {
-        debouncedFetchUsersForContributorSearch(event.target.value);
+    const handleChange = (searchString) => {
+        debouncedFetchUsersForContributorSearch(searchString);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -25,7 +25,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         setIsLoading(true);
         setValue(e.target.value);
         onSelect(null);
-        await onChange(e);
+        await onChange(e.target.value);
         if (e.target.value !== '') setIsOpen(true);
         else setIsOpen(false);
         setIsLoading(false);
@@ -50,12 +50,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         } else if (e.key === 'Enter' && isOpen && selectedIndex !== -1) {
             e.preventDefault();
             const selectedOption = options[selectedIndex];
-
-            setValue(stringifySelection(selectedOption));
-            onSelect(selectedOption);
-            setSelectedIndex(-1);
-            setIsOpen(false);
-            inputRef.current.focus();
+            handleSelect(selectedOption);
         }
     };
 
@@ -66,12 +61,11 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         }, 100); // Delay closing the datalist to allow clicking on options
     };
 
-    const handleListItemClick = (selectedOption) => {
-        // Handle mouse interaction
+    const handleSelect = (selectedOption) => {
         setValue(stringifySelection(selectedOption));
         onSelect(selectedOption);
-        setIsOpen(false);
         setSelectedIndex(-1);
+        setIsOpen(false);
         inputRef.current.focus();
     };
 
@@ -104,7 +98,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
                         <ServiceTable.Row
                             key={index}
                             selected={selectedIndex === index}
-                            onClick={() => handleListItemClick(option)}>
+                            onClick={() => handleSelect(option)}>
                             { keysToDisplay.map(key => {
                                 return <ServiceTable.Cell
                                     key={key}>
