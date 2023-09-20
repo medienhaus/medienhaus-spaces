@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../lib/Auth';
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
 import CreateContext from './CreateContext';
-import AddExistingContext from '../../etherpad/actions/AddExistingContext';
-import AddExistingItem from '../../etherpad/actions/AddExistingItem';
+import AddExistingContext from './AddExistingContext';
+import AddExistingItem from './AddExistingItem';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
@@ -31,7 +31,7 @@ const ExploreMatrixActionWrapper = styled.div`
   max-height: 100%;
   overflow-y: auto;
   border-collapse: collapse;
-  
+
   > * + * {
     margin-top: var(--margin);
   }

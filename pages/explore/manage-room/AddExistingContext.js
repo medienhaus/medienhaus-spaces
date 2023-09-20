@@ -93,13 +93,11 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
             onSubmit={addContextToParent}>
             <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} setSelectedContextName={setSelectedContextName} />
             { selectedContextName && isAddingAllowed && <p> { t('You are about to add {{ selectedContextName }} to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }) }</p> }
-            { isAddingAllowed && <>
-                <PreviousNextButtons
-                    disableNext={!isAddingAllowed}
-                    onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
-                </PreviousNextButtons>
-            </> }
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            <PreviousNextButtons
+                disableNext={!isAddingAllowed}
+                onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
+            </PreviousNextButtons>
         </Form>
     );
 };
