@@ -11,6 +11,7 @@ import AddExistingItem from './AddExistingItem';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
+import UserManagement from './UserManagement';
 
 /**
  * ACTIONS COMPONENT
@@ -205,6 +206,13 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+        case 'manageUsers':
+            return <UserManagement roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
@@ -233,6 +241,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 <RadioWrapper>
                     <input type="radio" id="removeSpace" name="action" value="removeSpace" />
                     <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="manageUsers" name="action" value="manageUsers" />
+                    <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
