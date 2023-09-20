@@ -42,7 +42,7 @@ module.exports = {
         {
             name: 'public',
             label: 'Public 🌐',
-            description: 'anyone can join ',
+            description: 'anyone can join',
             default: true,
         },
         {
@@ -52,12 +52,12 @@ module.exports = {
         },
         {
             name: 'knock',
-            label: 'Knock 🚪',
+            label: 'Knock 🛎️',
             description: 'users can request to join, you have the chance to accept or reject those requests.',
         },
         {
             name: 'knock_restricted',
-            label: 'Restricted Knock🚪',
+            label: 'Restricted Knock 🛎️',
             description: 'a user can request an invite using the same functions offered by the knock join rule, or can attempt to join having satisfied an allow condition.',
         },
         {
