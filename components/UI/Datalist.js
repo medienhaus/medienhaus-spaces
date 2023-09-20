@@ -27,6 +27,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         onSelect(null);
         await onChange(e);
         if (e.target.value !== '') setIsOpen(true);
+        else setIsOpen(false);
         setIsLoading(false);
     };
 
