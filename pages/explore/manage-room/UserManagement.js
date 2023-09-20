@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
+import { MatrixEvent } from 'matrix-js-sdk';
 
 import { ServiceTable } from '../../../components/UI/ServiceTable';
 import { useAuth } from '../../../lib/Auth';
@@ -21,12 +22,13 @@ const RoleSelect = styled.select`
 `;
 
 const UserManagement = ({ roomId, roomName, onCancel }) => {
+    console.log(roomId);
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const room = matrixClient.getRoom(roomId);
     // get the current members of the room and sort them first from highest to lowest power level and then alphabetically
-    const currentMembers = _.orderBy(room.getMembers(), ['powerLevel', 'name'], ['desc', 'asc']);
+    const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter(member => member.userId === matrixClient.getUserId())[0];
     const { t } = useTranslation();
 
@@ -41,7 +43,12 @@ const UserManagement = ({ roomId, roomName, onCancel }) => {
         const label = presets.powerLevels.find(role => role.level === level).label;
 
         if (confirm(t('Are you sure you want to promote {{name}} to {{role}}', { name: name, role: label }))) {
-            await matrixClient.setPowerLevel(roomId, userId, level)
+            const currentStateEvent = await matrixClient.getStateEvent(roomId, 'm.room.power_levels', '');
+            const newStateEvent = new MatrixEvent({
+                type: 'm.room.power_levels',
+                content: currentStateEvent,
+            });
+            await matrixClient.setPowerLevel(roomId, userId, level, newStateEvent)
                 .catch(error => setErrorMessage(error.data.error));
         }
     };

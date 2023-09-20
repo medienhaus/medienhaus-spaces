@@ -207,7 +207,12 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedAction('');
                 }} />;
         case 'manageUsers':
-            return <UserManagement roomId={currentId} roomName={roomName} />;
+            return <UserManagement roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
