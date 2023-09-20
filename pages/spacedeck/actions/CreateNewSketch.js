@@ -16,7 +16,7 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
-    const { t } = useTranslation();
+    const { t } = useTranslation('spacedeck');
 
     const createNewSketchRoom = async () => {
         setLoading(true);
