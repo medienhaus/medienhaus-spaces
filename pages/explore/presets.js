@@ -41,26 +41,32 @@ module.exports = {
     allowedJoinRules: [
         {
             name: 'public',
-            display: '🌐',
-            description: 'public to everyone to join',
+            label: 'Public 🌐',
+            description: 'anyone can join',
             default: true,
         },
         {
             name: 'restricted',
-            display: '🔐',
-            description: 'member is also member of a different specified room (aka spacemember function in element)',
+            label: 'Restricted 🔐',
+            description: 'anyone able to satisfy at least one of the allow conditions is able to join the room',
         },
         {
             name: 'knock',
-            display: '🚪',
-            description: 'people can request to join, you have the chance to accept or reject those requests. after acceptens the requested user will get an invite.',
+            label: 'Knock 🛎️',
+            description: 'users can request to join, you have the chance to accept or reject those requests.',
+        },
+        {
+            name: 'knock_restricted',
+            label: 'Restricted Knock 🛎️',
+            description: 'a user can request an invite using the same functions offered by the knock join rule, or can attempt to join having satisfied an allow condition.',
         },
         {
             name: 'invite',
-            display: '🔒',
-            description: 'only people you invite can join',
+            label: 'Invite Only 🔒',
+            description: 'a user must first receive an invite from someone already in the room in order to join.',
         },
     ],
+
     allowedHistoryVisibility: [
         {
             name: 'world_readable',

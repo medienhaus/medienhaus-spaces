@@ -13,6 +13,7 @@ import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
+import ChangeJoinRule from './ChangeJoinRule';
 
 /**
  * ACTIONS COMPONENT
@@ -222,6 +223,15 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+
+        case 'changeJoinRule':
+            return <ChangeJoinRule
+                roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
@@ -260,6 +270,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 <RadioWrapper>
                     <input type="radio" id="leaveRoom" name="action" value="leaveRoom" />
                     <label htmlFor="leaveRoom">{ t('Leave') } { roomName }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
+                    <label htmlFor="changeJoinRule">{ t('Change join rule') }</label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
