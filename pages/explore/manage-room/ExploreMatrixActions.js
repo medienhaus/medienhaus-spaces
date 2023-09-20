@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useAuth } from '../../../lib/Auth';
+import LoadingSpinner from '../../../components/UI/LoadingSpinner';
 import CreateContext from './CreateContext';
 import AddExistingContext from './AddExistingContext';
 import AddExistingItem from './AddExistingItem';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
+import UserManagement from './UserManagement';
+import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
 
 /**
@@ -31,6 +33,10 @@ const ExploreMatrixActionWrapper = styled.div`
   max-height: 100%;
   overflow-y: auto;
   border-collapse: collapse;
+
+  > * + * {
+    margin-top: var(--margin);
+  }
 `;
 
 const RadioWrapper = styled.div`
@@ -42,8 +48,6 @@ const RadioWrapper = styled.div`
 `;
 
 const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, children, callApiAndAddToObject }) => {
-    const [selectedAction, setSelectedAction] = useState('');
-    const [selectedRadioButton, setSelectedRadioButton] = useState('');
     /**
     * MATRIX
     * ------------------
@@ -122,6 +126,8 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
         setCachedRoomNames({ ...cachedRoomNames, [currentId]: { name: nameEvent?.name } });
     }, [cachedRoomNames, currentId, matrixClient]);
 
+    // callbacks
+
     /**
     * RENDER
     * ------------------
@@ -150,33 +156,14 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
             <h2>{ t('Manage contexts and items within ') }{ roomName }</h2>
 
             { isCurrentUserModerator && (
-                <Form onSubmit={(e) => {
-                    //@TODO check type submit thing
-                    e.preventDefault();
-                    setSelectedAction(selectedRadioButton);
-                }
-                }
-                onChange={(e) => setSelectedRadioButton(e.target.value)}>
-
-                    <RenderSwitch
-                        selectedAction={selectedAction}
-                        currentId={currentId}
-                        parentId={parentId}
-                        roomName={roomName}
-                        children={children}
-                        callApiAndAddToObject={callApiAndAddToObject}
-                    />
-                    <PreviousNextButtons
-                        disabled={!selectedRadioButton}
-                        disableNext={selectedAction}
-                        disablePrev={!selectedAction}
-                        onCancel={() => {
-                            setSelectedRadioButton('');
-                            setSelectedAction('');
-                        }}
-                    />
-
-                </Form>)
+                <RenderSwitch
+                    currentId={currentId}
+                    parentId={parentId}
+                    roomName={roomName}
+                    children={children}
+                    callApiAndAddToObject={callApiAndAddToObject}
+                />
+            )
             }
         </ExploreMatrixActionWrapper>
     );
@@ -184,22 +171,77 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children, callApiAndAddToObject }) => {
+const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddToObject }) => {
+    const [selectedAction, setSelectedAction] = useState('');
+    const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const { t } = useTranslation();
 
     switch (selectedAction) {
         case 'substructure':
-            return <CreateContext currentId={currentId} parentId={parentId} />;
+            return <CreateContext currentId={currentId}
+                parentId={parentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'existingItem':
-            return <AddExistingItem currentId={currentId} currentName={roomName} />;
+            return <AddExistingItem currentId={currentId}
+                currentName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'existingContext':
-            return <AddExistingContext parentId={currentId} parentName={roomName} contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId} />;
+            return <AddExistingContext parentId={currentId}
+                parentName={roomName}
+                contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'removeSpace':
-            return <RemoveSpaceFromParent parentId={currentId} parentName={roomName} children={children} callApiAndAddToObject={callApiAndAddToObject} />;
+            return <RemoveSpaceFromParent parentId={currentId}
+                parentName={roomName}
+                children={children}
+                callApiAndAddToObject={callApiAndAddToObject}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
+        case 'manageUsers':
+            return <UserManagement roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
+        case 'leaveRoom':
+            return <LeaveRoom roomId={currentId}
+                roomName={roomName}
+                parentId={parentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
+
         case 'changeJoinRule':
-            return <ChangeJoinRule roomId={currentId} roomName={roomName} />;
+            return <ChangeJoinRule
+                roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
-            return <>
+            return <Form
+                onSubmit={(e) => {
+                    //@TODO check type submit thing
+                    e.preventDefault();
+                    setSelectedAction(selectedRadioButton);
+                }
+                }
+                onChange={(e) => setSelectedRadioButton(e.target.value)}
+            >
                 <RadioWrapper>
                     <input type="radio" id="substructure" name="action" value="substructure" />
                     <label htmlFor="substructure">{ t('create new substructure') }</label>
@@ -221,9 +263,29 @@ const RenderSwitch = ({ selectedAction, currentId, parentId, roomName, children,
                 </RadioWrapper>
 
                 <RadioWrapper>
-                    <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
-                    <label htmlFor="changeJoinRule">{ t('change join rule') }</label>
+                    <input type="radio" id="manageUsers" name="action" value="manageUsers" />
+                    <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
                 </RadioWrapper>
-            </>;
+
+                <RadioWrapper>
+                    <input type="radio" id="leaveRoom" name="action" value="leaveRoom" />
+                    <label htmlFor="leaveRoom">{ t('Leave') } { roomName }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
+                    <label htmlFor="changeJoinRule">{ t('Change join rule') }</label>
+                </RadioWrapper>
+
+                <PreviousNextButtons
+                    disabled={!selectedRadioButton}
+                    disableNext={selectedAction}
+                    disablePrev={!selectedAction}
+                    onCancel={() => {
+                        setSelectedRadioButton('');
+                        setSelectedAction('');
+                    }}
+                />
+            </Form>;
     }
 };

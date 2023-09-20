@@ -5,6 +5,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayCl
     if (typeof window !== 'undefined') ReactModal.setAppElement(document.body);
 
     const customStyles = {
+    /* stylelint-disable*/
         content: {
             top: '50%',
             right: 'auto',
@@ -14,6 +15,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose, shouldCloseOnOverlayCl
             padding: 'calc(var(--margin) * 2)',
             transform: 'translate(-50%, -50%)',
         },
+        /* stylelint-enable*/
     };
 
     return <ReactModal
