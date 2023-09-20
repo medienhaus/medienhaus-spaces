@@ -3,14 +3,15 @@ import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import { useAuth } from '../../../lib/Auth';
+import LoadingSpinner from '../../../components/UI/LoadingSpinner';
 import CreateContext from './CreateContext';
 import AddExistingContext from './AddExistingContext';
 import AddExistingItem from './AddExistingItem';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
+import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
 
 /**
@@ -22,6 +23,8 @@ import LeaveRoom from './LeaveRoom';
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  * @param {Boolean} isCurrentUserModerator - true if the user has moderatoion rights for the currentId.
  * @callback callApiAndAddToObject
+ * @TODO
+ * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
 
 const ExploreMatrixActionWrapper = styled.div`
@@ -29,7 +32,7 @@ const ExploreMatrixActionWrapper = styled.div`
   max-height: 100%;
   overflow-y: auto;
   border-collapse: collapse;
-  
+
   > * + * {
     margin-top: var(--margin);
   }
@@ -204,6 +207,13 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+        case 'manageUsers':
+            return <UserManagement roomId={currentId}
+                roomName={roomName}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         case 'leaveRoom':
             return <LeaveRoom roomId={currentId}
                 roomName={roomName}
@@ -240,6 +250,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 <RadioWrapper>
                     <input type="radio" id="removeSpace" name="action" value="removeSpace" />
                     <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="manageUsers" name="action" value="manageUsers" />
+                    <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>

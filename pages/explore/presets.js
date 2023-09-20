@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-undef
+// eslint-disable no-undef
 
 /**
  * HELPERFILE 'presets' for actions
@@ -22,6 +22,22 @@ module.exports = {
         min: 1,
         max: 100,
     },
+
+    powerLevels: [
+        {
+            level: 0,
+            label: 'User',
+        },
+        {
+            level: 50,
+            label: 'Moderator',
+        },
+        {
+            level: 100,
+            label: 'Admin',
+        },
+    ],
+
     allowedJoinRules: [
         {
             name: 'public',

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
-import Form from '../../components/UI/Form';
-import ErrorMessage from '../../components/UI/ErrorMessage';
+import { useAuth } from '../../../lib/Auth';
+import { ServiceTable } from '../../../components/UI/ServiceTable';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import Form from '../../../components/UI/Form';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
 
 const RemoveSection = styled.div`
   & {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import ContextMultiLevelSelect from '../../components/ContextMultiLevelSelect';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Form from '../../components/UI/Form';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import { useAuth } from '../../../lib/Auth';
+import ContextMultiLevelSelect from '../../../components/ContextMultiLevelSelect';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import Form from '../../../components/UI/Form';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
 /**
  * 'ADD EXISTING CONTEXT' COMPONENT
@@ -94,13 +94,11 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
             onSubmit={addContextToParent}>
             <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} setSelectedContextName={setSelectedContextName} />
             { selectedContextName && isAddingAllowed && <p> { t('You are about to add {{ selectedContextName }} to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }) }</p> }
-            { isAddingAllowed && <>
-                <PreviousNextButtons
-                    disableNext={!isAddingAllowed}
-                    onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
-                </PreviousNextButtons>
-            </> }
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            <PreviousNextButtons
+                disableNext={!isAddingAllowed}
+                onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
+            </PreviousNextButtons>
         </Form>
     );
 };
