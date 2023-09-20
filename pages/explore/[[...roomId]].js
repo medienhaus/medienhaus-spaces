@@ -16,6 +16,7 @@ import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import DefaultModal from '../../components/UI/Modal';
+import logger from '../../lib/Logging';
 
 const ServiceTableWrapper = styled.div`
   width: 100%;
@@ -85,17 +86,17 @@ export default function Explore() {
     const callApiAndAddToObject = useCallback(async (e, roomId) => {
         if (!selectedSpaceChildren) return;
         e && e.preventDefault();
-        console.debug('Call API or matrix and add');
+        logger.debug('Call API or matrix and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
-            .catch(err => console.debug(err));
+            .catch(err => logger.debug(err));
         if (!spaceHierarchy) return;
         const parent = spaceHierarchy[0];
 
         const getMetaEvent = async (obj) => {
-            console.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
+            logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
             const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
                 .catch((err) => {
-                    console.debug(err);
+                    logger.debug(err);
                     obj.missingMetaEvent = true;
                 });
 
