@@ -21,7 +21,12 @@ const ServiceTableWrapper = styled.div`
   width: 100%;
   overflow: auto;
 `;
-
+/**
+ * Explore component for managing room hierarchies and content.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Explore component.
+ */
 export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
@@ -32,21 +37,20 @@ export default function Explore() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
 
-    /**
-     * A roomId is set when the route is /explore/<roomId>, otherwise it's undefined
-     * @type {String|undefined}
-     */
-
-    const roomId = _.get(router, 'query.roomId.0');
-    const iframeRoomId = _.get(router, 'query.roomId.1');
+    // Extract roomId and iframeRoomId from the query parameters
+    const roomId = _.get(router, 'query.roomId[0]');
+    const iframeRoomId = _.get(router, 'query.roomId[1]');
     const isCurrentUserModerator = matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[matrixClient.getUserId()];
-    const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length -1]?.find(space => space.room_id === iframeRoomId).template;
+    const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => space.room_id === iframeRoomId).template;
 
-    if (!roomId) {
-        // we use the roomId from the adress bar if there is one, orherwise we start with the supplied root ID from the config file.
-        router.push(`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`);
-    }
+    // Redirect to the default room if no roomId is provided
+    useEffect(() => {
+        if (!roomId) {
+            router.push(`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`);
+        }
+    }, [roomId, router]);
 
+    // Fetch room content when the iframeRoomId changes
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
@@ -55,9 +59,10 @@ export default function Explore() {
         };
         iframeRoomId && checkForRoomContent();
 
-        return () => controller.abort;
+        return () => controller.abort();
     }, [iframeRoomId, matrix]);
 
+    // Handle route changes and fetch room content
     const onRouterChange = useCallback(async () => {
         setIsFetchingContent(roomId);
         setManageContextActionToggle(false);
@@ -76,17 +81,18 @@ export default function Explore() {
         };
     }, [router.query?.roomId, matrix.initialSyncDone, onRouterChange]);
 
+    // Call API to fetch and add room hierarchy to selectedSpaceChildren
     const callApiAndAddToObject = useCallback(async (e, roomId) => {
         if (!selectedSpaceChildren) return;
         e && e.preventDefault();
-        console.debug('call Api or matrix and add');
+        console.debug('Call API or matrix and add');
         const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
             .catch(err => console.debug(err));
         if (!spaceHierarchy) return;
         const parent = spaceHierarchy[0];
 
         const getMetaEvent = async (obj) => {
-            console.debug('getting meta event for ' + (obj.state_key || obj.room_id));
+            console.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
             const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
                 .catch((err) => {
                     console.debug(err);
@@ -106,21 +112,21 @@ export default function Explore() {
         }
 
         setSelectedSpaceChildren((prevState) => {
-            // we loop through the first entries of the state to see if the selected roomId is already inside the array
+            // Check if the selected roomId is already inside the array
             let indexOfParent = null;
             for (const [index, children] of prevState.entries()) {
                 if (children[0].room_id === roomId) {
-                    // if we have a match we return the position and exit the loop
+                    // If there is a match, return the position and exit the loop
                     indexOfParent = index;
                     break;
                 }
             }
-            // if indexOfParent is 0 or our context root id, which is defined in the config, we simply return the new spaceHierarchy
+            // If indexOfParent is 0 or the context root ID defined in the config, return the new spaceHierarchy
             if (indexOfParent === 0 || roomId === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return [spaceHierarchy];
-            // otherwise we delete all entries starting with the found index
+            // Otherwise, delete all entries starting with the found index
             if (indexOfParent) prevState.splice(indexOfParent);
 
-            // if indexOfParent is still null we simply add the new spaceHierarchy to the end of the array.
+            // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
             return [...prevState, spaceHierarchy];
         });
     }, [auth, matrix, selectedSpaceChildren]);
@@ -133,85 +139,87 @@ export default function Explore() {
                 <h2 ref={dimensionsRef}>/explore</h2>
                 <ServiceTableWrapper>
                     { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
-                    !_.isEmpty(selectedSpaceChildren) &&
-                    <TreePath
-                        data={selectedSpaceChildren}
-                        isFetchingContent={isFetchingContent}
-                    />
+                        !_.isEmpty(selectedSpaceChildren) &&
+                        <TreePath
+                            data={selectedSpaceChildren}
+                            isFetchingContent={isFetchingContent}
+                        />
 
                     }
                 </ServiceTableWrapper>
             </IframeLayout.Sidebar>
             { !_.isEmpty(selectedSpaceChildren) &&
-            <IframeLayout.IframeWrapper>
+                <IframeLayout.IframeWrapper>
 
-                { iframeRoomId ? (
-                    <ExploreIframeViews
-                        currentTemplate={currentTemplate}
-                        iframeRoomId={iframeRoomId}
-                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
-                    />
-                ) : <>
-                    <ServiceIframeHeader
-                        content={window.location.href}
-                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length -1][0].name}
-                        removingLink={false}
-                        roomId={roomId}
-                        manageContextActionToggle={manageContextActionToggle}
-                        isCurrentUserModerator={isCurrentUserModerator}
-                        setManageContextActionToggle={setManageContextActionToggle}
-                    />
-                    <DefaultModal
-                        isOpen={manageContextActionToggle}
-                        onRequestClose={() => setManageContextActionToggle(false)}
-                        contentLabel="Manage context">
-                        <ExploreMatrixActions
-                            isCurrentUserModerator={isCurrentUserModerator}
-                            currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                            parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                            children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
-                            callApiAndAddToObject={callApiAndAddToObject}
+                    { iframeRoomId ? (
+                        <ExploreIframeViews
+                            currentTemplate={currentTemplate}
+                            iframeRoomId={iframeRoomId}
+                            title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                         />
-                    </DefaultModal>
-                    <ServiceTableWrapper>
-                        <ServiceTable>
-                            { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                .sort(function(a, b) {
-                                    if (a.type === 'item' && b.type !== 'item') {
-                                        return -1; // a comes before b
-                                    } else if (a.type !== 'item' && b.type === 'item') {
-                                        return 1; // a comes after b
-                                    } else {
-                                        return 0; // no sorting necessary
-                                    }
-                                })
-                                .map((leaf, index) => {
-                                    if (leaf.length <= 1) {
-                                        return <ErrorMessage key="error-message">
-                                                        Thank You { auth.user.displayname }! But Our Item Is In Another Context! 🍄
-                                        </ErrorMessage>;
-                                    }
-                                    if (index === 0) return null;
+                    ) : <>
+                        <ServiceIframeHeader
+                            content={window.location.href}
+                            title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                            removingLink={false}
+                            roomId={roomId}
+                            manageContextActionToggle={manageContextActionToggle}
+                            isCurrentUserModerator={isCurrentUserModerator}
+                            setManageContextActionToggle={setManageContextActionToggle}
+                        />
+                        <DefaultModal
+                            isOpen={manageContextActionToggle}
+                            onRequestClose={() => setManageContextActionToggle(false)}
+                            contentLabel="Manage context"
+                        >
+                            <ExploreMatrixActions
+                                isCurrentUserModerator={isCurrentUserModerator}
+                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                                children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                                callApiAndAddToObject={callApiAndAddToObject}
+                            />
+                        </DefaultModal>
+                        <ServiceTableWrapper>
+                            <ServiceTable>
+                                { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                    .sort(function(a, b) {
+                                        if (a.type === 'item' && b.type !== 'item') {
+                                            return -1; // 'a' comes before 'b'
+                                        } else if (a.type !== 'item' && b.type === 'item') {
+                                            return 1; // 'a' comes after 'b'
+                                        } else {
+                                            return 0; // No sorting necessary
+                                        }
+                                    })
+                                    .map((leaf, index) => {
+                                        if (leaf.length <= 1) {
+                                            return <ErrorMessage key="error-message">
+                                                Thank you, { auth.user.displayname }! But our item is in another context! 🍄
+                                            </ErrorMessage>;
+                                        }
+                                        if (index === 0) return null;
 
-                                    // we sort the array to display object of the type 'item' before others.
-                                    return <TreeLeaves
-                                        depth={selectedSpaceChildren.length}
-                                        leaf={leaf}
-                                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                        key={leaf.room_id + '_' + index}
-                                        iframeRoomId={iframeRoomId}
-                                        isFetchingContent={isFetchingContent}
-                                    />;
-                                }) }
-                        </ServiceTable>
-                    </ServiceTableWrapper>
-                </>
-                }
-            </IframeLayout.IframeWrapper> }
+                                        // Sort the array to display objects of type 'item' before others
+                                        return <TreeLeaves
+                                            depth={selectedSpaceChildren.length}
+                                            leaf={leaf}
+                                            parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                            key={leaf.room_id + '_' + index}
+                                            iframeRoomId={iframeRoomId}
+                                            isFetchingContent={isFetchingContent}
+                                        />;
+                                    }) }
+                            </ServiceTable>
+                        </ServiceTableWrapper>
+                    </>
+                    }
+                </IframeLayout.IframeWrapper> }
         </>
     );
 }
 
+// Set the layout for the Explore component
 Explore.getLayout = () => {
     return IframeLayout.Layout;
 };
