@@ -35,7 +35,7 @@ const PreviousButton = styled.button`
  * @param {function} onCancel function to execute when clicking 'previous'
  * @param {Boolean} disableNext disables 'next' button if true
  * @param {Boolean} disablePrev disables 'previous' button if true
- * @returns {React.ReactComponent} two inline buttons.  'previous' and 'next'
+ * @returns {React.JSX} two inline buttons.  'previous' and 'next'
  */
 const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev }) => {
     const { t } = useTranslation();

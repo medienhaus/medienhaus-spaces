@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import CachedContextMultiLevelSelect from '../../components/CachedContextMultiLevelSelect';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
-import Form from '../../components/UI/Form';
+import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '../../../lib/Matrix';
+import CachedContextMultiLevelSelect from '../../../components/CachedContextMultiLevelSelect';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import Form from '../../../components/UI/Form';
 
 /**
  * Component for adding an existing item to a context.

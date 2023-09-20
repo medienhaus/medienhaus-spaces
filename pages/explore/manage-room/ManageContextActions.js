@@ -3,8 +3,8 @@ import { t } from 'i18next';
 import getConfig from 'next/config';
 
 import CreateContext from './CreateContext';
-import AddExistingItem from './AddExistingItem';
-import AddExistingContext from './AddExistingContext';
+import AddExistingItem from '../../etherpad/actions/AddExistingItem';
+import AddExistingContext from '../../etherpad/actions/AddExistingContext';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 
 const ManageContextActions = ({ userInfos, parentId, currentId, currentName, children, callApiAndAddToObject }) => {
