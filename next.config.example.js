@@ -9,6 +9,7 @@ module.exports = {
                 allowCustomHomeserver: true,
             },
             etherpad: {
+                // important: path has to start with "/"
                 path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
                 // myPads: {

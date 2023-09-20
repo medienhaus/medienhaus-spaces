@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../../lib/Auth';
+import { path as etherpadPath } from '../../../lib/Etherpad';
 
 export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -24,7 +25,7 @@ export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
         const padId = await etherpad.createPad(padName, 'private', password);
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
         const roomId = await createWriteRoom(link, padName);
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`${etherpadPath}/${roomId}`);
 
         callbackDone && callbackDone();
         setPadName('');

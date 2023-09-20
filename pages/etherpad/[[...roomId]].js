@@ -20,6 +20,7 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
+import { path as etherpadPath } from '../../lib/Etherpad';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -27,8 +28,6 @@ export default function Etherpad() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
-    // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
-    const path = getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad';
 
     const { t } = useTranslation('etherpad');
     const router = useRouter();
@@ -147,7 +146,7 @@ export default function Etherpad() {
 
         await syncServerPadsAndSet();
 
-        router.push(path);
+        router.push(etherpadPath);
         setIsDeletingPad(false);
     };
 
@@ -190,16 +189,16 @@ export default function Etherpad() {
             <IframeLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
-                        <h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>
+                        <h2>{ etherpadPath }</h2>
                         <LoadingSpinner />
                     </>
                 ) : (
                     <>
                         <ServiceSubmenu
-                            title={<h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
+                            title={<h2>{ etherpadPath }</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: path }) }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
                         <ServiceTable>
                             { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
                                 return <ServiceLink
