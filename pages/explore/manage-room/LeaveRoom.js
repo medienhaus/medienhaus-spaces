@@ -56,7 +56,10 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
 
             <PreviousNextButtons
                 disableNext={isLeaving}
-                onCancel={onCancel}>{ isLeaving ? <LoadingSpinnerInline inverted /> : t('Leave') }
+                onCancel={onCancel}
+                warning
+            >
+                { isLeaving ? <LoadingSpinnerInline inverted /> : t('Leave') }
             </PreviousNextButtons>
 
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
