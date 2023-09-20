@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const TextButton = styled.button`
   padding: 0;
   font: inherit;
+  color: var(--color-foreground);
   cursor: pointer;
   background: none;
   border: none;
