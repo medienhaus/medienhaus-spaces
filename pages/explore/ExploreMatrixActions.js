@@ -11,7 +11,7 @@ import AddExistingItem from './AddExistingItem';
 import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
-import DeleteRoom from './DeleteSpace';
+import LeaveRoom from './LeaveRoom';
 
 /**
  * ACTIONS COMPONENT
@@ -22,8 +22,6 @@ import DeleteRoom from './DeleteSpace';
  * @param {function} popActiveContexts – deletes the latest Element of the Contexts Multi Level Select Stack. Needed for the remove action.
  * @param {Boolean} isCurrentUserModerator - true if the user has moderatoion rights for the currentId.
  * @callback callApiAndAddToObject
- * @TODO
- * - changing all hardcoded mod rights (50) in all files related to the 'action' component to dynamicly ones. so that it will check what the powerlevel for the intended event to send needs to be, based on the indidual specific room criterial.
 */
 
 const ExploreMatrixActionWrapper = styled.div`
@@ -207,7 +205,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedAction('');
                 }} />;
         case 'deleteSpace':
-            return <DeleteRoom roomId={currentId}
+            return <LeaveRoom roomId={currentId}
                 roomName={roomName}
                 parentId={parentId}
                 onCancel={() => {
@@ -246,7 +244,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
 
                 <RadioWrapper>
                     <input type="radio" id="deleteSpace" name="action" value="deleteSpace" />
-                    <label htmlFor="deleteSpace">{ t('delete items or contexts') }</label>
+                    <label htmlFor="deleteSpace">{ t('Leave') } { roomName }</label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
