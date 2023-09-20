@@ -10,6 +10,7 @@ import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -19,7 +20,7 @@ const RoleSelect = styled.select`
   border: unset;
 `;
 
-const UserManagement = ({ roomId, roomName }) => {
+const UserManagement = ({ roomId, roomName, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -37,7 +38,6 @@ const UserManagement = ({ roomId, roomName }) => {
     };
 
     const changePowerLevel = async (userId, level, name) => {
-        console.log(level);
         const label = presets.powerLevels.find(role => role.level === level).label;
 
         if (confirm(t('Are you sure you want to promote {{name}} to {{role}}', { name: name, role: label }))) {
@@ -88,12 +88,17 @@ const UserManagement = ({ roomId, roomName }) => {
             </ServiceTable.Body>
         </ServiceTable>
         { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+
+        <PreviousNextButtons
+            disableNext={true}
+            onCancel={onCancel} />
     </>
     );
 };
 export default UserManagement;
 
 function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLevel, handleKick, changePowerLevel }) {
+    const hasHigherPowerLevel = powerLevel < selfPowerLevel;
     const [isKicking, setIsKicking] = useState(false);
     const [isChangingPowerLevel, setIsChangingPowerLevel] = useState(false);
     const { t } = useTranslation();
@@ -122,7 +127,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
         <ServiceTable.Cell title={t('Role')}>
             <RoleSelect
                 defaultValue={powerLevel}
-                disabled={powerLevel >= selfPowerLevel || selfPowerLevel === powerLevel || isChangingPowerLevel}
+                disabled={!hasHigherPowerLevel || isChangingPowerLevel}
                 onChange={(e) => onPowerLevelChange(e, e.target.value)}
             >
                 { presets.powerLevels.map((role => {
@@ -134,9 +139,11 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
             <TextButton
                 disabled={powerLevel >= selfPowerLevel}
                 onClick={onKickClick}
-                title={t('Kick {{user}} from {{room}}', { user: displayName, room: roomName })}>
+                title={
+                    t(hasHigherPowerLevel ? 'Kick {{user}} from {{room}}' : 'Cannot kick {{ user }}, you don’t have the required permissions', { user: displayName, room: roomName })}>
                 { isKicking ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
             </TextButton>
+
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 }
