@@ -12,6 +12,7 @@ import Form from '../../components/UI/Form';
 import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 import LeaveRoom from './LeaveRoom';
+import KickUsersFromRoom from './KickUsersFromRoom';
 
 /**
  * ACTIONS COMPONENT
@@ -212,6 +213,14 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+        case 'kickUsers':
+            return <KickUsersFromRoom roomId={currentId}
+                roomName={roomName}
+                parentId={parentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
@@ -245,6 +254,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 <RadioWrapper>
                     <input type="radio" id="deleteSpace" name="action" value="deleteSpace" />
                     <label htmlFor="deleteSpace">{ t('Leave') } { roomName }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="kickUsers" name="action" value="kickUsers" />
+                    <label htmlFor="kickUsers">{ t('Kick Users') } </label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
