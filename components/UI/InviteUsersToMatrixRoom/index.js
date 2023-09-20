@@ -3,7 +3,7 @@
  * `activeContexts` is the array of room IDs for the currently set context spaces.
  *
  * @param {string} roomId (valid matrix roomId)
- * @param {string} roomName (name of the matrix room)
+ * @param {string} name (name of the matrix room)
  *
  * @return {React.ReactElement}
  *
@@ -43,7 +43,7 @@ const CloseButton = styled(TextButton)`
   background-color: unset;
 `;
 
-export default function InviteUserToMatrixRoom({ roomId, roomName }) {
+export default function InviteUserToMatrixRoom({ roomId, name }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
@@ -98,7 +98,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     };
 
     return <>
-        <button title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
+        <button title={t('Invite users to' + ' ' + name)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
         </button>
         { isInviteDialogueOpen && (
@@ -109,7 +109,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
-                    { t('Invite users to') } { roomName } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
+                    { t('Invite users to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
                         <CloseIcon />
                     </CloseButton>
                 </Header>
@@ -121,7 +121,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                             keysToDisplay={['display_name', 'user_id']}
                             onSelect={setSelectedUser}
                         />
-                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
+                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: name }) }</button> }
                     </Form>
                 }
             </DefaultModal>
