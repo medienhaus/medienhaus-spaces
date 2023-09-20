@@ -8,10 +8,10 @@ const PreviousNextButtonsWrapper = styled.div`
 `;
 
 const NextButton = styled.button`
-  color:var(--color-background);
-  background-color:  ${props => props.warning ? 'var(--color-notification)' :'var(--color-foreground)' };
-  border-color:  ${props => props.warning && 'var(--color-notification)' };
-  
+  color: var(--color-background);
+  background-color: ${props => props.warning ? 'var(--color-notification)' :'var(--color-foreground)' };
+  border-color: ${props => props.warning && 'var(--color-notification)' };
+
   &:disabled {
     color: var(--color-background);
     background-color: var(--color-disabled);
