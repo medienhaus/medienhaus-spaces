@@ -30,7 +30,7 @@ const ExploreMatrixActionWrapper = styled.div`
   max-height: 100%;
   overflow-y: auto;
   border-collapse: collapse;
-  
+
   > * + * {
     margin-top: var(--margin);
   }
