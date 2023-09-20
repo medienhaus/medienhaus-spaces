@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../lib/Auth';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Form from '../../components/UI/Form';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import PreviousNextButtons from '../../components/UI/PreviousNextButtons';
+import { useAuth } from '../../../lib/Auth';
+import ErrorMessage from '../../../components/UI/ErrorMessage';
+import Form from '../../../components/UI/Form';
+import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 
 /**
  * LeaveRoom component for leaving a Matrix room.
