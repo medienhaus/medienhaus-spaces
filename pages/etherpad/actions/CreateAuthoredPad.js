@@ -36,7 +36,7 @@ export default function CreateAuthoredPad({ callbackDone, createWriteRoom }) {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
-            <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
         </Form>
     );

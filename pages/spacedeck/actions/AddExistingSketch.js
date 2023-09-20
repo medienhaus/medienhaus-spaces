@@ -42,14 +42,13 @@ const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parse
 
     return (
         <Form onSubmit={handleSubmit}>
-            <input type="text" placeholder={t('sketch name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <input type="text" placeholder={t('link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
+            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <input type="text" placeholder={t('Link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
             { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
 
-            <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add existing sketch') }</button>
+            <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add sketch') }</button>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>);
 };
 
 export default AddExistingSketch;
-
