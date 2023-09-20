@@ -101,7 +101,7 @@ export default function Spacedeck() {
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
-            const syncSketches = await spacedeck.syncAllSketches()
+            const syncSketches = await spacedeck.syncAllSpaces()
                 .catch((error) => {
                     logger.debug(error);
                     setIsSpacedeckServerDown(true);
@@ -124,7 +124,7 @@ export default function Spacedeck() {
             if (!isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
-                await spacedeck.syncAllSketches();
+                await spacedeck.syncAllSpaces();
                 populateSketchesfromServer(true);
             }
         };
