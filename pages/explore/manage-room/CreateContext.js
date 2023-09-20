@@ -25,7 +25,7 @@ const AdvancedOptions = styled.details`
 
 const CreateContext = ({ currentId, onCancel }) => {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     const [name, setName] = useState('');
     const [topic, setTopic] = useState('');

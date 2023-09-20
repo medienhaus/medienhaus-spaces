@@ -17,6 +17,7 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
  * @param {String} parentId — matrix room id of the parent context
  * @param {String} parentName — name of parent
  * @param {String} contextRootId — matrix room id of the root context from where to start fetching room hierarchies. (CANNOT be selected itself)
+ * @param {Function} onCancel - Callback function to cancel the operation.
  *
  * @TODO
  *  return name from ContextMultiLevelSelect instead of fetching it again in fetchRoomName

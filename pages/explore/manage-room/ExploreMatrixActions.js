@@ -12,6 +12,7 @@ import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 import UserManagement from './UserManagement';
+import LeaveRoom from './LeaveRoom';
 
 /**
  * ACTIONS COMPONENT
@@ -213,10 +214,18 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+        case 'leaveRoom':
+            return <LeaveRoom roomId={currentId}
+                roomName={roomName}
+                parentId={parentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
-                //@TODO check type submit thing
+                    //@TODO check type submit thing
                     e.preventDefault();
                     setSelectedAction(selectedRadioButton);
                 }
@@ -246,6 +255,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 <RadioWrapper>
                     <input type="radio" id="manageUsers" name="action" value="manageUsers" />
                     <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
+                </RadioWrapper>
+
+                <RadioWrapper>
+                    <input type="radio" id="leaveRoom" name="action" value="leaveRoom" />
+                    <label htmlFor="leaveRoom">{ t('Leave') } { roomName }</label>
                 </RadioWrapper>
 
                 <PreviousNextButtons
