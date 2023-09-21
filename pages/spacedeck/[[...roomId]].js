@@ -30,6 +30,7 @@ export default function Spacedeck() {
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.spacedeck;
+    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter(child => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
@@ -60,7 +61,7 @@ export default function Spacedeck() {
                         // in order to get the actual spacedeck id of the sketch we need to check the room content
                         const id = matrix.roomContents.get(roomId)?.body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                         if (!id) {
-                            // if no content was found we can assume we are handleing a space and also want to loop through any rooms within it
+                            // if no content was found we can assume we are handling a space and also want to loop through any rooms within it
                             getAllMatrixSketches(roomId);
                             continue;
                         }
@@ -85,7 +86,6 @@ export default function Spacedeck() {
                     if (matrixSketches[sketch.id]) {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
                         if (sketch.name !== matrixSketches[sketch.id].name) {
-                            // eslint-disable-next-line no-undef
                             logger.debug('changing name for ' + matrixSketches[sketch.id]);
                             await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
@@ -187,10 +187,13 @@ export default function Spacedeck() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
+                            { spacedeckChildren?.map(spacedeckRoomId => {
+                                const room = matrix.rooms.get(spacedeckRoomId);
+                                if (!room) return null;
+
                                 return <ServiceLink
                                     key={spacedeckRoomId}
-                                    name={matrix.rooms.get(spacedeckRoomId).name}
+                                    name={room.name}
                                     href={`${spacedeckPath}/${spacedeckRoomId}`}
                                     selected={roomId === spacedeckRoomId}
                                     ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
