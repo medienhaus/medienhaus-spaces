@@ -117,8 +117,6 @@ export default function Etherpad() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix.serviceSpaces.etherpad, serverPads, createWriteRoom]);
 
-    const copyToClipboard = () => navigator.clipboard.writeText(matrix.roomContents.get(roomId).body);
-
     /**
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
      */
@@ -205,7 +203,7 @@ export default function Etherpad() {
                                     key={writeRoomId}
                                     roomId={writeRoomId}
                                     name={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    path={getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad'}  // sanitizing the string just in case of any forbidden url characters
+                                    href={`${etherpadPath}/${writeRoomId}`}
                                     passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                     selected={writeRoomId === roomId}
                                     ref={writeRoomId === roomId ? selectedPadRef : null}

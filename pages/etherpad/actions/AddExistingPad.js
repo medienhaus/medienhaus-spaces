@@ -36,7 +36,7 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
-            <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
             { !validLink && padLink && (
                 <ErrorMessage>

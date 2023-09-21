@@ -19,6 +19,7 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
+import { path as spacedeckPath } from '../../lib/Spacedeck';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -29,12 +30,12 @@ export default function Spacedeck() {
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.spacedeck;
+    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter(child => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
-    const path = getConfig().publicRuntimeConfig.authProviders.spacedeck.path?.replace(/[<>\s/:]/g, '') || 'spacedeck';
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -60,7 +61,7 @@ export default function Spacedeck() {
                         // in order to get the actual spacedeck id of the sketch we need to check the room content
                         const id = matrix.roomContents.get(roomId)?.body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                         if (!id) {
-                            // if no content was found we can assume we are handleing a space and also want to loop through any rooms within it
+                            // if no content was found we can assume we are handling a space and also want to loop through any rooms within it
                             getAllMatrixSketches(roomId);
                             continue;
                         }
@@ -85,7 +86,6 @@ export default function Spacedeck() {
                     if (matrixSketches[sketch.id]) {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
                         if (sketch.name !== matrixSketches[sketch.id].name) {
-                            // eslint-disable-next-line no-undef
                             logger.debug('changing name for ' + matrixSketches[sketch.id]);
                             await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
@@ -101,7 +101,7 @@ export default function Spacedeck() {
                     await createSketchRoom(link, sketch.name, parent);
                 }
             };
-            const syncSketches = await spacedeck.syncAllSketches()
+            const syncSketches = await spacedeck.syncAllSpaces()
                 .catch((error) => {
                     logger.debug(error);
                     setIsSpacedeckServerDown(true);
@@ -124,7 +124,7 @@ export default function Spacedeck() {
             if (!isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
-                await spacedeck.syncAllSketches();
+                await spacedeck.syncAllSpaces();
                 populateSketchesfromServer(true);
             }
         };
@@ -165,7 +165,7 @@ export default function Spacedeck() {
         }
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
-        router.push(`/${path}`);
+        router.push(`${spacedeckPath}`);
         setIsDeletingSketch(false);
     };
 
@@ -175,11 +175,11 @@ export default function Spacedeck() {
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
-                    title={<h2>{ getConfig().publicRuntimeConfig.authProviders.spacedeck.path }</h2>}
+                    title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
-                        { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create sketch') },
+                        { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
@@ -187,13 +187,15 @@ export default function Spacedeck() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
+                            { spacedeckChildren?.map(spacedeckRoomId => {
+                                const room = matrix.rooms.get(spacedeckRoomId);
+                                if (!room) return null;
+
                                 return <ServiceLink
-                                    roomId={spacedeckRoomId}
-                                    name={matrix.rooms.get(spacedeckRoomId).name}
-                                    path={path}
-                                    selected={roomId === spacedeckRoomId}
                                     key={spacedeckRoomId}
+                                    name={room.name}
+                                    href={`${spacedeckPath}/${spacedeckRoomId}`}
+                                    selected={roomId === spacedeckRoomId}
                                     ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
                                 />;
                             }) }
