@@ -244,27 +244,27 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
             >
                 <RadioWrapper>
                     <input type="radio" id="substructure" name="action" value="substructure" />
-                    <label htmlFor="substructure">{ t('create new substructure') }</label>
+                    <label htmlFor="substructure">{ t('Create new substructure') }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>
                     <input type="radio" id="existingItem" name="action" value="existingItem" />
-                    <label htmlFor="existingItem"> { t('add existing item') }</label>
+                    <label htmlFor="existingItem"> { t('Add existing item') }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>
                     <input type="radio" id="existingContext" name="action" value="existingContext" />
-                    <label htmlFor="existingContext">{ t('add existing context') }</label>
+                    <label htmlFor="existingContext">{ t('Add existing context') }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>
                     <input type="radio" id="removeSpace" name="action" value="removeSpace" />
-                    <label htmlFor="removeSpace">{ t('remove items or contexts') }</label>
+                    <label htmlFor="removeSpace">{ t('Remove items or contexts') }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>
                     <input type="radio" id="manageUsers" name="action" value="manageUsers" />
-                    <label htmlFor="manageUsers">{ t('manage users in') } { roomName }</label>
+                    <label htmlFor="manageUsers">{ t('Manage users in') } { roomName }</label>
                 </RadioWrapper>
 
                 <RadioWrapper>
