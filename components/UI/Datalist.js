@@ -8,8 +8,8 @@ import { ServiceTable } from './ServiceTable';
  *
  * @component
  * @param {string[]} options - An array of Objects for the datalist.
- * @callback onChange - function to execute when input changes
- * @callback onSelect - function to execute when a result from the datalist was selected
+ * @param {function} onChange - function to execute when input changes, receives string as first parameter.
+ * @param {function} onSelect - function to execute when a result from the datalist was selected
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results
  * @returns {React.JSX.Element} The Datalist component.
  */
@@ -27,7 +27,10 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         onSelect(null);
         await onChange(e.target.value);
         if (e.target.value !== '') setIsOpen(true);
-        else setIsOpen(false);
+        else {
+            // if the input is empty we close the datalist
+            setIsOpen(false);
+        }
         setIsLoading(false);
     };
 
