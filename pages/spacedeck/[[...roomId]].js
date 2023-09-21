@@ -50,73 +50,78 @@ export default function Spacedeck() {
     useEffect(() => {
         let cancelled = false;
 
+        const matrixSketches = {};
+
+        // Function to recursively collect all Matrix sketches within a space
+        const getAllMatrixSketches = (id, parent) => {
+            if (matrix?.spaces.get(id)?.children) {
+                for (const roomId of spacedeckChildren) {
+                    // Extract the spacedeck id from room content
+                    const roomIdContent = matrix.roomContents.get(roomId);
+                    const id = roomIdContent?.body.substring(roomIdContent.body.lastIndexOf('/') + 1);
+                    if (!id) {
+                        // If no content was found, it's likely a space with nested rooms, so continue searching
+                        getAllMatrixSketches(roomId);
+                        continue;
+                    }
+                    // Add the sketch information to matrixSketches object
+                    matrixSketches[id] = {
+                        name: matrix.rooms.get(roomId).name,
+                        id: roomId,
+                    };
+                }
+            }
+        };
+
+        // Function to update the Matrix rooms based on spacedeck sketches
+        const updateStructure = async (object, parent) => {
+            for (const sketch of Object.values(object)) {
+                if (!sketch.id) continue;
+                if (matrixSketches[sketch.id]) {
+                    if (sketch.name !== matrixSketches[sketch.id].name) {
+                        // If the sketch names differ, update the Matrix room name
+                        logger.debug('changing name for ' + matrixSketches[sketch.id]);
+                        await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
+                    }
+                    continue;
+                }
+
+                if (sketch.type === 'folder') {
+                    // Recursively update the structure for nested folders
+                    await updateStructure(sketch, parent);
+                    continue;
+                }
+
+                // Create a new Matrix room for the sketch
+                const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + sketch.id;
+                await createSketchRoom(link, sketch.name, parent);
+            }
+        };
+
+        // Function to sync spacedeck sketches with Matrix rooms
         const syncServerSketchesWithMatrix = async () => {
             setSyncingServerSketches(true);
-            // since sketches can be created in spacedeck as well as within /spaces, we need to keep them up do date.
-            let matrixSketches = {};
-            const getAllMatrixSketches = (id, parent) => {
-                // first we check if a room for the sketch on the server already exists in matrix.
-                if (matrix?.spaces.get(id)?.children) {
-                    // if there are rooms within the space id we grab the names of those rooms
-                    for (const roomId of matrix.spaces.get(id).children) {
-                        // in order to get the actual spacedeck id of the sketch we need to check the room content
-                        const id = matrix.roomContents.get(roomId)?.body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
-                        if (!id) {
-                            // if no content was found we can assume we are handling a space and also want to loop through any rooms within it
-                            getAllMatrixSketches(roomId);
-                            continue;
-                        }
-                        //@ TODO recursion if space/folder
-                        // and then we add it to our object
-                        matrixSketches = Object.assign({}, matrixSketches, {
-                            [id]: {
-                                name: matrix.rooms.get(roomId).name,
-                                id: roomId,
-                            },
-                        });
-                    }
-                }
-            };
+
+            // Collect all Matrix sketches within the serviceSpaceId
             getAllMatrixSketches(serviceSpaceId);
 
-            const updateStructure = async (object, parent) => {
-                for (const sketch of Object.values(object)) {
-                    // if the element does not have an id key, we can safely assume it is a key of a folder from recursion and skip it.
-                    if (!sketch.id) continue;
-                    // now we can check if a sketch already exists in matrix and if so we can skip this sketch.
-                    if (matrixSketches[sketch.id]) {
-                        // we check if the names of our sketches are still matching on the matrix server and on the sketch server
-                        if (sketch.name !== matrixSketches[sketch.id].name) {
-                            logger.debug('changing name for ' + matrixSketches[sketch.id]);
-                            await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
-                        }
-                        continue;
-                    }
-                    // then we check if the entry is a folder and if so cycle through the folder and underlying sketches first
-                    if (sketch.type === 'folder') {
-                        await updateStructure(sketch, parent);
-                        continue;
-                    }
-                    // otherwise we create a room for the sketch
-                    const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + sketch.id;
-                    await createSketchRoom(link, sketch.name, parent);
-                }
-            };
-            const syncSketches = await spacedeck.syncAllSpaces()
-                .catch((error) => {
-                    logger.debug(error);
-                    setIsSpacedeckServerDown(true);
-                });
+            // Sync all spacedeck spaces and sketches
+            const syncSketches = await spacedeck.syncAllSpaces().catch((error) => {
+                logger.debug(error);
+                setIsSpacedeckServerDown(true);
+            });
+
+            // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
         };
 
-        if (!cancelled && serviceSpaceId && serverSketches) {
+        // Check if the useEffect is cancelled and required conditions are met to sync sketches
+        if (!cancelled && serviceSpaceId && serverSketches && !syncingServerSketches) {
             syncServerSketchesWithMatrix();
         }
 
-        return () => cancelled = true;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        return () => (cancelled = true);
     }, [serviceSpaceId, serverSketches]);
 
     useEffect(() => {
