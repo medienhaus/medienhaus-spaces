@@ -30,6 +30,7 @@ export default function Spacedeck() {
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.spacedeck;
+    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter(child => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
@@ -186,7 +187,7 @@ export default function Spacedeck() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { matrix.spaces.get(serviceSpaceId).children?.map(spacedeckRoomId => {
+                            { spacedeckChildren?.map(spacedeckRoomId => {
                                 return <ServiceLink
                                     key={spacedeckRoomId}
                                     name={matrix.rooms.get(spacedeckRoomId).name}
