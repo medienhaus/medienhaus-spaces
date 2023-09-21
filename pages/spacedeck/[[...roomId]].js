@@ -60,7 +60,7 @@ export default function Spacedeck() {
                         // in order to get the actual spacedeck id of the sketch we need to check the room content
                         const id = matrix.roomContents.get(roomId)?.body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                         if (!id) {
-                            // if no content was found we can assume we are handleing a space and also want to loop through any rooms within it
+                            // if no content was found we can assume we are handling a space and also want to loop through any rooms within it
                             getAllMatrixSketches(roomId);
                             continue;
                         }
@@ -85,7 +85,6 @@ export default function Spacedeck() {
                     if (matrixSketches[sketch.id]) {
                         // we check if the names of our sketches are still matching on the matrix server and on the sketch server
                         if (sketch.name !== matrixSketches[sketch.id].name) {
-                            // eslint-disable-next-line no-undef
                             logger.debug('changing name for ' + matrixSketches[sketch.id]);
                             await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                         }
