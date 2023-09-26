@@ -168,50 +168,47 @@ export default function Explore() {
                             myPowerLevel={myPowerLevel}
                             setManageContextActionToggle={setManageContextActionToggle}
                         />
-                        <DefaultModal
-                            isOpen={manageContextActionToggle}
-                            onRequestClose={() => setManageContextActionToggle(false)}
-                            contentLabel="Manage context"
-                        >
-                            <ExploreMatrixActions
-                                myPowerLevel={myPowerLevel}
-                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                                children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
-                                callApiAndAddToObject={callApiAndAddToObject}
-                            />
-                        </DefaultModal>
                         <ServiceTableWrapper>
-                            <ServiceTable>
-                                { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                    .sort(function(a, b) {
-                                        if (a.type === 'item' && b.type !== 'item') {
-                                            return -1; // 'a' comes before 'b'
-                                        } else if (a.type !== 'item' && b.type === 'item') {
-                                            return 1; // 'a' comes after 'b'
-                                        } else {
-                                            return 0; // No sorting necessary
-                                        }
-                                    })
-                                    .map((leaf, index) => {
-                                        if (leaf.length <= 1) {
-                                            return <ErrorMessage key="error-message">
+                            { manageContextActionToggle ?
+                                <ExploreMatrixActions
+                                    myPowerLevel={myPowerLevel}
+                                    currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                    parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                                    children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                                    callApiAndAddToObject={callApiAndAddToObject}
+                                />
+                                :
+                                <ServiceTable>
+                                    { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                        .sort(function(a, b) {
+                                            if (a.type === 'item' && b.type !== 'item') {
+                                                return -1; // 'a' comes before 'b'
+                                            } else if (a.type !== 'item' && b.type === 'item') {
+                                                return 1; // 'a' comes after 'b'
+                                            } else {
+                                                return 0; // No sorting necessary
+                                            }
+                                        })
+                                        .map((leaf, index) => {
+                                            if (leaf.length <= 1) {
+                                                return <ErrorMessage key="error-message">
                                                 Thank you, { auth.user.displayname }! But our item is in another context! 🍄
-                                            </ErrorMessage>;
-                                        }
-                                        if (index === 0) return null;
+                                                </ErrorMessage>;
+                                            }
+                                            if (index === 0) return null;
 
-                                        // Sort the array to display objects of type 'item' before others
-                                        return <TreeLeaves
-                                            depth={selectedSpaceChildren.length}
-                                            leaf={leaf}
-                                            parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                            key={leaf.room_id + '_' + index}
-                                            iframeRoomId={iframeRoomId}
-                                            isFetchingContent={isFetchingContent}
-                                        />;
-                                    }) }
-                            </ServiceTable>
+                                            // Sort the array to display objects of type 'item' before others
+                                            return <TreeLeaves
+                                                depth={selectedSpaceChildren.length}
+                                                leaf={leaf}
+                                                parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                                key={leaf.room_id + '_' + index}
+                                                iframeRoomId={iframeRoomId}
+                                                isFetchingContent={isFetchingContent}
+                                            />;
+                                        }) }
+                                </ServiceTable>
+                            }
                         </ServiceTableWrapper>
                     </>
                     }
