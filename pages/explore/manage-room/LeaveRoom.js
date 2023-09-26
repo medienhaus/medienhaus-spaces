@@ -23,19 +23,10 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation();
 
-    const handleLeaveRoom = async () => {
+    const handleLeaveRoom = async (e) => {
+        e.preventDefault();
         setIsLeaving(true);
 
-        if (parentId) {
-            // Remove the space from its parent if a parentId was provided
-            await auth.getAuthenticationProvider('matrix').removeSpaceChild(parentId, roomId)
-                .catch(error => {
-                    setErrorMessage(error.data?.error || t('Something went wrong. Please try again'));
-                    setIsLeaving(false);
-
-                    return;
-                });
-        }
         // Leave the main room
         await matrixClient.leave(roomId)
             .catch(error => {
