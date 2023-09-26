@@ -66,6 +66,13 @@ export default function Navigation({ closeNavigation }) {
                         </Link>
                     </li>
                 ) }
+                { _.get(getConfig(), 'publicRuntimeConfig.authProviders.spacedeck.path') && (
+                    <li>
+                        <Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>
+                            { getConfig().publicRuntimeConfig.authProviders.spacedeck.path }
+                        </Link>
+                    </li>
+                ) }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>

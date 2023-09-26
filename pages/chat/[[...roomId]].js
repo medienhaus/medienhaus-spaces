@@ -80,7 +80,7 @@ const SidebarListEntry = function({ room }) {
     );
 };
 
-export default function RoomId() {
+export default function Chat() {
     const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
@@ -190,6 +190,6 @@ export default function RoomId() {
     );
 }
 
-RoomId.getLayout = () => {
+Chat.getLayout = () => {
     return IframeLayout.Layout;
 };

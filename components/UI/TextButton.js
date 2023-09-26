@@ -8,6 +8,7 @@ const TextButton = styled.button`
   padding: 0;
   margin: 0 auto;
   font: inherit;
+  color: var(--color-foreground);
   cursor: pointer;
   background: none;
   border: none;
