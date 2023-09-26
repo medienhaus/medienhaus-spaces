@@ -73,13 +73,15 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
         }
     }, [matrixClient, t]);
 
-    const handleInvite = async (userId, displayName) => {
+    const handleInvite = async (e) => {
+        e.preventDefault();
         function clearInputs() {
             setUserFeedback('');
             setSearchResults([]);
+            setSelectedUser();
         }
 
-        await matrixClient.invite(roomId, userId)
+        await matrixClient.invite(roomId, selectedUser.user_id)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
@@ -90,7 +92,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                 return;
             });
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + displayName + ' ' + t('was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + selectedUser.display_name + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             setIsInviteDialogueOpen(false);

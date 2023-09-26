@@ -73,15 +73,10 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     };
 
     const stringifySelection = (selectedOption) => {
-        // maps over all entries in the keysToDisplay array and returns the corresponding values as a string if the key is found in the selected options
-        let displayValue = _.map(selectedOption, (value, key) => {
-            if (!keysToDisplay.includes(key)) return;
-
-            return value;
-        });
-        displayValue = displayValue.filter((value) => value !== undefined).reverse().toString();
-
-        return displayValue;
+        return keysToDisplay
+            .map((key) => selectedOption[key])
+            .filter((value) => value !== undefined)
+            .join(' (') + ')'; // wrap in brackets
     };
 
     return (
