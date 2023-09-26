@@ -5,6 +5,10 @@ const PreviousNextButtonsWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: var(--margin);
+
+  &:not(:first-child) {
+    margin-top: var(--margin);
+  }
 `;
 
 const NextButton = styled.button`
