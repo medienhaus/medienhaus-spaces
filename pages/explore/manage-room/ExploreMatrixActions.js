@@ -47,7 +47,7 @@ const RadioWrapper = styled.div`
   justify-content: start;
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, children, callApiAndAddToObject }) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, callApiAndAddToObject }) => {
     /**
     * MATRIX
     * ------------------
@@ -155,7 +155,7 @@ const ExploreMatrixActions = ({ currentId, parentId, isCurrentUserModerator, chi
         <ExploreMatrixActionWrapper>
             <h2>{ t('Manage contexts and items within ') }{ roomName }</h2>
 
-            { isCurrentUserModerator && (
+            { myPowerLevel && (
                 <RenderSwitch
                     currentId={currentId}
                     parentId={parentId}

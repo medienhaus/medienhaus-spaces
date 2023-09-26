@@ -41,7 +41,7 @@ export default function Explore() {
     // Extract roomId and iframeRoomId from the query parameters
     const roomId = _.get(router, 'query.roomId[0]');
     const iframeRoomId = _.get(router, 'query.roomId[1]');
-    const isCurrentUserModerator = matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[matrixClient.getUserId()];
+    const myPowerLevel = matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[matrixClient.getUserId()];
     const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => space.room_id === iframeRoomId).template;
 
     // Redirect to the default room if no roomId is provided
@@ -165,7 +165,7 @@ export default function Explore() {
                             removingLink={false}
                             roomId={roomId}
                             manageContextActionToggle={manageContextActionToggle}
-                            isCurrentUserModerator={isCurrentUserModerator}
+                            myPowerLevel={myPowerLevel}
                             setManageContextActionToggle={setManageContextActionToggle}
                         />
                         <DefaultModal
@@ -174,7 +174,7 @@ export default function Explore() {
                             contentLabel="Manage context"
                         >
                             <ExploreMatrixActions
-                                isCurrentUserModerator={isCurrentUserModerator}
+                                myPowerLevel={myPowerLevel}
                                 currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                 parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
                                 children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}

@@ -19,7 +19,7 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypadsPadObject, content, isCurrentUserModerator, setManageContextActionToggle, manageContextActionToggle }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypadsPadObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -31,7 +31,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypa
                     { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />
-                { isCurrentUserModerator && (
+                { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(false); }}>
                             <FolderIcon
