@@ -12,22 +12,18 @@ import DisplayInvitations from './DisplayInvitations';
 
 const TableSection = styled.section`
   overflow-x: auto;
-
-  tbody tr:hover {
-    background-color: var(--color-background-alpha);
-  }
 `;
 
 export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
-    const MatrixAuthProvider = auth.getAuthenticationProvider('matrix');
     const { t } = useTranslation('dashboard');
     const [serviceInvitations, setServiceInvitations] = useState([]);
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const serviceSpaces = matrix.serviceSpaces;
     const [chatInvitations, setChatInvitations] = useState([]);
+    const [contextInvitations, setContextInvitations] = useState([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -37,8 +33,11 @@ export default function Dashboard() {
             // i.e. who sent it, what are we being invited to (service, chat)
             const chatInvitationsArray = [];
 
+            const contextInvitationsArray = [];
+
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
                 const room = await matrixClient.getRoom(invitation.roomId);
+                // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
                 const inviter = matrixClient.getUser(inviterName);
                 invitation.inviter = inviter;
@@ -51,7 +50,12 @@ export default function Dashboard() {
                 }
 
                 if (invitation.meta) {
-                    serviceInvitationsArray.push(invitation);
+                    //  if (invitation.meta.type === 'context' && getConfig().publicRuntimeConfig.templates.context.includes(invitation.meta.template)) { // @TODO: needs to be discussed if we want to show all or not
+                    if (invitation.meta.type === 'context') {
+                        contextInvitationsArray.push(invitation);
+                    } else {
+                        serviceInvitationsArray.push(invitation);
+                    }
                 } else {
                     chatInvitationsArray.push(invitation);
                 }
@@ -61,6 +65,7 @@ export default function Dashboard() {
 
             setServiceInvitations(serviceInvitationsArray);
             setChatInvitations(chatInvitationsArray);
+            setContextInvitations(contextInvitationsArray);
         };
 
         if (!cancelled) hydrateInvitationMetaEvents();
@@ -75,16 +80,11 @@ export default function Dashboard() {
         await matrix.leaveRoom(roomId);
     };
 
-    const acceptMatrixInvite = async (roomId, path, service) => {
-        await matrixClient.joinRoom(roomId).catch(() => {
-            return;
-        });
-        // if an invitation for a chat room was accepted we don't need to add it to a space
-        if (service !== 'chat') {
-            await MatrixAuthProvider.addSpaceChild(serviceSpaces[service], roomId).catch(() => {
+    const acceptMatrixInvite = async (roomId, path) => {
+        await matrixClient.joinRoom(roomId)
+            .catch(() => {
                 return;
             });
-        }
 
         return `${path}/${roomId}`;
     };
@@ -119,6 +119,15 @@ export default function Dashboard() {
                                    </ServiceTable.Row>
                                </ServiceTable.Head>
                                <ServiceTable.Body>
+                                   { contextInvitations && _.map(contextInvitations, (invite) => {
+                                       return <DisplayInvitations
+                                           key={invite.roomId}
+                                           path="/explore"
+                                           invite={invite}
+                                           acceptMatrixInvite={acceptMatrixInvite}
+                                           declineMatrixInvite={declineMatrixInvite}
+                                       />;
+                                   }) }
                                    { _.map(serviceSpaces, (id, service) => {
                                        if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
 
@@ -137,8 +146,9 @@ export default function Dashboard() {
                                            key={invite.roomId}
                                            path="/chat"
                                            invite={invite}
+                                           acceptMatrixInvite={acceptMatrixInvite}
                                            declineMatrixInvite={declineMatrixInvite}
-                                           acceptMatrixInvite={acceptMatrixInvite} />;
+                                       />;
                                    }) }
                                </ServiceTable.Body>
                            </ServiceTable>

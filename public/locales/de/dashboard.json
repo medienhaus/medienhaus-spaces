@@ -1,6 +1,6 @@
 {
-"You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?": "Du hast die Einladung erfolgreich angenommen!\n\nMöchtst du zu dem {{name}} Item weitergeleitet werden?",
-"Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitter versuche es erneut.",
+"You’ve successfully accepted the invitation!\n\nWould you like to be redirected to the newly accepted {{name}} item?": "Du hast die Einladung erfolgreich angenommen!\n\nMöchtest du zu dem {{name}} Item weitergeleitet werden?",
+"Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
 "accept invitation": "Einladung annehmen",
 "decline invitation": "Einladung ablehnen"
 }
