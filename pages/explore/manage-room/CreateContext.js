@@ -10,7 +10,7 @@ import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
-const CreateContext = ({ currentId, onCancel }) => {
+const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
     const auth = useAuth();
     const matrix = useMatrix();
 
@@ -68,7 +68,7 @@ const CreateContext = ({ currentId, onCancel }) => {
 
         // then add our new context to the parent.
         if (createNewSubContext) {
-            auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
+            await auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
                 await new Promise(r => setTimeout(r, 3000));
                 setCreateNewContextErrorMessage('');
@@ -77,6 +77,7 @@ const CreateContext = ({ currentId, onCancel }) => {
             },
             );
         }
+        await callApiAndAddToObject(null, currentId);
         setName('');
         setTopic('');
         setTemplate('');

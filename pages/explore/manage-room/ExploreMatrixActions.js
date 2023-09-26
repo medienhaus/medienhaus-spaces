@@ -84,6 +84,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
         case 'substructure':
             return <CreateContext currentId={currentId}
                 parentId={parentId}
+                callApiAndAddToObject={callApiAndAddToObject}
                 onCancel={() => {
                     setSelectedRadioButton('');
                     setSelectedAction('');
