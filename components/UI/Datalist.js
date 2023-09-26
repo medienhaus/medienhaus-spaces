@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 
