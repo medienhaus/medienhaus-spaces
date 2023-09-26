@@ -14,6 +14,7 @@ import RemoveSpaceFromParent from './RemoveSpaceFromParent';
 import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
+import { useMatrix } from '../../../lib/Matrix';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -46,9 +47,7 @@ const RadioWrapper = styled.div`
 
 const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, callApiAndAddToObject }) => {
     const { t } = useTranslation('explore');
-
-    const [roomName, setRoomName] = useState();
-
+    const roomName = useMatrix().spaces.get(currentId)?.name || useMatrix().rooms.get(currentId)?.name;
     if (!roomName) return <LoadingSpinner />;
 
     return (
