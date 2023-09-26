@@ -15,6 +15,7 @@ import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useMatrix } from '../../../lib/Matrix';
+import ChangeTopic from './ChangeTopic';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -135,6 +136,14 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+
+        case 'changeTopic':
+            return <ChangeTopic
+                roomId={currentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
         default:
             return <Form
                 onSubmit={(e) => {
@@ -183,6 +192,12 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     <RadioWrapper>
                         <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
                         <label htmlFor="changeJoinRule">{ t('Change join rule') }</label>
+                    </RadioWrapper> }
+
+                { room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) &&
+                    <RadioWrapper>
+                        <input type="radio" id="changeTopic" name="action" value="changeTopic" />
+                        <label htmlFor="changeTopic">{ t('Change topic') }</label>
                     </RadioWrapper> }
 
                 <PreviousNextButtons
