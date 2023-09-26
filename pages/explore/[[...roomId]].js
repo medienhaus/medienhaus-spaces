@@ -15,7 +15,6 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
-import DefaultModal from '../../components/UI/Modal';
 import logger from '../../lib/Logging';
 
 const ServiceTableWrapper = styled.div`
@@ -177,8 +176,7 @@ export default function Explore() {
                                     children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
                                     callApiAndAddToObject={callApiAndAddToObject}
                                 />
-                                :
-                                <ServiceTable>
+                                : <ServiceTable>
                                     { selectedSpaceChildren[selectedSpaceChildren.length - 1]
                                         .sort(function(a, b) {
                                             if (a.type === 'item' && b.type !== 'item') {
