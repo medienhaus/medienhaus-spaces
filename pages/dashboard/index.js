@@ -23,6 +23,7 @@ export default function Dashboard() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const serviceSpaces = matrix.serviceSpaces;
     const [chatInvitations, setChatInvitations] = useState([]);
+    const [contextInvitations, setContextInvitations] = useState([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -31,6 +32,8 @@ export default function Dashboard() {
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
             const chatInvitationsArray = [];
+
+            const contextInvitationsArray = [];
 
             const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
                 const room = await matrixClient.getRoom(invitation.roomId);
@@ -47,7 +50,12 @@ export default function Dashboard() {
                 }
 
                 if (invitation.meta) {
-                    serviceInvitationsArray.push(invitation);
+                    //  if (invitation.meta.type === 'context' && getConfig().publicRuntimeConfig.templates.context.includes(invitation.meta.template)) { // @TODO: needs to be discussed if we want to show all or not
+                    if (invitation.meta.type === 'context') {
+                        contextInvitationsArray.push(invitation);
+                    } else {
+                        serviceInvitationsArray.push(invitation);
+                    }
                 } else {
                     chatInvitationsArray.push(invitation);
                 }
@@ -57,6 +65,7 @@ export default function Dashboard() {
 
             setServiceInvitations(serviceInvitationsArray);
             setChatInvitations(chatInvitationsArray);
+            setContextInvitations(contextInvitationsArray);
         };
 
         if (!cancelled) hydrateInvitationMetaEvents();
@@ -110,6 +119,15 @@ export default function Dashboard() {
                                    </ServiceTable.Row>
                                </ServiceTable.Head>
                                <ServiceTable.Body>
+                                   { contextInvitations && _.map(contextInvitations, (invite) => {
+                                       return <DisplayInvitations
+                                           key={invite.roomId}
+                                           path="/explore"
+                                           invite={invite}
+                                           acceptMatrixInvite={acceptMatrixInvite}
+                                           declineMatrixInvite={declineMatrixInvite}
+                                       />;
+                                   }) }
                                    { _.map(serviceSpaces, (id, service) => {
                                        if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
 
@@ -128,8 +146,9 @@ export default function Dashboard() {
                                            key={invite.roomId}
                                            path="/chat"
                                            invite={invite}
+                                           acceptMatrixInvite={acceptMatrixInvite}
                                            declineMatrixInvite={declineMatrixInvite}
-                                           acceptMatrixInvite={acceptMatrixInvite} />;
+                                       />;
                                    }) }
                                </ServiceTable.Body>
                            </ServiceTable>
