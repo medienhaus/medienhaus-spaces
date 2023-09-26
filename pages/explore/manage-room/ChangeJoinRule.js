@@ -14,7 +14,6 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
  * @component
  * @param {string} roomId - The ID of the room or space for which the join rule is being changed.
  * @param {string} roomName - The name of the room or space.
- * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} - The rendered component.
  */
 
@@ -26,11 +25,9 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation('explore');
 
-    const handleChangeJoinRule = async (e) => {
-        e.preventDefault();
+    const handleChangeJoinRule = async () => {
         setChangingJoinRule(true);
-
-        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', { join_rule: joinRule })
+        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', {}, { join_rule: joinRule })
             .catch((error) => {
                 setErrorMessage(error.data?.error);
                 setJoinRule(currentJoinRule);
@@ -57,8 +54,7 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
             </select>
             <PreviousNextButtons
                 disableNext={joinRule === currentJoinRule || changingJoinRule}
-                onCancel={onCancel}>
-                { changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule') }
+                onCancel={onCancel}>{ changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule') }
             </PreviousNextButtons>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>
