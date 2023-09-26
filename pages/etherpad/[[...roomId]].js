@@ -202,6 +202,11 @@ export default function Etherpad() {
                         <ServiceTable>
                             <ServiceTable.Body>
                                 { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
+                                    const name = _.get(matrix.rooms.get(writeRoomId), 'name');
+
+                                    // if the room name is undefined we don't want to display it
+                                    if (!name) return;
+
                                     return <ServiceLink
                                         key={writeRoomId}
                                         name={_.get(matrix.rooms.get(writeRoomId), 'name')}
