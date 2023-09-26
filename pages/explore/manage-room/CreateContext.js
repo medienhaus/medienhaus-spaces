@@ -1,27 +1,14 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import _ from 'lodash';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
-import presets from '../presets';
 import { useMatrix } from '../../../lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-
-const AdvancedOptions = styled.details`
-  & {
-    margin-bottom: var(--margin);
-  }
-
-  & select {
-    margin-bottom: var(--margin);
-  }
-`;
 
 const CreateContext = ({ currentId, onCancel }) => {
     const auth = useAuth();
@@ -31,8 +18,6 @@ const CreateContext = ({ currentId, onCancel }) => {
     const [topic, setTopic] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [template, setTemplate] = useState('');
-    const [historyVisibility, setHistoryVisibility] = useState();
-    const [joinRule, setJoinRule] = useState();
     const [powerLevels, setPowerLevels] = useState();
     const [createNewContextErrorMessage, setCreateNewContextErrorMessage] = useState();
 
@@ -67,12 +52,12 @@ const CreateContext = ({ currentId, onCancel }) => {
             name,
             true,
             topic,
-            joinRule || 'public',
+            'public',
             'context',
             template,
             getConfig().publicRuntimeConfig.name,
             'public',
-            historyVisibility,
+            'world_readable',
             'public_chat').catch(async (err) => {
             setCreateNewContextErrorMessage(err.message);
             await new Promise(r => setTimeout(r, 3000));
@@ -108,28 +93,6 @@ const CreateContext = ({ currentId, onCancel }) => {
                 currentTemplate={template}
                 setTemplate={setTemplate}
             />
-
-            <AdvancedOptions>
-                <summary>Advanced</summary>
-                <select value={historyVisibility} onChange={(e) => {setHistoryVisibility(e.target.value); }}>
-                    <option value="" disabled>visibilty</option>
-                    { _.map(presets?.allowedHistoryVisibility, (option, key) => {
-                        return <option key={key} value={option?.name}>{ option?.display } — { option?.description }</option>;
-                    }) }
-                </select>
-                <select value={joinRule} onChange={(e) => {setJoinRule(e.target.value);}}>
-                    <option value="" disabled>join rules</option>
-                    { _.map(presets?.allowedJoinRules, (option, key) => {
-                        return <option key={key} value={option?.name}>{ option?.display } — { option?.description }</option>;
-                    }) }
-                </select>
-                <select value={powerLevels} onChange={(e) => {setPowerLevels(e.target.value);}}>
-                    <option value="" disabled>member participation presets</option>
-                    { _.map(presets?.allowedPowerLevelPresets, (option, key) => {
-                        return <option key={key} value={option?.name}>{ option?.display } — { option?.description }</option>;
-                    }) }
-                </select>
-            </AdvancedOptions>
             { (createNewContextErrorMessage) &&
                 <ErrorMessage>{ createNewContextErrorMessage }</ErrorMessage> //error message container
             }
