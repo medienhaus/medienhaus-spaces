@@ -148,7 +148,6 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, cal
     *                       'settings' -> mod/admin rights required
     * 'MenuSection'     contains the actual user interfaces for the specific action
     */
-
     if (!roomName) return <LoadingSpinner />;
 
     return (
@@ -162,6 +161,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, cal
                     roomName={roomName}
                     children={children}
                     callApiAndAddToObject={callApiAndAddToObject}
+                    myPowerLevel={myPowerLevel}
                 />
             )
             }
@@ -171,9 +171,12 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, cal
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddToObject }) => {
+const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddToObject, myPowerLevel }) => {
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
+    const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
+    const room = matrixClient.getRoom(currentId);
+
     const { t } = useTranslation();
 
     switch (selectedAction) {
@@ -242,40 +245,45 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                 }
                 onChange={(e) => setSelectedRadioButton(e.target.value)}
             >
-                <RadioWrapper>
-                    <input type="radio" id="substructure" name="action" value="substructure" />
-                    <label htmlFor="substructure">{ t('Create new substructure') }</label>
-                </RadioWrapper>
+                { room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
+                    <>
+                        <RadioWrapper>
+                            <input type="radio" id="substructure" name="action" value="substructure" />
+                            <label htmlFor="substructure">{ t('Create new substructure') }</label>
+                        </RadioWrapper>
 
-                <RadioWrapper>
-                    <input type="radio" id="existingItem" name="action" value="existingItem" />
-                    <label htmlFor="existingItem"> { t('Add existing item') }</label>
-                </RadioWrapper>
+                        <RadioWrapper>
+                            <input type="radio" id="existingItem" name="action" value="existingItem" />
+                            <label htmlFor="existingItem"> { t('Add existing item') }</label>
+                        </RadioWrapper>
 
-                <RadioWrapper>
-                    <input type="radio" id="existingContext" name="action" value="existingContext" />
-                    <label htmlFor="existingContext">{ t('Add existing context') }</label>
-                </RadioWrapper>
+                        <RadioWrapper>
+                            <input type="radio" id="existingContext" name="action" value="existingContext" />
+                            <label htmlFor="existingContext">{ t('Add existing context') }</label>
+                        </RadioWrapper>
 
-                <RadioWrapper>
-                    <input type="radio" id="removeSpace" name="action" value="removeSpace" />
-                    <label htmlFor="removeSpace">{ t('Remove items or contexts') }</label>
-                </RadioWrapper>
-
-                <RadioWrapper>
-                    <input type="radio" id="manageUsers" name="action" value="manageUsers" />
-                    <label htmlFor="manageUsers">{ t('Manage users in') } { roomName }</label>
-                </RadioWrapper>
+                        <RadioWrapper>
+                            <input type="radio" id="removeSpace" name="action" value="removeSpace" />
+                            <label htmlFor="removeSpace">{ t('Remove items or contexts') }</label>
+                        </RadioWrapper>
+                    </>
+                }
+                { room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
+                    <RadioWrapper>
+                        <input type="radio" id="manageUsers" name="action" value="manageUsers" />
+                        <label htmlFor="manageUsers">{ t('Manage users in') } { roomName }</label>
+                    </RadioWrapper> }
 
                 <RadioWrapper>
                     <input type="radio" id="leaveRoom" name="action" value="leaveRoom" />
                     <label htmlFor="leaveRoom">{ t('Leave') } { roomName }</label>
                 </RadioWrapper>
 
-                <RadioWrapper>
-                    <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
-                    <label htmlFor="changeJoinRule">{ t('Change join rule') }</label>
-                </RadioWrapper>
+                { room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) &&
+                    <RadioWrapper>
+                        <input type="radio" id="changeJoinRule" name="action" value="changeJoinRule" />
+                        <label htmlFor="changeJoinRule">{ t('Change join rule') }</label>
+                    </RadioWrapper> }
 
                 <PreviousNextButtons
                     disabled={!selectedRadioButton}
