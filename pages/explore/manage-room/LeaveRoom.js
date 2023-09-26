@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { router } from 'next/client';
 
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
@@ -38,6 +39,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
 
         setIsLeaving(false);
         setErrorMessage('');
+        parentId && router.push(parentId);
     };
 
     return (
