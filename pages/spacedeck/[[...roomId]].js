@@ -36,6 +36,7 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const [userFeedback, setUserFeedback] = useState('');
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -113,6 +114,7 @@ export default function Spacedeck() {
             // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
+            setUserFeedback('');
         };
 
         // Check if the useEffect is cancelled and required conditions are met to sync sketches
@@ -143,6 +145,7 @@ export default function Spacedeck() {
     async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
         // Log debugging information
         logger.debug('Attempt %d of creating a room for %s', retries, name);
+        setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
         // Function to handle retries with rate limiting
         const handleRetry = async (error, retryFunction) => {
@@ -169,8 +172,7 @@ export default function Spacedeck() {
             });
 
         // Log debug information about current progress
-        logger.debug('Created Room for ' + name);
-        logger.debug(room);
+        logger.debug('Created Room for %s with id %s ' + name, room);
 
         // Add the room as a child to the parent space
         const addSpaceChild = async (parent, room) => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room)
@@ -226,7 +228,7 @@ export default function Spacedeck() {
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
                 { syncingServerSketches ?
-                    <LoadingSpinner /> :
+                    <span>{ userFeedback } <LoadingSpinnerInline /></span> :
                     <>
                         <ServiceTable>
                             { spacedeckChildren?.map(spacedeckRoomId => {
