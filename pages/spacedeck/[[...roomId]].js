@@ -140,21 +140,61 @@ export default function Spacedeck() {
         };
     }, [spacedeck]);
 
-    async function createSketchRoom(link, name, parent = serviceSpaceId) {
-        // eslint-disable-next-line no-undef
-        logger.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck').catch(() => {
-            setErrorMessage(t('Something went wrong when trying to create a new room'));
-        });
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
-            setErrorMessage(t('Couldn\'t add the new room to your sketch folder'));
-        });
-        await matrixClient.sendMessage(room, {
+    async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
+        // Log debugging information
+        logger.debug('Creating room for ' + name);
+        logger.debug(retries);
+
+        // Function to handle retries with rate limiting
+        const handleRetry = async (error, retryFunction) => {
+            if (error.httpStatus === 429) {
+                // Handle rate limiting with retry_after_ms
+                const retryAfterMs = error.data['retry_after_ms'];
+                logger.debug('Retry after (ms):', retryAfterMs);
+
+                if (retryAfterMs) {
+                    // Retry the function after the specified delay
+                    await new Promise((resolve) => setTimeout(resolve, retryAfterMs * 2));
+
+                    return retryFunction();
+                }
+            }
+            // Handle other errors
+            setErrorMessage(t(error.data.error || 'Something went wrong.'));
+
+            return null;
+        };
+
+        // Create the room with retry handling
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck')
+            .catch(async (error) => {
+                return handleRetry(error, () => createSketchRoom(link, name, parent, retries + 1));
+            });
+
+        // Log debug information about current progress
+        logger.debug('Created Room for ' + name);
+        logger.debug(room);
+
+        // Add the room as a child to the parent space
+        const addSpaceChild = async (parent, room) => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room)
+            .catch(async (error) => {
+                return handleRetry(error, () => addSpaceChild(parent, room));
+            });
+
+        await addSpaceChild(parent, room);
+
+        // Log debug information about current progress
+        logger.debug('Added room to parent');
+
+        // Send the message to the room with retry handling
+        const sendMessage = async (room) => await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
-        }).catch(() => {
-            setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
+        }).catch(async (error) => {
+            return handleRetry(error, () => sendMessage(parent, room));
         });
+
+        await sendMessage(room);
 
         return room;
     }
