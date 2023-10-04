@@ -176,7 +176,6 @@ export default function Spacedeck() {
 
         // Send the message to the room with retry handling
         const sendMessage = async () => {
-            console.log('.......sending message...... for ' + link);
             await matrixClient.sendMessage(room, {
                 msgtype: 'm.text',
                 body: link,
