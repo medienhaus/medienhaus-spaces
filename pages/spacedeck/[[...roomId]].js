@@ -147,28 +147,11 @@ export default function Spacedeck() {
         logger.debug('Attempt %d of creating a room for %s', retries, name);
         setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
-        // Function to handle retries with rate limiting
-        const handleRetry = async (error, retryFunction) => {
-            if (error.httpStatus === 429) {
-                // Handle rate limiting with retry_after_ms
-                const retryAfterMs = error.data['retry_after_ms'] || 5000;
-                logger.debug('Retry after (ms):', retryAfterMs);
-
-                // Retry the function after the specified delay, defaults to 5000ms
-                await new Promise((resolve) => setTimeout(resolve, retryAfterMs));
-
-                return retryFunction();
-            }
-            // Handle other errors
-            setErrorMessage(t(error.data.error || 'Something went wrong.'));
-
-            return null;
-        };
-
         // Create the room with retry handling
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck')
             .catch(async (error) => {
-                return handleRetry(error, () => createSketchRoom(link, name, parent, retries + 1));
+                return matrix.handleRateLimit(error, () => createSketchRoom(link, name, parent, retries + 1))
+                    .catch(error => setErrorMessage(error.message));
             });
 
         // Log debug information about current progress
@@ -177,7 +160,8 @@ export default function Spacedeck() {
         // Add the room as a child to the parent space
         const addSpaceChild = async (parent, room) => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room)
             .catch(async (error) => {
-                return handleRetry(error, () => addSpaceChild(parent, room));
+                return matrix.handleRateLimit(error, () => addSpaceChild(parent, room))
+                    .catch(error => setErrorMessage(error.message));
             });
 
         await addSpaceChild(parent, room);
@@ -190,7 +174,8 @@ export default function Spacedeck() {
             msgtype: 'm.text',
             body: link,
         }).catch(async (error) => {
-            return handleRetry(error, () => sendMessage(parent, room));
+            return matrix.handleRateLimit(error, () => sendMessage(parent, room))
+                .catch(error => setErrorMessage(error.message));
         });
 
         await sendMessage(room);
