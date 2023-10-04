@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { useAuth } from '../lib/Auth';
 
 const LoginSection = styled.div`
+  max-width: 55ch;
+
   & > * + *,
   & > form > * + * {
     margin-top: var(--margin);

@@ -200,21 +200,23 @@ export default function Etherpad() {
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
                         <ServiceTable>
-                            { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
-                                const name = _.get(matrix.rooms.get(writeRoomId), 'name');
+                            <ServiceTable.Body>
+                                { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
+                                    const name = _.get(matrix.rooms.get(writeRoomId), 'name');
 
-                                // if the room name is undefined we don't want to display it
-                                if (!name) return;
+                                    // if the room name is undefined we don't want to display it
+                                    if (!name) return;
 
-                                return <ServiceLink
-                                    key={writeRoomId}
-                                    name={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    href={`${etherpadPath}/${writeRoomId}`}
-                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
-                                    selected={writeRoomId === roomId}
-                                    ref={writeRoomId === roomId ? selectedPadRef : null}
-                                />;
-                            }) }
+                                    return <ServiceLink
+                                        key={writeRoomId}
+                                        name={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                        href={`${etherpadPath}/${writeRoomId}`}
+                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
+                                        selected={writeRoomId === roomId}
+                                        ref={writeRoomId === roomId ? selectedPadRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                     </>
                 ) }
