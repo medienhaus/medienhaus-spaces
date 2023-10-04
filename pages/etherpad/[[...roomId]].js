@@ -33,7 +33,8 @@ export default function Etherpad() {
     const router = useRouter();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
-
+    const [errorMessage, setErrorMessage] = useState('');
+    const [userFeedback, setUserFeedback] = useState('');
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
      * @type {String|undefined}
@@ -106,12 +107,15 @@ export default function Etherpad() {
             }
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
+                setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }));
+
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
+            setUserFeedback('');
         };
 
-        !cancelled && matrix.serviceSpaces.etherpad && serverPads && syncServerPadsWithMatrix();
+        if (!cancelled && matrix.serviceSpaces.etherpad && serverPads) syncServerPadsWithMatrix();
 
         return () => { cancelled = true; };
         // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within mypads that are then synced here.
@@ -152,20 +156,42 @@ export default function Etherpad() {
 
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
-
         logger.debug('Creating new Matrix room for pad', { link, name });
 
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
-        await matrixClient.sendMessage(room, {
+        const createRoomForPad = async (retries = 1) => {
+            logger.debug('Attempt %d of creating a room for %s', retries, name);
+
+            return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
+        };
+
+        const room = await createRoomForPad()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => createRoomForPad())
+                    .catch(error => setErrorMessage(error.message));
+            });
+        const addRoomToServiceSpace = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
+        await addRoomToServiceSpace()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => addRoomToServiceSpace())
+                    .catch(error => setErrorMessage(error.message));
+            });
+
+        const sendMessageToRoom = async () => await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
         });
+
+        await sendMessageToRoom()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => sendMessageToRoom())
+                    .catch(error => setErrorMessage(error.message));
+            });
 
         if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
             await etherpad.syncAllPads();
             setServerPads(etherpad.getAllPads());
         }
+        setErrorMessage('');
 
         return room;
     }, [auth, matrix, matrixClient, etherpad]);
@@ -177,7 +203,7 @@ export default function Etherpad() {
         getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createWriteRoom={createWriteRoom} />, label: t('Create password protected pad') },
     ]);
 
-    // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // Add the user's Matrix display name as parameter so that it shows up in Etherpad as username
     let iframeUrl;
     if (roomId && matrix.roomContents.get(roomId)?.body) {
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
@@ -216,6 +242,8 @@ export default function Etherpad() {
                                 />;
                             }) }
                         </ServiceTable>
+                        { userFeedback && <span>{ userFeedback }</span> }
+                        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
                     </>
                 ) }
             </IframeLayout.Sidebar>
