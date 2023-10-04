@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import IframeLayout from '../../components/layouts/iframe';
@@ -31,11 +32,13 @@ export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const dimensionsRef = useRef();
     const router = useRouter();
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const { t } = useTranslation('explore');
 
     // Extract roomId and iframeRoomId from the query parameters
     const roomId = _.get(router, 'query.roomId[0]');
@@ -85,9 +88,22 @@ export default function Explore() {
     const callApiAndAddToObject = useCallback(async (e, roomId) => {
         if (!selectedSpaceChildren) return;
         e && e.preventDefault();
-        logger.debug('Call API or matrix and add');
-        const spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
-            .catch(err => logger.debug(err));
+        logger.debug('Fetch the room hierarchy for ' + roomId);
+        const getSpaceHierarchy = async () => await matrix.roomHierarchy(roomId, null, 1)
+            .catch(async error => {
+                if (error.data?.error.includes('not in room')) {
+                    // If the error indicates the user is not in the room and previews are disabled
+                    // We prompt the user to join the room.
+                    if (confirm(t('You are currently not in room {{roomId}}, and previews are disabled. Do you want to join the room?', { roomId: roomId }))) {
+                        const joinRoom = await matrixClient.joinRoom(roomId)
+                            .catch(error => setErrorMessage(error.data?.error));
+
+                        // If successfully joined, recursively call 'getSpaceHierarchy' again.
+                        if (joinRoom) return await getSpaceHierarchy();
+                    }
+                } else setErrorMessage(error.data.error); // Handle other errors by setting an error message.
+            });
+        const spaceHierarchy = await getSpaceHierarchy();
         if (!spaceHierarchy) return;
         const parent = spaceHierarchy[0];
 
@@ -148,69 +164,70 @@ export default function Explore() {
                     }
                 </ServiceTableWrapper>
             </IframeLayout.Sidebar>
-            { !_.isEmpty(selectedSpaceChildren) &&
-                <IframeLayout.IframeWrapper>
 
-                    { iframeRoomId ? (
-                        <ExploreIframeViews
-                            currentTemplate={currentTemplate}
-                            iframeRoomId={iframeRoomId}
-                            title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                        />
-                    ) : <>
-                        <ServiceIframeHeader
-                            content={window.location.href}
-                            title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                            removingLink={false}
-                            roomId={roomId}
-                            manageContextActionToggle={manageContextActionToggle}
-                            myPowerLevel={myPowerLevel}
-                            setManageContextActionToggle={setManageContextActionToggle}
-                        />
-                        <ServiceTableWrapper>
-                            { manageContextActionToggle ?
-                                <ExploreMatrixActions
-                                    myPowerLevel={myPowerLevel}
-                                    currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                    parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                                    children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
-                                    callApiAndAddToObject={callApiAndAddToObject}
-                                />
-                                : <ServiceTable>
-                                    { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                        .sort(function(a, b) {
-                                            if (a.type === 'item' && b.type !== 'item') {
-                                                return -1; // 'a' comes before 'b'
-                                            } else if (a.type !== 'item' && b.type === 'item') {
-                                                return 1; // 'a' comes after 'b'
-                                            } else {
-                                                return 0; // No sorting necessary
-                                            }
-                                        })
-                                        .map((leaf, index) => {
-                                            if (leaf.length <= 1) {
-                                                return <ErrorMessage key="error-message">
+            <IframeLayout.IframeWrapper>
+
+                { iframeRoomId ? (
+                    <ExploreIframeViews
+                        currentTemplate={currentTemplate}
+                        iframeRoomId={iframeRoomId}
+                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                    />
+                ) : !_.isEmpty(selectedSpaceChildren) && <>
+                    <ServiceIframeHeader
+                        content={window.location.href}
+                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                        removingLink={false}
+                        roomId={roomId}
+                        manageContextActionToggle={manageContextActionToggle}
+                        myPowerLevel={myPowerLevel}
+                        setManageContextActionToggle={setManageContextActionToggle}
+                    />
+                    <ServiceTableWrapper>
+                        { manageContextActionToggle ?
+                            <ExploreMatrixActions
+                                myPowerLevel={myPowerLevel}
+                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                                children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                                callApiAndAddToObject={callApiAndAddToObject}
+                            />
+                            : <ServiceTable>
+                                { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                    .sort(function(a, b) {
+                                        if (a.type === 'item' && b.type !== 'item') {
+                                            return -1; // 'a' comes before 'b'
+                                        } else if (a.type !== 'item' && b.type === 'item') {
+                                            return 1; // 'a' comes after 'b'
+                                        } else {
+                                            return 0; // No sorting necessary
+                                        }
+                                    })
+                                    .map((leaf, index) => {
+                                        if (leaf.length <= 1) {
+                                            return <ErrorMessage key="error-message">
                                                 Thank you, { auth.user.displayname }! But our item is in another context! 🍄
-                                                </ErrorMessage>;
-                                            }
-                                            if (index === 0) return null;
+                                            </ErrorMessage>;
+                                        }
+                                        if (index === 0) return null;
 
-                                            // Sort the array to display objects of type 'item' before others
-                                            return <TreeLeaves
-                                                depth={selectedSpaceChildren.length}
-                                                leaf={leaf}
-                                                parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                                key={leaf.room_id + '_' + index}
-                                                iframeRoomId={iframeRoomId}
-                                                isFetchingContent={isFetchingContent}
-                                            />;
-                                        }) }
-                                </ServiceTable>
-                            }
-                        </ServiceTableWrapper>
-                    </>
-                    }
-                </IframeLayout.IframeWrapper> }
+                                        // Sort the array to display objects of type 'item' before others
+                                        return <TreeLeaves
+                                            depth={selectedSpaceChildren.length}
+                                            leaf={leaf}
+                                            parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                            key={leaf.room_id + '_' + index}
+                                            iframeRoomId={iframeRoomId}
+                                            isFetchingContent={isFetchingContent}
+                                        />;
+                                    }) }
+                            </ServiceTable>
+                        }
+                    </ServiceTableWrapper>
+                </>
+                }
+                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            </IframeLayout.IframeWrapper>
         </>
     );
 }
