@@ -144,13 +144,18 @@ export default function Spacedeck() {
 
     async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
         // Log debugging information
-        logger.debug('Attempt %d of creating a room for %s', retries, name);
         setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
         // Create the room with retry handling
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck')
+        const createRoomForSketch = async (retries = 1) => {
+            logger.debug('Attempt %d of creating a room for %s', retries, name);
+
+            return await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck');
+        };
+
+        const room = await createRoomForSketch()
             .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => createSketchRoom(link, name, parent, retries + 1))
+                return matrix.handleRateLimit(error, () => createRoomForSketch())
                     .catch(error => setErrorMessage(error.message));
             });
 
@@ -158,27 +163,31 @@ export default function Spacedeck() {
         logger.debug('Created Room for %s with id %s ' + name, room);
 
         // Add the room as a child to the parent space
-        const addSpaceChild = async (parent, room) => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room)
+        const addSpaceChild = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room);
+
+        await addSpaceChild()
             .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => addSpaceChild(parent, room))
+                return matrix.handleRateLimit(error, () => addSpaceChild())
                     .catch(error => setErrorMessage(error.message));
             });
-
-        await addSpaceChild(parent, room);
 
         // Log debug information about current progress
         logger.debug('Added %s to parent %s', name, parent);
 
         // Send the message to the room with retry handling
-        const sendMessage = async (room) => await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(async (error) => {
-            return matrix.handleRateLimit(error, () => sendMessage(parent, room))
-                .catch(error => setErrorMessage(error.message));
-        });
+        const sendMessage = async () => {
+            console.log('.......sending message...... for ' + link);
+            await matrixClient.sendMessage(room, {
+                msgtype: 'm.text',
+                body: link,
+            });
+        };
 
-        await sendMessage(room);
+        await sendMessage()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => sendMessage())
+                    .catch(error => setErrorMessage(error.message));
+            });
 
         return room;
     }
