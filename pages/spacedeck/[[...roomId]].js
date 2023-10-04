@@ -36,11 +36,12 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const [userFeedback, setUserFeedback] = useState('');
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedSketchRef = useRef(null);
     useEffect(() => {
         selectedSketchRef.current?.focus();
@@ -113,6 +114,7 @@ export default function Spacedeck() {
             // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
+            setUserFeedback('');
         };
 
         // Check if the useEffect is cancelled and required conditions are met to sync sketches
@@ -140,21 +142,51 @@ export default function Spacedeck() {
         };
     }, [spacedeck]);
 
-    async function createSketchRoom(link, name, parent = serviceSpaceId) {
-        // eslint-disable-next-line no-undef
-        logger.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck').catch(() => {
-            setErrorMessage(t('Something went wrong when trying to create a new room'));
-        });
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
-            setErrorMessage(t('Couldn\'t add the new room to your sketch folder'));
-        });
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(() => {
-            setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
-        });
+    async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
+        // Log debugging information
+        setUserFeedback(t('Syncing {{name}} from server', { name: name }));
+
+        // Create the room with retry handling
+        const createRoomForSketch = async (retries = 1) => {
+            logger.debug('Attempt %d of creating a room for %s', retries, name);
+
+            return await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck');
+        };
+
+        const room = await createRoomForSketch()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => createRoomForSketch())
+                    .catch(error => setErrorMessage(error.message));
+            });
+
+        // Log debug information about current progress
+        logger.debug('Created Room for %s with id %s ' + name, room);
+
+        // Add the room as a child to the parent space
+        const addSpaceChild = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room);
+
+        await addSpaceChild()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => addSpaceChild())
+                    .catch(error => setErrorMessage(error.message));
+            });
+
+        // Log debug information about current progress
+        logger.debug('Added %s to parent %s', name, parent);
+
+        // Send the message to the room with retry handling
+        const sendMessage = async () => {
+            await matrixClient.sendMessage(room, {
+                msgtype: 'm.text',
+                body: link,
+            });
+        };
+
+        await sendMessage()
+            .catch(async (error) => {
+                return matrix.handleRateLimit(error, () => sendMessage())
+                    .catch(error => setErrorMessage(error.message));
+            });
 
         return room;
     }
@@ -189,7 +221,7 @@ export default function Spacedeck() {
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
                 { syncingServerSketches ?
-                    <LoadingSpinner /> :
+                    <span>{ userFeedback } <LoadingSpinnerInline /></span> :
                     <>
                         <ServiceTable>
                             { spacedeckChildren?.map(spacedeckRoomId => {
