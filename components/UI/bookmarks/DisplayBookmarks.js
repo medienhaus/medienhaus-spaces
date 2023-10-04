@@ -56,10 +56,17 @@ export default function DisplayBookmarks({ bookmarkSpaceId }) {
  * @param {string} name - The name of the bookmarked room.
  * @param {Function} removeBookmark - A function to remove the bookmark.
  * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
+ *
+ * @TODO
+ * origin only works
  */
 const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
     const { t } = useTranslation();
+    // grab the origin of the bookmark. This expression returns the string from the end of the top level domain until the beginning of the room id
+    const match = link.match(/:\/\/[^/]+(\/.*?)\/![^/]+/);
+    // Check if a match was found and get the desired string
+    const origin = match ? match[1] : null;
 
     const handleRemove = async (e) => {
         e.preventDefault();
@@ -72,7 +79,7 @@ const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
     return (
         <ServiceTable.Row key={roomId}>
             <ServiceTable.Cell>
-                <Link href={link}>{ name }</Link>
+                <Link href={link}>{ name } { t('from') } { origin }</Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
