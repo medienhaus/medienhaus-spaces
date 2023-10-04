@@ -33,7 +33,7 @@ export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
     };
 
     return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-        <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+        <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
         <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
         <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
         <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
