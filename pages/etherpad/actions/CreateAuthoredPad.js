@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../../lib/Auth';
+import { path as etherpadPath } from '../../../lib/Etherpad';
 
 export default function CreateAuthoredPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -27,7 +28,7 @@ export default function CreateAuthoredPad({ callbackDone, createWriteRoom }) {
         }
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
         const roomId = await createWriteRoom(link, padName);
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`${etherpadPath}/${roomId}`);
 
         callbackDone && callbackDone();
         setPadName('');
@@ -36,7 +37,7 @@ export default function CreateAuthoredPad({ callbackDone, createWriteRoom }) {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
-            <input type="text" placeholder={t('pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
         </Form>
     );

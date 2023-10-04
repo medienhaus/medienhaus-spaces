@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '../../../lib/Etherpad';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -30,12 +31,12 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
         setPadLink('');
         setIsLoading(false);
 
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`${etherpadPath}/${roomId}`);
     };
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
-            <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
             { !validLink && padLink && (
                 <ErrorMessage>
