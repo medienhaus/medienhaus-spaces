@@ -33,6 +33,7 @@ export default function Etherpad() {
     const router = useRouter();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [isSyncingServerPads, setIsSyncingServerPads] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [userFeedback, setUserFeedback] = useState('');
     /**
@@ -90,6 +91,7 @@ export default function Etherpad() {
     useEffect(() => {
         let cancelled = false;
         const syncServerPadsWithMatrix = async () => {
+            setIsSyncingServerPads(true);
             let matrixPads = {};
             if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
                 // if there are rooms within the space id we grab the names of those room
@@ -107,11 +109,12 @@ export default function Etherpad() {
             }
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
-                setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }));
+                setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }) + <LoadingSpinnerInline />);
 
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
+            setIsSyncingServerPads(false);
             setUserFeedback('');
         };
 
@@ -225,7 +228,7 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
-                        <ServiceTable>
+                        { !isSyncingServerPads && <ServiceTable>
                             { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
                                 const name = _.get(matrix.rooms.get(writeRoomId), 'name');
 
@@ -241,7 +244,7 @@ export default function Etherpad() {
                                     ref={writeRoomId === roomId ? selectedPadRef : null}
                                 />;
                             }) }
-                        </ServiceTable>
+                        </ServiceTable> }
                         { userFeedback && <span>{ userFeedback }</span> }
                         { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
                     </>
