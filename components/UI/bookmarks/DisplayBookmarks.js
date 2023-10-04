@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import { useMatrix } from '../../../lib/Matrix';
-import { ServiceTable } from '../../../components/UI/ServiceTable';
+import { ServiceTable } from '../ServiceTable';
 import { useAuth } from '../../../lib/Auth';
 import Bin from '../../../assets/icons/bin.svg';
 import TextButton from '../../../components/UI/TextButton';
@@ -17,11 +17,10 @@ import LoadingSpinnerInline from '../LoadingSpinnerInline';
  * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
  */
 
-export default function DisplayBookmarks({ bookmarkSpaceId }) {
+export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const allBookmarkIds = matrix.spaces.get(bookmarkSpaceId)?.children;
-    const { t } = useTranslation();
 
     const removeBookmark = async (parent, roomId) => {
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
@@ -32,7 +31,7 @@ export default function DisplayBookmarks({ bookmarkSpaceId }) {
 
     return (
         <>
-            { allBookmarkIds.length > 0 && <h2>{ t('Bookmarks') }</h2> }
+            { allBookmarkIds.length > 0 && <h2>{ name } </h2> }
             <ServiceTable>
                 { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
                     return <Bookmark
@@ -63,10 +62,6 @@ export default function DisplayBookmarks({ bookmarkSpaceId }) {
 const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
     const { t } = useTranslation();
-    // grab the origin of the bookmark. This expression returns the string from the end of the top level domain until the beginning of the room id
-    const match = link.match(/:\/\/[^/]+(\/.*?)\/![^/]+/);
-    // Check if a match was found and get the desired string
-    const origin = match ? match[1] : null;
 
     const handleRemove = async (e) => {
         e.preventDefault();
@@ -79,7 +74,7 @@ const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
     return (
         <ServiceTable.Row key={roomId}>
             <ServiceTable.Cell>
-                <Link href={link}>{ name } { t('from') } { origin }</Link>
+                <Link href={link}>{ name }</Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
