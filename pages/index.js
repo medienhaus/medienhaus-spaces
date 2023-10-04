@@ -11,7 +11,7 @@ export default function Dashboard() {
             { bookmarks && bookmarks.map(bookmarkSpace => {
                 return <DisplayBookmarks
                     key={bookmarkSpace}
-                    roomId={bookmarkSpace}
+                    bookmarkSpaceId={bookmarkSpace}
                     name={matrix.spaces.get(bookmarkSpace)?.name}
                 />;
             }) }

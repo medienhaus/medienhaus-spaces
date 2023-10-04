@@ -20,7 +20,7 @@ const AddBookmark = ({ name, roomId }) => {
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const errorHandleing = async () => {
+    const errorHandling = async () => {
         setIsCreatingBookmark(false);
         setErrorMessage(<CloseIcon fill="var(color-foreground)" />);
         await new Promise(() => setTimeout(() => {
@@ -47,7 +47,7 @@ const AddBookmark = ({ name, roomId }) => {
             // if there is no bookmark space for the service yet, we create one
             bookmarkSpace = await matrix.createRoom(service, true, '', 'invite', 'content', 'link')
                 .catch(() => {
-                    errorHandleing();
+                    errorHandling();
 
                     return;
                 });
@@ -55,7 +55,7 @@ const AddBookmark = ({ name, roomId }) => {
             await auth.getAuthenticationProvider('matrix')
                 .addSpaceChild(matrix.serviceSpaces.bookmarks, bookmarkSpace)
                 .catch(() => {
-                    errorHandleing();
+                    errorHandling();
 
                     return;
                 });
@@ -76,7 +76,7 @@ const AddBookmark = ({ name, roomId }) => {
         // we create a room for the bookmark
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link')
             .catch(() => {
-                errorHandleing();
+                errorHandling();
 
                 return;
             });
@@ -84,7 +84,7 @@ const AddBookmark = ({ name, roomId }) => {
         await auth.getAuthenticationProvider('matrix')
             .addSpaceChild(bookmarkSpace, room)
             .catch(() => {
-                errorHandleing();
+                errorHandling();
 
                 return;
             });
@@ -93,7 +93,7 @@ const AddBookmark = ({ name, roomId }) => {
             msgtype: 'm.text',
             body: link,
         }).catch(() => {
-            errorHandleing();
+            errorHandling();
 
             return;
         });
