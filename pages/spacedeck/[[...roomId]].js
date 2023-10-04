@@ -20,6 +20,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import AddBookmark from '../../components/UI/bookmarks/AddBookmark';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -216,6 +217,7 @@ export default function Spacedeck() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
+                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} />
                             <button title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
                             </button>
