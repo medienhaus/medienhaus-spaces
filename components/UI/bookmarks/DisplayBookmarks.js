@@ -9,45 +9,75 @@ import Bin from '../../../assets/icons/bin.svg';
 import TextButton from '../../../components/UI/TextButton';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 
-export default function DisplayBookmarks({ roomId, name }) {
+/**
+ * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
+ * This component displays a list of bookmarks, allowing users to remove them.
+ *
+ * @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
+ * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
+ */
+
+export default function DisplayBookmarks({ bookmarkSpaceId }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const allBookmarkIds = matrix.spaces.get(bookmarkSpaceId)?.children;
     const { t } = useTranslation();
 
-    const [removingBookmark, setRemovingBookmark] = useState(false);
-
-    const removeBookmark = async (e, parent, roomId) => {
-        e.preventDefault();
-        setRemovingBookmark(true);
+    const removeBookmark = async (parent, roomId) => {
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
         await matrix.leaveRoom(roomId);
-        setRemovingBookmark(false);
     };
 
-    const Bookmarks = ({ link, name }) => {
-        return (<Link href={link}>{ name }</Link>);
-    };
-
-    if (!matrix.spaces.get(roomId)) return null;
+    if (!matrix.spaces.get(bookmarkSpaceId)) return null;
 
     return (
         <>
+            { allBookmarkIds.length > 0 && <h2>{ t('Bookmarks') }</h2> }
             <ServiceTable>
-                { matrix.spaces.get(roomId)?.children.map(roomId => {
-                    return <ServiceTable.Row key={roomId}>
-                        <ServiceTable.Cell>
-                            <Bookmarks
-                                link={matrix.roomContents.get(roomId).body}
-                                name={matrix.rooms.get(roomId).name} />
-                        </ServiceTable.Cell>
-                        <ServiceTable.Cell>
-                            <TextButton title={t('Remove bookmark')} onClick={(e) => removeBookmark(e, roomId)}>
-                                { removingBookmark ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
-                            </TextButton></ServiceTable.Cell>
-                    </ServiceTable.Row>;
-                }) }
+                { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
+                    return <Bookmark
+                        parent={bookmarkSpaceId}
+                        roomId={roomId}
+                        link={matrix.roomContents.get(roomId).body}
+                        name={matrix.rooms.get(roomId).name}
+                        removeBookmark={removeBookmark}
+                    />;
+                })
+                }
             </ServiceTable>
-        </>
-    );
+        </>);
 }
+/**
+ * Bookmark component for rendering a single bookmark entry.
+ *
+ * @param {string} parent - The ID of the parent space.
+ * @param {string} roomId - The ID of the bookmarked room.
+ * @param {string} link - The link associated with the bookmark.
+ * @param {string} name - The name of the bookmarked room.
+ * @param {Function} removeBookmark - A function to remove the bookmark.
+ * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
+ */
+const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
+    const [removingBookmark, setRemovingBookmark] = useState(false);
+    const { t } = useTranslation();
 
+    const handleRemove = async (e) => {
+        e.preventDefault();
+        setRemovingBookmark(true);
+        await removeBookmark(parent, roomId)
+            .catch(error => alert(error.data?.error));
+        setRemovingBookmark(false);
+    };
+
+    return (
+        <ServiceTable.Row key={roomId}>
+            <ServiceTable.Cell>
+                <Link href={link}>{ name }</Link>
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
+                <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
+                    { removingBookmark ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                </TextButton></ServiceTable.Cell>
+        </ServiceTable.Row>
+    );
+};
