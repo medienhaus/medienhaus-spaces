@@ -41,7 +41,7 @@ export default function Spacedeck() {
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedSketchRef = useRef(null);
     useEffect(() => {
         selectedSketchRef.current?.focus();
