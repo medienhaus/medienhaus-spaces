@@ -192,18 +192,20 @@ export default function Spacedeck() {
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
-                            { spacedeckChildren?.map(spacedeckRoomId => {
-                                const room = matrix.rooms.get(spacedeckRoomId);
-                                if (!room) return null;
+                            <ServiceTable.Body>
+                                { spacedeckChildren?.map(spacedeckRoomId => {
+                                    const room = matrix.rooms.get(spacedeckRoomId);
+                                    if (!room) return null;
 
-                                return <ServiceLink
-                                    key={spacedeckRoomId}
-                                    name={room.name}
-                                    href={`${spacedeckPath}/${spacedeckRoomId}`}
-                                    selected={roomId === spacedeckRoomId}
-                                    ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
-                                />;
-                            }) }
+                                    return <ServiceLink
+                                        key={spacedeckRoomId}
+                                        name={room.name}
+                                        href={`${spacedeckPath}/${spacedeckRoomId}`}
+                                        selected={roomId === spacedeckRoomId}
+                                        ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                         { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
