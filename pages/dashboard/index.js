@@ -9,6 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceInvitations from './ServiceInvitations';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
+import DisplayBookmarks from '../../components/UI/bookmarks/DisplayBookmarks';
 
 const TableSection = styled.section`
   overflow-x: auto;
@@ -22,6 +23,7 @@ export default function Dashboard() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const serviceSpaces = matrix.serviceSpaces;
+    const bookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks)?.children;
     const [chatInvitations, setChatInvitations] = useState([]);
     const [contextInvitations, setContextInvitations] = useState([]);
 
@@ -153,6 +155,42 @@ export default function Dashboard() {
                                </ServiceTable.Body>
                            </ServiceTable>
                        </TableSection>
+            }
+
+            { bookmarks &&
+                <TableSection>
+                    <ServiceTable>
+                        <ServiceTable.Caption>
+                            { t('Bookmarks') }
+                        </ServiceTable.Caption>
+                        <ServiceTable.Head>
+                            <ServiceTable.Row>
+                                <ServiceTable.Header align="left">
+                                    { t('App') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="left">
+                                    { t('Item') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center">
+                                    { t('Remove') }
+                                </ServiceTable.Header>
+                            </ServiceTable.Row>
+                        </ServiceTable.Head>
+                        <ServiceTable.Body>
+                            { bookmarks.map(bookmarkSpace => {
+                                const spaceName = matrix.spaces.get(bookmarkSpace)?.name;
+                                const pathName = getConfig().publicRuntimeConfig.authProviders[spaceName]?.path;
+
+                                return <DisplayBookmarks
+                                    key={bookmarkSpace}
+                                    bookmarkSpaceId={bookmarkSpace}
+                                    name={pathName || spaceName}
+                                />;
+                            }) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
+
+                </TableSection>
             }
         </>
     );

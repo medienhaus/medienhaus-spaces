@@ -20,7 +20,6 @@ import LoadingSpinnerInline from '../LoadingSpinnerInline';
 export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const allBookmarkIds = matrix.spaces.get(bookmarkSpaceId)?.children;
 
     const removeBookmark = async (parent, roomId) => {
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
@@ -31,19 +30,16 @@ export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
 
     return (
         <>
-            { allBookmarkIds.length > 0 && <h2>{ name } </h2> }
-            <ServiceTable>
-                { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
-                    return <Bookmark
-                        parent={bookmarkSpaceId}
-                        roomId={roomId}
-                        link={matrix.roomContents.get(roomId).body}
-                        name={matrix.rooms.get(roomId).name}
-                        removeBookmark={removeBookmark}
-                    />;
-                })
-                }
-            </ServiceTable>
+            { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
+                return <Bookmark
+                    parent={bookmarkSpaceId}
+                    roomId={roomId}
+                    link={matrix.roomContents.get(roomId).body}
+                    name={matrix.rooms.get(roomId).name}
+                    origin={name}
+                    removeBookmark={removeBookmark}
+                />;
+            }) }
         </>);
 }
 /**
@@ -53,13 +49,14 @@ export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
  * @param {string} roomId - The ID of the bookmarked room.
  * @param {string} link - The link associated with the bookmark.
  * @param {string} name - The name of the bookmarked room.
+ * @param {string} origin - The name of the origin of the bookmarked room.
  * @param {Function} removeBookmark - A function to remove the bookmark.
  * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
  *
  * @TODO
  * origin only works
  */
-const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
+const Bookmark = ({ parent, roomId, link, name, origin, removeBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
     const { t } = useTranslation();
 
@@ -73,6 +70,9 @@ const Bookmark = ({ parent, roomId, link, name, removeBookmark }) => {
 
     return (
         <ServiceTable.Row key={roomId}>
+            <ServiceTable.Cell>
+                { origin }
+            </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <Link href={link}>{ name }</Link>
             </ServiceTable.Cell>
