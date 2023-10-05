@@ -121,6 +121,7 @@ export default function Spacedeck() {
         }
 
         return () => (cancelled = true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverSketches]);
 
     useEffect(() => {
