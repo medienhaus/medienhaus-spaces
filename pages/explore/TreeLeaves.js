@@ -23,7 +23,7 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent }) => {
                 selected={router.query.roomId[1] === roomId|| router.query.roomId[0] === roomId}
             >
                 { leaf.missingMetaEvent ?
-                    <em> <a href="">{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</a></em>
+                    <em> <Link disabled={isFetchingContent} href={`/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link></em>
                     :<Link disabled={isFetchingContent} href={getConfig().publicRuntimeConfig.templates.item.includes(leaf.template) ? `/explore/${parentId}/${roomId}` : `/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
                 }
             </ServiceTable.Cell>
