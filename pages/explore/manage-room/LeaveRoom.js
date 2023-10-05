@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { router } from 'next/client';
+import { router } from 'next/router';
 
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
