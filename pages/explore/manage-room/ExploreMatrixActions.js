@@ -48,7 +48,8 @@ const RadioWrapper = styled.div`
 
 const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, callApiAndAddToObject }) => {
     const { t } = useTranslation('explore');
-    const roomName = useMatrix().spaces.get(currentId)?.name || useMatrix().rooms.get(currentId)?.name;
+    const matrix = useMatrix();
+    const roomName = matrix.spaces.get(currentId)?.name || matrix.rooms.get(currentId)?.name;
     if (!roomName) return <LoadingSpinner />;
 
     return (
