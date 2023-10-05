@@ -21,14 +21,15 @@ services:
   spaces:
     build:
       context: .
+      target: "development-runner"
     labels:
       traefik.enable: "true"
       traefik.http.routers.spaces.entrypoints: "web"
       traefik.http.routers.spaces.rule: "PathPrefix(`/`)"
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/.next
+      - .:/app
+    environment:
+      - NODE_ENV=development
 
   element:
     image: vectorim/element-web:latest
