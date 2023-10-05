@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import styled from 'styled-components';
@@ -47,6 +47,8 @@ export default function Login() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
+    const usernameInput = useRef();
+
     // If we are logged in... what do we want here? Let's forward the user to the dashboard!
     if (auth.user) router.push('/');
 
@@ -64,13 +66,18 @@ export default function Login() {
         setHomeserver(prompt(`${t('Set another homeserver')}:`, homeserver) ?? homeserver);
     };
 
+    // Automatically focus the username input on pageload
+    useEffect(() => {
+        usernameInput.current.focus();
+    }, []);
+
     return (
         <>
             <h2>/login</h2>
             <LoginSection>
                 <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
                     <UsernameHomeserverContainer>
-                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
+                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} ref={usernameInput} />
                         { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
                             <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
                         ) }
