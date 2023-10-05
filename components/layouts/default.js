@@ -10,7 +10,6 @@ export const Main = styled.main`
   @media ${breakpoints.tabletAndAbove} {
     grid-row: 1/4;
     grid-column: 2;
-    max-width: 55ch;
     height: 100vh;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     overflow: auto;
