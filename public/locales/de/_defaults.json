@@ -13,5 +13,9 @@
   "Save changes": "Änderungen speichern",
   "Select action": "Aktion wählen",
   "What would you like to do?": "Was möchtest Du tun?",
-  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."
+  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
+  "Invitations": "Einladungen",
+  "From": "Von",
+  "Accept": "Annehmen",
+  "Decline": "Ablehnen"
 }
