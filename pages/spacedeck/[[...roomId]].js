@@ -142,21 +142,19 @@ export default function Spacedeck() {
         };
     }, [spacedeck]);
 
-    async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
+    async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // Log debugging information
         setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
         // Create the room with retry handling
-        const createRoomForSketch = async (retries = 1) => {
-            logger.debug('Attempt %d of creating a room for %s', retries, name);
-
+        const createRoomForSketch = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck');
         };
 
         const room = await createRoomForSketch()
             .catch(async (error) => {
                 return matrix.handleRateLimit(error, () => createRoomForSketch())
-                    .catch(error => setErrorMessage(t(error.message)));
+                    .catch(error => setErrorMessage(error.message));
             });
 
         // Log debug information about current progress
@@ -168,7 +166,7 @@ export default function Spacedeck() {
         await addSpaceChild()
             .catch(async (error) => {
                 return matrix.handleRateLimit(error, () => addSpaceChild())
-                    .catch(error => setErrorMessage(t(error.message)));
+                    .catch(error => setErrorMessage(error.message));
             });
 
         // Log debug information about current progress

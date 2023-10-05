@@ -159,11 +159,7 @@ export default function Etherpad() {
 
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
-        logger.debug('Creating new Matrix room for pad', { link, name });
-
-        const createRoomForPad = async (retries = 1) => {
-            logger.debug('Attempt %d of creating a room for %s', retries, name);
-
+        const createRoomForPad = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
         };
 
@@ -248,7 +244,7 @@ export default function Etherpad() {
                             </ServiceTable.Body>
                         </ServiceTable> }
                         { userFeedback && <span>{ userFeedback }</span> }
-                        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+                        { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                     </>
                 ) }
             </IframeLayout.Sidebar>
