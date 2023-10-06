@@ -43,7 +43,7 @@ export default function Login() {
     const [isTryingToSignIn, setIsTryingToSignIn] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    const [homeserver, setHomeserver] = useState(getConfig().publicRuntimeConfig.authProviders.matrix?.baseUrl ?? 'https://matrix.org');
+    const [homeserver, setHomeserver] = useState(getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl ?? 'https://matrix.org');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
