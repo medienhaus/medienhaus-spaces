@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm clean-install
 
 
 

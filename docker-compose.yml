@@ -28,6 +28,8 @@ services:
       traefik.http.routers.spaces.rule: "PathPrefix(`/`)"
     volumes:
       - .:/app
+      - medienhaus-spaces--node_modules:/app/node_modules
+      - medienhaus-spaces--.next:/app/.next
     environment:
       - NODE_ENV=development
 
@@ -42,3 +44,9 @@ services:
       traefik.http.middlewares.element.stripprefix.prefixes: "/element"
     volumes:
       - ./element.config.json:/app/config.json
+
+volumes:
+  medienhaus-spaces--node_modules:
+    driver: local
+  medienhaus-spaces--.next:
+    driver: local
