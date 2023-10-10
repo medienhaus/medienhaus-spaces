@@ -45,14 +45,12 @@ export default function Dashboard() {
                 const room = await matrixClient.getRoom(invitation.roomId);
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
-                const inviter = matrixClient.getUser(inviterName);
-                invitation.inviter = inviter;
+                invitation.inviter = matrixClient.getUser(inviterName);
 
                 if (!invitation.meta) {
                     // if there is no meta key yet, we manually check for one
-                    const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
+                    invitation.meta = await matrix.hydrateMetaEvent(invitation.roomId)
                         .catch(() => { });
-                    invitation.meta = metaEvent;
                 }
 
                 if (invitation.meta) {
@@ -107,19 +105,19 @@ export default function Dashboard() {
                                </ServiceTable.Caption>
                                <ServiceTable.Head>
                                    <ServiceTable.Row>
-                                       <ServiceTable.Header align="left">
+                                       <ServiceTable.Header align="left" width="20%">
                                            { t('App') }
                                        </ServiceTable.Header>
-                                       <ServiceTable.Header align="left">
+                                       <ServiceTable.Header align="left" width="30%">
                                            { t('Item') }
                                        </ServiceTable.Header>
-                                       <ServiceTable.Header align="left">
+                                       <ServiceTable.Header align="left" width="30%">
                                            { t('From') }
                                        </ServiceTable.Header>
-                                       <ServiceTable.Header align="center">
+                                       <ServiceTable.Header align="center" width="10%">
                                            { t('Accept') }
                                        </ServiceTable.Header>
-                                       <ServiceTable.Header align="center">
+                                       <ServiceTable.Header align="center" width="10%">
                                            { t('Decline') }
                                        </ServiceTable.Header>
                                    </ServiceTable.Row>
@@ -169,16 +167,16 @@ export default function Dashboard() {
                         </ServiceTable.Caption>
                         <ServiceTable.Head>
                             <ServiceTable.Row>
-                                <ServiceTable.Header align="left">
+                                <ServiceTable.Header align="left" width="20%">
                                     { t('App') }
                                 </ServiceTable.Header>
-                                <ServiceTable.Header align="left">
+                                <ServiceTable.Header align="left" width="60%">
                                     { t('Item') }
                                 </ServiceTable.Header>
-                                <ServiceTable.Header align="center">
+                                <ServiceTable.Header align="center" width="10%">
                                     { t('Copy Link') }
                                 </ServiceTable.Header>
-                                <ServiceTable.Header align="center">
+                                <ServiceTable.Header align="center" width="10%">
                                     { t('Remove') }
                                 </ServiceTable.Header>
                             </ServiceTable.Row>

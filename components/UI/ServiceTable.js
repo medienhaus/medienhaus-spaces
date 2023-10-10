@@ -65,7 +65,7 @@ const TableHeader = styled.th`
   line-height: calc(var(--margin) * 3);
   text-align: ${props => props.align && props.align};
   white-space: nowrap;
-
+  ${props => props.width && `width: ${ typeof props.width === 'string' ? props.width : '8ch'};`}
   > * {
     display: inline-block;
     line-height: calc(var(--margin) * 3);
@@ -89,7 +89,6 @@ const TableCell = styled.td`
       cursor: ${props => props.selected && 'not-allowed' };
     }
   }
-
 `;
 
 export const ServiceTable = Table;
