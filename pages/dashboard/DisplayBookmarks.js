@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
-import { useMatrix } from '../../../lib/Matrix';
-import { ServiceTable } from '../ServiceTable';
-import { useAuth } from '../../../lib/Auth';
-import Bin from '../../../assets/icons/bin.svg';
-import TextButton from '../../../components/UI/TextButton';
-import LoadingSpinnerInline from '../LoadingSpinnerInline';
+import { useMatrix } from '../../lib/Matrix';
+import { ServiceTable } from '../../components/UI/ServiceTable';
+import { useAuth } from '../../lib/Auth';
+import Bin from '../../assets/icons/bin.svg';
+import TextButton from '../../components/UI/TextButton';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 /**
  * DisplayBookmarks component for rendering and managing bookmarks within a specified space.

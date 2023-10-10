@@ -9,7 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceInvitations from './ServiceInvitations';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
-import DisplayBookmarks from '../../components/UI/bookmarks/DisplayBookmarks';
+import DisplayBookmarks from './DisplayBookmarks';
 
 const TableSection = styled.section`
   overflow-x: auto;
