@@ -9,6 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import TextButton from '../../components/UI/TextButton';
 import BinIcon from '../../assets/icons/bin.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -254,9 +255,9 @@ export default function Etherpad() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
-                            <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                            <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
-                            </button>
+                            </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
                     <iframe src={iframeUrl.toString()} />
