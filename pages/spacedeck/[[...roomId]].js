@@ -101,23 +101,17 @@ export default function Spacedeck() {
         // Function to sync spacedeck sketches with Matrix rooms
         const syncServerSketchesWithMatrix = async () => {
             setSyncingServerSketches(true);
-
             // Collect all Matrix sketches within the serviceSpaceId
             getAllMatrixSketches(serviceSpaceId);
 
-            // Sync all spacedeck spaces and sketches
-            const syncSketches = await spacedeck.syncAllSpaces().catch((error) => {
-                logger.debug(error);
-                setIsSpacedeckServerDown(true);
-            });
-
             // Update the Matrix structure based on spacedeck sketches
-            syncSketches && await updateStructure(spacedeck.getStructure());
+            await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
         };
 
         // Check if the useEffect is cancelled and required conditions are met to sync sketches
-        if (!cancelled && serviceSpaceId && serverSketches && !syncingServerSketches) {
+        if (!cancelled && serviceSpaceId && !isEmpty(serverSketches) && !syncingServerSketches) {
+            console.log(serverSketches);
             syncServerSketchesWithMatrix();
         }
 
@@ -129,10 +123,13 @@ export default function Spacedeck() {
         let cancelled = false;
         const populateSketchesfromServer = async (recursion) => {
             if (!isEmpty(spacedeck.getStructure())) {
+                setIsSpacedeckServerDown(false);
                 setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
                 await spacedeck.syncAllSpaces();
-                populateSketchesfromServer(true);
+                await populateSketchesfromServer(true);
+            } else if (recursion) {
+                setIsSpacedeckServerDown(true);
             }
         };
         !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesfromServer();
