@@ -19,8 +19,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.2.2",
-    "styled-components": "^6.0.8",
-    "react-modal": "^3.16.1"
+    "react-modal": "^3.16.1",
+    "styled-components": "^6.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
