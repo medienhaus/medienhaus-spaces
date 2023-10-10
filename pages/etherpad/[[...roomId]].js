@@ -9,6 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import TextButton from '../../components/UI/TextButton';
 import BinIcon from '../../assets/icons/bin.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -201,21 +202,23 @@ export default function Etherpad() {
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
                         <ServiceTable>
-                            { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
-                                const name = _.get(matrix.rooms.get(writeRoomId), 'name');
+                            <ServiceTable.Body>
+                                { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
+                                    const name = _.get(matrix.rooms.get(writeRoomId), 'name');
 
-                                // if the room name is undefined we don't want to display it
-                                if (!name) return;
+                                    // if the room name is undefined we don't want to display it
+                                    if (!name) return;
 
-                                return <ServiceLink
-                                    key={writeRoomId}
-                                    name={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    href={`${etherpadPath}/${writeRoomId}`}
-                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
-                                    selected={writeRoomId === roomId}
-                                    ref={writeRoomId === roomId ? selectedPadRef : null}
-                                />;
-                            }) }
+                                    return <ServiceLink
+                                        key={writeRoomId}
+                                        name={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                        href={`${etherpadPath}/${writeRoomId}`}
+                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
+                                        selected={writeRoomId === roomId}
+                                        ref={writeRoomId === roomId ? selectedPadRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                     </>
                 ) }
@@ -227,9 +230,9 @@ export default function Etherpad() {
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
-                            <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                            <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
-                            </button>
+                            </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
                     <iframe src={iframeUrl.toString()} />
