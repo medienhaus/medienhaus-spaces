@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/Auth';
 import Bin from '../../assets/icons/bin.svg';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 
 /**
  * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
@@ -75,6 +76,9 @@ const Bookmark = ({ parent, roomId, link, name, origin, removeBookmark }) => {
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <Link href={link}>{ name }</Link>
+            </ServiceTable.Cell>
+            <ServiceTable.Cell>
+                <CopyToClipboard content={link} />
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove bookmark')} onClick={handleRemove}>

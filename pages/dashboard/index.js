@@ -13,6 +13,10 @@ import DisplayBookmarks from './DisplayBookmarks';
 
 const TableSection = styled.section`
   overflow-x: auto;
+
+  & + section {
+    margin-top: calc(var(--margin) * 3 + 2px);
+  }
 `;
 
 export default function Dashboard() {
@@ -170,6 +174,9 @@ export default function Dashboard() {
                                 </ServiceTable.Header>
                                 <ServiceTable.Header align="left">
                                     { t('Item') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center">
+                                    { t('Copy Link') }
                                 </ServiceTable.Header>
                                 <ServiceTable.Header align="center">
                                     { t('Remove') }
