@@ -3,25 +3,42 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
+import LoadingSpinner from './LoadingSpinner';
 
-const ImagePreview = styled.img`
+const Avatar = styled.img`
   display: block;
   max-width: 100%;
   max-height: 60vh;
-  margin: 0 auto;
+  margin: 0 auto var(--margin) auto;
+`;
+
+const AvatarContainer = styled.div`
+  position: relative;
+`;
+
+const SpinnerOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgb(255 255 255 / 70%);
 `;
 
 /**
  * ImageUpload component for selecting and uploading an image.
  *
- * @param {Boolean} preview - Previews the selected image if set to true.
+ * @param {String} currentAvatarUrl - string with the url for the current avatar
  * @param {function} callback - The callback function to handle the uploaded image.
  * @returns {JSX.Element} - The rendered component.
  */
 
-const ImageUpload = ({ preview, callback }) => {
+const ImageUpload = ({ currentAvatarUrl, callback }) => {
     const [isUploadingImage, setIsUploadingImage] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState('');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation();
     const imageUploadRef = useRef(null);
@@ -35,19 +52,8 @@ const ImageUpload = ({ preview, callback }) => {
     const handleUpload = useCallback(async (event) => {
         const file = event.target.files[0];
 
-        if (!file) {
-            setPreviewUrl('');
+        if (!file) return;
 
-            return;
-        }
-        // Display image preview when a file is selected and preview === true
-        if (preview) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setPreviewUrl(e.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
         setIsUploadingImage(true);
         const formData = new FormData();
         formData.append('image', file);
@@ -61,15 +67,29 @@ const ImageUpload = ({ preview, callback }) => {
         if (uploadedImage) callback(uploadedImage.content_uri);
 
         setIsUploadingImage(false);
-    }, [callback, matrixClient, preview, t]);
+    }, [callback, matrixClient, t]);
 
     return (
-
-        <>
-            { preview && previewUrl && <ImagePreview src={previewUrl} /> }
+        <div>
+            <AvatarContainer>
+                { currentAvatarUrl && <Avatar src={currentAvatarUrl} width="100%" height="100%" /> }
+                { isUploadingImage && (
+                    <SpinnerOverlay>
+                        <LoadingSpinner />
+                    </SpinnerOverlay>
+                ) }
+            </AvatarContainer>
             <input type="file" accept="image/*" ref={imageUploadRef} style={{ display: 'none' }} onChange={handleUpload} />
-            <button disabled={isUploadingImage} type="button" onClick={() => { imageUploadRef.current.click(); }}>{ isUploadingImage ? `${t('Uploading')} ...` : t('Upload') }</button>
-        </>
+            <button
+                disabled={isUploadingImage}
+                type="button"
+                onClick={() => {
+                    imageUploadRef.current.click();
+                }}
+            >
+                { currentAvatarUrl ? t('Change') : t('Upload') }
+            </button>
+        </div>
     );
 };
 

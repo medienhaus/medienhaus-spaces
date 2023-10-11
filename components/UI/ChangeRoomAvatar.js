@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import ImageIcon from '../../assets/icons/image.svg';
 import DefaultModal from './Modal';
 import ImageUpload from './ImageUpload';
 import ErrorMessage from './ErrorMessage';
-
-const Avatar = styled.img`
-  display: block;
-  max-width: 100%;
-  max-height: 60vh;
-  margin: 0 auto var(--margin) auto;
-`;
+import TextButton from './TextButton';
 
 /**
  * ChangeRoomAvatar component for changing the avatar of a Matrix room.
@@ -52,12 +45,12 @@ const ChangeRoomAvatar = ({ roomId }) => {
 
     return (
         <>
-            <button
+            <TextButton
                 title={t('Change Room Avatar')}
                 onClick={() => setIsChangingAvatarDialogueOpen(true)}
             >
                 <ImageIcon fill="var(--color-foreground)" />
-            </button>
+            </TextButton>
             { isChangingAvatarDialogueOpen && (
                 <DefaultModal
                     isOpen={isChangingAvatarDialogueOpen}
@@ -66,9 +59,9 @@ const ChangeRoomAvatar = ({ roomId }) => {
                     shouldCloseOnOverlayClick={true}
                     headline={t('Change Room Avatar')}
                 >
-                    { currentAvatarUrl && <Avatar src={currentAvatarUrl} width="500" height="500" /> }
                     <ImageUpload
                         roomId={roomId}
+                        currentAvatarUrl={currentAvatarUrl}
                         callback={uploadRoomAvatar} />
                     { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
 
