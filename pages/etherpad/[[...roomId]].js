@@ -9,6 +9,8 @@ import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import TextButton from '../../components/UI/TextButton';
+import BinIcon from '../../assets/icons/bin.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';

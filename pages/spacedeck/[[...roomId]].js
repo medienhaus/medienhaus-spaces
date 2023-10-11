@@ -11,6 +11,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
+import TextButton from '../../components/UI/TextButton';
 import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
@@ -20,6 +21,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -123,6 +125,7 @@ export default function Spacedeck() {
         }
 
         return () => (cancelled = true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverSketches]);
 
     useEffect(() => {
@@ -224,18 +227,20 @@ export default function Spacedeck() {
                     <span>{ userFeedback } <LoadingSpinnerInline /></span> :
                     <>
                         <ServiceTable>
-                            { spacedeckChildren?.map(spacedeckRoomId => {
-                                const room = matrix.rooms.get(spacedeckRoomId);
-                                if (!room) return null;
+                            <ServiceTable.Body>
+                                { spacedeckChildren?.map(spacedeckRoomId => {
+                                    const room = matrix.rooms.get(spacedeckRoomId);
+                                    if (!room) return null;
 
-                                return <ServiceLink
-                                    key={spacedeckRoomId}
-                                    name={room.name}
-                                    href={`${spacedeckPath}/${spacedeckRoomId}`}
-                                    selected={roomId === spacedeckRoomId}
-                                    ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
-                                />;
-                            }) }
+                                    return <ServiceLink
+                                        key={spacedeckRoomId}
+                                        name={room.name}
+                                        href={`${spacedeckPath}/${spacedeckRoomId}`}
+                                        selected={roomId === spacedeckRoomId}
+                                        ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                         { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
@@ -247,10 +252,11 @@ export default function Spacedeck() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
-                            <button title={t('Delete sketch')} onClick={removeSketch}>
+                            <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
-                            </button>
+                            </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
                     <iframe src={content.body} />

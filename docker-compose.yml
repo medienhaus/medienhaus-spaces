@@ -21,14 +21,17 @@ services:
   spaces:
     build:
       context: .
+      target: "development-runner"
     labels:
       traefik.enable: "true"
       traefik.http.routers.spaces.entrypoints: "web"
       traefik.http.routers.spaces.rule: "PathPrefix(`/`)"
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/.next
+      - .:/app
+      - medienhaus-spaces--node_modules:/app/node_modules
+      - medienhaus-spaces--.next:/app/.next
+    environment:
+      - NODE_ENV=development
 
   element:
     image: vectorim/element-web:latest
@@ -41,3 +44,9 @@ services:
       traefik.http.middlewares.element.stripprefix.prefixes: "/element"
     volumes:
       - ./element.config.json:/app/config.json
+
+volumes:
+  medienhaus-spaces--node_modules:
+    driver: local
+  medienhaus-spaces--.next:
+    driver: local

@@ -85,15 +85,6 @@ const IframeHeaderButtonWrapper = styled.div`
   grid-auto-flow: column;
   grid-gap: calc(var(--margin));
   height: 100%;
-
-  button {
-    /* unset globally defined button styles; set height to line-height */
-    width: unset;
-    height: calc(var(--margin) * 1.3);
-    padding: unset;
-    background-color: unset;
-    border: unset;
-  }
 `;
 
 const Layout = ({ children }) => {

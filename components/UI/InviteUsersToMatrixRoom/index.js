@@ -3,7 +3,7 @@
  * `activeContexts` is the array of room IDs for the currently set context spaces.
  *
  * @param {string} roomId (valid matrix roomId)
- * @param {string} name (name of the matrix room)
+ * @param {string} roomName (name of the matrix room)
  *
  * @return {React.ReactElement}
  *
@@ -17,33 +17,17 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
-import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
 import TextButton from '../TextButton';
 import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
-import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
 import DefaultModal from '../Modal';
 import Datalist from '../Datalist';
 
-const Header = styled.header`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  margin-bottom: calc(var(--margin) * 2);
-`;
-
-const CloseButton = styled(TextButton)`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
-  height: calc(var(--margin) * 1.3);
-  padding: unset;
-  background-color: unset;
-`;
-
-export default function InviteUserToMatrixRoom({ roomId, name }) {
+export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
@@ -56,8 +40,8 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         setIsInviteDialogueOpen(prevState => !prevState);
     };
 
-    const handleChange = (event) => {
-        debouncedFetchUsersForContributorSearch(event.target.value);
+    const handleChange = (searchString) => {
+        debouncedFetchUsersForContributorSearch(searchString);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,13 +57,16 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
         }
     }, [matrixClient, t]);
 
-    const handleInvite = async (userId, displayName) => {
-        function clearInputs() {
-            setUserFeedback('');
-            setSearchResults([]);
-        }
+    function clearInputs() {
+        setUserFeedback('');
+        setSearchResults([]);
+        setSelectedUser('');
+    }
 
-        await matrixClient.invite(roomId, userId)
+    const handleInvite = async (e) => {
+        e.preventDefault();
+
+        await matrixClient.invite(roomId, selectedUser.user_id)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
@@ -90,29 +77,29 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                 return;
             });
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + displayName + ' ' + t('was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + selectedUser.display_name + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             setIsInviteDialogueOpen(false);
         }, 3000));
     };
 
+    const handleModalClose = () => {
+        clearInputs();
+        setIsInviteDialogueOpen(false);
+    };
+
     return <>
-        <button title={t('Invite users to' + ' ' + name)} onClick={handleClick}>
+        <TextButton title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
-        </button>
+        </TextButton>
         { isInviteDialogueOpen && (
             <DefaultModal
                 isOpen={isInviteDialogueOpen}
-                onRequestClose={() => setIsInviteDialogueOpen(false)}
-                contentLabel="Invite Users"
+                onRequestClose={handleModalClose}
+                contentLabel={t('Invite users to {{roomName}}', { roomName: roomName })}
                 shouldCloseOnOverlayClick={true}>
 
-                <Header>
-                    { t('Invite users to') } { name } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
-                        <CloseIcon />
-                    </CloseButton>
-                </Header>
                 { userFeedback ? <div>{ userFeedback }</div> :
                     <Form onSubmit={handleInvite}>
                         <Datalist
@@ -121,7 +108,7 @@ export default function InviteUserToMatrixRoom({ roomId, name }) {
                             keysToDisplay={['display_name', 'user_id']}
                             onSelect={setSelectedUser}
                         />
-                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: name }) }</button> }
+                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
                     </Form>
                 }
             </DefaultModal>

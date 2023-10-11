@@ -1,6 +1,6 @@
 // This component returns a styled table with optional table head/headers.
 // Example usage:
-//
+
 // <ServiceTable>
 //   <ServiceTable.Caption>
 //     This caption (here: heading) will be aligned left
@@ -33,14 +33,10 @@
 
 import styled from 'styled-components';
 
-// @TODO
-// max-height is used because just using 'height' messes up other services like write and
-// sketch because those are using serviceSubmenu and the calculation doesn't work there.
 const Table = styled.table`
   width: 100%;
-  max-height: 100%;
-  overflow-y: auto;
   border-collapse: collapse;
+  border-top: 1px solid rgb(0 0 0 / 5%);
 `;
 
 const TableCaption = styled.caption`
@@ -56,6 +52,8 @@ const TableBody = styled.tbody`
 `;
 
 const TableRow = styled.tr`
+  max-width: 100%;
+  color: ${props => props.selected && 'var(--color-disabled)' };
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);
