@@ -7,7 +7,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
-const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent }) => {
+const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small }) => {
     const router = useRouter();
     const roomId = leaf.id || leaf.room_id;
     const parentId = leaf.parent.id || leaf.parent.room_id;
@@ -21,6 +21,7 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent }) => {
             <ServiceTable.Cell
                 disabled={isFetchingContent}
                 selected={router.query.roomId[1] === roomId|| router.query.roomId[0] === roomId}
+                small={small}
             >
                 { leaf.missingMetaEvent ?
                     <em> <Link disabled={isFetchingContent} href={`/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link></em>

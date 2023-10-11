@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import ErrorMessage from '../../components/UI/ErrorMessage';
+import TreeLeaves from './TreeLeaves';
 
 const Leaf = styled(ServiceTable.Cell)`
   cursor: pointer;
@@ -22,10 +24,11 @@ const Leaf = styled(ServiceTable.Cell)`
   }
 
 `;
-const TreePath = ({ data, isFetchingContent }) => {
+
+const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) => {
     return (
         <ServiceTable>
-            { data.map((path, index) => {
+            { selectedSpaceChildren.map((path, index) => {
                 if (!path[0]?.parent) return null;
 
                 return <ServiceTable.Row key={index}>
@@ -37,6 +40,33 @@ const TreePath = ({ data, isFetchingContent }) => {
 
                 </ServiceTable.Row>;
             }) }
+            { iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                .sort(function(a, b) {
+                    if (a.type === 'item' && b.type !== 'item') {
+                        return -1; // 'a' comes before 'b'
+                    } else if (a.type !== 'item' && b.type === 'item') {
+                        return 1; // 'a' comes after 'b'
+                    } else {
+                        return 0; // No sorting necessary
+                    }
+                })
+                .map((leaf, index) => {
+                    if (leaf.length <= 1) {
+                        return;
+                    }
+                    if (index === 0) return null;
+
+                    // Sort the array to display objects of type 'item' before others
+                    return <TreeLeaves
+                        small
+                        depth={selectedSpaceChildren.length}
+                        leaf={leaf}
+                        parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                        key={leaf.room_id + '_' + index}
+                        iframeRoomId={iframeRoomId}
+                        isFetchingContent={isFetchingContent}
+                    />;
+                }) }
         </ServiceTable>
     );
 };

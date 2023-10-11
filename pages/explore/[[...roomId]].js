@@ -158,8 +158,9 @@ export default function Explore() {
                     { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
                         !_.isEmpty(selectedSpaceChildren) &&
                         <TreePath
-                            data={selectedSpaceChildren}
+                            selectedSpaceChildren={selectedSpaceChildren}
                             isFetchingContent={isFetchingContent}
+                            iframeRoomId={iframeRoomId}
                         />
 
                     }
@@ -167,7 +168,7 @@ export default function Explore() {
             </IframeLayout.Sidebar>
 
             <IframeLayout.IframeWrapper>
-                { iframeRoomId ? (
+                { iframeRoomId && !_.isEmpty(selectedSpaceChildren)? (
                     <ExploreIframeViews
                         currentTemplate={currentTemplate}
                         iframeRoomId={iframeRoomId}
