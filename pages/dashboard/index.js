@@ -159,7 +159,7 @@ export default function Dashboard() {
                        </TableSection>
             }
 
-            { bookmarks &&
+            { !_.isEmpty(bookmarks) &&
                 <TableSection>
                     <ServiceTable>
                         <ServiceTable.Caption>
