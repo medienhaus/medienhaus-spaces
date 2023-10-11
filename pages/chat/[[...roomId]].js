@@ -51,21 +51,6 @@ const Avatar = styled.img`
   }
 `;
 
-const SidebarListEntryWrapper = styled.a`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 0.3rem;
-`;
-
-const RoomName = styled.span`
-  flex: 1 0;
-  height: 2rem;
-  overflow: hidden;
-  line-height: 2rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 const SidebarListEntry = function({ room }) {
     const [isLeavingRoom, setIsLeavingRoom] = useState(false);
     const { t } = useTranslation();
