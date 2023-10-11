@@ -41,9 +41,31 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
+
+  /*
   background: var(--color-foreground);
+  */
+
+  &.placeholder {
+    backdrop-filter: invert(100%);
+  }
 `;
 
+const SidebarListEntryWrapper = styled.a`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+`;
+
+const RoomName = styled.span`
+  flex: 1 0;
+  height: 2rem;
+  overflow: hidden;
+  line-height: 2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 const SidebarListEntry = function({ room }) {
     const [isLeavingRoom, setIsLeavingRoom] = useState(false);
     const { t } = useTranslation();
@@ -95,7 +117,7 @@ export default function RoomId() {
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const [deviceType, setDeviceType] = useState(null);
     const [isRoomListVisible, setIsRoomListVisible] = useState(true);
 
@@ -184,15 +206,18 @@ export default function RoomId() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms);
+    // filtering invites for all invitations without a dev.medienhaus.meta event.
+    // for now normal chat rooms don't have this event.
+    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
+        .filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.template !== 'chat')
+        // ... contain a dev.medienhaus.meta state event)
+        .reject(room => room.events.get('dev.medienhaus.meta'))
         .sortBy(sortRooms)
         .value();
 

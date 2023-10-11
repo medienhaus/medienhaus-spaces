@@ -8,18 +8,20 @@ module.exports = {
                 baseUrl: 'https://matrix.org',
                 allowCustomHomeserver: true,
             },
-            matrixContentStorage: {
-                baseUrl: 'https://second.matrixserver.org',
-            },
             etherpad: {
+                // important: path has to start with "/"
                 path: '/write',
                 baseUrl: 'https://pad.riseup.net/p',
-                myPads: {
-                    api: 'http://etherpad.localhost/mypads/api',
-                    spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
+                // myPads: {
+                //     api: 'http://etherpad.localhost/mypads/api',
+                //     spacesGroupName: '/spaces', // optional, defaults to publicRuntimeConfig.name
 
-                },
+                // },
             },
+            // spacedeck: {
+            //     path: '/sketch',
+            //     baseUrl: 'http://spacedeck.localhost',
+            // },
         },
         contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
         account: {
@@ -29,17 +31,33 @@ module.exports = {
             pathToElement: '//localhost/element',
         },
     },
-    async rewrites() {
-        return [
-            {
+    rewrites() {
+        const rewriteConfig = [];
+
+        if (this.publicRuntimeConfig.authProviders.etherpad) {
+            rewriteConfig.push({
                 source: this.publicRuntimeConfig.authProviders.etherpad.path,
                 destination: '/etherpad',
             },
             {
                 source: this.publicRuntimeConfig.authProviders.etherpad.path + '/:roomId',
                 destination: '/etherpad/:roomId',
-            },
-        ];
+            });
+        }
+        if (this.publicRuntimeConfig.authProviders.spacedeck) {
+            rewriteConfig.push(
+                {
+                    source: this.publicRuntimeConfig.authProviders.spacedeck.path,
+                    destination: '/spacedeck',
+                },
+                {
+                    source: this.publicRuntimeConfig.authProviders.spacedeck.path + '/:roomId',
+                    destination: '/spacedeck/:roomId',
+                });
+        }
+
+        return rewriteConfig;
     },
+    output: 'standalone',
     webpack: WebpackConfig,
 };

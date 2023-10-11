@@ -3,20 +3,20 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
-import '../lib/Internationalization';
-
+import { DefaultLayout } from '../components/layouts/default';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
+import '../lib/Internationalization';
 import '/assets/_globalCss.css';
-import { DefaultLayout } from '../components/layouts/default';
-import MatrixAuthProvider from '../lib/auth/MatrixAuthProvider';
+import LostConnection from '../components/UI/LostConnection';
 
-const guestRoutes = ['/', '/login'];
+const guestRoutes = ['/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
+
     const authData = useAuthProvider();
-    const matrixData = useMatrixProvider(authData.getActiveAuthenticationsByType(MatrixAuthProvider));
+    const matrixData = useMatrixProvider(authData);
 
     let Layout = DefaultLayout;
     if (Component.getLayout) { Layout = Component.getLayout(); }
@@ -43,6 +43,7 @@ export default function App({ Component, pageProps }) {
             </Head>
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
+                    { !matrixData.isConnectedToServer && <LostConnection /> }
                     <Layout>
                         { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
