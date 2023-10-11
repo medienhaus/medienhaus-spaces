@@ -17,6 +17,7 @@ import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const ServiceTableWrapper = styled.div`
   width: 100%;
@@ -152,7 +153,7 @@ export default function Explore() {
     return (
         <>
             <IframeLayout.Sidebar>
-                <h2 ref={dimensionsRef}>/explore</h2>
+                <h2 ref={dimensionsRef}>/explore   { _.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline /> }</h2>
                 <ServiceTableWrapper>
                     { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
                         !_.isEmpty(selectedSpaceChildren) &&
@@ -166,7 +167,6 @@ export default function Explore() {
             </IframeLayout.Sidebar>
 
             <IframeLayout.IframeWrapper>
-
                 { iframeRoomId ? (
                     <ExploreIframeViews
                         currentTemplate={currentTemplate}
