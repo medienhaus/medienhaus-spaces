@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinnerInline from './LoadingSpinnerInline';
 
 const Avatar = styled.img`
   display: block;
@@ -71,14 +72,15 @@ const ImageUpload = ({ currentAvatarUrl, callback }) => {
 
     return (
         <div>
-            <AvatarContainer>
-                { currentAvatarUrl && <Avatar src={currentAvatarUrl} width="100%" height="100%" /> }
+            { currentAvatarUrl && <AvatarContainer>
+                <Avatar src={currentAvatarUrl} width="100%" height="100%" />
                 { isUploadingImage && (
                     <SpinnerOverlay>
                         <LoadingSpinner />
                     </SpinnerOverlay>
                 ) }
             </AvatarContainer>
+            }
             <input type="file" accept="image/*" ref={imageUploadRef} style={{ display: 'none' }} onChange={handleUpload} />
             <button
                 disabled={isUploadingImage}
@@ -87,7 +89,11 @@ const ImageUpload = ({ currentAvatarUrl, callback }) => {
                     imageUploadRef.current.click();
                 }}
             >
-                { currentAvatarUrl ? t('Change') : t('Upload') }
+                { currentAvatarUrl ?
+                    t('Change') :
+                    !currentAvatarUrl && isUploadingImage ?
+                        <LoadingSpinnerInline inverted /> :
+                        t('Upload') }
             </button>
         </div>
     );
