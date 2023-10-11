@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinner from './LoadingSpinner';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
+import ConfirmCancelButtons from './ConfirmCancelButtons';
 
 const Avatar = styled.img`
   display: block;
@@ -38,7 +39,7 @@ const SpinnerOverlay = styled.div`
  * @returns {JSX.Element} - The rendered component.
  */
 
-const ImageUpload = ({ currentAvatarUrl, callback }) => {
+const ImageUpload = ({ currentAvatarUrl, roomId, callback }) => {
     const [isUploadingImage, setIsUploadingImage] = useState(false);
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation();
@@ -70,6 +71,14 @@ const ImageUpload = ({ currentAvatarUrl, callback }) => {
         setIsUploadingImage(false);
     }, [callback, matrixClient, t]);
 
+    const handleDelete = async () => {
+        await matrixClient.sendStateEvent(roomId, 'm.room.avatar', {})
+            .catch((error) => {
+                alert(error.data?.error || t('Something went wrong, please try again.'));
+            },
+            );
+    };
+
     return (
         <div>
             { currentAvatarUrl && <AvatarContainer>
@@ -82,19 +91,30 @@ const ImageUpload = ({ currentAvatarUrl, callback }) => {
             </AvatarContainer>
             }
             <input type="file" accept="image/*" ref={imageUploadRef} style={{ display: 'none' }} onChange={handleUpload} />
-            <button
+
+            { !currentAvatarUrl ? <button
                 disabled={isUploadingImage}
                 type="button"
                 onClick={() => {
                     imageUploadRef.current.click();
                 }}
             >
-                { currentAvatarUrl ?
-                    t('Change') :
-                    !currentAvatarUrl && isUploadingImage ?
+                { !currentAvatarUrl && isUploadingImage ?
+                    <LoadingSpinnerInline inverted /> :
+                    t('Upload') }
+            </button> :
+                <ConfirmCancelButtons warning
+                    disabled={isUploadingImage}
+                    onClick={() => {
+                        imageUploadRef.current.click();
+                    }}
+                    onCancel={handleDelete}
+                    cancelTitle={t('Delete')}>
+                    { isUploadingImage ?
                         <LoadingSpinnerInline inverted /> :
-                        t('Upload') }
-            </button>
+                        t('Change') }
+                </ConfirmCancelButtons>
+            }
         </div>
     );
 };
