@@ -17,31 +17,15 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
-import styled from 'styled-components';
 import { logger } from 'matrix-js-sdk/lib/logger';
 
 import TextButton from '../TextButton';
 import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
-import CloseIcon from '../../../assets/icons/close.svg';
 import ErrorMessage from '../ErrorMessage';
 import DefaultModal from '../Modal';
 import Datalist from '../Datalist';
-
-const Header = styled.header`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  margin-bottom: calc(var(--margin) * 2);
-`;
-
-const CloseButton = styled(TextButton)`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
-  height: calc(var(--margin) * 1.3);
-  padding: unset;
-  background-color: unset;
-`;
 
 export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     const auth = useAuth();
@@ -113,14 +97,9 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
             <DefaultModal
                 isOpen={isInviteDialogueOpen}
                 onRequestClose={handleModalClose}
-                contentLabel="Invite Users"
+                contentLabel={t('Invite users to {{roomName}}', { roomName: roomName })}
                 shouldCloseOnOverlayClick={true}>
 
-                <Header>
-                    { t('Invite users to') } { roomName } <CloseButton onClick={handleModalClose}>
-                        <CloseIcon />
-                    </CloseButton>
-                </Header>
                 { userFeedback ? <div>{ userFeedback }</div> :
                     <Form onSubmit={handleInvite}>
                         <Datalist
