@@ -5,6 +5,7 @@ import getConfig from 'next/config';
 
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '../../../lib/Etherpad';
 
 export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -29,12 +30,12 @@ export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
         setPadName('');
 
         // Forward the user and show the newly created pad
-        router.push(`/${getConfig().publicRuntimeConfig.authProviders.etherpad.path}/${roomId}`);
+        router.push(`${etherpadPath}/${roomId}`);
     };
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
-            <input type="text" placeholder={t('Pad name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
         </Form>
     );

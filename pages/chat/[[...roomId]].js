@@ -80,7 +80,7 @@ const SidebarListEntry = function({ room }) {
     );
 };
 
-export default function RoomId() {
+export default function Chat() {
     const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
@@ -142,15 +142,18 @@ export default function RoomId() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms);
+    // filtering invites for all invitations without a dev.medienhaus.meta event.
+    // for now normal chat rooms don't have this event.
+    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
+        .filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.template !== 'chat')
+        // ... contain a dev.medienhaus.meta state event)
+        .reject(room => room.events.get('dev.medienhaus.meta'))
         .sortBy(sortRooms)
         .value();
 
@@ -158,7 +161,7 @@ export default function RoomId() {
         <>
             <IframeLayout.Sidebar>
                 <h2>/chat</h2>
-                { matrix.invites.size > 0 && (
+                { invites.length > 0 && (
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
@@ -187,6 +190,6 @@ export default function RoomId() {
     );
 }
 
-RoomId.getLayout = () => {
+Chat.getLayout = () => {
     return IframeLayout.Layout;
 };

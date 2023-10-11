@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
 
 const LoginSection = styled.div`
+  max-width: 55ch;
+
   & > * + *,
   & > form > * + * {
     margin-top: var(--margin);
@@ -33,16 +36,21 @@ const Homeserver = styled.span`
 `;
 
 export default function Login() {
-    const [isTryingToSignIn, setIsTryingToSignIn] = useState(false);
+    const auth = useAuth();
+    const router = useRouter();
+    const { t } = useTranslation('login');
 
-    const [homeserver, setHomeserver] = useState(getConfig().publicRuntimeConfig.authProviders.matrix?.baseUrl ?? 'https://matrix.org');
+    const [isTryingToSignIn, setIsTryingToSignIn] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const [homeserver, setHomeserver] = useState(getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl ?? 'https://matrix.org');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
 
-    const [errorMessage, setErrorMessage] = useState(null);
+    const usernameInput = useRef();
 
-    const auth = useAuth();
-    const { t } = useTranslation('login');
+    // If we are logged in... what do we want here? Let's forward the user to the dashboard!
+    if (auth.user) router.push('/');
 
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
@@ -58,49 +66,27 @@ export default function Login() {
         setHomeserver(prompt(`${t('Set another homeserver')}:`, homeserver) ?? homeserver);
     };
 
-    const onLogout = () => {
-        auth.signout();
-    };
-
-    const logAuthenticationStatus = () => {
-        console.log('matrix authentication provider status:');
-        console.log(auth.getAuthenticationProvider('matrix'));
-        console.log('peerTube authentication provider status:');
-        console.log(auth.getAuthenticationProvider('peerTube'));
-    };
+    // Automatically focus the username input on pageload
+    useEffect(() => {
+        usernameInput.current.focus();
+    }, []);
 
     return (
         <>
             <h2>/login</h2>
             <LoginSection>
-                { auth.user ? (
-                    <>
-                        <button type="button" onClick={onLogout}>{ t('Logout') }</button>
-                        { /*
-                        <a href="#" onClick={logAuthenticationStatus}>{ t('Log Authentication Provider Statuses') }</a>
-                        */ }
-                        <button type="button" onClick={logAuthenticationStatus}>{ t('Log Authentication Provider Status') }</button>
-                        <pre>
-                            <small>{ JSON.stringify(auth.user, null, 2) }</small>
-                        </pre>
-                    </>
-                ) : (
-                    <>
-                        <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                            <UsernameHomeserverContainer>
-                                <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} />
-                                { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                                    <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
-                                ) }
-                            </UsernameHomeserverContainer>
-                            <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                            <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
-                            { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                        </form>
-                    </>
-                ) }
+                <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                    <UsernameHomeserverContainer>
+                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} ref={usernameInput} />
+                        { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                            <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
+                        ) }
+                    </UsernameHomeserverContainer>
+                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                    { errorMessage && (<p>❗️ { errorMessage }</p>) }
+                </form>
             </LoginSection>
         </>
     );
 }
-

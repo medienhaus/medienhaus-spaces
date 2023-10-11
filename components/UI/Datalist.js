@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 
@@ -8,8 +7,8 @@ import { ServiceTable } from './ServiceTable';
  *
  * @component
  * @param {string[]} options - An array of Objects for the datalist.
- * @callback onChange - function to execute when input changes
- * @callback onSelect - function to execute when a result from the datalist was selected
+ * @param {function} onChange - function to execute when input changes, receives string as first parameter.
+ * @param {function} onSelect - function to execute when a result from the datalist was selected
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results
  * @returns {React.JSX.Element} The Datalist component.
  */
@@ -25,8 +24,12 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         setIsLoading(true);
         setValue(e.target.value);
         onSelect(null);
-        await onChange(e);
+        await onChange(e.target.value);
         if (e.target.value !== '') setIsOpen(true);
+        else {
+            // if the input is empty we close the datalist
+            setIsOpen(false);
+        }
         setIsLoading(false);
     };
 
@@ -49,12 +52,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         } else if (e.key === 'Enter' && isOpen && selectedIndex !== -1) {
             e.preventDefault();
             const selectedOption = options[selectedIndex];
-
-            setValue(stringifySelection(selectedOption));
-            onSelect(selectedOption);
-            setSelectedIndex(-1);
-            setIsOpen(false);
-            inputRef.current.focus();
+            handleSelect(selectedOption);
         }
     };
 
@@ -65,25 +63,19 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         }, 100); // Delay closing the datalist to allow clicking on options
     };
 
-    const handleListItemClick = (selectedOption) => {
-        // Handle mouse interaction
+    const handleSelect = (selectedOption) => {
         setValue(stringifySelection(selectedOption));
         onSelect(selectedOption);
-        setIsOpen(false);
         setSelectedIndex(-1);
+        setIsOpen(false);
         inputRef.current.focus();
     };
 
     const stringifySelection = (selectedOption) => {
-        // maps over all entries in the keysToDisplay array and returns the corresponding values as a string if the key is found in the selected options
-        let displayValue = _.map(selectedOption, (value, key) => {
-            if (!keysToDisplay.includes(key)) return;
-
-            return value;
-        });
-        displayValue = displayValue.filter((value) => value !== undefined).reverse().toString();
-
-        return displayValue;
+        return keysToDisplay
+            .map((key) => selectedOption[key])
+            .filter((value) => value !== undefined)
+            .join(' (') + ')'; // wrap in brackets
     };
 
     return (
@@ -103,7 +95,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
                         <ServiceTable.Row
                             key={index}
                             selected={selectedIndex === index}
-                            onClick={() => handleListItemClick(option)}>
+                            onClick={() => handleSelect(option)}>
                             { keysToDisplay.map(key => {
                                 return <ServiceTable.Cell
                                     key={key}>

@@ -6,21 +6,23 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import EtherpadListEntry from './EtherpadListEntry';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
+import TextButton from '../../components/UI/TextButton';
 import BinIcon from '../../assets/icons/bin.svg';
-import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
+import ServiceLink from '../../components/UI/ServiceLink';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
+import { path as etherpadPath } from '../../lib/Etherpad';
 import ChangeRoomAvatar from '../../components/UI/ChangeRoomAvatar';
 
 export default function Etherpad() {
@@ -29,8 +31,6 @@ export default function Etherpad() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
-    // we check if there is a custom path name defined and if so remove any forbidden url characters from the string
-    const path = getConfig().publicRuntimeConfig.authProviders.etherpad.path?.replace(/[<>\s/:]/g, '') || 'etherpad';
 
     const { t } = useTranslation('etherpad');
     const router = useRouter();
@@ -122,8 +122,6 @@ export default function Etherpad() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrix.serviceSpaces.etherpad, serverPads, createWriteRoom]);
 
-    const copyToClipboard = () => navigator.clipboard.writeText(matrix.roomContents.get(roomId).body);
-
     /**
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
      */
@@ -151,7 +149,7 @@ export default function Etherpad() {
 
         await syncServerPadsAndSet();
 
-        router.push(path);
+        router.push(etherpadPath);
         setIsDeletingPad(false);
     };
 
@@ -185,7 +183,6 @@ export default function Etherpad() {
     // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
     let iframeUrl;
     if (roomId && matrix.roomContents.get(roomId)?.body) {
-        console.log(matrix.roomContents.get(roomId).body);
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
     }
@@ -195,27 +192,34 @@ export default function Etherpad() {
             <IframeLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
-                        <h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>
+                        <h2>{ etherpadPath }</h2>
                         <LoadingSpinner />
                     </>
                 ) : (
                     <>
                         <ServiceSubmenu
-                            title={<h2>{ getConfig().publicRuntimeConfig.authProviders.etherpad.path }</h2>}
+                            title={<h2>{ etherpadPath }</h2>}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
-                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: path }) }</ErrorMessage> }
+                        { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
                         <ServiceTable>
-                            { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
-                                return <EtherpadListEntry
-                                    key={writeRoomId}
-                                    roomId={writeRoomId}
-                                    padName={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                    passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
-                                    selected={writeRoomId === roomId}
-                                    ref={writeRoomId === roomId ? selectedPadRef : null}
-                                />;
-                            }) }
+                            <ServiceTable.Body>
+                                { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
+                                    const name = _.get(matrix.rooms.get(writeRoomId), 'name');
+
+                                    // if the room name is undefined we don't want to display it
+                                    if (!name) return;
+
+                                    return <ServiceLink
+                                        key={writeRoomId}
+                                        name={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                        href={`${etherpadPath}/${writeRoomId}`}
+                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
+                                        selected={writeRoomId === roomId}
+                                        ref={writeRoomId === roomId ? selectedPadRef : null}
+                                    />;
+                                }) }
+                            </ServiceTable.Body>
                         </ServiceTable>
                     </>
                 ) }
@@ -225,14 +229,12 @@ export default function Etherpad() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <button title={t('Copy pad link to clipboard')} onClick={copyToClipboard}>
-                                <ClipboardIcon fill="var(--color-foreground)" />
-                            </button>
-                            <ChangeRoomAvatar roomId={roomId} />
                             <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
-                            <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                            <ChangeRoomAvatar roomId={roomId} />
+                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
+                            <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
-                            </button>
+                            </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
                     <iframe src={iframeUrl.toString()} />

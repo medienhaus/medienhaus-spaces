@@ -56,8 +56,8 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
         setIsInviteDialogueOpen(prevState => !prevState);
     };
 
-    const handleChange = (event) => {
-        debouncedFetchUsersForContributorSearch(event.target.value);
+    const handleChange = (searchString) => {
+        debouncedFetchUsersForContributorSearch(searchString);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,13 +73,16 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
         }
     }, [matrixClient, t]);
 
-    const handleInvite = async (userId, displayName) => {
-        function clearInputs() {
-            setUserFeedback('');
-            setSearchResults([]);
-        }
+    function clearInputs() {
+        setUserFeedback('');
+        setSearchResults([]);
+        setSelectedUser('');
+    }
 
-        await matrixClient.invite(roomId, userId)
+    const handleInvite = async (e) => {
+        e.preventDefault();
+
+        await matrixClient.invite(roomId, selectedUser.user_id)
             .catch(async err => {
                 // if something went wrong we display the error and clear all inputs
                 setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
@@ -90,26 +93,31 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
                 return;
             });
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + displayName + ' ' + t('was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + selectedUser.display_name + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             setIsInviteDialogueOpen(false);
         }, 3000));
     };
 
+    const handleModalClose = () => {
+        clearInputs();
+        setIsInviteDialogueOpen(false);
+    };
+
     return <>
-        <button title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
+        <TextButton title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
             <UserAddIcon fill="var(--color-foreground)" />
-        </button>
+        </TextButton>
         { isInviteDialogueOpen && (
             <DefaultModal
                 isOpen={isInviteDialogueOpen}
-                onRequestClose={() => setIsInviteDialogueOpen(false)}
+                onRequestClose={handleModalClose}
                 contentLabel="Invite Users"
                 shouldCloseOnOverlayClick={true}>
 
                 <Header>
-                    { t('Invite users to') } { roomName } <CloseButton onClick={() => setIsInviteDialogueOpen(false)}>
+                    { t('Invite users to') } { roomName } <CloseButton onClick={handleModalClose}>
                         <CloseIcon />
                     </CloseButton>
                 </Header>
