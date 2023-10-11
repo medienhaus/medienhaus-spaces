@@ -18,8 +18,10 @@ const ConfirmButton = styled.button`
 `;
 
 const CancelButton = styled.button`
-  color: var(--color-foreground);
-  background-color: var(--color-background);
+  color: ${props => props.warning ? 'var(--color-background)' : 'var(--color-foreground)'};
+  ${props => props.warning && 'border-color: var(--color-notification);'}
+
+  background-color: ${props => props.warning ? 'var(--color-notification)' : 'var(--color-background)'};
 
   &:disabled {
     color: var(--color-disabled);
@@ -27,13 +29,14 @@ const CancelButton = styled.button`
   }
 `;
 
-const ConfirmCancelButtons = ({ children, disabled, onClick, onCancel }) => {
+const ConfirmCancelButtons = ({ children, disabled, onClick, onCancel, cancelTitle }) => {
     const { t } = useTranslation();
+    console.log(children);
 
     return (
         <ConfirmCancelButtonsWrapper>
             <ConfirmButton type="submit" disabled={disabled} onClick={onClick}>{ children ? children : t('Confirm') }</ConfirmButton>
-            <CancelButton type="reset" disabled={disabled} onClick={onCancel}>{ t('Cancel') }</CancelButton>
+            <CancelButton warning type="reset" disabled={disabled} onClick={onCancel}>{ cancelTitle || t('Cancel') }</CancelButton>
         </ConfirmCancelButtonsWrapper>
     );
 };
