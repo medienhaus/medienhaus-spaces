@@ -23,6 +23,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { getOrdinalSuffix } from '../../lib/Utils';
+import useConfirm from '../../components/UI/useConfirm';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -39,6 +40,9 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    // const { confirm, isConfirmVisible, ConfirmDialog } = useConfirm();
+
+    const [loginPrompt, Confirmation] = useConfirm();
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -130,12 +134,17 @@ export default function Spacedeck() {
                 setServerSketches(spacedeck.getStructure());
             } else if (maxTries < MAX_SYNC_TRIES) {
                 logger.debug(`${getOrdinalSuffix(maxTries)} attempt to sync spacedeck`);
-                await spacedeck.syncAllSpaces()
-                    .catch(error => {
-                        setIsSpacedeckServerDown(true);
-                        logger.error('Error during spacedeck synchronization:', error);
-                    });
-                await populateSketchesFromServer(maxTries + 1);
+                const syncSpacedeck = await spacedeck.syncAllSpaces();
+
+                if (syncSpacedeck.status === 401 || syncSpacedeck.status === 403) {
+                    const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
+                    const password = await loginPrompt('Please re-enter your password for ' + username);
+                    if (password) {
+                        await spacedeck.signin(username, password)
+                            .catch(() => {});
+                        await populateSketchesFromServer(maxTries + 1);
+                    } else setIsSpacedeckServerDown(true);
+                }
             } else {
                 logger.error('reached maximum number of tries, can’t sync spacedeck');
                 setIsSpacedeckServerDown(true);
@@ -186,6 +195,7 @@ export default function Spacedeck() {
 
     return (
         <>
+            <Confirmation />
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
