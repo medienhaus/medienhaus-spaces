@@ -23,6 +23,7 @@ import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { path as etherpadPath } from '../../lib/Etherpad';
+import useConfirm from '../../components/UI/useConfirm';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -35,6 +36,7 @@ export default function Etherpad() {
     const router = useRouter();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [loginPrompt, Confirmation] = useConfirm();
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -83,10 +85,21 @@ export default function Etherpad() {
         };
     }, [syncServerPadsAndSet, etherpad]);
 
-    const syncServerPadsAndSet = useCallback(async () => {
-        await etherpad.syncAllPads().catch(() => setServerPads(null));
-        setServerPads(etherpad.getAllPads());
-    }, [etherpad]);
+    const syncServerPadsAndSet = useCallback(async (maxTries = 0) => {
+        if (maxTries > 3) return setServerPads(null);
+
+        const syncMyPads = await etherpad.syncAllPads().catch(() => setServerPads(null));
+
+        if (syncMyPads.status === 401 || syncMyPads.status === 403) {
+            const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
+            const password = await loginPrompt('Please re-enter your password for ' + username);
+            if (password) {
+                await etherpad.signin(username, password)
+                    .catch(() => {});
+                await syncServerPadsAndSet(maxTries + 1);
+            } //@TODO else display error
+        }
+    }, [etherpad, loginPrompt]);
 
     useEffect(() => {
         let cancelled = false;
@@ -188,6 +201,7 @@ export default function Etherpad() {
 
     return (
         <>
+            <Confirmation />
             <IframeLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
