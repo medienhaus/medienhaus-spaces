@@ -123,7 +123,7 @@ export default function Spacedeck() {
     useEffect(() => {
         let cancelled = false;
         const MAX_SYNC_TRIES = 3;
-        const populateSketchesfromServer = async (maxTries = 1) => {
+        const populateSketchesFromServer = async (maxTries = 1) => {
             if (!isEmpty(spacedeck.getStructure())) {
                 setIsSpacedeckServerDown(false);
                 setServerSketches(spacedeck.getStructure());
@@ -134,13 +134,13 @@ export default function Spacedeck() {
                         setIsSpacedeckServerDown(true);
                         logger.error('Error during spacedeck synchronization:', error);
                     });
-                await populateSketchesfromServer(maxTries + 1);
+                await populateSketchesFromServer(maxTries + 1);
             } else {
                 logger.error('reached maximum number of tries, can’t sync spacedeck');
                 setIsSpacedeckServerDown(true);
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesFromServer();
 
         return () => {
             cancelled = true;
