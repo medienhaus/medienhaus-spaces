@@ -21,6 +21,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import { getOrdinalSuffix } from '../../lib/Utils';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -121,14 +122,21 @@ export default function Spacedeck() {
 
     useEffect(() => {
         let cancelled = false;
-        const populateSketchesfromServer = async (recursion) => {
+        const MAX_SYNC_TRIES = 3;
+        const populateSketchesfromServer = async (maxTries = 1) => {
             if (!isEmpty(spacedeck.getStructure())) {
                 setIsSpacedeckServerDown(false);
                 setServerSketches(spacedeck.getStructure());
-            } else if (!recursion) {
-                await spacedeck.syncAllSpaces();
-                await populateSketchesfromServer(true);
-            } else if (recursion) {
+            } else if (maxTries < MAX_SYNC_TRIES) {
+                logger.debug(`${getOrdinalSuffix(maxTries)} attempt to sync spacedeck`);
+                await spacedeck.syncAllSpaces()
+                    .catch(error => {
+                        setIsSpacedeckServerDown(true);
+                        logger.error('Error during spacedeck synchronization:', error);
+                    });
+                await populateSketchesfromServer(maxTries + 1);
+            } else {
+                logger.error('reached maximum number of tries, can’t sync spacedeck');
                 setIsSpacedeckServerDown(true);
             }
         };
