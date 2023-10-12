@@ -52,6 +52,8 @@ const TableBody = styled.tbody`
 `;
 
 const TableRow = styled.tr`
+  max-width: 100%;
+  color: ${props => props.selected && 'var(--color-disabled)' };
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid rgb(0 0 0 / 5%);
   border-bottom: 1px solid rgb(0 0 0 / 5%);

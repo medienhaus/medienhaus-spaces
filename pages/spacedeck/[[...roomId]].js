@@ -21,6 +21,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { getOrdinalSuffix } from '../../lib/Utils';
 
 export default function Spacedeck() {
@@ -224,6 +225,7 @@ export default function Spacedeck() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
