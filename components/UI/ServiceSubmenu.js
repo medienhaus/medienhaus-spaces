@@ -66,8 +66,8 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                         onChange={(e) => setValue(e.target.value)}
                     >
                         <option disabled value="">-- { t('Select action') } --</option>
-                        { items.map(({ value, label }) => (
-                            <option key={value} value={value}>{ label }</option>
+                        { items.map(({ value, disabled, label }) => (
+                            <option key={value} value={value} disabled={disabled}>{ label }</option>
                         )) }
                     </select>
                     { value && ActionComponent }
