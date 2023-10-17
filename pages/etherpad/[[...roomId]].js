@@ -36,7 +36,7 @@ export default function Etherpad() {
     const router = useRouter();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
-    const [loginPrompt, Confirmation] = useConfirm();
+    const { loginPrompt, Confirmation, password } = useConfirm();
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -88,17 +88,27 @@ export default function Etherpad() {
     const syncServerPadsAndSet = useCallback(async (maxTries = 0) => {
         if (maxTries > 3) return setServerPads(null);
 
-        const syncMyPads = await etherpad.syncAllPads().catch(() => setServerPads(null));
-
-        if (syncMyPads.status === 401 || syncMyPads.status === 403) {
+        const loginForm = async (maxTries) => {
             const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
             const password = await loginPrompt('Please re-enter your password for ' + username);
             if (password) {
                 await etherpad.signin(username, password)
                     .catch(() => {});
-                await syncServerPadsAndSet(maxTries + 1);
+
+                return await syncServerPadsAndSet(maxTries + 1);
             } //@TODO else display error
+
+            return false;
+        };
+
+        const syncMyPads = await etherpad.syncAllPads().catch(() => setServerPads(null));
+        if (syncMyPads.status === 401 || syncMyPads.status === 403) {
+            await loginForm(maxTries);
+
+            return;
         }
+
+        setServerPads(syncMyPads);
     }, [etherpad, loginPrompt]);
 
     useEffect(() => {
@@ -201,12 +211,12 @@ export default function Etherpad() {
 
     return (
         <>
-            <Confirmation />
             <IframeLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
                         <h2>{ etherpadPath }</h2>
                         <LoadingSpinner />
+
                     </>
                 ) : (
                     <>
@@ -252,6 +262,7 @@ export default function Etherpad() {
                     <iframe src={iframeUrl.toString()} />
                 </IframeLayout.IframeWrapper>
             ) }
+            <Confirmation password={password} />
         </>
     );
 }
