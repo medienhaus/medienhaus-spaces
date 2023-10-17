@@ -42,7 +42,7 @@ export default function Spacedeck() {
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
     // const { confirm, isConfirmVisible, ConfirmDialog } = useConfirm();
 
-    const [loginPrompt, Confirmation] = useConfirm();
+    const { loginPrompt, Confirmation, password } = useConfirm();
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -136,7 +136,8 @@ export default function Spacedeck() {
                 logger.debug(`${getOrdinalSuffix(maxTries)} attempt to sync spacedeck`);
                 const syncSpacedeck = await spacedeck.syncAllSpaces();
 
-                if (syncSpacedeck.status === 401 || syncSpacedeck.status === 403) {
+                if (syncSpacedeck.status === 401 ||
+                    syncSpacedeck.status === 403) {
                     const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
                     const password = await loginPrompt('Please re-enter your password for ' + username);
                     if (password) {
@@ -155,7 +156,7 @@ export default function Spacedeck() {
         return () => {
             cancelled = true;
         };
-    }, [spacedeck]);
+    }, [loginPrompt, spacedeck]);
 
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
@@ -195,7 +196,7 @@ export default function Spacedeck() {
 
     return (
         <>
-            <Confirmation />
+            <Confirmation password={password} />
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
