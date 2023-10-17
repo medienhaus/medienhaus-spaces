@@ -9,7 +9,7 @@ import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path } from '../../../lib/Spacedeck';
 
-const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
+const CreateNewSketch = ({ callbackDone, createSketchRoom, checkServerStatus, loginPrompt }) => {
     const [sketchName, setSketchName] = useState('');
     const [loading, setLoading] = useState(false);
     const auth = useAuth();
@@ -21,7 +21,27 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const createNewSketchRoom = async () => {
         setLoading(true);
 
-        const create = await spacedeck.createSpace(sketchName);
+        const create = await spacedeck.createSpace(sketchName)
+            .catch(() => {});
+        if (!create) {
+            setLoading(false);
+
+            return checkServerStatus();
+        }
+        if (create.status === 401 ||
+            create.status === 403) {
+            const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
+            const password = await loginPrompt('Please re-enter your password for ' + username)
+                .catch(() => {
+                    setErrorMessage(t('No password provided'));
+
+                    return setLoading(false);
+                });
+            if (!password) return;
+            await spacedeck.signin(username, password)
+                .catch(() => {});
+            await createNewSketchRoom();
+        }
         const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + create._id;
         const roomId = await createSketchRoom(link, sketchName)
             .catch(error => setErrorMessage((err) => {
