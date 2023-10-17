@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DefaultModal from './Modal';
@@ -9,10 +9,10 @@ const useLoginPrompt = () => {
     const [open, setOpen] = useState(false);
     const [password, setPassword] = useState('');
     const [resolver, setResolver] = useState({ resolver: null });
-    const [label, setLabel] = useState();
+    const [label, setLabel] = useState('');
     const { t } = useTranslation();
 
-    const createPromise = async () => {
+    const createPromise = () => {
         let resolver;
 
         return [new Promise((resolve, reject) => {
@@ -20,32 +20,57 @@ const useLoginPrompt = () => {
         }), resolver];
     };
 
-    const getConfirmation = async (text) => {
+    const loginPrompt = useCallback(async (text) => {
         setLabel(text);
         setOpen(true);
-        const [promise, resolve] = await createPromise();
+        const [promise, resolve] = createPromise();
         setResolver({ resolve });
 
         return promise;
-    };
+    }, []);
 
-    const onClick = async (status) => {
+    const handlePasswordInput = useCallback((e) => {
+        setPassword(e.target.value);
+    }, []);
+
+    const onClick = useCallback(async (status) => {
         setOpen(false);
-        resolver.resolve(status);
-    };
+        if (status) resolver.resolve(status);
+    }, [resolver]);
 
-    const Confirmation = () => (
-        <DefaultModal isOpen={open}
+    const onCancel = useCallback(async () => {
+        setPassword('');
+        setOpen(false);
+    }, []);
+
+    // const confirmation = <DefaultModal
+    //     isOpen={open}
+    //     contentLabel={label}
+    //     onRequestClose={() => onClick(false)}>
+    //     <Form>
+    //         <input type="password" placeholder={t('password')} value={password} onChange={handlePasswordInput} />
+    //         <ConfirmCancelButtons disabled={!password}
+    //             onClick={() => onClick(password)}
+    //             onCancel={onCancel} />
+    //     </Form>
+    // </DefaultModal>;
+
+    const Confirmation = useCallback(
+        ({ password }) => <DefaultModal
+            isOpen={open}
             contentLabel={label}
             onRequestClose={() => onClick(false)}>
             <Form>
-                <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                <ConfirmCancelButtons disabled={!password} onClick={() => onClick(password)} onCancel={() => onClick(false)} />
+                <input type="password" placeholder={t('password')} value={password} onChange={handlePasswordInput} />
+                <ConfirmCancelButtons disabled={!password}
+                    onClick={() => onClick(password)}
+                    onCancel={onCancel} />
             </Form>
-        </DefaultModal>
+        </DefaultModal>,
+        [handlePasswordInput, label, onCancel, onClick, open, t],
     );
 
-    return [getConfirmation, Confirmation];
+    return { loginPrompt, Confirmation, password };
 };
 
 export default useLoginPrompt;
