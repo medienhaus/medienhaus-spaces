@@ -24,6 +24,7 @@ import { path as spacedeckPath } from '../../lib/Spacedeck';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { getOrdinalSuffix } from '../../lib/Utils';
 import useConfirm from '../../components/UI/useConfirm';
+import useServerStatus from '../../components/useServerStatus';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -45,9 +46,10 @@ export default function Spacedeck() {
     const { loginPrompt, Confirmation, password } = useConfirm();
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
+    const [isSpacedeckServerOnline, checkServerStatus] = useServerStatus(spacedeck.url);
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedSketchRef = useRef(null);
     useEffect(() => {
         selectedSketchRef.current?.focus();
@@ -107,11 +109,18 @@ export default function Spacedeck() {
         // Function to sync spacedeck sketches with Matrix rooms
         const syncServerSketchesWithMatrix = async () => {
             setSyncingServerSketches(true);
+
             // Collect all Matrix sketches within the serviceSpaceId
             getAllMatrixSketches(serviceSpaceId);
 
+            // Sync all spacedeck spaces and sketches
+            const syncSketches = await spacedeck.syncAllSpaces().catch((error) => {
+                logger.debug(error);
+                checkServerStatus();
+            });
+
             // Update the Matrix structure based on spacedeck sketches
-            await updateStructure(spacedeck.getStructure());
+            syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
         };
 
@@ -226,7 +235,7 @@ export default function Spacedeck() {
                                 }) }
                             </ServiceTable.Body>
                         </ServiceTable>
-                        { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                        { !isSpacedeckServerOnline && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
 
                 }
