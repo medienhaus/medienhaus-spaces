@@ -7,7 +7,7 @@ const NotificationBubble = styled.sup`
   color: var(--color-notification);
   vertical-align: super;
 
-  ::after {
+  &::after {
     content: '●';
   }
 `;
