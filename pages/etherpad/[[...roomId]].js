@@ -22,6 +22,7 @@ import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { path as etherpadPath } from '../../lib/Etherpad';
+import useServerStatus from '../../components/useServerStatus';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -29,6 +30,7 @@ export default function Etherpad() {
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
+    const [isSpacedeckServerOnline, checkServerStatus] = useServerStatus(etherpad.url);
 
     const { t } = useTranslation('etherpad');
     const router = useRouter();
@@ -75,7 +77,7 @@ export default function Etherpad() {
                 await syncServerPadsAndSet();
             }
         };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && populatePadsfromServer();
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && isSpacedeckServerOnline && populatePadsfromServer();
 
         return () => {
             cancelled = true;
