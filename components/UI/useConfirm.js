@@ -13,18 +13,20 @@ const useLoginPrompt = () => {
     const { t } = useTranslation();
 
     const createPromise = () => {
-        let resolver;
+        let resolved;
+        let rejecter;
 
         return [new Promise((resolve, reject) => {
-            resolver = resolve;
-        }), resolver];
+            resolved = resolve;
+            rejecter = reject;
+        }), resolved, rejecter];
     };
 
     const loginPrompt = useCallback(async (text) => {
         setLabel(text);
         setOpen(true);
-        const [promise, resolve] = createPromise();
-        setResolver({ resolve });
+        const [promise, resolve, reject] = createPromise();
+        setResolver({ resolve, reject });
 
         return promise;
     }, []);
@@ -41,7 +43,10 @@ const useLoginPrompt = () => {
     const onCancel = useCallback(async () => {
         setPassword('');
         setOpen(false);
-    }, []);
+        if (resolver.reject) {
+            resolver.reject('User canceled'); // Reject the promise
+        }
+    }, [resolver]);
 
     // const confirmation = <DefaultModal
     //     isOpen={open}
@@ -62,7 +67,7 @@ const useLoginPrompt = () => {
             onRequestClose={() => onClick(false)}>
             <Form>
                 <input type="password" placeholder={t('password')} value={password} onChange={handlePasswordInput} />
-                <ConfirmCancelButtons disabled={!password}
+                <ConfirmCancelButtons disableConfirm={!password}
                     onClick={() => onClick(password)}
                     onCancel={onCancel} />
             </Form>
