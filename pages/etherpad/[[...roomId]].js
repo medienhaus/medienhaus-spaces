@@ -242,6 +242,7 @@ export default function Etherpad() {
                                         roomId={writeRoomId}
                                         name={_.get(matrix.rooms.get(writeRoomId), 'name')}
                                         href={`${etherpadPath}/${writeRoomId}`}
+                                        path={etherpadPath}
                                         passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
                                         selected={writeRoomId === roomId}
                                         ref={writeRoomId === roomId ? selectedPadRef : null}

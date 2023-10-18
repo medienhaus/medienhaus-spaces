@@ -235,6 +235,8 @@ export default function Spacedeck() {
                                     return <ServiceLink
                                         key={spacedeckRoomId}
                                         name={room.name}
+                                        roomId={spacedeckRoomId}
+                                        path={spacedeckPath}
                                         href={`${spacedeckPath}/${spacedeckRoomId}`}
                                         selected={roomId === spacedeckRoomId}
                                         ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
