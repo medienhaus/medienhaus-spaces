@@ -23,7 +23,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { getOrdinalSuffix } from '../../lib/Utils';
-import useConfirm from '../../components/UI/useConfirm';
+import useConfirm from '../../components/UI/useLoginPrompt';
 import useServerStatus from '../../components/useServerStatus';
 
 export default function Spacedeck() {
