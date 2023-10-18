@@ -24,7 +24,7 @@ import CreatePasswordPad from './actions/CreatePasswordPad';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { path as etherpadPath } from '../../lib/Etherpad';
 import useServerStatus from '../../components/useServerStatus';
-import useConfirm from '../../components/UI/useConfirm';
+import useConfirm from '../../components/UI/useLoginPrompt';
 
 export default function Etherpad() {
     const auth = useAuth();

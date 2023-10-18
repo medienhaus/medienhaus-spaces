@@ -14,12 +14,12 @@ const useLoginPrompt = () => {
 
     const createPromise = () => {
         let resolved;
-        let rejecter;
+        let rejected;
 
         return [new Promise((resolve, reject) => {
             resolved = resolve;
-            rejecter = reject;
-        }), resolved, rejecter];
+            rejected = reject;
+        }), resolved, rejected];
     };
 
     const loginPrompt = useCallback(async (text) => {
@@ -48,23 +48,11 @@ const useLoginPrompt = () => {
         }
     }, [resolver]);
 
-    // const confirmation = <DefaultModal
-    //     isOpen={open}
-    //     contentLabel={label}
-    //     onRequestClose={() => onClick(false)}>
-    //     <Form>
-    //         <input type="password" placeholder={t('password')} value={password} onChange={handlePasswordInput} />
-    //         <ConfirmCancelButtons disabled={!password}
-    //             onClick={() => onClick(password)}
-    //             onCancel={onCancel} />
-    //     </Form>
-    // </DefaultModal>;
-
     const Confirmation = useCallback(
         ({ password }) => <DefaultModal
             isOpen={open}
             contentLabel={label}
-            onRequestClose={() => onClick(false)}>
+            onRequestClose={() => onCancel()}>
             <Form>
                 <input type="password" placeholder={t('password')} value={password} onChange={handlePasswordInput} />
                 <ConfirmCancelButtons disableConfirm={!password}
