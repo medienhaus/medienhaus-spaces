@@ -40,7 +40,6 @@ export default function Spacedeck() {
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
-    const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
     // const { confirm, isConfirmVisible, ConfirmDialog } = useConfirm();
 
     const { loginPrompt, Confirmation, password } = useConfirm();
@@ -139,7 +138,6 @@ export default function Spacedeck() {
         const MAX_SYNC_TRIES = 3;
         const populateSketchesFromServer = async (maxTries = 1) => {
             if (!isEmpty(spacedeck.getStructure())) {
-                setIsSpacedeckServerDown(false);
                 setServerSketches(spacedeck.getStructure());
             } else if (maxTries < MAX_SYNC_TRIES) {
                 logger.debug(`${getOrdinalSuffix(maxTries)} attempt to sync spacedeck`);
@@ -148,16 +146,17 @@ export default function Spacedeck() {
                 if (syncSpacedeck.status === 401 ||
                     syncSpacedeck.status === 403) {
                     const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
-                    const password = await loginPrompt('Please re-enter your password for ' + username);
+                    const password = await loginPrompt('Please re-enter your password for ' + username)
+                        .catch((error => setErrorMessage(t('no password provided'))
+                        ));
                     if (password) {
                         await spacedeck.signin(username, password)
                             .catch(() => {});
                         await populateSketchesFromServer(maxTries + 1);
-                    } else setIsSpacedeckServerDown(true);
+                    }
                 }
             } else {
                 logger.error('reached maximum number of tries, can’t sync spacedeck');
-                setIsSpacedeckServerDown(true);
             }
         };
         !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesFromServer();
