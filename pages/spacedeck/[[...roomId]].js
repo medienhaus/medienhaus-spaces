@@ -224,7 +224,10 @@ export default function Spacedeck() {
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
+                    <iframe
+                        title={spacedeckPath}
+                        src={content.body}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
