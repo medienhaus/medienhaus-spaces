@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
@@ -157,4 +157,3 @@ export default function Dashboard() {
         </>
     );
 }
-
