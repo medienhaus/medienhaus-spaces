@@ -21,7 +21,9 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
+import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { path as etherpadPath } from '../../lib/Etherpad';
+import ChangeRoomAvatar from '../../components/UI/ChangeRoomAvatar';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -227,6 +229,8 @@ export default function Etherpad() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                            <ChangeRoomAvatar roomId={roomId} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }

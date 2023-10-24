@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { styled } from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
+import ImageUpload from '../components/UI/ImageUpload';
 
 const ProfileSection = styled.div`
   display: grid;
@@ -88,8 +89,6 @@ export default function Account() {
 
     const [feedbackMessage, setFeedbackMessage] = useState(null);
 
-    const avatarFileUploadInput = useRef(null);
-
     const fetchEmails = useCallback(async () => {
         setEmails(map(filter((await matrixClient.getThreePids()).threepids, { medium: 'email' }), 'address'));
     }, [matrixClient]);
@@ -100,11 +99,9 @@ export default function Account() {
         setInputDisplayname(profileInfo.displayname);
     }, [matrixClient]);
 
-    const uploadAvatar = async (event) => {
+    const uploadAvatar = async (imageUri) => {
         setIsChangingAvatar(true);
-        const uploadResponse = await matrixClient.uploadContent(event.target.files[0], { onlyContentUri: false });
-        if (!uploadResponse.content_uri) return;
-        await matrixClient.setAvatarUrl(uploadResponse.content_uri);
+        await matrixClient.setAvatarUrl(imageUri);
         await fetchProfileInfo();
         setIsChangingAvatar(false);
     };
@@ -223,8 +220,7 @@ export default function Account() {
                     <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                 ) }
                 <AvatarButtonContainer>
-                    <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                    <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload') } …</button>
+                    <ImageUpload callback={uploadAvatar} />
                     { profileInfo.avatar_url && (
                         <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
                     ) }

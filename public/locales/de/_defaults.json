@@ -12,9 +12,11 @@
   "Save changes": "Änderungen speichern",
   "Select action": "Aktion wählen",
   "What would you like to do?": "Was möchtest Du tun?",
-  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
   "Invitations": "Einladungen",
   "From": "Von",
   "Accept": "Annehmen",
-  "Decline": "Ablehnen"
+  "Decline": "Ablehnen",
+  "Something went wrong, please try again": "Da ist etwas schief gelaufen, bitte versuche es erneut",
+  "You don’t have the required permissions": "Du besitzt nicht die nötigen Rechte",
+  "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."
 }
