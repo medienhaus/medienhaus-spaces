@@ -121,7 +121,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                     <button disabled={selectedUsers.length === 0}>{ t('invite {{amount}}', { amount: selectedUsers.length > 0 ? selectedUsers.length : '' }) }</button>
                 </>
             }
-            { userFeedback && userFeedback }
+            { userFeedback && errorFeedback && userFeedback }
             { errorFeedback && errorFeedback }
         </InviteUserForm>
     </>;

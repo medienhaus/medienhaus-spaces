@@ -6,14 +6,14 @@ import { ServiceTable } from './ServiceTable';
  * An input component that functions as a datalist and can be controlled with arrow keys and mouse clicks.
  *
  * @component
- * @param {string[]} options - An array of Objects for the datalist.
+ * @param {Object[]} options - An array of Objects for the datalist.
  * @param {function} onChange - function to execute when input changes, receives string as first parameter.
  * @param {function} onSelect - function to execute when a result from the datalist was selected
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results
  * @returns {React.JSX.Element} The Datalist component.
  */
 
-function Datalist({ options, onChange, onSelect, keysToDisplay }) {
+export default function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +39,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
             if (!isOpen) {
                 setIsOpen(true);
             } else {
-                const newIndex = Math.min(selectedIndex + 1, options.length - 1);
-                setSelectedIndex(newIndex);
+                setSelectedIndex(Math.min(selectedIndex + 1, options.length - 1));
             }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -92,7 +91,6 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
                 <ServiceTable>
                     <ServiceTable.Body>
                         { options.map((option, index) => (
-
                             <a
                                 onClick={() => handleSelect(option)}>
                                 <ServiceTable.Row
@@ -115,5 +113,3 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
         </div>
     );
 }
-
-export default Datalist;
