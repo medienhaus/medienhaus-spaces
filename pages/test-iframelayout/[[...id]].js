@@ -22,7 +22,10 @@ export default function TestIframeLayout() {
                 <p><Link href="/test-iframelayout/wikimedia.de">wikimedia.de</Link></p>
             </IframeLayout.Sidebar>
             { domainToLoad && <IframeLayout.IframeWrapper>
-                <iframe src={`https://${domainToLoad}`} />
+                <iframe
+                    title="Test"
+                    src={`https://${domainToLoad}`}
+                />
             </IframeLayout.IframeWrapper> }
         </>
     );

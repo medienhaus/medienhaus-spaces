@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';

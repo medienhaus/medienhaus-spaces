@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
@@ -183,7 +183,11 @@ export default function Chat() {
             </IframeLayout.Sidebar>
             { roomId && (
                 <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>

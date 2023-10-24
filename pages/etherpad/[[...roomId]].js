@@ -249,7 +249,10 @@ export default function Etherpad() {
                             roomName={matrix.rooms.get(roomId).name}
                             onSuccess={() => setIsInviteUsersOpen(false)}
                         /> :
-                        <iframe src={iframeUrl.toString()} />
+                        <iframe
+                            title={etherpadPath}
+                            src={iframeUrl.toString()}
+                        />
                     }
                 </IframeLayout.IframeWrapper>
             ) }
