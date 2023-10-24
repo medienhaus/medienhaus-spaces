@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Clipboard from '../../assets/icons/clipboard.svg';
 import TextButton from './TextButton';
+import { ClipboardIcon } from '@remixicons/react/line';
 
 const CopyToClipboard = ({ content, title }) => {
     const [wasContentCopied, setWasContentCopied] = useState(false);
@@ -19,7 +19,7 @@ const CopyToClipboard = ({ content, title }) => {
         <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
             { wasContentCopied ?
                 '✓':
-                <Clipboard fill="var(--color-fg)" /> }
+                <ClipboardIcon width="24" height="24" fill="var(--color-fg)" /> }
         </TextButton>
     );
 };

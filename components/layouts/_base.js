@@ -2,11 +2,10 @@ import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
 
-import CloseIcon from '../../assets/icons/close.svg';
-import MenuIcon from '../../assets/icons/menu.svg';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
+import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
 const Wrapper = styled.div`
   display: flex;
@@ -120,11 +119,11 @@ export default function BaseLayout({ children }) {
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
                         <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
-                            <CloseIcon fill="var(--color-foreground)" />
+                            <CloseIcon width="24" height="24" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) : (
                         <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
-                            <MenuIcon fill="var(--color-foreground)" />
+                            <MenuIcon width="24" height="24" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) }
                 </Header>
