@@ -23,7 +23,6 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     const handleChange = async (e) => {
         setIsLoading(true);
         setValue(e.target.value);
-        onSelect(null);
         await onChange(e.target.value);
         if (e.target.value !== '') setIsOpen(true);
         else {
@@ -64,10 +63,10 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     };
 
     const handleSelect = (selectedOption) => {
-        setValue(stringifySelection(selectedOption));
         onSelect(selectedOption);
-        setSelectedIndex(-1);
-        setIsOpen(false);
+        setValue(stringifySelection(selectedOption));
+        // setSelectedIndex(-1);
+        // setIsOpen(false);
         inputRef.current.focus();
     };
 
@@ -91,20 +90,26 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
             />
             { options.length > 0 && isOpen && (
                 <ServiceTable>
-                    { options.map((option, index) => (
-                        <ServiceTable.Row
-                            key={index}
-                            selected={selectedIndex === index}
-                            onClick={() => handleSelect(option)}>
-                            { keysToDisplay.map(key => {
-                                return <ServiceTable.Cell
-                                    key={key}>
-                                    { option[key] }
-                                </ServiceTable.Cell>;
-                            }) }
+                    <ServiceTable.Body>
+                        { options.map((option, index) => (
 
-                        </ServiceTable.Row>
-                    )) }
+                            <a
+                                onClick={() => handleSelect(option)}>
+                                <ServiceTable.Row
+                                    key={index}
+                                    selected={selectedIndex === index}
+                                >
+                                    { keysToDisplay.map(key => {
+                                        return <ServiceTable.Cell
+                                            key={key}>
+                                            { option[key] }
+                                        </ServiceTable.Cell>;
+                                    }) }
+
+                                </ServiceTable.Row>
+                            </a>
+                        )) }
+                    </ServiceTable.Body>
                 </ServiceTable>
             ) }
         </div>
