@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 import { ServiceTable } from './ServiceTable';
+import TextButton from './TextButton';
 
 /**
  * An input component that functions as a datalist and can be controlled with arrow keys and mouse clicks.
@@ -91,21 +92,19 @@ export default function Datalist({ options, onChange, onSelect, keysToDisplay })
                 <ServiceTable>
                     <ServiceTable.Body>
                         { options.map((option, index) => (
-                            <a
-                                onClick={() => handleSelect(option)}>
-                                <ServiceTable.Row
-                                    key={index}
-                                    selected={selectedIndex === index}
-                                >
-                                    { keysToDisplay.map(key => {
-                                        return <ServiceTable.Cell
-                                            key={key}>
-                                            { option[key] }
-                                        </ServiceTable.Cell>;
-                                    }) }
-
-                                </ServiceTable.Row>
-                            </a>
+                            <ServiceTable.Row
+                                onClick={() => handleSelect(option)}
+                                key={index}
+                                selected={selectedIndex === index}
+                            >
+                                { keysToDisplay.map((key, keyIndex) => {
+                                    return <ServiceTable.Cell
+                                        key={key}>
+                                        { keyIndex === 0 && selectedIndex === index && '→ ' }
+                                        { option[key] }
+                                    </ServiceTable.Cell>;
+                                }) }
+                            </ServiceTable.Row>
                         )) }
                     </ServiceTable.Body>
                 </ServiceTable>
