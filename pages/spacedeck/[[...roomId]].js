@@ -175,21 +175,20 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
-    if (!serviceSpaceId) return <LoadingSpinner />;
-
     return (
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
+                    disabled={!serviceSpaceId}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                { syncingServerSketches ?
+                { !serviceSpaceId || syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
