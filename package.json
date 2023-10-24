@@ -47,8 +47,10 @@
       "matrix-org"
     ],
     "extends": [
+      "plugin:import/recommended",
       "plugin:matrix-org/babel",
       "plugin:matrix-org/react",
+      "plugin:matrix-org/a11y",
       "plugin:@next/next/recommended"
     ],
     "env": {

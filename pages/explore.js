@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 
 import ContextMultiLevelSelect from '../components/ContextMultiLevelSelect';
 import { useAuth } from '../lib/Auth';
@@ -17,10 +18,19 @@ const ExploreSection = styled.div`
 `;
 
 export default function Explore() {
+    const router = useRouter();
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = matrix.getMatrixClient();
     const { t } = useTranslation('explore');
+
+    // If there's no context root space set in our configuration we can't make any use of the /explore page at
+    // the moment, so we forward the user to `/`
+    if (!getConfig().publicRuntimeConfig.contextRootSpaceRoomId) {
+        router.replace('/');
+
+        return null;
+    }
 
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);

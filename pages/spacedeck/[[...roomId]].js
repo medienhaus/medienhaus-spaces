@@ -1,7 +1,6 @@
 import getConfig from 'next/config';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isEmpty } from 'lodash';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
@@ -128,7 +127,7 @@ export default function Spacedeck() {
     useEffect(() => {
         let cancelled = false;
         const populateSketchesfromServer = async (recursion) => {
-            if (!isEmpty(spacedeck.getStructure())) {
+            if (!_.isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
                 await spacedeck.syncAllSpaces();
@@ -225,7 +224,10 @@ export default function Spacedeck() {
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
+                    <iframe
+                        title={spacedeckPath}
+                        src={content.body}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>

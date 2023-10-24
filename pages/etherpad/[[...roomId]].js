@@ -262,7 +262,10 @@ export default function Etherpad() {
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={iframeUrl.toString()} />
+                    <iframe
+                        title={etherpadPath}
+                        src={iframeUrl.toString()}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
