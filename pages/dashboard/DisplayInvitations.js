@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import { CheckIcon, CloseIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
-import AcceptIcon from '../../assets/icons/accept.svg';
-import CloseIcon from '../../assets/icons/close.svg';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 /**
@@ -69,12 +68,12 @@ const DisplayInvitations = ({ invite, path, acceptMatrixInvite, declineMatrixInv
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('accept invitation')}>
                 <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <AcceptIcon /> }
+                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <CheckIcon width="24" height="24" /> }
                 </TextButton>
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('decline invitation')}>
                 <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon /> }
+                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon width="24" height="24" /> }
                 </TextButton>
             </ServiceTable.Cell>
         </ServiceTable.Row>

@@ -2,8 +2,8 @@ import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { styled } from 'styled-components';
+import { LockIcon } from '@remixicons/react/line';
 
-import LockIcon from '../../assets/icons/lock.svg';
 import { ServiceTable } from './ServiceTable';
 
 const LockIconResized = styled(LockIcon)`
