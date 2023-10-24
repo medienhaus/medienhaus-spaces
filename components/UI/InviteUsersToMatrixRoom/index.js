@@ -1,44 +1,45 @@
 /**
- * This component renders a button whoch onClick opens a Modal.
- * `activeContexts` is the array of room IDs for the currently set context spaces.
+ * This component provides a user interface for inviting other users to a Matrix room.
+ * It includes a form for searching and inviting users, and provides feedback to the user.
  *
- * @param {string} roomId (valid matrix roomId)
- * @param {string} roomName (name of the matrix room)
- *
- * @return {React.ReactElement}
- *
- * @TODO
- * - create separate component for the invitation dialogue so it can be used without the button and maybe without the modal view.
- * - maybe swap datalist for a different UI element. datalist handling is far from optimal, since we have to manually get the userId and displayName after a user has selected the user to invite.
- *   Even though we already have it from the `matrixClient.searchUserDirectory` call. The problem is that afaik there is no way to parse the object from the <option>.
- *
+ * @param {string} roomId - The valid Matrix room ID to which you want to invite a user.
+ * @param {string} roomName - The name of the Matrix room.
+ * @param {Function} onSuccess - An optional callback function to execute after a successful invitation.
+
+ * @returns {React.ReactElement} - A React element representing the component.
+
+ * @example
+ * // Example usage of the InviteUserToMatrixRoom component:
+ * <InviteUserToMatrixRoom roomId="your-room-id" roomName="Your Room" onSuccess={handleSuccess} />
  */
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import styled from 'styled-components';
 
-import TextButton from '../TextButton';
-import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
-import DefaultModal from '../Modal';
 import Datalist from '../Datalist';
 
-export default function InviteUserToMatrixRoom({ roomId, roomName }) {
+const InviteUserForm = styled(Form)`
+  display: grid;
+  align-content: start;
+  justify-self: start;
+  width: 100%;
+  height: 100%;
+  padding: var(--margin);
+`;
+
+export default function InviteUserToMatrixRoom({ roomId, roomName, onSuccess }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
     const [selectedUser, setSelectedUser] = useState();
     const { t } = useTranslation('invitationModal');
-
-    const handleClick = () => {
-        setIsInviteDialogueOpen(prevState => !prevState);
-    };
 
     const handleChange = (searchString) => {
         debouncedFetchUsersForContributorSearch(searchString);
@@ -80,39 +81,25 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
         setUserFeedback('✓ ' + selectedUser.display_name + ' ' + t('was invited and needs to accept your invitation'));
         await new Promise(() => setTimeout(() => {
             clearInputs();
-            setIsInviteDialogueOpen(false);
+            onSuccess && onSuccess();
         }, 3000));
     };
 
-    const handleModalClose = () => {
-        clearInputs();
-        setIsInviteDialogueOpen(false);
-    };
-
     return <>
-        <TextButton title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
-            <UserAddIcon fill="var(--color-foreground)" />
-        </TextButton>
-        { isInviteDialogueOpen && (
-            <DefaultModal
-                isOpen={isInviteDialogueOpen}
-                onRequestClose={handleModalClose}
-                contentLabel={t('Invite users to {{roomName}}', { roomName: roomName })}
-                shouldCloseOnOverlayClick={true}>
-
-                { userFeedback ? <div>{ userFeedback }</div> :
-                    <Form onSubmit={handleInvite}>
-                        <Datalist
-                            options={searchResults}
-                            onChange={handleChange}
-                            keysToDisplay={['display_name', 'user_id']}
-                            onSelect={setSelectedUser}
-                        />
-                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
-                    </Form>
-                }
-            </DefaultModal>
-        ) }
+        <InviteUserForm onSubmit={handleInvite}>
+            <legend>{ t('Invite users to {{roomName}}', { roomName: roomName }) }</legend>
+            { userFeedback ? <div>{ userFeedback }</div> :
+                <>
+                    <Datalist
+                        options={searchResults}
+                        onChange={handleChange}
+                        keysToDisplay={['display_name', 'user_id']}
+                        onSelect={setSelectedUser}
+                    />
+                    { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
+                </>
+            }
+        </InviteUserForm>
     </>;
 }
 

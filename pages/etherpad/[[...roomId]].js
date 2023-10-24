@@ -23,6 +23,8 @@ import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { path as etherpadPath } from '../../lib/Etherpad';
+import UserAddIcon from '../../assets/icons/user-add.svg';
+import UserRemoveIcon from '../../assets/icons/user-remove.svg';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -35,6 +37,7 @@ export default function Etherpad() {
     const router = useRouter();
     const [serverPads, setServerPads] = useState({});
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -64,6 +67,8 @@ export default function Etherpad() {
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
+        // closing any other open user function in case they are open
+        setIsInviteUsersOpen(false);
     }, [roomId]);
 
     useEffect(() => {
@@ -228,14 +233,24 @@ export default function Etherpad() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                            <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
+                                { isInviteUsersOpen ? <UserRemoveIcon fill="var(--color-foreground)" /> : <UserAddIcon fill="var(--color-foreground)" /> }
+                            </TextButton>
+
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={iframeUrl.toString()} />
+                    { isInviteUsersOpen ?
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        /> :
+                        <iframe src={iframeUrl.toString()} />
+                    }
                 </IframeLayout.IframeWrapper>
             ) }
         </>
