@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
