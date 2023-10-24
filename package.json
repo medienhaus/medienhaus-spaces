@@ -66,7 +66,8 @@
       "jsx-quotes": [
         "error",
         "prefer-double"
-      ]
+      ],
+      "import/no-named-as-default": "off"
     }
   }
 }
