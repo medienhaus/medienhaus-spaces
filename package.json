@@ -40,11 +40,14 @@
     ],
     "extends": [
       "next",
-      "plugin:matrix-org/babel",
+      "plugin:matrix-org/javascript",
       "plugin:matrix-org/a11y",
       "plugin:matrix-org/react",
       "plugin:import/recommended"
     ],
+    "env": {
+      "es6": true
+    },
     "rules": {
       "padding-line-between-statements": [
         "error",

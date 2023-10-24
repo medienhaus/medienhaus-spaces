@@ -28,5 +28,6 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref
         </ServiceTable.Row>
     );
 });
+ServiceLink.displayName = 'ServiceLink';
 
 export default ServiceLink;

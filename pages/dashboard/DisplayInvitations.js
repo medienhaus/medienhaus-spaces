@@ -8,23 +8,30 @@ import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 /**
- * COMPONENT 'DisplayInvitations'
- * Displays an invitation for a matrix room/space within a <ServiceTable> component and gives users the option to accept or decline them.
- *
- * @param {Object} invite — object of the room the user was invited to
- * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
- *
- * @callback acceptMatrixInvite - callback function to accept invitations to a matrix room or space
- * @param roomId - matrix roomId
- * @param path -
- *
- * @callback declineMatrixInvite - callback function to decline invitations to a matrix room or space
- * @param roomId - matrix roomId
- *
- * @returns {React.ReactComponent}
+ * Callback definitions
+*/
+/**
+ * @callback acceptMatrixInvite
+ * @param {string} roomId
+ * @param {string} path
+*/
+/**
+ * @callback declineMatrixInvite
+ * @param {string} roomId
 */
 
-const DisplayInvitations = ({ invite, path, acceptMatrixInvite, declineMatrixInvite }) => {
+/**
+ * Displays an invitation for a matrix room/space within a <ServiceTable> component and gives users the option to accept or decline them.
+ *
+ * @param {React.ComponentPropsWithoutRef} props
+ * @param {Object} props.invite — object of the room the user was invited to
+ * @param {String} props.path — name of the Application (i.e. the 'path' variable in the config)
+ * @param {acceptMatrixInvite} props.acceptMatrixInvite
+ * @param {declineMatrixInvite} props.declineMatrixInvite
+ *
+ * @returns {React.JSX.Element}
+*/
+export default function DisplayInvitations({ invite, path, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
@@ -78,5 +85,4 @@ const DisplayInvitations = ({ invite, path, acceptMatrixInvite, declineMatrixInv
             </ServiceTable.Cell>
         </ServiceTable.Row>
     );
-};
-export default DisplayInvitations;
+}

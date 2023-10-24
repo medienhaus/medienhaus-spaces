@@ -24,14 +24,6 @@ export default function Explore() {
     const matrixClient = matrix.getMatrixClient();
     const { t } = useTranslation('explore');
 
-    // If there's no context root space set in our configuration we can't make any use of the /explore page at
-    // the moment, so we forward the user to `/`
-    if (!getConfig().publicRuntimeConfig.contextRootSpaceRoomId) {
-        router.replace('/');
-
-        return null;
-    }
-
     const [activeContexts, setActiveContexts] = useState([getConfig().publicRuntimeConfig.contextRootSpaceRoomId]);
     const [contents, setContents] = useState(null);
 
@@ -66,6 +58,14 @@ export default function Explore() {
 
         if (activeContexts) fetchContents();
     }, [activeContexts, matrixClient]);
+
+    // If there's no context root space set in our configuration we can't make any use of the /explore page at
+    // the moment, so we forward the user to `/`
+    if (!getConfig().publicRuntimeConfig.contextRootSpaceRoomId) {
+        router.replace('/');
+
+        return null;
+    }
 
     return (
         <>
