@@ -87,7 +87,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName, onSuccess }) 
 
     return <>
         <InviteUserForm onSubmit={handleInvite}>
-            <legend>{ t('Invite users to {{roomName}}', { roomName: roomName }) }</legend>
+            <legend>{ t('Invite user') }</legend>
             { userFeedback ? <div>{ userFeedback }</div> :
                 <>
                     <Datalist
@@ -96,7 +96,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName, onSuccess }) 
                         keysToDisplay={['display_name', 'user_id']}
                         onSelect={setSelectedUser}
                     />
-                    { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
+                    <button disabled={!selectedUser}>{ t('invite {{user}}', { user: selectedUser.display_name }) }</button>
                 </>
             }
         </InviteUserForm>
