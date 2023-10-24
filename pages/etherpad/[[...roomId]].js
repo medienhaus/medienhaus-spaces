@@ -208,11 +208,12 @@ export default function Etherpad() {
                                     // if the room name is undefined we don't want to display it
                                     if (!name) return;
 
-                                    return <ServiceLink
+                                    return <WritePads
                                         key={writeRoomId}
-                                        name={_.get(matrix.rooms.get(writeRoomId), 'name')}
+                                        name={name}
                                         href={`${etherpadPath}/${writeRoomId}`}
-                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
+                                        serverPads={serverPads}
+                                        etherpadId={matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)}
                                         selected={writeRoomId === roomId}
                                         ref={writeRoomId === roomId ? selectedPadRef : null}
                                     />;
@@ -242,4 +243,32 @@ export default function Etherpad() {
 
 Etherpad.getLayout = () => {
     return IframeLayout.Layout;
+};
+
+const WritePads = ({ serverPads, name, writeRoomId, etherpadId, ref, selected }) => {
+    const auth = useAuth();
+    const etherpad = auth.getAuthenticationProvider('etherpad');
+    const [isPadPrivate, setIsPadPrivate] = useState();
+
+    useEffect(() => {
+        const checkPadForPassword = async () => {
+            let passwordProtected;
+            const serverPad = serverPads[etherpadId];
+            if (serverPad) passwordProtected = serverPad.visibility === 'private';
+            else {
+                passwordProtected = await etherpad.isPadPrivate(etherpadId);
+            }
+            setIsPadPrivate(passwordProtected);
+        };
+        checkPadForPassword();
+    }, [etherpad, etherpadId, serverPads]);
+
+    return <ServiceLink
+        key={writeRoomId}
+        name={name}
+        href={`${etherpadPath}/${writeRoomId}`}
+        passwordProtected={isPadPrivate}
+        selected={selected}
+        ref={ref}
+    />;
 };
