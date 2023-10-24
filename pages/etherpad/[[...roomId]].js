@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -21,7 +22,6 @@ import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { path as etherpadPath } from '../../lib/Etherpad';
-import { DeleteBinIcon } from '@remixicons/react/line';
 
 export default function Etherpad() {
     const auth = useAuth();

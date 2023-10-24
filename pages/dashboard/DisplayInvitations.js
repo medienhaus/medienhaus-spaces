@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import { CheckIcon, CloseIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import { CheckIcon, CloseIcon } from '@remixicons/react/line';
 
 /**
  * COMPONENT 'DisplayInvitations'

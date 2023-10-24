@@ -1,11 +1,11 @@
 import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
+import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
-import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
 const Wrapper = styled.div`
   display: flex;

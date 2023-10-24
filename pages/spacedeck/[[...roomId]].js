@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -19,7 +20,6 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
-import { DeleteBinIcon } from '@remixicons/react/line';
 
 export default function Spacedeck() {
     const auth = useAuth();

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ClipboardIcon } from '@remixicons/react/line';
 
 import TextButton from './TextButton';
-import { ClipboardIcon } from '@remixicons/react/line';
 
 const CopyToClipboard = ({ content, title }) => {
     const [wasContentCopied, setWasContentCopied] = useState(false);
