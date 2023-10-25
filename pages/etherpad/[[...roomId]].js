@@ -65,6 +65,11 @@ export default function Etherpad() {
         selectedPadRef.current?.focus();
     }, [roomId]);
 
+    const syncServerPadsAndSet = useCallback(async () => {
+        await etherpad.syncAllPads().catch(() => setServerPads(null));
+        setServerPads(etherpad.getAllPads());
+    }, [etherpad]);
+
     useEffect(() => {
         let cancelled = false;
 
@@ -82,10 +87,25 @@ export default function Etherpad() {
         };
     }, [syncServerPadsAndSet, etherpad]);
 
-    const syncServerPadsAndSet = useCallback(async () => {
-        await etherpad.syncAllPads().catch(() => setServerPads(null));
-        setServerPads(etherpad.getAllPads());
-    }, [etherpad]);
+    const createWriteRoom = useCallback(async (link, name) => {
+        if (!link || !name) return;
+
+        logger.debug('Creating new Matrix room for pad', { link, name });
+
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
+        await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
+        await matrixClient.sendMessage(room, {
+            msgtype: 'm.text',
+            body: link,
+        });
+
+        if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
+            await etherpad.syncAllPads();
+            setServerPads(etherpad.getAllPads());
+        }
+
+        return room;
+    }, [auth, matrix, matrixClient, etherpad]);
 
     useEffect(() => {
         let cancelled = false;
@@ -150,26 +170,6 @@ export default function Etherpad() {
         router.push(etherpadPath);
         setIsDeletingPad(false);
     };
-
-    const createWriteRoom = useCallback(async (link, name) => {
-        if (!link || !name) return;
-
-        logger.debug('Creating new Matrix room for pad', { link, name });
-
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        });
-
-        if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
-            await etherpad.syncAllPads();
-            setServerPads(etherpad.getAllPads());
-        }
-
-        return room;
-    }, [auth, matrix, matrixClient, etherpad]);
 
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />, label: t('Add existing pad') },
