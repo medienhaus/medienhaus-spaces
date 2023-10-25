@@ -8,7 +8,8 @@ import { ServiceTable } from './ServiceTable';
 
 const LockIconResized = styled(LockIcon)`
   display: block;
-  transform: scale(0.9);
+  width: 20px;
+  height: 20px;
 `;
 
 const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref) => {
@@ -21,7 +22,7 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref
             </ServiceTable.Cell>
             { /* Show a lock icon if this Link is password protected */ }
             { passwordProtected && (
-                <ServiceTable.Cell title={t('password protected')}>
+                <ServiceTable.Cell title={t('password protected')} align="right">
                     <LockIconResized />
                 </ServiceTable.Cell>
             ) }
