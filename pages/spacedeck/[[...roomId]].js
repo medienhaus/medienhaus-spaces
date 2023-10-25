@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -37,6 +37,7 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -218,17 +219,27 @@ export default function Spacedeck() {
                     <IframeLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                            <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
+                                { isInviteUsersOpen ? <UserUnfollowIcon width="24" height="24" fill="var(--color-foreground)" /> : <UserAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                            </TextButton>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe
-                        title={spacedeckPath}
-                        src={content.body}
-                    />
+                    { isInviteUsersOpen ?
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        /> :
+                        <iframe
+                            title={spacedeckPath}
+                            src={content.body}
+                        />
+                    }
+
                 </IframeLayout.IframeWrapper>
             ) }
         </>
