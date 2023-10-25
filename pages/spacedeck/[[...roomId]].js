@@ -188,6 +188,7 @@ export default function Spacedeck() {
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+                { !auth.connectionStatus.spacedeck && 'insert login prompt' }
                 { !serviceSpaceId || syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>

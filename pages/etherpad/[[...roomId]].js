@@ -200,6 +200,7 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
+                        { !auth.connectionStatus.etherpad && 'insert login prompt' }
                         <ServiceTable>
                             <ServiceTable.Body>
                                 { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
