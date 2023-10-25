@@ -78,7 +78,7 @@ export default function Datalist({ options, onChange, onSelect, keysToDisplay })
     };
 
     return (
-        <div>
+        <>
             <input
                 type="text"
                 value={value}
@@ -109,6 +109,6 @@ export default function Datalist({ options, onChange, onSelect, keysToDisplay })
                     </ServiceTable.Body>
                 </ServiceTable>
             ) }
-        </div>
+        </>
     );
 }
