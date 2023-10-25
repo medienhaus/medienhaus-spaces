@@ -26,7 +26,7 @@ import { path as etherpadPath } from '../../lib/Etherpad';
 const WritePads = ({ serverPads, name, href, etherpadId, ref, selected }) => {
     const auth = useAuth();
     const etherpad = auth.getAuthenticationProvider('etherpad');
-    const [isPadPrivate, setIsPadPrivate] = useState();
+    const [isPadPasswordProtected, setIsPadPasswordProtected] = useState();
 
     useEffect(() => {
         const checkPadForPassword = async () => {
@@ -34,9 +34,11 @@ const WritePads = ({ serverPads, name, href, etherpadId, ref, selected }) => {
             const serverPad = serverPads[etherpadId];
             if (serverPad) passwordProtected = serverPad.visibility === 'private';
             else {
-                passwordProtected = await etherpad.isPadPrivate(etherpadId);
+                passwordProtected = await etherpad.isPadPasswordProtected(etherpadId)
+                    // logging errors to the console. myPads actually doesn't return a reason for the error
+                    .catch(error => logger.debug(error));
             }
-            setIsPadPrivate(passwordProtected);
+            setIsPadPasswordProtected(passwordProtected);
         };
         checkPadForPassword();
     }, [etherpad, etherpadId, serverPads]);
@@ -45,7 +47,7 @@ const WritePads = ({ serverPads, name, href, etherpadId, ref, selected }) => {
         key={etherpadId}
         name={name}
         href={href}
-        passwordProtected={isPadPrivate}
+        passwordProtected={isPadPasswordProtected}
         selected={selected}
         ref={ref}
     />;
