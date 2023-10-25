@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';

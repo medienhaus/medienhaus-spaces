@@ -1,5 +1,5 @@
 import { default as NextLink } from 'next/link';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
