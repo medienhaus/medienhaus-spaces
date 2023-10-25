@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Form = styled.form`
   /* if first child of parent element (i.e. wrapper), set margin-top */

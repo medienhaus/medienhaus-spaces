@@ -1,44 +1,48 @@
 /**
- * This component renders a button whoch onClick opens a Modal.
- * `activeContexts` is the array of room IDs for the currently set context spaces.
+ * This component provides a user interface for inviting other users to a Matrix room.
+ * It includes a form for searching and inviting users, and provides feedback to the user.
  *
- * @param {string} roomId (valid matrix roomId)
- * @param {string} roomName (name of the matrix room)
- *
- * @return {React.ReactElement}
- *
- * @TODO
- * - create separate component for the invitation dialogue so it can be used without the button and maybe without the modal view.
- * - maybe swap datalist for a different UI element. datalist handling is far from optimal, since we have to manually get the userId and displayName after a user has selected the user to invite.
- *   Even though we already have it from the `matrixClient.searchUserDirectory` call. The problem is that afaik there is no way to parse the object from the <option>.
- *
+ * @param {string} roomId - The valid Matrix room ID to which you want to invite a user.
+ * @param {string} roomName - The name of the Matrix room.
+ * @param {Function} onSuccess - An optional callback function to execute after a successful invitation.
+
+ * @returns {React.ReactElement} - A React element representing the component.
+
+ * @example
+ * // Example usage of the InviteUserToMatrixRoom component:
+ * <InviteUserToMatrixRoom roomId="your-room-id" roomName="Your Room" onSuccess={handleSuccess} />
  */
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import styled from 'styled-components';
+import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon';
 
-import TextButton from '../TextButton';
-import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
-import DefaultModal from '../Modal';
 import Datalist from '../Datalist';
+import { ServiceTable } from '../ServiceTable';
 
-export default function InviteUserToMatrixRoom({ roomId, roomName }) {
+const InviteUserForm = styled(Form)`
+  display: grid;
+  align-content: start;
+  justify-self: start;
+  width: 100%;
+  height: 100%;
+  padding: var(--margin);
+`;
+
+export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const [isInviteDialogueOpen, setIsInviteDialogueOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
-    const [selectedUser, setSelectedUser] = useState();
+    const [errorFeedback, setErrorFeedback] = useState();
+    const [selectedUsers, setSelectedUsers] = useState([]);
     const { t } = useTranslation('invitationModal');
-
-    const handleClick = () => {
-        setIsInviteDialogueOpen(prevState => !prevState);
-    };
 
     const handleChange = (searchString) => {
         debouncedFetchUsersForContributorSearch(searchString);
@@ -60,59 +64,78 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
     function clearInputs() {
         setUserFeedback('');
         setSearchResults([]);
-        setSelectedUser('');
+        setSelectedUsers([]);
     }
 
     const handleInvite = async (e) => {
         e.preventDefault();
+        const errors = [];
 
-        await matrixClient.invite(roomId, selectedUser.user_id)
-            .catch(async err => {
-                // if something went wrong we display the error and clear all inputs
-                setUserFeedback(<ErrorMessage>{ err.data?.error }</ErrorMessage>);
-                await new Promise(() => setTimeout(() => {
-                    clearInputs();
-                }, 3000));
+        for (const user of selectedUsers) {
+            await matrixClient.invite(roomId, user.user_id)
+                .catch(async err => {
+                    errors.push(err);
+                });
+        }
+        if (errors.length !== 0) {
+            // if something went wrong we display the errors and clear all inputs
+            setErrorFeedback(errors.map(err => <ErrorMessage>{ err.data?.error }</ErrorMessage>));
+        }
+        const successAmount = selectedUsers.length - errors.length;
 
-                return;
-            });
         // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + selectedUser.display_name + ' ' + t('was invited and needs to accept your invitation'));
+        setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and needs to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was' }));
         await new Promise(() => setTimeout(() => {
             clearInputs();
-            setIsInviteDialogueOpen(false);
+            onSuccess && successAmount === selectedUsers.length && onSuccess();
         }, 3000));
     };
 
-    const handleModalClose = () => {
-        clearInputs();
-        setIsInviteDialogueOpen(false);
+    const handleUserSelect = (user) => {
+        const find = selectedUsers.some(selectedUser => selectedUser?.user_id === user.user_id);
+        if (find) return;
+        setSelectedUsers(prevState => [...prevState, user]);
+    };
+
+    const handleRemove = (user) => {
+        const filteredArray = selectedUsers.filter(selectedUser => selectedUser?.user_id !== user.user_id);
+        setSelectedUsers(filteredArray);
     };
 
     return <>
-        <TextButton title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
-            <UserAddIcon fill="var(--color-foreground)" />
-        </TextButton>
-        { isInviteDialogueOpen && (
-            <DefaultModal
-                isOpen={isInviteDialogueOpen}
-                onRequestClose={handleModalClose}
-                contentLabel={t('Invite users to {{roomName}}', { roomName: roomName })}
-                shouldCloseOnOverlayClick={true}>
-
-                { userFeedback ? <div>{ userFeedback }</div> :
-                    <Form onSubmit={handleInvite}>
-                        <Datalist
-                            options={searchResults}
-                            onChange={handleChange}
-                            keysToDisplay={['display_name', 'user_id']}
-                            onSelect={setSelectedUser}
-                        />
-                        { selectedUser && <button>{ t('invite {{user}} to {{room}}', { user: selectedUser.display_name, room: roomName }) }</button> }
-                    </Form>
-                }
-            </DefaultModal>
-        ) }
+        <InviteUserForm onSubmit={handleInvite}>
+            <legend>{ t('Invite users') }</legend>
+            { userFeedback && !errorFeedback ? <div>{ userFeedback }</div> :
+                <>
+                    <Datalist
+                        options={searchResults}
+                        onChange={handleChange}
+                        keysToDisplay={['display_name', 'user_id']}
+                        onSelect={handleUserSelect}
+                    />
+                    { selectedUsers.length !== 0 && <ServiceTable>{ selectedUsers.map(user => {
+                        return <DisplaySelectedUser key={user.display_name} user={user} handleRemove={handleRemove} />;
+                    },
+                    ) }
+                    </ServiceTable> }
+                    <button disabled={selectedUsers.length === 0}>{ t('invite {{amount}}', { amount: selectedUsers.length > 0 ? selectedUsers.length : '' }) }</button>
+                </>
+            }
+            { userFeedback && errorFeedback && userFeedback }
+            { errorFeedback && errorFeedback }
+        </InviteUserForm>
     </>;
 }
 
+const DisplaySelectedUser = ({ user, handleRemove }) => {
+    return <ServiceTable.Row>
+        <ServiceTable.Cell>
+            { user.display_name }
+        </ServiceTable.Cell>
+        <ServiceTable.Cell align="right">
+            <a onClick={() => handleRemove(user)}>
+                <CloseIcon fill="var(--color-foreground)" />
+            </a>
+        </ServiceTable.Cell>
+    </ServiceTable.Row>;
+};

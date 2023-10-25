@@ -1,19 +1,20 @@
 import React, { useState, useRef } from 'react';
 
 import { ServiceTable } from './ServiceTable';
+import TextButton from './TextButton';
 
 /**
  * An input component that functions as a datalist and can be controlled with arrow keys and mouse clicks.
  *
  * @component
- * @param {string[]} options - An array of Objects for the datalist.
+ * @param {Object[]} options - An array of Objects for the datalist.
  * @param {function} onChange - function to execute when input changes, receives string as first parameter.
  * @param {function} onSelect - function to execute when a result from the datalist was selected
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results
  * @returns {React.JSX.Element} The Datalist component.
  */
 
-function Datalist({ options, onChange, onSelect, keysToDisplay }) {
+export default function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +24,6 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     const handleChange = async (e) => {
         setIsLoading(true);
         setValue(e.target.value);
-        onSelect(null);
         await onChange(e.target.value);
         if (e.target.value !== '') setIsOpen(true);
         else {
@@ -40,8 +40,7 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
             if (!isOpen) {
                 setIsOpen(true);
             } else {
-                const newIndex = Math.min(selectedIndex + 1, options.length - 1);
-                setSelectedIndex(newIndex);
+                setSelectedIndex(Math.min(selectedIndex + 1, options.length - 1));
             }
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -64,10 +63,10 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
     };
 
     const handleSelect = (selectedOption) => {
-        setValue(stringifySelection(selectedOption));
         onSelect(selectedOption);
-        setSelectedIndex(-1);
-        setIsOpen(false);
+        setValue(stringifySelection(selectedOption));
+        // setSelectedIndex(-1);
+        // setIsOpen(false);
         inputRef.current.focus();
     };
 
@@ -91,24 +90,25 @@ function Datalist({ options, onChange, onSelect, keysToDisplay }) {
             />
             { options.length > 0 && isOpen && (
                 <ServiceTable>
-                    { options.map((option, index) => (
-                        <ServiceTable.Row
-                            key={index}
-                            selected={selectedIndex === index}
-                            onClick={() => handleSelect(option)}>
-                            { keysToDisplay.map(key => {
-                                return <ServiceTable.Cell
-                                    key={key}>
-                                    { option[key] }
-                                </ServiceTable.Cell>;
-                            }) }
-
-                        </ServiceTable.Row>
-                    )) }
+                    <ServiceTable.Body>
+                        { options.map((option, index) => (
+                            <ServiceTable.Row
+                                onClick={() => handleSelect(option)}
+                                key={index}
+                                selected={selectedIndex === index}
+                            >
+                                { keysToDisplay.map((key, keyIndex) => {
+                                    return <ServiceTable.Cell
+                                        key={key}>
+                                        { keyIndex === 0 && selectedIndex === index && '→ ' }
+                                        { option[key] }
+                                    </ServiceTable.Cell>;
+                                }) }
+                            </ServiceTable.Row>
+                        )) }
+                    </ServiceTable.Body>
                 </ServiceTable>
             ) }
         </div>
     );
 }
-
-export default Datalist;

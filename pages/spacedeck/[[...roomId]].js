@@ -1,7 +1,6 @@
 import getConfig from 'next/config';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isEmpty } from 'lodash';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
@@ -124,7 +123,7 @@ export default function Spacedeck() {
         };
 
         // Check if the useEffect is cancelled and required conditions are met to sync sketches
-        if (!cancelled && serviceSpaceId && !isEmpty(serverSketches) && !syncingServerSketches) {
+        if (!cancelled && serviceSpaceId && !_.isEmpty(serverSketches) && !syncingServerSketches) {
             console.log(serverSketches);
             syncServerSketchesWithMatrix();
         }
@@ -137,7 +136,7 @@ export default function Spacedeck() {
         let cancelled = false;
         const MAX_SYNC_TRIES = 3;
         const populateSketchesFromServer = async (maxTries = 1) => {
-            if (!isEmpty(spacedeck.getStructure())) {
+            if (!_.isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
             } else if (maxTries < MAX_SYNC_TRIES) {
                 logger.debug(`${getOrdinalSuffix(maxTries)} attempt to sync spacedeck`);
@@ -251,7 +250,10 @@ export default function Spacedeck() {
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
+                    <iframe
+                        title={spacedeckPath}
+                        src={content.body}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
