@@ -26,13 +26,26 @@ import ErrorMessage from '../ErrorMessage';
 import Datalist from '../Datalist';
 import { ServiceTable } from '../ServiceTable';
 
-const InviteUserForm = styled(Form)`
+const ActionWrapper = styled.section`
   display: grid;
   align-content: start;
   justify-self: start;
   width: 100%;
   height: 100%;
-  padding: var(--margin);
+  padding: 0 calc(var(--margin) *1.5) ;
+
+  h3 {
+    line-height: calc(var(--margin) *3);
+  }
+`;
+
+const InviteUserForm = styled(Form)`
+  display: grid;
+  height: 100%;
+  
+  > :last-child{
+    align-self: end;
+  }
 `;
 
 export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
@@ -102,9 +115,9 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         setSelectedUsers(filteredArray);
     };
 
-    return <>
+    return <ActionWrapper>
+        <h3>{ t('Invite users') }</h3>
         <InviteUserForm onSubmit={handleInvite}>
-            <legend>{ t('Invite users') }</legend>
             { userFeedback && !errorFeedback ? <div>{ userFeedback }</div> :
                 <>
                     <Datalist
@@ -118,13 +131,13 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                     },
                     ) }
                     </ServiceTable> }
-                    <button disabled={selectedUsers.length === 0}>{ t('invite {{amount}}', { amount: selectedUsers.length > 0 ? selectedUsers.length : '' }) }</button>
+                    <button disabled={selectedUsers.length === 0}>{ t('invite') }</button>
                 </>
             }
             { userFeedback && errorFeedback && userFeedback }
             { errorFeedback && errorFeedback }
         </InviteUserForm>
-    </>;
+    </ActionWrapper>;
 }
 
 const DisplaySelectedUser = ({ user, handleRemove }) => {
