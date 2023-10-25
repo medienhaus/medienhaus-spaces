@@ -232,12 +232,12 @@ export default function Etherpad() {
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
-                                { isInviteUsersOpen ? <UserUnfollowIcon width="24" height="24" fill="var(--color-foreground)" /> : <UserAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                                { isInviteUsersOpen ? <UserUnfollowIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> : <UserAddIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                             </TextButton>
 
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>

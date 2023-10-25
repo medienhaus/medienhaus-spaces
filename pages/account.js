@@ -11,7 +11,7 @@ import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 const ProfileSection = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
-  grid-gap: calc(var(--margin) * 1.3);
+  grid-gap: calc(var(--margin) * var(--line-height));
   max-width: 55ch;
 
   & > form {
@@ -20,7 +20,7 @@ const ProfileSection = styled.div`
   }
 
   & > form > * + * {
-    margin-top: calc(var(--margin) * 1.3);
+    margin-top: calc(var(--margin) * var(--line-height));
   }
 
   @media (min-width: 40em) {
@@ -57,7 +57,7 @@ const Avatar = styled.img`
 
 const AvatarButtonContainer = styled.div`
   display: grid;
-  grid-gap: calc(var(--margin) * 1.3);
+  grid-gap: calc(var(--margin) * var(--line-height));
 
   @media (min-width: 40em) {
     grid-template-columns: repeat(auto-fit, minmax(calc(50% - (var(--margin) * 0.65)), 1fr));
