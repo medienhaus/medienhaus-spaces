@@ -19,7 +19,7 @@ const CopyToClipboard = ({ content, title }) => {
         <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
             { wasContentCopied ?
                 '✓':
-                <ClipboardIcon width="24" height="24" fill="var(--color-fg)" /> }
+                <ClipboardIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-fg)" /> }
         </TextButton>
     );
 };

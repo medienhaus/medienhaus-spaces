@@ -55,7 +55,7 @@ const Header = styled.header`
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
   width: unset;
-  height: calc(var(--margin) * 1.3);
+  height: calc(var(--margin) * var(--line-height));
   padding: unset;
   background-color: unset;
   border: unset;
@@ -119,11 +119,11 @@ export default function BaseLayout({ children }) {
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
                         <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
-                            <CloseIcon width="24" height="24" fill="var(--color-foreground)" />
+                            <CloseIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) : (
                         <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
-                            <MenuIcon width="24" height="24" fill="var(--color-foreground)" />
+                            <MenuIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) }
                 </Header>
