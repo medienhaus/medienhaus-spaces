@@ -266,7 +266,7 @@ export default function Etherpad() {
                     </IframeLayout.IframeHeader>
                     <iframe
                         title={etherpadPath}
-                        src={iframeUrl.toString()}
+                        src={`${iframeUrl.toString()}?=&auth_token=${etherpad.getToken()}`}
                     />
                 </IframeLayout.IframeWrapper>
             ) }
