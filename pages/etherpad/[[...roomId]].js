@@ -178,11 +178,14 @@ export default function Etherpad() {
         getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createWriteRoom={createWriteRoom} />, label: t('Create password protected pad') },
     ]);
 
-    // Add the user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // Add the following parameters to the iframe URL:
+    // - user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     let iframeUrl;
     if (roomId && matrix.roomContents.get(roomId)?.body) {
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
+        iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
     return (
@@ -236,7 +239,7 @@ export default function Etherpad() {
                     </IframeLayout.IframeHeader>
                     <iframe
                         title={etherpadPath}
-                        src={`${iframeUrl.toString()}?=&auth_token=${etherpad.getToken()}`}
+                        src={iframeUrl.toString()}
                     />
                 </IframeLayout.IframeWrapper>
             ) }
