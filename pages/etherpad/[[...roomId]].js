@@ -23,7 +23,7 @@ import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { path as etherpadPath } from '../../lib/Etherpad';
 
-const WritePads = ({ serverPads, name, writeRoomId, etherpadId, ref, selected }) => {
+const WritePads = ({ serverPads, name, href, etherpadId, ref, selected }) => {
     const auth = useAuth();
     const etherpad = auth.getAuthenticationProvider('etherpad');
     const [isPadPrivate, setIsPadPrivate] = useState();
@@ -42,9 +42,9 @@ const WritePads = ({ serverPads, name, writeRoomId, etherpadId, ref, selected })
     }, [etherpad, etherpadId, serverPads]);
 
     return <ServiceLink
-        key={writeRoomId}
+        key={etherpadId}
         name={name}
-        href={`${etherpadPath}/${writeRoomId}`}
+        href={href}
         passwordProtected={isPadPrivate}
         selected={selected}
         ref={ref}
