@@ -54,7 +54,7 @@ export default function Spacedeck() {
         const matrixSketches = {};
 
         // Function to recursively collect all Matrix sketches within a space
-        const getAllMatrixSketches = (id, parent) => {
+        const getAllMatrixSketches = (id) => {
             if (matrix?.spaces.get(id)?.children) {
                 for (const roomId of spacedeckChildren) {
                     // Extract the spacedeck id from room content
