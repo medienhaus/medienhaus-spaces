@@ -147,7 +147,7 @@ export default function Spacedeck() {
                     syncSpacedeck.status === 403) {
                     const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
                     const password = await loginPrompt('Please re-enter your password for ' + username)
-                        .catch((error => setErrorMessage(t('no password provided'))
+                        .catch((error => setErrorMessage('no password provided')
                         ));
                     if (password) {
                         await spacedeck.signin(username, password)
@@ -170,16 +170,16 @@ export default function Spacedeck() {
         // eslint-disable-next-line no-undef
         logger.debug('creating room for ' + name);
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck').catch(() => {
-            setErrorMessage(t('Something went wrong when trying to create a new room'));
+            setErrorMessage('Something went wrong when trying to create a new room');
         });
         await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
-            setErrorMessage(t('Couldn\'t add the new room to your sketch folder'));
+            setErrorMessage('Couldn\'t add the new room to your sketch folder');
         });
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
         }).catch(() => {
-            setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
+            setErrorMessage('Something went wrong when trying to save the new sketch link');
         });
 
         return room;
@@ -213,7 +213,7 @@ export default function Spacedeck() {
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+                { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                 { !serviceSpaceId || syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>
