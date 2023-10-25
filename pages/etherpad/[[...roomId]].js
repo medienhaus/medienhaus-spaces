@@ -73,28 +73,6 @@ export default function Etherpad() {
         setIsInviteUsersOpen(false);
     }, [roomId]);
 
-    const syncServerPadsAndSet = useCallback(async () => {
-        await etherpad.syncAllPads().catch(() => setServerPads(null));
-        setServerPads(etherpad.getAllPads());
-    }, [etherpad]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const populatePadsfromServer = async () => {
-            if (!_.isEmpty(etherpad.getAllPads())) {
-                setServerPads(etherpad.getAllPads());
-            } else {
-                await syncServerPadsAndSet();
-            }
-        };
-        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && isSpacedeckServerOnline && populatePadsfromServer();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [syncServerPadsAndSet, etherpad]);
-
     const syncServerPadsAndSet = useCallback(async (maxTries = 0) => {
         if (maxTries > 3) return setServerPads(null);
 
@@ -120,6 +98,23 @@ export default function Etherpad() {
 
         setServerPads(syncMyPads);
     }, [etherpad, loginPrompt]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const populatePadsfromServer = async () => {
+            if (!_.isEmpty(etherpad.getAllPads())) {
+                setServerPads(etherpad.getAllPads());
+            } else {
+                await syncServerPadsAndSet();
+            }
+        };
+        !cancelled && getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && isSpacedeckServerOnline && populatePadsfromServer();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [syncServerPadsAndSet, etherpad]);
 
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
