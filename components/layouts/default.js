@@ -1,4 +1,4 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 import BaseLayout from './_base';
 import { breakpoints } from '../_breakpoints';
