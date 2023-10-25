@@ -40,7 +40,12 @@ const ActionWrapper = styled.section`
 `;
 
 const InviteUserForm = styled(Form)`
-
+  display: grid;
+  height: 100%;
+  
+  > :last-child{
+    align-self: end;
+  }
 `;
 
 export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
