@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -11,7 +12,6 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
-import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -176,21 +176,20 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
-    if (!serviceSpaceId) return <LoadingSpinner />;
-
     return (
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
+                    disabled={!serviceSpaceId}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                { syncingServerSketches ?
+                { !serviceSpaceId || syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>
                         <ServiceTable>
@@ -222,7 +221,7 @@ export default function Spacedeck() {
                             <InviteUserToMatrixRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                                { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>

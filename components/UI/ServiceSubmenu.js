@@ -1,9 +1,8 @@
 import React, { cloneElement, useState } from 'react';
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
-
-import MenuAddIcon from '../../assets/icons/menu-add.svg';
+import { MenuAddIcon } from '@remixicons/react/line';
 
 const Header = styled.header`
   display: grid;
@@ -38,7 +37,7 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, subheadline, items }) {
+export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -54,9 +53,9 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
         <>
             <Header>
                 { title && title }
-                <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAddIcon fill="var(--color-foreground)" /> }
-                </ToggleButton>
+                { !disabled && <ToggleButton onClick={handleMenuToggle}>
+                    { icon ? icon : <MenuAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                </ToggleButton> }
             </Header>
             { isOpen && (
                 <Submenu>
