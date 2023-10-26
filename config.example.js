@@ -6,13 +6,18 @@ module.exports = {
             allowCustomHomeserver: true,
         },
         etherpad: {
+            // important: path has to start with "/"
             path: '/write',
             baseUrl: 'https://pad.riseup.net/p',
-            myPads: {
-                api: 'http://etherpad.localhost/mypads/api',
-                spacesGroupName: '/spaces',
-            },
+            // myPads: {
+            //     api: 'http://etherpad.localhost/mypads/api',
+            //     spacesGroupName: '/spaces',
+            // },
         },
+        // spacedeck: {
+        //     path: '/sketch',
+        //     baseUrl: 'http://spacedeck.localhost',
+        // },
     },
     contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
     account: {
