@@ -19,7 +19,7 @@ module.exports = {
         //     baseUrl: 'http://spacedeck.localhost',
         // },
     },
-    contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
+    // contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
     account: {
         allowAddingNewEmails: true,
     },
