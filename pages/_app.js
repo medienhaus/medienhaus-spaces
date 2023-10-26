@@ -7,10 +7,10 @@ import { DefaultLayout } from '../components/layouts/default';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '../lib/Internationalization';
-import '/assets/_globalCss.css';
+import '../assets/_globalCss.css';
 import LostConnection from '../components/UI/LostConnection';
 
-const guestRoutes = ['/', '/login'];
+const guestRoutes = ['/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();

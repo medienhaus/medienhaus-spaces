@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
+import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
-import CloseIcon from '../../assets/icons/close.svg';
-import MenuIcon from '../../assets/icons/menu.svg';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -14,7 +13,7 @@ const Wrapper = styled.div`
   width: 100vw;
   max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.isNavigationOpen ? 'hidden' : 'unset'};
+  overflow: ${props => props.$isNavigationOpen ? 'hidden' : 'unset'};
 
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
@@ -82,7 +81,7 @@ const Sidebar = styled.aside`
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.isNavigationOpen ? 'flex' : 'none'};
+    display: ${props => props.$isNavigationOpen ? 'flex' : 'none'};
   }
 
   @media ${breakpoints.tabletAndAbove} {
@@ -115,20 +114,20 @@ export default function BaseLayout({ children }) {
 
     return (
         <>
-            <Wrapper isNavigationOpen={isNavigationOpen}>
+            <Wrapper $isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
                         <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
-                            <CloseIcon fill="var(--color-foreground)" />
+                            <CloseIcon width="24" height="24" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) : (
                         <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
-                            <MenuIcon fill="var(--color-foreground)" />
+                            <MenuIcon width="24" height="24" fill="var(--color-foreground)" />
                         </ToggleButton>
                     ) }
                 </Header>
-                <Sidebar isNavigationOpen={isNavigationOpen}>
+                <Sidebar $isNavigationOpen={isNavigationOpen}>
                     <Nav>
                         <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
