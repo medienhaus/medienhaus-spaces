@@ -17,5 +17,5 @@
   "From": "Von",
   "Accept": "Annehmen",
   "Decline": "Ablehnen",
-  "Something went wrong. Please resubmit your password.": "Da ist etwas schief gelaufen, bitte bestätige dein Passwort erneut."
+  "Token invalid. Please sign in again.": "Token ungültig. Bitte melde dich erneut an."
 }
