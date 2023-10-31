@@ -22,8 +22,7 @@ import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { path as etherpadPath } from '../../lib/Etherpad';
-import Form from '../../components/UI/Form';
-import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -255,37 +254,3 @@ Etherpad.getLayout = () => {
     return IframeLayout.Layout;
 };
 
-const LoginPrompt = () => {
-    const [isSigningIn, setIsSigningIn] = useState(false);
-    const [password, setPassword] = useState('');
-    const auth = useAuth();
-    const { t } = useTranslation();
-    const onClick = async (e, password) => {
-        setIsSigningIn(true);
-        e.preventDefault();
-        await auth.validateAuthProvidersAccessTokens(
-            auth.getAuthenticationProvider('matrix').getMatrixClient().getUserIdLocalpart(),
-            password,
-        ); //getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api,
-        setIsSigningIn(false);
-    };
-
-    const onCancel = () => {
-        setPassword('');
-    };
-
-    return <Form>
-        <input type="password"
-            placeholder={t('password')}
-            value={password}
-            onChange={(e) => {
-                setPassword(e.target.value);
-            }
-            }
-        />
-        <ConfirmCancelButtons disableConfirm={!password}
-            disabled={isSigningIn}
-            onClick={(e) => onClick(e, password)}
-            onCancel={onCancel} />
-    </Form>;
-};
