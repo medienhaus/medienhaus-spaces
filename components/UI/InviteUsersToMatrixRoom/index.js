@@ -25,6 +25,7 @@ import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../Datalist';
 import { ServiceTable } from '../ServiceTable';
+import TextButton from '../TextButton';
 
 const ActionWrapper = styled.section`
   display: grid;
@@ -42,8 +43,8 @@ const ActionWrapper = styled.section`
 const InviteUserForm = styled(Form)`
   display: grid;
   height: 100%;
-  
-  > :last-child{
+
+  > :last-child {
     align-self: end;
   }
 `;
@@ -92,7 +93,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         }
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
-            setErrorFeedback(errors.map(err => <ErrorMessage>{ err.data?.error }</ErrorMessage>));
+            setErrorFeedback(errors.map(err => <ErrorMessage key={err.data?.error}>{ err.data?.error }</ErrorMessage>));
         }
         const successAmount = selectedUsers.length - errors.length;
 
@@ -146,9 +147,9 @@ const DisplaySelectedUser = ({ user, handleRemove }) => {
             { user.display_name }
         </ServiceTable.Cell>
         <ServiceTable.Cell align="right">
-            <a onClick={() => handleRemove(user)}>
-                <CloseIcon fill="var(--color-foreground)" />
-            </a>
+            <TextButton onClick={() => handleRemove(user)}>
+                <CloseIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
+            </TextButton>
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 };

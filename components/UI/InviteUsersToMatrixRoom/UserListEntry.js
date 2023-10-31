@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UserAddIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from '../ServiceTable';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import TextButton from '../TextButton';
-import UserAddIcon from '../../../assets/icons/user-add.svg';
 
 const UserListEntry = ({ user, handleInvite, roomName }) => {
     const [isInviting, setIsInviting] = useState(false);
@@ -24,7 +24,7 @@ const UserListEntry = ({ user, handleInvite, roomName }) => {
                 title={t('invite {{user}} to join {{room}}', { user: user.display_name, room: roomName })}
                 onClick={handleClick}
                 disabled={isInviting}
-            >{ isInviting ? <LoadingSpinnerInline /> || '✓' : <UserAddIcon fill="var(--color-foreground)" /> }
+            >{ isInviting ? <LoadingSpinnerInline /> || '✓' : <UserAddIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
             </TextButton>
         </ServiceTable.Cell>
 

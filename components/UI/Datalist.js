@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 
 import { ServiceTable } from './ServiceTable';
-import TextButton from './TextButton';
 
 /**
  * An input component that functions as a datalist and can be controlled with arrow keys and mouse clicks.
