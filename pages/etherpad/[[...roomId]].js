@@ -203,6 +203,7 @@ export default function Etherpad() {
                     <>
                         <ServiceSubmenu
                             title={<h2>{ etherpadPath }</h2>}
+                            disabled={!auth.connectionStatus.etherpad}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
