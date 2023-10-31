@@ -189,9 +189,8 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('userName', auth.user.displayname);
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
-    useEffect(() => {
-        console.log(auth.connectionStatus);
-    }, [auth.connectionStatus]);
+
+    // const [etherpadState, setEtherpadState] = useState(false);
 
     return (
         <>
@@ -208,7 +207,7 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
-                        { !auth.connectionStatus.etherpad && <LoginPrompt service="etherpad" onSubmit={auth.validateAuthProvidersAccessTokens} /> }
+                        { !auth.connectionStatus.etherpad && <LoginPrompt /> }
                         <ServiceTable>
                             <ServiceTable.Body>
                                 { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
@@ -256,15 +255,18 @@ Etherpad.getLayout = () => {
     return IframeLayout.Layout;
 };
 
-const LoginPrompt = ({ service, onSubmit }) => {
+const LoginPrompt = () => {
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [password, setPassword] = useState('');
-    const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
+    const auth = useAuth();
     const { t } = useTranslation();
     const onClick = async (e, password) => {
         setIsSigningIn(true);
         e.preventDefault();
-        await onSubmit(username, password); //getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api,
+        await auth.validateAuthProvidersAccessTokens(
+            auth.getAuthenticationProvider('matrix').getMatrixClient().getUserIdLocalpart(),
+            password,
+        ); //getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api,
         setIsSigningIn(false);
     };
 
