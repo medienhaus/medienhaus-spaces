@@ -32,8 +32,8 @@ const ConfirmCancelButtons = ({ children, disabled, disableConfirm, disableCance
 
     return (
         <ConfirmCancelButtonsWrapper>
-            <ConfirmButton type="submit" disabled={disabled || disableConfirm} onClick={onClick}>{ children ? children : t('Confirm') }</ConfirmButton>
             <CancelButton type="reset" disabled={disabled || disableCancel} onClick={onCancel}>{ t('Cancel') }</CancelButton>
+            <ConfirmButton type="submit" disabled={disabled || disableConfirm} onClick={onClick}>{ children ? children : t('Confirm') }</ConfirmButton>
         </ConfirmCancelButtonsWrapper>
     );
 };
