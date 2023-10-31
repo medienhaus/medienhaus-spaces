@@ -16,5 +16,6 @@
   "Invitations": "Einladungen",
   "From": "Von",
   "Accept": "Annehmen",
-  "Decline": "Ablehnen"
+  "Decline": "Ablehnen",
+  "Something went wrong. Please resubmit your password.": "Da ist etwas schief gelaufen, bitte bestätige dein Passwort erneut."
 }

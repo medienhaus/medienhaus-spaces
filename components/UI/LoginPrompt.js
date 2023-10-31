@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../../lib/Auth';
 import Form from './Form';
 import ConfirmCancelButtons from './ConfirmCancelButtons';
+import ErrorMessage from './ErrorMessage';
 
 const LoginPrompt = () => {
     const [isSigningIn, setIsSigningIn] = useState(false);
@@ -25,6 +26,7 @@ const LoginPrompt = () => {
     };
 
     return <Form>
+        <ErrorMessage>{ t('Something went wrong. Please resubmit your password.') }</ErrorMessage>
         <input type="password"
             placeholder={t('password')}
             value={password}
