@@ -11,6 +11,7 @@
     "i18next": "^23.5.1",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-resources-to-backend": "^1.1.4",
+    "immer": "^10.0.3",
     "lodash": "^4.17.21",
     "matrix-js-sdk": "^28.2.0",
     "next": "^13.5.4",
@@ -19,7 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.2.2",
-    "styled-components": "^6.0.8"
+    "styled-components": "^6.0.8",
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
     "@remixicons/react": "^1.0.0",
