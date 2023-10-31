@@ -23,7 +23,7 @@ import { CloseIcon } from 'next/dist/client/components/react-dev-overlay/interna
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
-import Datalist from '../Datalist';
+import Datalist from '../DataList';
 import { ServiceTable } from '../ServiceTable';
 import TextButton from '../TextButton';
 
@@ -69,7 +69,8 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         try {
             const users = await matrixClient.searchUserDirectory({ term: a });
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
-            users.results.length > 0 && setSearchResults(users.results);
+            // const filterResults = users.results.filter(item => _.isEqual(item, option));
+            setSearchResults(users.results);
         } catch (err) {
             logger.error(t('Error while trying to fetch users: ') + err);
         }
@@ -125,6 +126,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                         options={searchResults}
                         onChange={handleChange}
                         keysToDisplay={['display_name', 'user_id']}
+                        selected={selectedUsers}
                         onSelect={handleUserSelect}
                     />
                     { selectedUsers.length !== 0 && <ServiceTable>{ selectedUsers.map(user => {
