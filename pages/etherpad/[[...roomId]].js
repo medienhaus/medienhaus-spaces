@@ -22,6 +22,8 @@ import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { path as etherpadPath } from '../../lib/Etherpad';
+import Form from '../../components/UI/Form';
+import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 
 export default function Etherpad() {
     const auth = useAuth();
@@ -187,6 +189,9 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('userName', auth.user.displayname);
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
+    useEffect(() => {
+        console.log(auth.connectionStatus);
+    }, [auth.connectionStatus]);
 
     return (
         <>
@@ -203,7 +208,7 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
-                        { !auth.connectionStatus.etherpad && 'insert login prompt' }
+                        { !auth.connectionStatus.etherpad && <LoginPrompt service="etherpad" onSubmit={auth.validateAuthProvidersAccessTokens} /> }
                         <ServiceTable>
                             <ServiceTable.Body>
                                 { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
@@ -249,4 +254,36 @@ export default function Etherpad() {
 
 Etherpad.getLayout = () => {
     return IframeLayout.Layout;
+};
+
+const LoginPrompt = ({ service, onSubmit }) => {
+    const [isSigningIn, setIsSigningIn] = useState(false);
+    const [password, setPassword] = useState('');
+    const username = localStorage.getItem('mx_user_id').split('@').pop().split(':')[0];
+    const { t } = useTranslation();
+    const onClick = async (e, password) => {
+        setIsSigningIn(true);
+        e.preventDefault();
+        await onSubmit(username, password); //getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api,
+        setIsSigningIn(false);
+    };
+
+    const onCancel = () => {
+        setPassword('');
+    };
+
+    return <Form>
+        <input type="password"
+            placeholder={t('password')}
+            value={password}
+            onChange={(e) => {
+                setPassword(e.target.value);
+            }
+            }
+        />
+        <ConfirmCancelButtons disableConfirm={!password}
+            disabled={isSigningIn}
+            onClick={(e) => onClick(e, password)}
+            onCancel={onCancel} />
+    </Form>;
 };
