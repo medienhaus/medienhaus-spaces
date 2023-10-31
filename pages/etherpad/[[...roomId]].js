@@ -237,7 +237,7 @@ export default function Etherpad() {
 
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
@@ -249,7 +249,7 @@ export default function Etherpad() {
                         /> :
                         <iframe
                             title={etherpadPath}
-                            src={iframeUrl.toString()}
+                            src={`${iframeUrl.toString()}?=&auth_token=${etherpad.getToken()}`}
                         />
                     }
                 </IframeLayout.IframeWrapper>
