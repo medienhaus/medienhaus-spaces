@@ -4,12 +4,14 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';
 
+import TextButton from './TextButton';
+
 const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
 `;
 
-const ToggleButton = styled.button`
+const ToggleButton = styled(TextButton)`
   /* unset globally defined button styles; set height to line-height */
   width: unset;
   height: calc(var(--margin) * 1.3);
@@ -53,9 +55,11 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
         <>
             <Header>
                 { title && title }
-                { !disabled && <ToggleButton onClick={handleMenuToggle}>
+                <ToggleButton
+                    disabled={disabled}
+                    onClick={handleMenuToggle}>
                     { icon ? icon : <MenuAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
-                </ToggleButton> }
+                </ToggleButton>
             </Header>
             { isOpen && (
                 <Submenu>
