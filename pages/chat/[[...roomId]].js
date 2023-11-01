@@ -183,7 +183,11 @@ export default function Chat() {
             </IframeLayout.Sidebar>
             { roomId && (
                 <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>

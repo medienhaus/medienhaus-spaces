@@ -2,13 +2,14 @@ import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { LockIcon } from '@remixicons/react/line';
 
-import LockIcon from '../../assets/icons/lock.svg';
 import { ServiceTable } from './ServiceTable';
 
 const LockIconResized = styled(LockIcon)`
   display: block;
-  transform: scale(0.9);
+  width: 20px;
+  height: 20px;
 `;
 
 const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref) => {
@@ -21,12 +22,13 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref
             </ServiceTable.Cell>
             { /* Show a lock icon if this Link is password protected */ }
             { passwordProtected && (
-                <ServiceTable.Cell title={t('password protected')}>
+                <ServiceTable.Cell title={t('password protected')} align="right">
                     <LockIconResized />
                 </ServiceTable.Cell>
             ) }
         </ServiceTable.Row>
     );
 });
+ServiceLink.displayName = 'ServiceLink';
 
 export default ServiceLink;

@@ -1,10 +1,10 @@
 import getConfig from 'next/config';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isEmpty } from 'lodash';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -12,7 +12,6 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import TextButton from '../../components/UI/TextButton';
-import Bin from '../../assets/icons/bin.svg';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -130,7 +129,7 @@ export default function Spacedeck() {
     useEffect(() => {
         let cancelled = false;
         const populateSketchesfromServer = async (recursion) => {
-            if (!isEmpty(spacedeck.getStructure())) {
+            if (!_.isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
             } else if (!recursion) {
                 await spacedeck.syncAllSpaces();
@@ -205,21 +204,20 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
-    if (!serviceSpaceId) return <LoadingSpinner />;
-
     return (
         <>
             <IframeLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
+                    disabled={!serviceSpaceId}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
-                { syncingServerSketches ?
+                { !serviceSpaceId || syncingServerSketches ?
                     <span>{ userFeedback } <LoadingSpinnerInline /></span> :
                     <>
                         <ServiceTable>
@@ -250,11 +248,14 @@ export default function Spacedeck() {
                         <IframeLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                                { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>
-                    <iframe src={content.body} />
+                    <iframe
+                        title={spacedeckPath}
+                        src={content.body}
+                    />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
