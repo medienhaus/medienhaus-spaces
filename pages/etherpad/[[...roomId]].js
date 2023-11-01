@@ -231,8 +231,6 @@ export default function Etherpad() {
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
-            console.log(etherpadId, _.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined);
-
             return <EtherpadListEntry
                 key={writeRoomId}
                 name={name}
