@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import getConfig from 'next/config';
 
 import { useAuth } from '../../../lib/Auth';
 import { ServiceTable } from '../../../components/UI/ServiceTable';
@@ -79,7 +80,11 @@ const RemoveSpaceFromParent = ({
             <RemoveSection>
                 <ServiceTable>
                     { children.map(child => {
+                        // don't display the root space, so it not accidentally deleted
+                        if (child.room_id === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
+
                         return <RemoveListEntry
+                            key={child.name}
                             child={child}
                             handleSelect={handleSelect}
                             checked={itemsToRemove.includes(child.room_id)}
@@ -123,7 +128,7 @@ function RemoveListEntry({ child, parentName, handleSelect, checked }) {
             <input type="checkbox"
                 checked={checked}
                 title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}
-                onClick={() => handleSelect(child.room_id)} />
+                onChange={() => handleSelect(child.room_id)} />
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 }

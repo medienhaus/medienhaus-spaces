@@ -26,11 +26,6 @@ const ChangeTopic = ({ roomId, onCancel }) => {
     const [currentTopic, setCurrentTopic] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    useEffect(() => {
-        // Fetch the current room topic when the component mounts
-        getCurrentTopic();
-    }, [getCurrentTopic]);
-
     const getCurrentTopic = useCallback(async () => {
         // Use the Matrix client to get the current room topic
         const stateEvent = await matrixClient.getStateEvent(roomId, 'm.room.topic')
@@ -43,6 +38,11 @@ const ChangeTopic = ({ roomId, onCancel }) => {
             setErrorMessage('');
         }
     }, [matrixClient, roomId]);
+
+    useEffect(() => {
+        // Fetch the current room topic when the component mounts
+        getCurrentTopic();
+    }, [getCurrentTopic]);
 
     const handleTopicChange = (e) => {
         setNewTopic(e.target.value);
