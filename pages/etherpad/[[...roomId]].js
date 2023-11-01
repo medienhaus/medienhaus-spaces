@@ -16,6 +16,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
 import ServiceLink from '../../components/UI/ServiceLink';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
