@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import IframeLayout from '../../components/layouts/iframe';
-import BinIcon from '../../assets/icons/bin.svg';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import FolderIcon from '../../assets/icons/folder.svg';
@@ -27,7 +27,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypa
             <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
-                    { isDeletingPad ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
+                    { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />
                 { myPowerLevel && (

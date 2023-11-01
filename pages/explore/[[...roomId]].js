@@ -66,25 +66,6 @@ export default function Explore() {
         return () => controller.abort();
     }, [iframeRoomId, matrix]);
 
-    // Handle route changes and fetch room content
-    const onRouterChange = useCallback(async () => {
-        setIsFetchingContent(roomId);
-        setManageContextActionToggle(false);
-        await callApiAndAddToObject(null, roomId);
-        setIsFetchingContent(false);
-    }, [roomId, callApiAndAddToObject]);
-
-    useEffect(() => {
-        let cancelled = false;
-        if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
-            onRouterChange();
-        }
-
-        return () => {
-            cancelled = true;
-        };
-    }, [router.query?.roomId, matrix.initialSyncDone, onRouterChange]);
-
     // Call API to fetch and add room hierarchy to selectedSpaceChildren
     const callApiAndAddToObject = useCallback(async (e, roomId) => {
         if (!selectedSpaceChildren) return;
@@ -147,6 +128,25 @@ export default function Explore() {
             return [...prevState, spaceHierarchy];
         });
     }, [auth, matrix, selectedSpaceChildren]);
+
+    // Handle route changes and fetch room content
+    const onRouterChange = useCallback(async () => {
+        setIsFetchingContent(roomId);
+        setManageContextActionToggle(false);
+        await callApiAndAddToObject(null, roomId);
+        setIsFetchingContent(false);
+    }, [roomId, callApiAndAddToObject]);
+
+    useEffect(() => {
+        let cancelled = false;
+        if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
+            onRouterChange();
+        }
+
+        return () => {
+            cancelled = true;
+        };
+    }, [router.query?.roomId, matrix.initialSyncDone, onRouterChange]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
 

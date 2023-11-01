@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { MatrixEvent } from 'matrix-js-sdk';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from '../../../components/UI/ServiceTable';
 import { useAuth } from '../../../lib/Auth';
-import BinIcon from '../../../assets/icons/bin.svg';
 import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -148,7 +148,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
                 onClick={onKickClick}
                 title={
                     t(hasHigherPowerLevel ? 'Kick {{user}} from {{room}}' : 'Cannot kick {{ user }}, you don’t have the required permissions', { user: displayName, room: roomName })}>
-                { isKicking ? <LoadingSpinnerInline /> : <BinIcon fill="var(--color-foreground)" /> }
+                { isKicking ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
             </TextButton>
 
         </ServiceTable.Cell>

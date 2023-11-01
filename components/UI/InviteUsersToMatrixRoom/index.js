@@ -18,9 +18,9 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { UserAddIcon } from '@remixicons/react/line';
 
 import TextButton from '../TextButton';
-import UserAddIcon from '../../../assets/icons/user-add.svg';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
@@ -91,7 +91,7 @@ export default function InviteUserToMatrixRoom({ roomId, roomName }) {
 
     return <>
         <TextButton title={t('Invite users to' + ' ' + roomName)} onClick={handleClick}>
-            <UserAddIcon fill="var(--color-foreground)" />
+            <UserAddIcon width="24px" height="24px" fill="var(--color-foreground)" />
         </TextButton>
         { isInviteDialogueOpen && (
             <DefaultModal

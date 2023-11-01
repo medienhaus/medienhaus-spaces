@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 import styled from 'styled-components';
+import { CloseIcon } from '@remixicons/react/line';
 
-import CloseIcon from '../../assets/icons/close.svg';
 import TextButton from './TextButton';
 
 const Header = styled.header`
@@ -43,7 +43,7 @@ const DefaultModal = ({ children, isOpen, onRequestClose, contentLabel }) => {
         shouldCloseOnOverlayClick={true}>
         <Header>
             { contentLabel } <CloseButton onClick={onRequestClose}>
-                <CloseIcon />
+                <CloseIcon width="24px" height="24px" />
             </CloseButton>
         </Header>
         { children }

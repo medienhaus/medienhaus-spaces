@@ -184,7 +184,9 @@ export default function Chat() {
             </IframeLayout.Sidebar>
             { roomId && (
                 <IframeLayout.IframeWrapper>
-                    <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} />
+                    <ChatIframeView
+                        title="chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
