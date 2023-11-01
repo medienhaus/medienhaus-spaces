@@ -26,7 +26,7 @@ Installs all of the application's dependencies.
 
 ### Configuration
 
-Configuration happens in the `next.config.js` file.
+Configuration happens in the `config.js` file.
 
 ### Available Scripts
 
