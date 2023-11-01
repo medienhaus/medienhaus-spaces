@@ -23,4 +23,5 @@ const CopyToClipboard = ({ content, title }) => {
         </TextButton>
     );
 };
+
 export default CopyToClipboard;

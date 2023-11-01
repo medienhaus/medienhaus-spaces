@@ -124,6 +124,7 @@ export default function Etherpad() {
                 await syncServerPadsAndSet();
             }
         };
+
         !cancelled && isMyPadsApiEnabled && populatePadsFromServer();
 
         return () => {
@@ -153,8 +154,10 @@ export default function Etherpad() {
 
     useEffect(() => {
         let cancelled = false;
+
         const syncServerPadsWithMatrix = async () => {
             let matrixPads = {};
+
             if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(matrix.serviceSpaces.etherpad).children) {
@@ -169,6 +172,7 @@ export default function Etherpad() {
                     });
                 }
             }
+
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
@@ -190,6 +194,7 @@ export default function Etherpad() {
     const deletePad = async () => {
         // Confirm if the user really wants to remove/delete this pad ...
         let confirmDeletionMessage;
+
         if (myPadsObject) {
             confirmDeletionMessage = t('This is going to delete the pad and all of its content.');
         } else {
@@ -248,6 +253,7 @@ export default function Etherpad() {
     // - user's Matrix displayname as parameter so that it shows up in Etherpad as username
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     let iframeUrl;
+
     if (roomId && matrix.roomContents.get(roomId)?.body) {
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
