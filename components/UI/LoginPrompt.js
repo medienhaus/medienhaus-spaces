@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { useAuth } from '../../lib/Auth';
 import Form from './Form';
-import ConfirmCancelButtons from './ConfirmCancelButtons';
 import ErrorMessage from './ErrorMessage';
 
 const Wrapper = styled.aside`
@@ -29,7 +28,7 @@ const LoginPrompt = () => {
     const auth = useAuth();
     const { t } = useTranslation();
 
-    const onClick = async (e, password) => {
+    const loginAgain = async (e) => {
         setIsSigningIn(true);
         e.preventDefault();
         await auth.validateAuthProvidersAccessTokens(
@@ -39,16 +38,12 @@ const LoginPrompt = () => {
         setIsSigningIn(false);
     };
 
-    const onCancel = () => {
-        setPassword('');
-    };
-
     return (
         <Wrapper>
             <ErrorMessage>
                 { t('Token invalid. Please sign in again.') }
             </ErrorMessage>
-            <Form>
+            <Form onSubmit={loginAgain}>
                 <input type="password"
                     placeholder={t('password')}
                     value={password}
@@ -56,12 +51,7 @@ const LoginPrompt = () => {
                         setPassword(e.target.value);
                     }}
                 />
-                <ConfirmCancelButtons
-                    disabled={!password || isSigningIn}
-                    onClick={(e) => onClick(e, password)}
-                    onCancel={onCancel}>
-                    { t('Login') }
-                </ConfirmCancelButtons>
+                <button type="submit" disabled={!password || isSigningIn}>{ t('Login') }</button>
             </Form>
         </Wrapper>
     );
