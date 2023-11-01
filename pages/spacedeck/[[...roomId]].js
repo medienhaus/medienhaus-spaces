@@ -58,11 +58,13 @@ export default function Spacedeck() {
                     // Extract the spacedeck id from room content
                     const roomIdContent = matrix.roomContents.get(roomId);
                     const id = roomIdContent?.body.substring(roomIdContent.body.lastIndexOf('/') + 1);
+
                     if (!id) {
                         // If no content was found, it's likely a space with nested rooms, so continue searching
                         getAllMatrixSketches(roomId);
                         continue;
                     }
+
                     // Add the sketch information to matrixSketches object
                     matrixSketches[id] = {
                         name: matrix.rooms.get(roomId).name,
@@ -76,12 +78,14 @@ export default function Spacedeck() {
         const updateStructure = async (object, parent) => {
             for (const sketch of Object.values(object)) {
                 if (!sketch.id) continue;
+
                 if (matrixSketches[sketch.id]) {
                     if (sketch.name !== matrixSketches[sketch.id].name) {
                         // If the sketch names differ, update the Matrix room name
                         logger.debug('changing name for ' + matrixSketches[sketch.id]);
                         await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                     }
+
                     continue;
                 }
 
@@ -126,6 +130,7 @@ export default function Spacedeck() {
 
     useEffect(() => {
         let cancelled = false;
+
         const populateSketchesfromServer = async (recursion) => {
             if (!_.isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
@@ -134,6 +139,7 @@ export default function Spacedeck() {
                 populateSketchesfromServer(true);
             }
         };
+
         !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesfromServer();
 
         return () => {
@@ -163,12 +169,14 @@ export default function Spacedeck() {
     const removeSketch = async () => {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
+
         if (!remove || remove.ok) {
             setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
             return;
         }
+
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
         router.push(`${spacedeckPath}`);
