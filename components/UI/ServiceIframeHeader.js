@@ -18,7 +18,7 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypadsPadObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -26,7 +26,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, mypa
             <h2>{ title }</h2>
             <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
-                { deleteContent && <button title={t(mypadsPadObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
+                { deleteContent && <button title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />

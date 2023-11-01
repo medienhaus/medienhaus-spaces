@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -54,7 +53,7 @@ export default function Spacedeck() {
         const matrixSketches = {};
 
         // Function to recursively collect all Matrix sketches within a space
-        const getAllMatrixSketches = (id, parent) => {
+        const getAllMatrixSketches = (id) => {
             if (matrix?.spaces.get(id)?.children) {
                 for (const roomId of spacedeckChildren) {
                     // Extract the spacedeck id from room content
@@ -144,14 +143,12 @@ export default function Spacedeck() {
         };
     }, [spacedeck]);
 
-    async function createSketchRoom(link, name, parent = serviceSpaceId, retries = 0) {
+    async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // Log debugging information
         setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
         // Create the room with retry handling
-        const createRoomForSketch = async (retries = 1) => {
-            logger.debug('Attempt %d of creating a room for %s', retries, name);
-
+        const createRoomForSketch = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck');
         };
 
@@ -162,7 +159,7 @@ export default function Spacedeck() {
             });
 
         // Log debug information about current progress
-        logger.debug('Created Room for %s with id %s ' + name, room);
+        logger.debug(`Created room for ${name} with id ${room}`);
 
         // Add the room as a child to the parent space
         const addSpaceChild = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room);
@@ -175,7 +172,6 @@ export default function Spacedeck() {
 
         // Log debug information about current progress
         logger.debug('Added %s to parent %s', name, parent);
-
         // Send the message to the room with retry handling
         const sendMessage = async () => {
             await matrixClient.sendMessage(room, {
@@ -220,7 +216,7 @@ export default function Spacedeck() {
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
                     ]}
                 />
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+                { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                 { !serviceSpaceId || syncingServerSketches ?
                     <span>{ userFeedback } <LoadingSpinnerInline /></span> :
                     <>

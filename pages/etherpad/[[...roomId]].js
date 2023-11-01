@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import TextButton from '../../components/UI/TextButton';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -132,10 +130,7 @@ export default function Etherpad() {
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
         logger.debug('Creating new Matrix room for pad', { link, name });
-
-        const createRoomForPad = async (retries = 1) => {
-            logger.debug('Attempt %d of creating a room for %s', retries, name);
-
+        const createRoomForPad = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
         };
 
@@ -270,7 +265,7 @@ export default function Etherpad() {
     }, [matrix.roomContents, matrix.rooms, matrix.serviceSpaces.etherpad, matrix.spaces, roomId, serverPads]);
 
     // Add the following parameters to the iframe URL:
-    // - user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // - user's Matrix display name as parameter so that it shows up in Etherpad as username
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     // Add the user's Matrix display name as parameter so that it shows up in Etherpad as username
     let iframeUrl;
@@ -330,8 +325,8 @@ export default function Etherpad() {
                         roomId={roomId}
                         deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
-                        mypadsPadObject={mypadsPadObject} />
-                    <iframe src={iframeUrl.toString()} />
+                        myPadsObject={myPadsObject} />
+                    <iframe title={etherpadPath} src={iframeUrl.toString()} />
                 </IframeLayout.IframeWrapper>
             ) }
         </>
