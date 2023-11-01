@@ -59,7 +59,9 @@ const LoginPrompt = () => {
                 <ConfirmCancelButtons
                     disabled={!password || isSigningIn}
                     onClick={(e) => onClick(e, password)}
-                    onCancel={onCancel} />
+                    onCancel={onCancel}>
+                    { t('Login') }
+                </ConfirmCancelButtons>
             </Form>
         </Wrapper>
     );
