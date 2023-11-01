@@ -129,7 +129,6 @@ export default function Etherpad() {
         };
     }, [etherpad, syncServerPadsAndSet]);
 
-
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
         const createRoomForPad = async () => {
