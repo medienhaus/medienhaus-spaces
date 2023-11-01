@@ -60,7 +60,12 @@
         },
         {
           "blankLine": "always",
-          "prev": "return",
+          "prev": "*",
+          "next": "multiline-block-like"
+        },
+        {
+          "blankLine": "always",
+          "prev": "multiline-block-like",
           "next": "*"
         }
       ],

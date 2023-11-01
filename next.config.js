@@ -21,6 +21,7 @@ module.exports = {
                 destination: '/etherpad/:roomId',
             });
         }
+
         if (SpacesConfig.authProviders.spacedeck) {
             rewriteConfig.push(
                 {

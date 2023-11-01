@@ -51,11 +51,13 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
         setIsAcceptingInvite(true);
         const forwardingUrl = await acceptMatrixInvite(roomId, path);
         setIsAcceptingInvite(false);
+
         if (!forwardingUrl) {
             alert(t('Something went wrong! Please try again.'));
 
             return;
         }
+
         setLink(forwardingUrl);
         setWasHandled(true);
     };
