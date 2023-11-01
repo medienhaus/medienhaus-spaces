@@ -189,7 +189,7 @@ export default function Spacedeck() {
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
-                    disabled={!serviceSpaceId ||!auth.connectionStatus.etherpad}
+                    disabled={!serviceSpaceId ||!auth.connectionStatus.spacedeck}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
