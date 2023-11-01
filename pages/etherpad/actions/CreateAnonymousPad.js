@@ -19,9 +19,11 @@ export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
         let string = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
         const charactersLength = characters.length;
+
         for (let i = 0; i < 20; i++) {
             string += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
+
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + string;
         const roomId = await createWriteRoom(link, padName);
 

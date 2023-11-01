@@ -121,11 +121,13 @@ export default function Account() {
 
         setFeedbackMessage(null);
         setIsSavingChanges(true);
+
         // Save display name if changed
         if (profileInfo.displayname !== inputDisplayname) {
             await matrixClient.setDisplayName(inputDisplayname);
             await fetchProfileInfo();
         }
+
         // Add new email if provided
         if (inputNewEmail) {
             const secretResponse = await matrixClient.generateClientSecret();
