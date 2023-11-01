@@ -22,11 +22,13 @@ const Wrapper = styled.aside`
     margin-top: 0 !important;
   }
 `;
+
 const LoginPrompt = () => {
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [password, setPassword] = useState('');
     const auth = useAuth();
     const { t } = useTranslation();
+
     const onClick = async (e, password) => {
         setIsSigningIn(true);
         e.preventDefault();
@@ -41,21 +43,26 @@ const LoginPrompt = () => {
         setPassword('');
     };
 
-    return <Wrapper>
-        <ErrorMessage>{ t('Token invalid. Please sign in again.') }</ErrorMessage>
-        <Form>
-            <input type="password"
-                placeholder={t('password')}
-                value={password}
-                onChange={(e) => {
-                    setPassword(e.target.value);
-                }}
-            />
-            <ConfirmCancelButtons
-                disabled={!password || isSigningIn}
-                onClick={(e) => onClick(e, password)}
-                onCancel={onCancel} />
-        </Form>
-    </Wrapper>;
+    return (
+        <Wrapper>
+            <ErrorMessage>
+                { t('Token invalid. Please sign in again.') }
+            </ErrorMessage>
+            <Form>
+                <input type="password"
+                    placeholder={t('password')}
+                    value={password}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
+                />
+                <ConfirmCancelButtons
+                    disabled={!password || isSigningIn}
+                    onClick={(e) => onClick(e, password)}
+                    onCancel={onCancel} />
+            </Form>
+        </Wrapper>
+    );
 };
+
 export default LoginPrompt;
