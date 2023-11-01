@@ -17,10 +17,9 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { UserAddIcon } from '@remixicons/react/line';
 import styled from 'styled-components';
+import { CloseIcon } from '@remixicons/react/line';
 
-import TextButton from '../TextButton';
 import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
@@ -93,10 +92,12 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                     errors.push(err);
                 });
         }
+
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
             setErrorFeedback(errors.map(err => <ErrorMessage key={err.data?.error}>{ err.data?.error }</ErrorMessage>));
         }
+
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the modal view.

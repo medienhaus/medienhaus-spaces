@@ -25,15 +25,15 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
             <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <button title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
-                    { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24px" height="24px" fill="var(--color-foreground)" /> }
+                    { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(false); }}>
                             <FolderIcon
-                                width="24px"
-                                height="24px"
+                                width="var(--icon-size)"
+                                height="var(--icon-size)"
                                 title={t('Browse the selected context')}
                                 fill="var(--color-foreground)"
                             />
@@ -41,8 +41,8 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                     ) : (
                         <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
                             <ListSettingsIcon
-                                width="24px"
-                                height="24px"
+                                width="var(--icon-size)"
+                                height="var(--icon-size)"
                                 title={t('Manage the selected context')}
                                 fill="var(--color-foreground)"
                             />
@@ -54,4 +54,5 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
         </IframeLayout.IframeHeader>
     );
 };
+
 export default ServiceIframeHeader;
