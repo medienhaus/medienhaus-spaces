@@ -84,6 +84,7 @@ const IframeHeaderButtonWrapper = styled.div`
   display: grid;
   grid-auto-flow: column;
   grid-gap: calc(var(--margin));
+  align-content: start;
   height: 100%;
 `;
 

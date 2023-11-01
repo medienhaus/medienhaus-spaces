@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -136,6 +135,7 @@ export default function Etherpad() {
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
         logger.debug('Creating new Matrix room for pad', { link, name });
+
         const createRoomForPad = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
         };
@@ -167,6 +167,7 @@ export default function Etherpad() {
             await etherpad.syncAllPads();
             setServerPads(etherpad.getAllPads());
         }
+
         setErrorMessage('');
 
         return room;
@@ -337,7 +338,10 @@ export default function Etherpad() {
                         roomId={roomId}
                         deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
-                        myPadsObject={myPadsObject} />
+                        myPadsObject={myPadsObject}
+                        isInviteUsersOpen={isInviteUsersOpen}
+                        setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
+                    />
                     { isInviteUsersOpen ?
                         <InviteUserToMatrixRoom
                             roomId={roomId}
