@@ -19,7 +19,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^13.2.2",
-    "react-modal": "^3.16.1",
     "styled-components": "^6.0.8"
   },
   "devDependencies": {
@@ -59,7 +58,12 @@
         },
         {
           "blankLine": "always",
-          "prev": "return",
+          "prev": "*",
+          "next": "multiline-block-like"
+        },
+        {
+          "blankLine": "always",
+          "prev": "multiline-block-like",
           "next": "*"
         }
       ],

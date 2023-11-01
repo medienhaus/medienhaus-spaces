@@ -21,11 +21,13 @@ export default function CreateAuthoredPad({ callbackDone, createWriteRoom }) {
     const createAuthoredPad = async () => {
         setIsLoading(true);
         const padId = await etherpad.createPad(padName, 'public');
+
         if (!padId) {
             setIsLoading(false);
 
             return;
         }
+
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padId;
         const roomId = await createWriteRoom(link, padName);
         router.push(`${etherpadPath}/${roomId}`);

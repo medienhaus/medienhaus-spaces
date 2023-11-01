@@ -27,6 +27,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         let cancelled = false;
+
         const hydrateInvitationMetaEvents = async () => {
             const serviceInvitationsArray = [];
             // fetch information about pending invitations

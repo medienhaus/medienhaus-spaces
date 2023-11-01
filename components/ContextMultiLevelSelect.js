@@ -39,6 +39,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
             // Remove the first entry, which is the context we retrieved the children for
 
             roomHierarchy.rooms.shift();
+
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
                 const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
@@ -51,9 +52,11 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
                 // ... otherwise show this space child:
                 newChildContexts.push(room);
             }
+
             if (sortAlphabetically) {
                 newChildContexts = _.sortBy(newChildContexts, 'name');
             }
+
             if (!isSubscribed) return;
             onFetchedChildren(newChildContexts.length > 0);
             setChildContexts(newChildContexts);

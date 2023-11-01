@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -19,6 +20,7 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
+import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
@@ -66,6 +68,7 @@ export default function Etherpad() {
 
     const [serverPads, setServerPads] = useState(null);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     const [isSyncingServerPads, setIsSyncingServerPads] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [userFeedback, setUserFeedback] = useState('');
@@ -103,6 +106,8 @@ export default function Etherpad() {
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
+        // closing any other open user function in case they are open
+        setIsInviteUsersOpen(false);
     }, [roomId]);
 
     const syncServerPadsAndSet = useCallback(async () => {
@@ -120,6 +125,7 @@ export default function Etherpad() {
                 await syncServerPadsAndSet();
             }
         };
+
         !cancelled && isMyPadsApiEnabled && populatePadsFromServer();
 
         return () => {
@@ -168,9 +174,11 @@ export default function Etherpad() {
 
     useEffect(() => {
         let cancelled = false;
+
         const syncServerPadsWithMatrix = async () => {
             setIsSyncingServerPads(true);
             let matrixPads = {};
+
             if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(matrix.serviceSpaces.etherpad).children) {
@@ -185,6 +193,7 @@ export default function Etherpad() {
                     });
                 }
             }
+
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
                 setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }) + <LoadingSpinnerInline />);
@@ -192,6 +201,7 @@ export default function Etherpad() {
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
+
             setIsSyncingServerPads(false);
             setUserFeedback('');
         };
@@ -210,6 +220,7 @@ export default function Etherpad() {
     const deletePad = async () => {
         // Confirm if the user really wants to remove/delete this pad ...
         let confirmDeletionMessage;
+
         if (myPadsObject) {
             confirmDeletionMessage = t('This is going to delete the pad and all of its content.');
         } else {
@@ -269,6 +280,7 @@ export default function Etherpad() {
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     // Add the user's Matrix display name as parameter so that it shows up in Etherpad as username
     let iframeUrl;
+
     if (roomId && matrix.roomContents.get(roomId)?.body) {
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
@@ -326,7 +338,17 @@ export default function Etherpad() {
                         deleteContent={deletePad}
                         isDeletingPad={isDeletingPad}
                         myPadsObject={myPadsObject} />
-                    <iframe title={etherpadPath} src={iframeUrl.toString()} />
+                    { isInviteUsersOpen ?
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        /> :
+                        <iframe
+                            title={etherpadPath}
+                            src={iframeUrl.toString()}
+                        />
+                    }
                 </IframeLayout.IframeWrapper>
             ) }
         </>

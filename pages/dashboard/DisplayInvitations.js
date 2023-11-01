@@ -51,11 +51,13 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
         setIsAcceptingInvite(true);
         const forwardingUrl = await acceptMatrixInvite(roomId, path);
         setIsAcceptingInvite(false);
+
         if (!forwardingUrl) {
             alert(t('Something went wrong! Please try again.'));
 
             return;
         }
+
         setLink(forwardingUrl);
         setWasHandled(true);
     };
@@ -75,12 +77,12 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('accept invitation')}>
                 <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <CheckIcon width="24" height="24" /> }
+                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <CheckIcon width="var(--icon-size)" height="var(--icon-size)" /> }
                 </TextButton>
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('decline invitation')}>
                 <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon width="24" height="24" /> }
+                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon width="var(--icon-size)" height="var(--icon-size)" /> }
                 </TextButton>
             </ServiceTable.Cell>
         </ServiceTable.Row>
