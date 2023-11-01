@@ -1,5 +1,8 @@
 import React from 'react';
 import getConfig from 'next/config';
+import { useTranslation } from 'react-i18next';
+
+import ErrorMessage from '../../../components/UI/ErrorMessage';
 
 /**
  * TEMPLATE SELECT COMPONENT
@@ -16,18 +19,21 @@ import getConfig from 'next/config';
 */
 
 const TemplateSelect = ({ currentTemplate, setTemplate }) => {
-    const contextTemplates = getConfig().publicRuntimeConfig.templates.context; //
+    const contextTemplates = getConfig().publicRuntimeConfig.templates?.context; //
+    const { t } = useTranslation();
 
     const onChangeTemplateSelect = (e) => {
         setTemplate(e.target.value);
     };
+
+    if (!contextTemplates) return <ErrorMessage>{ t('No context templates defined, please contact the administrator') }</ErrorMessage>;
 
     return (
         <>
             <select name="template" defaultValue="" value={currentTemplate} onChange={onChangeTemplateSelect}>
                 <option value="" disabled>Template</option>
                 { contextTemplates?.map((template, key) => {
-                    {/* cycle through all of context templates supplied in the config */}
+                    {/* cycle through all context templates supplied in the config */}
 
                     return <option key={key} value={template}>
                         { template }
