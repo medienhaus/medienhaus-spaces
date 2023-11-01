@@ -71,7 +71,9 @@ export default function Explore() {
         if (!selectedSpaceChildren) return;
         e && e.preventDefault();
         logger.debug('Fetch the room hierarchy for ' + roomId);
-        const getSpaceHierarchy = async () => await matrix.roomHierarchy(roomId, null, 1)
+        const getSpaceHierarchy = async () => await matrix.roomHierarchy(roomId, null, 1);
+
+        const spaceHierarchy = await getSpaceHierarchy()
             .catch(async error => {
                 if (error.data?.error.includes('not in room')) {
                     // If the error indicates the user is not in the room and previews are disabled
@@ -83,19 +85,19 @@ export default function Explore() {
                         // If successfully joined, recursively call 'getSpaceHierarchy' again.
                         if (joinRoom) return await getSpaceHierarchy();
                     }
-                } else setErrorMessage(error.data.error); // Handle other errors by setting an error message.
+                } else {
+                    return matrix.handleRateLimit(error, () => getSpaceHierarchy())
+                        .catch(error => {
+                            setErrorMessage(error.message);
+                        });  // Handle other errors by setting an error message.
+                }
             });
-        const spaceHierarchy = await getSpaceHierarchy();
         if (!spaceHierarchy) return;
         const parent = spaceHierarchy[0];
 
         const getMetaEvent = async (obj) => {
             logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
-            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta')
-                .catch((err) => {
-                    logger.debug(err);
-                    obj.missingMetaEvent = true;
-                });
+            const metaEvent = async () => await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
 
             if (metaEvent) {
                 obj.type = metaEvent.type;
@@ -106,7 +108,16 @@ export default function Explore() {
 
         for (const space of spaceHierarchy) {
             space.parent = parent;
-            await getMetaEvent(space);
+            await getMetaEvent(space)
+                .catch((error) => {
+                    logger.debug(error);
+
+                    return matrix.handleRateLimit(error, () => getMetaEvent(space))
+                        .catch(error => {
+                            space.missingMetaEvent = true;
+                            setErrorMessage(error.message);
+                        });
+                });
         }
 
         setSelectedSpaceChildren((prevState) => {
@@ -127,18 +138,20 @@ export default function Explore() {
             // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
             return [...prevState, spaceHierarchy];
         });
-    }, [auth, matrix, selectedSpaceChildren]);
+    }, [auth, matrix, matrixClient, selectedSpaceChildren, t]);
 
     // Handle route changes and fetch room content
-    const onRouterChange = useCallback(async () => {
-        setIsFetchingContent(roomId);
-        setManageContextActionToggle(false);
-        await callApiAndAddToObject(null, roomId);
-        setIsFetchingContent(false);
-    }, [roomId, callApiAndAddToObject]);
 
     useEffect(() => {
         let cancelled = false;
+
+        const onRouterChange = async () => {
+            setIsFetchingContent(roomId);
+            setManageContextActionToggle(false);
+            await callApiAndAddToObject(null, roomId);
+            setIsFetchingContent(false);
+        };
+
         if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
             onRouterChange();
         }
@@ -146,7 +159,7 @@ export default function Explore() {
         return () => {
             cancelled = true;
         };
-    }, [router.query?.roomId, matrix.initialSyncDone, onRouterChange]);
+    }, [router.query?.roomId, matrix.initialSyncDone]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
@@ -162,7 +175,6 @@ export default function Explore() {
                             isFetchingContent={isFetchingContent}
                             iframeRoomId={iframeRoomId}
                         />
-
                     }
                 </ServiceTableWrapper>
             </IframeLayout.Sidebar>

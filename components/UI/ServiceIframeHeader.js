@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { DeleteBinIcon, FolderIcon, ListSettingsIcon } from '@remixicons/react/line';
 
 import IframeLayout from '../../components/layouts/iframe';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import FolderIcon from '../../assets/icons/folder.svg';
-import ListSettingsIcon from '../../assets/icons/list-settings.svg';
 import InviteUsersToMatrixRoom from './InviteUsersToMatrixRoom';
 
 const ToggleButton = styled.button`
@@ -27,13 +25,15 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
             <IframeLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <button title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
-                    { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon fill="var(--color-foreground)" /> }
+                    { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24px" height="24px" fill="var(--color-foreground)" /> }
                 </button> }
                 <InviteUsersToMatrixRoom roomId={roomId} name={title} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => { setManageContextActionToggle(false); }}>
                             <FolderIcon
+                                width="24px"
+                                height="24px"
                                 title={t('Browse the selected context')}
                                 fill="var(--color-foreground)"
                             />
@@ -41,6 +41,8 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                     ) : (
                         <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
                             <ListSettingsIcon
+                                width="24px"
+                                height="24px"
                                 title={t('Manage the selected context')}
                                 fill="var(--color-foreground)"
                             />
