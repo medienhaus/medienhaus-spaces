@@ -7,11 +7,14 @@ import { useSearchParams } from 'next/navigation';
 
 import { useAuth } from '../lib/Auth';
 import ErrorMessage from '../components/UI/ErrorMessage';
+import LoadingSpinner from '../components/UI/LoadingSpinner';
 
 const LoginSection = styled.div`
   max-width: 55ch;
 
+  /*
   & > * + *,
+  */
   & > form > * + * {
     margin-top: var(--margin);
   }
@@ -21,8 +24,30 @@ const LoginSection = styled.div`
   }
 `;
 
+const ServiceStatus = styled.div`
+  margin-bottom: calc(var(--margin) * var(--line-height));
+
+  > * + * {
+    margin-top: var(--margin);
+
+    /* margin-top: calc(var(--margin) * var(--line-height)); */
+  }
+`;
+
 const UsernameHomeserverContainer = styled.div`
   position: relative;
+`;
+
+const PasswordInputButtonContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-gap: 0 calc(var(--margin) / var(--line-height));
+  align-items: start;
+
+  /* it might work, but i really don’t like it */
+  & > * {
+    margin-top: unset;
+  }
 `;
 
 const Homeserver = styled.span`
@@ -50,10 +75,10 @@ export default function Login() {
     const [password, setPassword] = useState('');
 
     const usernameInput = useRef();
-    const useSearch = useSearchParams();
+    const searchParams = useSearchParams();
 
     // If we are logged in... what do we want here? Let's forward the user to the dashboard!
-    if (auth.user && auth.connectionStatus.etherpad) router.push('/');
+    if (auth.user && !searchParams.get('via')) router.push('/');
 
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
@@ -84,45 +109,62 @@ export default function Login() {
 
     // Automatically focus the username input on page load
     useEffect(() => {
-        if (!auth.user) usernameInput.current.focus();
-    }, []);
-
-    const ServiceStatus = () => {
-        return Object.keys(auth.connectionStatus).map((service, index) => {
-            return (
-                <div>
-                    {
-                        !auth.connectionStatus[service] && <ErrorMessage>{ t('Your {{service}} session has expired. Please sign in again, in order to use {{service}} ', { service: service }) }</ErrorMessage> }
-                    <p key={index}>{ auth.connectionStatus[service] ? '🟢' :' 🔴' } { service } </p>
-                </div>);
-        });
-    };
-
-    console.log(useSearch);
+        if (auth.user !== null && !auth.user) usernameInput.current.focus();
+        console.log(auth.user);
+    }, [auth.user]);
 
     return (
         <>
-            <h2>/login</h2>
-            <LoginSection>
-                { auth.user && <ServiceStatus /> }
-                <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                    { !auth.user && <UsernameHomeserverContainer>
-                        <input type="text"
-                            placeholder={t('username')}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            ref={usernameInput} />
-                        { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                            <Homeserver
-                                onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
-                        ) }
-                    </UsernameHomeserverContainer> }
-                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
-                    { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                </form>
-            </LoginSection>
+            <h2>
+                { searchParams?.get('via') ? '/' + searchParams.get('via') : '/login' }
+            </h2>
+            { auth.user === null ?
+                <LoadingSpinner />
+                :
+                <LoginSection>
+                    { searchParams.get('via') &&
+                    <ServiceStatus>
+                        <>
+                            <ErrorMessage>
+                                { t('Your /{{service}} session has expired.', { service: searchParams.get('via') }) }
+                            </ErrorMessage>
+                            <p>
+                                { t('Please sign in again, in order to use /{{service}} without any limitations.', { service: searchParams.get('via') }) }
+                            </p>
+                        </>
+                    </ServiceStatus>
+                    }
+                    <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                        { auth.user !== null && !auth.user &&
+                        <UsernameHomeserverContainer>
+                            <input type="text"
+                                placeholder={t('username')}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                ref={usernameInput} />
+                            {
+                                (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                                    <Homeserver
+                                        onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }
+                                    </Homeserver>
+                                )
+                            }
+                        </UsernameHomeserverContainer>
+                        }
+                        <PasswordInputButtonContainer>
+                            <input type="password"
+                                placeholder={t('password')}
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                }}
+                            />
+                            <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                        </PasswordInputButtonContainer>
+                        { errorMessage && (<p>❗️ { errorMessage }</p>) }
+                    </form>
+                </LoginSection>
+            }
         </>
     );
 }
-
