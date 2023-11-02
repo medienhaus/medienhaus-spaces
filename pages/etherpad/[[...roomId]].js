@@ -149,6 +149,25 @@ export default function Etherpad() {
         return room;
     }, [auth, matrix, matrixClient, etherpad]);
 
+    /**
+     * Creates an Etherpad and navigates to it based on the provided name, visibility, and password.
+     *
+     * @param {string} name - The name of the Etherpad to create.
+     * @param {string} visibility - The visibility setting for the Etherpad. Expects 'private' or 'public'.
+     * @param {string} password - The password for accessing the Etherpad (if private).
+     * @returns {Promise<boolean|void>} - A Promise that resolves to a 'false' indicating the success of pad creation or navigates to the Etherpad's URL.
+     */
+    const createPadAndOpen = async (name, visibility, password) => {
+        const padObject = await etherpad.createPad(name, visibility, password);
+
+        if (!padObject || !padObject.success) return false;
+
+        const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
+        const roomId = await createWriteRoom(link, name);
+
+        return router.push(`${etherpadPath}/${roomId}`);
+    };
+
     useEffect(() => {
         let cancelled = false;
 
@@ -220,8 +239,8 @@ export default function Etherpad() {
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />, label: t('Add existing pad') },
         { value: 'anonymousPad', actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />, label: t('Create new anonymous pad') },
-        isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createWriteRoom={createWriteRoom} />, label: t('Create new authored pad') },
-        isMyPadsApiEnabled && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createWriteRoom={createWriteRoom} />, label: t('Create password protected pad') },
+        isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />, label: t('Create new authored pad') },
+        isMyPadsApiEnabled && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createPadAndOpen={createPadAndOpen} />, label: t('Create password protected pad') },
     ]);
 
     const listEntries = useMemo(() => {
@@ -231,8 +250,6 @@ export default function Etherpad() {
 
             // if the room name is undefined we don't want to display it
             if (!name) return;
-
-            console.log(etherpadId, _.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined);
 
             return <EtherpadListEntry
                 key={writeRoomId}

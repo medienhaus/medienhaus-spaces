@@ -1,19 +1,11 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { useAuth } from '../../../lib/Auth';
-import { path as etherpadPath } from '../../../lib/Etherpad';
 
-export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
-    const router = useRouter();
+export default function CreatePasswordPad({ createPadAndOpen }) {
     const { t } = useTranslation('etherpad');
-
-    const auth = useAuth();
-    const etherpad = auth.getAuthenticationProvider('etherpad');
 
     const [padName, setPadName] = useState('');
     const [password, setPassword] = useState('');
@@ -22,21 +14,10 @@ export default function CreatePasswordPad({ callbackDone, createWriteRoom }) {
 
     const createPasswordPad = async () => {
         setIsLoading(true);
-        const padObject = await etherpad.createPad(padName, 'private', password);
-
-        if (!padObject || !padObject.success) {
-            setIsLoading(false);
-
-            return;
-        }
-
-        const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
-        const roomId = await createWriteRoom(link, padName);
-        router.push(`${etherpadPath}/${roomId}`);
-
-        callbackDone && callbackDone();
-        setPadName('');
+        const createPad = await createPadAndOpen(padName, 'private', password);
         setIsLoading(false);
+        if (!createPad) return;
+        setPadName('');
     };
 
     return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
