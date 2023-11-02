@@ -275,6 +275,7 @@ export default function Etherpad() {
     }
 
     // const [etherpadState, setEtherpadState] = useState(false);
+    if (!auth.connectionStatus.etherpad) router.push('/login?via=write');
 
     return (
         <>
@@ -292,7 +293,6 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
-                        { !auth.connectionStatus.etherpad && <LoginPrompt /> }
                         <ServiceTable>
                             <ServiceTable.Body>
                                 { listEntries }
