@@ -55,7 +55,7 @@ const LoginPrompt = () => {
             <ErrorMessage>
                 { t('Token invalid. Please sign in again.') }
             </ErrorMessage>
-            <InputButton>
+            <InputButton onSubmit={loginAgain}>
                 <input type="password"
                     placeholder={t('password')}
                     value={password}
@@ -63,11 +63,7 @@ const LoginPrompt = () => {
                         setPassword(e.target.value);
                     }}
                 />
-                <button
-                    disabled={!password || isSigningIn}
-                    onClick={(e) => onClick(e, password)}>
-                    { t('Login') }
-                </button>
+                <button type="submit" disabled={!password || isSigningIn}>{ t('Login') }</button>
             </InputButton>
         </Wrapper>
     );
