@@ -169,7 +169,6 @@ export default function Spacedeck() {
     const removeSketch = async () => {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
-        console.log(remove);
 
         if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
@@ -178,11 +177,8 @@ export default function Spacedeck() {
             return;
         }
 
-        console.log('here');
-        const removespace = await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
-        console.log(removespace);
-        const leave = await matrix.leaveRoom(roomId);
-        console.log(leave);
+        await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
+        await matrix.leaveRoom(roomId);
         router.push(`${spacedeckPath}`);
         setIsDeletingSketch(false);
     };
