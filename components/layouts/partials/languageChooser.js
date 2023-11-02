@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 const LanguageSelect = styled.select`
   display: inline;
   width: unset;
-  height: 1.3rem;
+  height: calc(1rem * var(--line-height));
   padding-left: 1ch;
   margin-bottom: 0;
   background-color: unset;

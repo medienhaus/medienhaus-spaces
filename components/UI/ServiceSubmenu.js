@@ -14,7 +14,7 @@ const Header = styled.header`
 const ToggleButton = styled(TextButton)`
   /* unset globally defined button styles; set height to line-height */
   width: unset;
-  height: calc(var(--margin) * 1.3);
+  height: calc(var(--margin) * var(--line-height));
   padding: unset;
   background-color: unset;
   border: unset;
@@ -58,7 +58,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                 <ToggleButton
                     disabled={disabled}
                     onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                    { icon ? icon : <MenuAddIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                 </ToggleButton>
             </Header>
             { isOpen && (
