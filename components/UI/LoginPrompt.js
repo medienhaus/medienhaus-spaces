@@ -9,7 +9,7 @@ import ErrorMessage from './ErrorMessage';
 const InputButton = styled(Form)`
   display: grid;
   grid-template-columns: 1fr min-content;
-  grid-gap: 0 calc(var(--margin) / 1.4);
+  grid-gap: 0 calc(var(--margin) / var(--line-height));
   align-items: start;
 
   /* it might work, but i really don’t like it */
