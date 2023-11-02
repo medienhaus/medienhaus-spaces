@@ -6,6 +6,18 @@ import { useAuth } from '../../lib/Auth';
 import Form from './Form';
 import ErrorMessage from './ErrorMessage';
 
+const InputButton = styled(Form)`
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-gap: 0 calc(var(--margin) / 1.4);
+  align-items: start;
+
+  /* it might work, but i really don’t like it */
+  & > * {
+    margin-top: unset;
+  }
+`;
+
 const Wrapper = styled.aside`
   /* align next element with nav */
   padding-bottom: calc(var(--margin) * 2.4);
@@ -43,7 +55,7 @@ const LoginPrompt = () => {
             <ErrorMessage>
                 { t('Token invalid. Please sign in again.') }
             </ErrorMessage>
-            <Form onSubmit={loginAgain}>
+            <InputButton>
                 <input type="password"
                     placeholder={t('password')}
                     value={password}
@@ -51,8 +63,12 @@ const LoginPrompt = () => {
                         setPassword(e.target.value);
                     }}
                 />
-                <button type="submit" disabled={!password || isSigningIn}>{ t('Login') }</button>
-            </Form>
+                <button
+                    disabled={!password || isSigningIn}
+                    onClick={(e) => onClick(e, password)}>
+                    { t('Login') }
+                </button>
+            </InputButton>
         </Wrapper>
     );
 };
