@@ -20,9 +20,9 @@ const LameColumn = styled.div`
   padding: var(--margin);
 
   @media ${breakpoints.tabletAndAbove} {
+    width: 100%;
     max-width: 55ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-    width: 100%;
   }
 `;
 

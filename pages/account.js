@@ -13,7 +13,7 @@ const ProfileSection = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-gap: calc(var(--margin) * var(--line-height));
-  
+
   & > form {
     grid-row: 2 / 3;
     grid-column: 1 / -1;
