@@ -81,7 +81,7 @@ export default function Etherpad() {
      * The MyPads pad ID that can be used with the MyPads API
      * @type {string | undefined}
      */
-    const myPadsPadId = _.get(matrix, ['roomContents', roomId, 'body'])?.substring(_.get(matrix, ['roomContents', roomId, 'body'])?.lastIndexOf('/') + 1);
+    const myPadsPadId = _.get(matrix.roomContents.get(roomId), ['body'])?.substring(_.get(matrix.roomContents.get(roomId), ['body'])?.lastIndexOf('/') + 1);
 
     /**
      * If the currently visible pad can be accessed via the MyPads API, this will be the MyPads pad object; e.g.
@@ -101,7 +101,7 @@ export default function Etherpad() {
     const myPadsObject = _.get(serverPads, myPadsPadId);
 
     // Whenever the roomId changes (e.g. after a new pad was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
@@ -235,8 +235,6 @@ export default function Etherpad() {
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
-            console.log(etherpadId, _.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined);
-
             return <EtherpadListEntry
                 key={writeRoomId}
                 name={name}
@@ -294,7 +292,7 @@ export default function Etherpad() {
 
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                             </TextButton>
                         </IframeLayout.IframeHeaderButtonWrapper>
                     </IframeLayout.IframeHeader>

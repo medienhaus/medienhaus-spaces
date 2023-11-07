@@ -172,7 +172,7 @@ export default function Spacedeck() {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
 
-        if (!remove || remove.ok) {
+        if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
