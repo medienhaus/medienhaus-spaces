@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import ContextMultiLevelSelect from '../components/ContextMultiLevelSelect';
 import { useAuth } from '../lib/Auth';
+import DefaultLayout from '../components/layouts/default';
 
 const ExploreSection = styled.div`
   & > * + * {
@@ -71,7 +72,7 @@ export default function Explore() {
     }
 
     return (
-        <>
+        <DefaultLayout.LameColumn>
             <h2>/explore</h2>
             <ExploreSection>
                 <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} />
@@ -93,6 +94,6 @@ export default function Explore() {
                     <p>- { t('There are no contents for this context') } -</p>
                 ) }
             </ExploreSection>
-        </>
+        </DefaultLayout.LameColumn>
     );
 }

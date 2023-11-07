@@ -5,10 +5,9 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
+import DefaultLayout from '../components/layouts/default';
 
 const LoginSection = styled.div`
-  max-width: 55ch;
-
   & > form > * + * {
     margin-top: var(--margin);
   }
@@ -97,7 +96,7 @@ export default function Login() {
     }, [auth.user]);
 
     return (
-        <>
+        <DefaultLayout.LameColumn>
             <h2>/login</h2>
             <LoginSection>
                 <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
@@ -128,6 +127,6 @@ export default function Login() {
                     { errorMessage && (<p>❗️ { errorMessage }</p>) }
                 </form>
             </LoginSection>
-        </>
+        </DefaultLayout.LameColumn>
     );
 }

@@ -29,7 +29,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
  * @param {acceptMatrixInvite} props.acceptMatrixInvite
  * @param {declineMatrixInvite} props.declineMatrixInvite
  *
- * @returns {React.JSX.Element}
+ * @returns {React.ReactNode}
 */
 export default function DisplayInvitations({ invite, path, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');

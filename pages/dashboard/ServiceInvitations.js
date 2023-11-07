@@ -27,7 +27,7 @@ import { useMatrix } from '../../lib/Matrix';
  * @param {acceptMatrixInvite} props.acceptMatrixInvite
  * @param {declineMatrixInvite} props.declineMatrixInvite
  *
- * @returns {React.JSX.Element[]}
+ * @returns {React.ReactNode}
  */
 export default function ServiceInvitations({ service, invitations, acceptMatrixInvite, declineMatrixInvite }) {
     const matrix = useMatrix();
