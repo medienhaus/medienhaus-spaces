@@ -3,7 +3,7 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 
-import { DefaultLayout } from '../components/layouts/default';
+import DefaultLayout from '../components/layouts/default';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
 import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '../lib/Internationalization';
@@ -17,9 +17,6 @@ export default function App({ Component, pageProps }) {
 
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData);
-
-    let Layout = DefaultLayout;
-    if (Component.getLayout) { Layout = Component.getLayout(); }
 
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {
@@ -44,11 +41,11 @@ export default function App({ Component, pageProps }) {
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     { !matrixData.isConnectedToServer && <LostConnection /> }
-                    <Layout>
+                    <DefaultLayout.Layout>
                         { (authData.user || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
                         ) }
-                    </Layout>
+                    </DefaultLayout.Layout>
                 </MatrixContext.Provider>
             </AuthContext.Provider>
         </>
