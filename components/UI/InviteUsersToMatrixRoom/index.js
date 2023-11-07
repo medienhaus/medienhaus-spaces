@@ -92,10 +92,12 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                     errors.push(err);
                 });
         }
+
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
             setErrorFeedback(errors.map(err => <ErrorMessage key={err.data?.error}>{ err.data?.error }</ErrorMessage>));
         }
+
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the modal view.
