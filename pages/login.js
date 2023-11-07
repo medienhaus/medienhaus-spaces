@@ -101,22 +101,20 @@ export default function Login() {
             <h2>/login</h2>
             <LoginSection>
                 <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                    { auth.user !== null && !auth.user &&
-                        <UsernameHomeserverContainer>
-                            <input type="text"
-                                placeholder={t('username')}
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                ref={usernameInput} />
-                            {
-                                (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                                    <Homeserver
-                                        onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }
-                                    </Homeserver>
-                                )
-                            }
-                        </UsernameHomeserverContainer>
-                    }
+                    <UsernameHomeserverContainer>
+                        <input type="text"
+                            placeholder={t('username')}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            ref={usernameInput} />
+                        {
+                            (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                                <Homeserver
+                                    onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }
+                                </Homeserver>
+                            )
+                        }
+                    </UsernameHomeserverContainer>
                     <PasswordInputButtonContainer>
                         <input type="password"
                             placeholder={t('password')}

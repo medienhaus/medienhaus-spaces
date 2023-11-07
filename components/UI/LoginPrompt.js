@@ -20,7 +20,6 @@ const InputButton = styled(Form)`
 
 const Wrapper = styled.div`
   /* align next element with nav */
-  padding: calc(var(--margin));
   border-top: 1px solid transparent;
 
   p {
@@ -62,6 +61,7 @@ const LoginPrompt = ({ service }) => {
 
     return (
         <Wrapper>
+            <h2>{ service }</h2>
             <ServiceStatus>
                 <>
                     <ErrorMessage>
