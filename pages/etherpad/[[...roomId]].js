@@ -274,7 +274,7 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
-    if (!auth.connectionStatus.etherpad) return <LoginPrompt service={etherpadPath} />;
+    if (!auth.connectionStatus.etherpad) return <DefaultLayout.LameColumn><LoginPrompt service={etherpadPath} /></DefaultLayout.LameColumn>;
 
     return (
         <>

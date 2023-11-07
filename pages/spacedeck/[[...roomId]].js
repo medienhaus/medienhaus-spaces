@@ -183,7 +183,7 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
-    if (!auth.connectionStatus.spacedeck) return <LoginPrompt service={spacedeckPath} />;
+    if (!auth.connectionStatus.spacedeck) return <DefaultLayout.LameColumn><LoginPrompt service={spacedeckPath} /></DefaultLayout.LameColumn>;
 
     return (
         <>
