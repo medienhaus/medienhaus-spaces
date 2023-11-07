@@ -3,34 +3,18 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { useSearchParams } from 'next/navigation';
 
 import { useAuth } from '../lib/Auth';
-import ErrorMessage from '../components/UI/ErrorMessage';
-import LoadingSpinner from '../components/UI/LoadingSpinner';
 
 const LoginSection = styled.div`
   max-width: 55ch;
 
-  /*
-  & > * + *,
-  */
   & > form > * + * {
     margin-top: var(--margin);
   }
 
   & > pre {
     overflow-x: scroll;
-  }
-`;
-
-const ServiceStatus = styled.div`
-  margin-bottom: calc(var(--margin) * var(--line-height));
-
-  > * + * {
-    margin-top: var(--margin);
-
-    /* margin-top: calc(var(--margin) * var(--line-height)); */
   }
 `;
 
@@ -75,10 +59,9 @@ export default function Login() {
     const [password, setPassword] = useState('');
 
     const usernameInput = useRef();
-    const searchParams = useSearchParams();
 
     // If we are logged in... what do we want here? Let's forward the user to the dashboard!
-    if (auth.user && !searchParams.get('via')) router.push('/');
+    if (auth.user) router.push('/');
 
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
@@ -115,27 +98,10 @@ export default function Login() {
 
     return (
         <>
-            <h2>
-                { searchParams?.get('via') ? '/' + searchParams.get('via') : '/login' }
-            </h2>
-            { auth.user === null ?
-                <LoadingSpinner />
-                :
-                <LoginSection>
-                    { searchParams.get('via') &&
-                    <ServiceStatus>
-                        <>
-                            <ErrorMessage>
-                                { t('Your /{{service}} session has expired.', { service: searchParams.get('via') }) }
-                            </ErrorMessage>
-                            <p>
-                                { t('Please sign in again, in order to use /{{service}} without any limitations.', { service: searchParams.get('via') }) }
-                            </p>
-                        </>
-                    </ServiceStatus>
-                    }
-                    <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
-                        { auth.user !== null && !auth.user &&
+            <h2>/login</h2>
+            <LoginSection>
+                <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                    { auth.user !== null && !auth.user &&
                         <UsernameHomeserverContainer>
                             <input type="text"
                                 placeholder={t('username')}
@@ -150,21 +116,20 @@ export default function Login() {
                                 )
                             }
                         </UsernameHomeserverContainer>
-                        }
-                        <PasswordInputButtonContainer>
-                            <input type="password"
-                                placeholder={t('password')}
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
-                            />
-                            <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
-                        </PasswordInputButtonContainer>
-                        { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                    </form>
-                </LoginSection>
-            }
+                    }
+                    <PasswordInputButtonContainer>
+                        <input type="password"
+                            placeholder={t('password')}
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            }}
+                        />
+                        <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                    </PasswordInputButtonContainer>
+                    { errorMessage && (<p>❗️ { errorMessage }</p>) }
+                </form>
+            </LoginSection>
         </>
     );
 }

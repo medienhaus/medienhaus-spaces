@@ -18,9 +18,9 @@ const InputButton = styled(Form)`
   }
 `;
 
-const Wrapper = styled.aside`
+const Wrapper = styled.div`
   /* align next element with nav */
-  padding-bottom: calc(var(--margin) * 2.4);
+  padding: calc(var(--margin));
   border-top: 1px solid transparent;
 
   p {
@@ -34,7 +34,17 @@ const Wrapper = styled.aside`
   }
 `;
 
-const LoginPrompt = () => {
+const ServiceStatus = styled.div`
+  margin-bottom: calc(var(--margin) * var(--line-height));
+
+  > * + * {
+    margin-top: var(--margin);
+
+    /* margin-top: calc(var(--margin) * var(--line-height)); */
+  }
+`;
+
+const LoginPrompt = ({ service }) => {
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [password, setPassword] = useState('');
     const auth = useAuth();
@@ -52,9 +62,16 @@ const LoginPrompt = () => {
 
     return (
         <Wrapper>
-            <ErrorMessage>
-                { t('Token invalid. Please sign in again.') }
-            </ErrorMessage>
+            <ServiceStatus>
+                <>
+                    <ErrorMessage>
+                        { t('Your {{service}} session has expired.', { service: service }) }
+                    </ErrorMessage>
+                    <p>
+                        { t('Please sign in again, in order to use {{service}} without any limitations.', { service: service }) }
+                    </p>
+                </>
+            </ServiceStatus>
             <InputButton onSubmit={loginAgain}>
                 <input type="password"
                     placeholder={t('password')}

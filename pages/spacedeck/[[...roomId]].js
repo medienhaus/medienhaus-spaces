@@ -183,6 +183,8 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
+    if (!auth.connectionStatus.spacedeck) return <LoginPrompt service={spacedeckPath} />;
+
     return (
         <>
             <IframeLayout.Sidebar>
@@ -196,7 +198,6 @@ export default function Spacedeck() {
                     ]}
                 />
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                { !auth.connectionStatus.spacedeck && <LoginPrompt /> }
                 { !serviceSpaceId || syncingServerSketches ?
                     <LoadingSpinner /> :
                     <>

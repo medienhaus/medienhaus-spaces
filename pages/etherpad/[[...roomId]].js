@@ -16,13 +16,13 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
 import ServiceLink from '../../components/UI/ServiceLink';
-// import LoginPrompt from '../../components/UI/LoginPrompt';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -274,8 +274,7 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
-    // const [etherpadState, setEtherpadState] = useState(false);
-    if (!auth.connectionStatus.etherpad) router.push('/login?via=write');
+    if (!auth.connectionStatus.etherpad) return <LoginPrompt service={etherpadPath} />;
 
     return (
         <>
