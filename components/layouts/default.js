@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { memo } from 'react';
 
 import BaseLayout from './_base';
 import { breakpoints } from '../_breakpoints';
@@ -107,12 +108,12 @@ const Layout = ({ children }) => {
  *   all content within IframeHeaderButtonWrapper is aligned to the right side of the view.
  */
 const DefaultLayout = {
-    Layout,
-    LameColumn, // in search of a better name
-    Sidebar,
-    IframeWrapper,
-    IframeHeader,
-    IframeHeaderButtonWrapper,
+    Layout: memo(Layout),
+    LameColumn: memo(LameColumn), // in search of a better name
+    Sidebar: memo(Sidebar),
+    IframeWrapper: memo(IframeWrapper),
+    IframeHeader: memo(IframeHeader),
+    IframeHeaderButtonWrapper: memo(IframeHeaderButtonWrapper),
 };
 
 export default DefaultLayout;
