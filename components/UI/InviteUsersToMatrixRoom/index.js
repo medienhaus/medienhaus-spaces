@@ -91,7 +91,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and needs to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was' }));
+        successAmount > 0 && setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and {{needs}} to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was', needs: successAmount > 1 ? 'needs' : 'need' }));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();

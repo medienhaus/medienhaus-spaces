@@ -139,6 +139,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     value={value}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
+                    onFocus={() => setSelectedIndex(-1)}
                     ref={inputRef}
                 />
                 { (options.length > 0 || selected.length > 0) && (
