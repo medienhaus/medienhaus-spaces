@@ -11,6 +11,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
+import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import DefaultLayout from '../../components/layouts/default';
@@ -227,7 +228,13 @@ export default function Spacedeck() {
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
+                                { isDeletingSketch ?
+                                    <LoadingSpinnerInline />
+                                    :
+                                    <Icon>
+                                        <DeleteBinIcon />
+                                    </Icon>
+                                }
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>

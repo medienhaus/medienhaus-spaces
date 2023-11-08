@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
+import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -119,11 +120,15 @@ export default function BaseLayout({ children }) {
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
                         <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
-                            <CloseIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
+                            <Icon>
+                                <CloseIcon />
+                            </Icon>
                         </ToggleButton>
                     ) : (
                         <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
-                            <MenuIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
+                            <Icon>
+                                <MenuIcon />
+                            </Icon>
                         </ToggleButton>
                     ) }
                 </Header>
