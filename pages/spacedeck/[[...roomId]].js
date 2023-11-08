@@ -191,7 +191,7 @@ export default function Spacedeck() {
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
-                    disabled={!serviceSpaceId ||!auth.connectionStatus.spacedeck}
+                    disabled={!serviceSpaceId}
                     items={[
                         { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
                         { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
@@ -211,7 +211,7 @@ export default function Spacedeck() {
                                         key={spacedeckRoomId}
                                         name={room.name}
                                         href={`${spacedeckPath}/${spacedeckRoomId}`}
-                                        selected={!auth.connectionStatus.spacedeck || roomId === spacedeckRoomId}
+                                        selected={roomId === spacedeckRoomId}
                                         ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
                                     />;
                                 }) }
