@@ -5,18 +5,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../lib/Auth';
 import Form from './Form';
 import ErrorMessage from './ErrorMessage';
-
-const InputButton = styled(Form)`
-  display: grid;
-  grid-template-columns: 1fr min-content;
-  grid-gap: 0 calc(var(--margin) / var(--line-height));
-  align-items: start;
-
-  /* it might work, but i really don’t like it */
-  & > * {
-    margin-top: unset;
-  }
-`;
+import PasswordInputButton from './PasswordInputButton';
 
 const Wrapper = styled.div`
   /* align next element with nav */
@@ -72,16 +61,16 @@ const LoginPrompt = ({ service }) => {
                     </p>
                 </>
             </ServiceStatus>
-            <InputButton onSubmit={loginAgain}>
-                <input type="password"
-                    placeholder={t('password')}
+            <Form onSubmit={loginAgain}>
+                <PasswordInputButton
                     value={password}
+                    placeholder={t('password')}
                     onChange={(e) => {
                         setPassword(e.target.value);
                     }}
+                    disabled={!password || isSigningIn}
                 />
-                <button type="submit" disabled={!password || isSigningIn}>{ t('Login') }</button>
-            </InputButton>
+            </Form>
         </Wrapper>
     );
 };

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
+import PasswordInputButton from '../components/UI/PasswordInputButton';
 
 const LoginSection = styled.div`
   & > form > * + * {
@@ -19,18 +20,6 @@ const LoginSection = styled.div`
 
 const UsernameHomeserverContainer = styled.div`
   position: relative;
-`;
-
-const PasswordInputButtonContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr min-content;
-  grid-gap: 0 calc(var(--margin) / var(--line-height));
-  align-items: start;
-
-  /* it might work, but i really don’t like it */
-  & > * {
-    margin-top: unset;
-  }
 `;
 
 const Homeserver = styled.span`
@@ -99,7 +88,10 @@ export default function Login() {
         <DefaultLayout.LameColumn>
             <h2>/login</h2>
             <LoginSection>
-                <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    onSubmitLoginForm();
+                }}>
                     <UsernameHomeserverContainer>
                         <input type="text"
                             placeholder={t('username')}
@@ -114,16 +106,13 @@ export default function Login() {
                             )
                         }
                     </UsernameHomeserverContainer>
-                    <PasswordInputButtonContainer>
-                        <input type="password"
-                            placeholder={t('password')}
-                            value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                            }}
-                        />
-                        <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
-                    </PasswordInputButtonContainer>
+                    <PasswordInputButton placeholder={t('password')}
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                        disabled={isTryingToSignIn}
+                    />
                     { errorMessage && (<p>❗️ { errorMessage }</p>) }
                 </form>
             </LoginSection>
