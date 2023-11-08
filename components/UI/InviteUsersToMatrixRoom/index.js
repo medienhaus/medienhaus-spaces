@@ -14,7 +14,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
+import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import styled from 'styled-components';
 
@@ -35,13 +35,16 @@ const ActionWrapper = styled.section`
   }
 `;
 
+const FeedbackWrapper = styled.div`
+  margin-top: var(--margin);
+`;
+
 export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
-    const [errorFeedback, setErrorFeedback] = useState();
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [errorFeedback, setErrorFeedback] = useState([]);
     const { t } = useTranslation('invitationModal');
 
     const handleChange = (searchString) => {
@@ -65,23 +68,23 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     function clearInputs() {
         setUserFeedback('');
         setSearchResults([]);
-        setSelectedUsers([]);
     }
 
-    const handleInvite = async (e) => {
-        e.preventDefault();
+    const handleInvite = async (selectedUsers) => {
         const errors = [];
 
         for (const user of selectedUsers) {
             await matrixClient.invite(roomId, user.user_id)
-                .catch(async err => {
-                    errors.push(err);
+                .catch(async error => {
+                    // avoid adding duplicates
+                    if (errors.includes(error.data.error)) return;
+                    errors.push(error.data.error);
                 });
         }
 
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
-            setErrorFeedback(errors.map(err => <ErrorMessage key={err.data?.error}>{ err.data?.error }</ErrorMessage>));
+            setErrorFeedback(errors);
         }
 
         const successAmount = selectedUsers.length - errors.length;
@@ -92,23 +95,22 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
         }, 3000));
-
-        return successAmount === selectedUsers.length;
     };
 
     return <ActionWrapper>
         <h3>{ t('Invite users') }</h3>
-        { userFeedback && !errorFeedback ? <div>{ userFeedback }</div> :
+        { userFeedback && _.isEmpty(errorFeedback) ? <div>{ userFeedback }</div> :
             <Datalist
                 options={searchResults}
                 onInputChange={handleChange}
                 keysToDisplay={['display_name', 'user_id']}
-                selected={selectedUsers}
                 onSubmit={handleInvite}
             />
         }
-        { userFeedback && errorFeedback && userFeedback }
-        { errorFeedback && errorFeedback }
+        <FeedbackWrapper>
+            { userFeedback && errorFeedback && userFeedback }
+            { !_.isEmpty(errorFeedback) && errorFeedback.map(error => <ErrorMessage key={error}>{ error }</ErrorMessage>) }
+        </FeedbackWrapper>
 
     </ActionWrapper>;
 }
