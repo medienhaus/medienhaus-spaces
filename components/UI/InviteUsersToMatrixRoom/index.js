@@ -71,6 +71,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     }
 
     const handleInvite = async (selectedUsers) => {
+        setErrorFeedback([]);
         const errors = [];
 
         for (const user of selectedUsers) {
@@ -90,7 +91,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and needs to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was' }));
+        successAmount > 0 && setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and needs to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was' }));
         await new Promise(() => setTimeout(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
@@ -100,17 +101,19 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     return <ActionWrapper>
         <h3>{ t('Invite users') }</h3>
         { userFeedback && _.isEmpty(errorFeedback) ? <div>{ userFeedback }</div> :
-            <Datalist
-                options={searchResults}
-                onInputChange={handleChange}
-                keysToDisplay={['display_name', 'user_id']}
-                onSubmit={handleInvite}
-            />
-        }
-        <FeedbackWrapper>
-            { userFeedback && errorFeedback && userFeedback }
-            { !_.isEmpty(errorFeedback) && errorFeedback.map(error => <ErrorMessage key={error}>{ error }</ErrorMessage>) }
-        </FeedbackWrapper>
+            <>
+                <Datalist
+                    options={searchResults}
+                    onInputChange={handleChange}
+                    keysToDisplay={['display_name', 'user_id']}
+                    onSubmit={handleInvite}
+                />
 
+                <FeedbackWrapper>
+                    { userFeedback && errorFeedback && userFeedback }
+                    { !_.isEmpty(errorFeedback) && errorFeedback.map(error => <ErrorMessage key={error}>{ error }</ErrorMessage>) }
+                </FeedbackWrapper>
+            </>
+        }
     </ActionWrapper>;
 }
