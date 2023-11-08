@@ -110,8 +110,8 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
 
     const handleUserSelect = (user) => {
         const find = selectedUsers.some(selectedUser => selectedUser?.user_id === user.user_id);
-        if (find) return;
-        setSelectedUsers(prevState => [...prevState, user]);
+        if (find) setSelectedUsers(prevState => prevState.filter(state => state !== user));
+        else setSelectedUsers(prevState => [...prevState, user]);
     };
 
     const handleRemove = (user) => {
@@ -131,11 +131,11 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
                         selected={selectedUsers}
                         onSelect={handleUserSelect}
                     />
-                    { selectedUsers.length !== 0 && <ServiceTable>{ selectedUsers.map(user => {
-                        return <DisplaySelectedUser key={user.display_name} user={user} handleRemove={handleRemove} />;
-                    },
-                    ) }
-                    </ServiceTable> }
+                    { /*{ selectedUsers.length !== 0 && <ServiceTable>{ selectedUsers.map(user => {*/ }
+                    { /*    return <DisplaySelectedUser key={user.display_name} user={user} handleRemove={handleRemove} />;*/ }
+                    { /*},*/ }
+                    { /*) }*/ }
+                    { /*</ServiceTable> }*/ }
                     <button disabled={selectedUsers.length === 0}>{ t('invite') }</button>
                 </>
             }
