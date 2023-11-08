@@ -54,22 +54,10 @@ export default function Login() {
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
         setErrorMessage(null);
-
-        if (auth.user) {
-            await auth.validateAuthProvidersAccessTokens(
-                auth.getAuthenticationProvider('matrix').getMatrixClient().getUserIdLocalpart(),
-                password,
-            );
-        } else {
-            await auth.signin(name, password, homeserver).catch(/** @param {MatrixError} error */(error) => {
-                if (error.errcode === 'M_LIMIT_EXCEEDED') {
-                    setErrorMessage(t('{{error}}, please wait {{time}} seconds.', {
-                        error: error.data.error,
-                        time: Math.round(error.data.retry_after_ms / 1000),
-                    }));
-                } else setErrorMessage(error.data?.error);
-            });
-        }
+        await auth.signin(name, password, homeserver).catch(/** @param {MatrixError} error */(error) => {
+            if (error.errcode === 'M_LIMIT_EXCEEDED') setErrorMessage(t('{{error}}, please wait {{time}} seconds.', { error: error.data.error, time: Math.round(error.data.retry_after_ms / 1000) }));
+            else setErrorMessage(error.data?.error);
+        });
 
         setIsTryingToSignIn(false);
     };
@@ -80,8 +68,7 @@ export default function Login() {
 
     // Automatically focus the username input on page load
     useEffect(() => {
-        if (auth.user !== null && !auth.user) usernameInput.current.focus();
-        console.log(auth.user);
+        usernameInput.current.focus();
     }, [auth.user]);
 
     return (
