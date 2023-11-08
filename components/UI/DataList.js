@@ -217,6 +217,10 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
                     onChange={handleOnCheck}
+                    onClick={() => {
+                        // make sure element gets deselected on mouse press
+                        if (focus) setSelectedIndex(-1);
+                    }}
                 />
             </ServiceTable.Cell>
             { keysToDisplay.map((key) => {
