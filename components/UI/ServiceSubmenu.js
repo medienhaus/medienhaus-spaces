@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';
 
+import Icon from './Icon';
+
 const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
@@ -54,7 +56,13 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
             <Header>
                 { title && title }
                 { !disabled && <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAddIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
+                    { icon ?
+                        icon
+                        :
+                        <Icon>
+                            <MenuAddIcon />
+                        </Icon>
+                    }
                 </ToggleButton> }
             </Header>
             { isOpen && (
