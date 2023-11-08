@@ -69,7 +69,7 @@ export default function Login() {
     // Automatically focus the username input on page load
     useEffect(() => {
         usernameInput.current.focus();
-    }, [auth.user]);
+    }, []);
 
     return (
         <DefaultLayout.LameColumn>

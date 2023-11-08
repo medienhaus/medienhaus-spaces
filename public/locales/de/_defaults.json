@@ -17,5 +17,5 @@
   "From": "Von",
   "Accept": "Annehmen",
   "Decline": "Ablehnen",
-  "Token invalid. Please sign in again.": "Token ungültig. Bitte melde dich erneut an."
+  "Please sign in again, in order to use {{service}} without any limitations.": "Bitte melde dich erneut an, um {{service}} ohne Einschränkungen zu nutzen."
 }
