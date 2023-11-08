@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ClipboardIcon } from '@remixicons/react/line';
 
+import Icon from './Icon';
 import TextButton from './TextButton';
 
 const CopyToClipboard = ({ content, title }) => {
@@ -18,8 +19,12 @@ const CopyToClipboard = ({ content, title }) => {
     return (
         <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
             { wasContentCopied ?
-                '✓':
-                <ClipboardIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-fg)" /> }
+                '✓'
+                :
+                <Icon>
+                    <ClipboardIcon />
+                </Icon>
+            }
         </TextButton>
     );
 };
