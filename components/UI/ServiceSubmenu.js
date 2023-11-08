@@ -12,12 +12,7 @@ const Header = styled.header`
 `;
 
 const ToggleButton = styled(TextButton)`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
   height: calc(var(--margin) * var(--line-height));
-  padding: unset;
-  background-color: unset;
-  border: unset;
 `;
 
 const Submenu = styled.aside`
