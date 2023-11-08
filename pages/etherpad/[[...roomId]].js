@@ -8,7 +8,7 @@ import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import IframeLayout from '../../components/layouts/iframe';
+import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import TextButton from '../../components/UI/TextButton';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -260,7 +260,7 @@ export default function Etherpad() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
                         <h2>{ etherpadPath }</h2>
@@ -280,22 +280,21 @@ export default function Etherpad() {
                         </ServiceTable>
                     </>
                 ) }
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && matrix.roomContents.get(roomId) && (
-                <IframeLayout.IframeWrapper>
-                    <IframeLayout.IframeHeader>
+                <DefaultLayout.IframeWrapper>
+                    <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
-                        <IframeLayout.IframeHeaderButtonWrapper>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
                             <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
                                 { isInviteUsersOpen ? <UserUnfollowIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> : <UserAddIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                             </TextButton>
-
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                             </TextButton>
-                        </IframeLayout.IframeHeaderButtonWrapper>
-                    </IframeLayout.IframeHeader>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader>
                     { isInviteUsersOpen ?
                         <InviteUserToMatrixRoom
                             roomId={roomId}
@@ -307,12 +306,8 @@ export default function Etherpad() {
                             src={iframeUrl.toString()}
                         />
                     }
-                </IframeLayout.IframeWrapper>
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-Etherpad.getLayout = () => {
-    return IframeLayout.Layout;
-};

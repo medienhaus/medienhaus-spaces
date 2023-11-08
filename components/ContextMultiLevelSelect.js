@@ -116,7 +116,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
  * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
  *
- * @return {React.ReactElement}
+ * @return {React.ReactNode}
  */
 const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
