@@ -3,17 +3,20 @@ import { useTranslation } from 'react-i18next';
 
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import logger from '../../../lib/Logging';
 
-export default function CreateAuthoredPad({ createPadAndOpen }) {
+export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');
     const [padName, setPadName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const createAuthoredPad = async () => {
         setIsLoading(true);
-        const createPad = await createPadAndOpen(padName, 'public');
+        const createPad = await createPadAndOpen(padName, 'public')
+            .catch(error => logger.debug(error));
         setIsLoading(false);
         if (!createPad) return;
+        callbackDone && callbackDone();
         setPadName('');
     };
 
