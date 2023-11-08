@@ -217,7 +217,7 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
                     onChange={handleOnCheck}
-                    onMouseDown={() => {
+                    onMouseUp={() => {
                         // make sure element gets deselected on mouse press
                         if (focus) setSelectedIndex(-1);
                     }}
