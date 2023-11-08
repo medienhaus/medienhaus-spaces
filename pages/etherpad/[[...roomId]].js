@@ -155,12 +155,12 @@ export default function Etherpad() {
      * @param {string} name - The name of the Etherpad to create.
      * @param {string} visibility - The visibility setting for the Etherpad. Expects 'private' or 'public'.
      * @param {string} password - The password for accessing the Etherpad (if private).
-     * @returns {Promise<boolean|void>} - A Promise that resolves to a 'false' indicating the success of pad creation or navigates to the Etherpad's URL.
+     * @returns {Promise<boolean|void>} - A Promise that resolves 'true' indicating the success of pad creation and navigates to the Etherpad's URL.
      */
+
     const createPadAndOpen = async (name, visibility, password) => {
         const padObject = await etherpad.createPad(name, visibility, password);
-
-        if (!padObject || !padObject.success) return false;
+        if (!padObject || !padObject.success) throw new Error('The following error occurred', { cause: padObject });
 
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
         const roomId = await createWriteRoom(link, name);
@@ -288,7 +288,6 @@ export default function Etherpad() {
                     <>
                         <ServiceSubmenu
                             title={<h2>{ etherpadPath }</h2>}
-                            disabled={!auth.connectionStatus.etherpad}
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
