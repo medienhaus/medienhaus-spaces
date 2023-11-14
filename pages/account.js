@@ -205,7 +205,7 @@ export default function Account() {
                 <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
                 <br />
                 <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
-                    <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
                     <ConfirmCancelButtons disabled={isSavingChanges} onCancel={() => setInputPassword('')} />
                 </form>
                 { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }

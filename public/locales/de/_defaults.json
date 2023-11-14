@@ -5,6 +5,7 @@
   "Connection lost": "Verbindung unterbrochen",
   "Delete": "Löschen",
   "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
+  "Username": "Benutzername",
   "Name": "Bezeichnung",
   "Password": "Passwort",
   "password protected": "Passwortgeschützt",
@@ -17,5 +18,6 @@
   "From": "Von",
   "Accept": "Annehmen",
   "Decline": "Ablehnen",
-  "Please sign in again, in order to use {{service}} without any limitations.": "Bitte melde dich erneut an, um {{service}} ohne Einschränkungen zu nutzen."
+  "Your session has expired.": "Deine Sitzung ist abgelaufen.",
+  "Please sign in again in order to continue using {{service}}.": "Bitte melde Dich erneut an, um {{service}} wieder nutzen zu können."
 }

@@ -81,7 +81,7 @@ export default function Login() {
                 }}>
                     <UsernameHomeserverContainer>
                         <input type="text"
-                            placeholder={t('username')}
+                            placeholder={t('Username')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             ref={usernameInput} />
@@ -93,7 +93,7 @@ export default function Login() {
                             )
                         }
                     </UsernameHomeserverContainer>
-                    <PasswordInputButton placeholder={t('password')}
+                    <PasswordInputButton placeholder={t('Password')}
                         value={password}
                         onChange={(e) => {
                             setPassword(e.target.value);
