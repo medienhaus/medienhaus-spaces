@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
+import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
+import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -12,9 +14,7 @@ const Wrapper = styled.div`
   width: 100vw;
   max-width: 100%;
   height: 100vh;
-  overflow: ${props => props.navigationopen ? 'hidden' : 'unset'};
-
-  --color-background-sidebar: rgb(0 0 0 / 6%);
+  overflow: ${props => props.$isNavigationOpen ? 'hidden' : 'unset'};
 
   @media ${breakpoints.tabletAndAbove} {
     display: grid;
@@ -30,16 +30,12 @@ const Wrapper = styled.div`
 
     @media ${breakpoints.tabletAndAbove} {
       margin-bottom: calc(var(--margin) * 2);
-
-      @media ${breakpoints.laptopAndAbove} {
-        margin-bottom: calc(var(--margin) * 3);
-      }
     }
   }
 `;
 
 const Header = styled.header`
-  background: var(--color-background-sidebar);
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     display: flex;
@@ -54,90 +50,58 @@ const Header = styled.header`
     grid-row: 1;
     grid-column: 1;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 3) calc(var(--margin) * 2);
-    }
   }
 `;
 
-const HeaderButton = styled.button`
-  display: grid;
-  place-content: center;
-  width: calc(var(--margin) * 3.5);
-  height: calc(var(--margin) * 3.5);
-  margin: calc(var(--margin) * -1);
-  font-weight: bold;
-  color: var(--color-foreground);
-  text-align: center;
-  cursor: pointer;
-  background-color: transparent;
+const ToggleButton = styled.button`
+  /* unset globally defined button styles; set height to line-height */
+  width: unset;
+  height: calc(var(--margin) * var(--line-height));
+  padding: unset;
+  background-color: unset;
   border: unset;
-  transform: rotate(90deg);
 
   @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
 `;
 
-const HeaderButtonClose = styled(HeaderButton)`
-  font-size: 2rem;
-  font-weight: 500;
-`;
-
 const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
-  background: white;
+  row-gap: var(--margin);
+  padding: 0 var(--margin) var(--margin);
+  overflow: hidden;
+  overflow-y: auto;
+  background: var(--color-background-beta);
 
   @media ${breakpoints.phoneOnly} {
     position: fixed;
-    top: calc(var(--margin) * 3.5);
+    top: calc(var(--margin) * 3.3);
     right: 0;
     bottom: 0;
     left: 0;
     z-index: 2;
-    display: ${props => props.navigationopen ? 'flex' : 'none'};
+    display: ${props => props.$isNavigationOpen ? 'flex' : 'none'};
+  }
+
+  @media ${breakpoints.tabletAndAbove} {
+    row-gap: calc(var(--margin) * 1.5);
+    min-width: 21ch;
+    padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
   }
 `;
 
 const Nav = styled.nav`
   flex: 1 0;
-  padding: var(--margin);
-  overflow: auto;
   font-weight: 500;
-  background: var(--color-background-sidebar);
-
-  @media ${breakpoints.tabletAndAbove} {
-    display: block;
-    grid-row: 2;
-    grid-column: 1;
-    width: 12em;
-    padding: 0 calc(var(--margin) * 1.5);
-
-    @media ${breakpoints.laptopAndAbove} {
-      width: 13em;
-      padding: 0 calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Footer = styled.footer`
-  padding: var(--margin);
   font-weight: 700;
   color: rgb(0 0 0 / 10%);
+  white-space: nowrap;
   cursor: default;
-  background: var(--color-background-sidebar);
-
-  @media ${breakpoints.tabletAndAbove} {
-    grid-row: 3;
-    grid-column: 1;
-    padding: calc(var(--margin)) calc(var(--margin) * 1.3);
-
-    @media ${breakpoints.laptopAndAbove} {
-      padding: calc(var(--margin) * 2);
-    }
-  }
 `;
 
 const Copyleft = styled.span`
@@ -147,26 +111,34 @@ const Copyleft = styled.span`
 `;
 
 export default function BaseLayout({ children }) {
-    const [navigationOpen, setNavigationOpen] = useState(false);
+    const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     return (
         <>
-            <Wrapper navigationopen={navigationOpen}>
+            <Wrapper $isNavigationOpen={isNavigationOpen}>
                 <Header>
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
-                    { navigationOpen ? (
-                        <HeaderButtonClose type="button" onClick={() => { setNavigationOpen(false); }}>×</HeaderButtonClose>
+                    { isNavigationOpen ? (
+                        <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
+                            <Icon>
+                                <CloseIcon />
+                            </Icon>
+                        </ToggleButton>
                     ) : (
-                        <HeaderButton type="button" onClick={() => { setNavigationOpen(true); }}>|||</HeaderButton>
+                        <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
+                            <Icon>
+                                <MenuIcon />
+                            </Icon>
+                        </ToggleButton>
                     ) }
                 </Header>
-                <Sidebar navigationopen={navigationOpen}>
+                <Sidebar $isNavigationOpen={isNavigationOpen}>
                     <Nav>
-                        <NavigationMenu closeNavigation={() => { setNavigationOpen(false); }} />
-                        <LanguageChooser />
+                        <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
                     <Footer>
                         <Copyleft>🄯</Copyleft> medienhaus/
+                        <LanguageChooser />
                     </Footer>
                 </Sidebar>
                 { children }

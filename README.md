@@ -4,7 +4,7 @@
 
 Customizable modular free and open-source environment for decentralized, distributed communication and collaboration.
 
-[Website](https://medienhaus.dev/) — [Twitter](https://twitter.com/medienhaus_)
+[Website](https://medienhaus.dev/) — [Fediverse](https://chaos.social/@medienhaus)
 
 <br>
 
@@ -16,15 +16,17 @@ The application itself is written in JavaScript, we're using the Next.js framewo
 
 ## Development
 
+If you don't want to dive deep and just get started use Docker. The provided `docker-compose.yml` file will fetch and start all necessary containers to develop, including a copy of Element. Just run `docker compose watch` to start. You can use `docker compose down` to stop & then also delete all containers.
+
 ### Installation
 
 #### `npm install`
 
-Installs all of the application's dependencies.
+Installs all the application's dependencies.
 
 ### Configuration
 
-Configuration happens in the `next.config.js` file.
+Configuration happens in the `config.js` file.
 
 ### Available Scripts
 

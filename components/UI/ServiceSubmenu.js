@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { cloneElement, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { CSSTransition } from 'react-transition-group';
+import { MenuAddIcon } from '@remixicons/react/line';
 
-import MenuAdd from '../../assets/icons/menu-add.svg';
+import Icon from './Icon';
 
 const Header = styled.header`
   display: grid;
@@ -14,7 +15,7 @@ const Header = styled.header`
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
   width: unset;
-  height: calc(var(--margin) * 1.3);
+  height: calc(var(--margin) * var(--line-height));
   padding: unset;
   background-color: unset;
   border: unset;
@@ -44,7 +45,7 @@ const BlurOverlay = styled.div`
   backdrop-filter: blur(3px);
 `;
 
-export function ServiceSubmenu({ title, icon, subheadline, items }) {
+export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -52,18 +53,24 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
     const nodeRef = useRef(null);
     const nodeRef2 = useRef(null);
 
-    const handleMenuToggle = () => setIsOpen(!isOpen);
+    const handleMenuToggle = () => { setIsOpen(!isOpen); setValue(''); };
 
-    const ActionComponent = value && _.get(_.find(items, { value: value }), 'actionComponentToRender');
+    // We clone the passed in React element to add the callback function prop to it:
+    const ActionComponent = value && cloneElement(_.get(_.find(items, { value: value }), 'actionComponentToRender'), {
+        callbackDone: handleMenuToggle,
+    });
 
     return (
         <>
             <div style={{ position: 'relative', zIndex: 1 }}>
                 <Header>
                     { title && title }
-                    <ToggleButton onClick={handleMenuToggle}>
-                        { icon ? icon : <MenuAdd fill="var(--color-foreground)" /> }
-                    </ToggleButton>
+                    { !disabled &&<ToggleButton onClick={handleMenuToggle}>
+                        { icon ? icon :
+                        <Icon>
+                            <MenuAddIcon />
+                        </Icon> }
+                    </ToggleButton>}
                 </Header>
                 <CSSTransition nodeRef={nodeRef} in={isOpen} timeout={300} classNames="my-node" mountOnEnter unmountOnExit>
                     <Submenu ref={nodeRef}>
@@ -72,12 +79,12 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
                         >
-                            <option disabled value="">-- { t('select action') } --</option>
-                            { items.filter(Boolean).map(({ value, label }) => (
+                            <option disabled value="">-- { t('Select action') } --</option>
+                            { items.map(({ value, label }) => (
                                 <option key={value} value={value}>{ label }</option>
                             )) }
                         </select>
-                        { value && <ActionComponent callbackDone={handleMenuToggle} /> }
+                        { value && ActionComponent }
                     </Submenu>
                 </CSSTransition>
             </div>
