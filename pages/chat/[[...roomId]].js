@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { useMatrix } from '../../lib/Matrix';
-import IframeLayout from '../../components/layouts/iframe';
+import DefaultLayout from '../../components/layouts/default';
 import { breakpoints } from '../../components/_breakpoints';
 
 const sortRooms = function(room) {
@@ -159,7 +159,7 @@ export default function Chat() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 <h2>/chat</h2>
                 { invites.length > 0 && (
                     <>
@@ -180,20 +180,16 @@ export default function Chat() {
                     { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                 </details>
                 <br />
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && (
-                <IframeLayout.IframeWrapper>
+                <DefaultLayout.IframeWrapper>
                     <iframe
                         ref={iframe}
                         title="/chat"
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
                     />
-                </IframeLayout.IframeWrapper>
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-Chat.getLayout = () => {
-    return IframeLayout.Layout;
-};

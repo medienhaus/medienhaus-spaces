@@ -58,7 +58,17 @@
         },
         {
           "blankLine": "always",
-          "prev": "return",
+          "prev": "*",
+          "next": "export"
+        },
+        {
+          "blankLine": "always",
+          "prev": "*",
+          "next": "multiline-block-like"
+        },
+        {
+          "blankLine": "always",
+          "prev": "multiline-block-like",
           "next": "*"
         }
       ],

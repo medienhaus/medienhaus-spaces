@@ -8,7 +8,8 @@ import { DeleteBinIcon } from '@remixicons/react/line';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import IframeLayout from '../../components/layouts/iframe';
+import Icon from '../../components/UI/Icon';
+import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import TextButton from '../../components/UI/TextButton';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -80,7 +81,7 @@ export default function Etherpad() {
      * The MyPads pad ID that can be used with the MyPads API
      * @type {string | undefined}
      */
-    const myPadsPadId = _.get(matrix, ['roomContents', roomId, 'body'])?.substring(_.get(matrix, ['roomContents', roomId, 'body'])?.lastIndexOf('/') + 1);
+    const myPadsPadId = _.get(matrix.roomContents.get(roomId), ['body'])?.substring(_.get(matrix.roomContents.get(roomId), ['body'])?.lastIndexOf('/') + 1);
 
     /**
      * If the currently visible pad can be accessed via the MyPads API, this will be the MyPads pad object; e.g.
@@ -100,7 +101,7 @@ export default function Etherpad() {
     const myPadsObject = _.get(serverPads, myPadsPadId);
 
     // Whenever the roomId changes (e.g. after a new pad was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
@@ -121,6 +122,7 @@ export default function Etherpad() {
                 await syncServerPadsAndSet();
             }
         };
+
         !cancelled && isMyPadsApiEnabled && populatePadsFromServer();
 
         return () => {
@@ -168,9 +170,11 @@ export default function Etherpad() {
 
     useEffect(() => {
         let cancelled = false;
+
         const syncServerPadsWithMatrix = async () => {
             setIsSyncingServerPads(true);
             let matrixPads = {};
+
             if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
                 // if there are rooms within the space id we grab the names of those room
                 for (const roomId of matrix.spaces.get(matrix.serviceSpaces.etherpad).children) {
@@ -185,6 +189,7 @@ export default function Etherpad() {
                     });
                 }
             }
+
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
                 setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }) + <LoadingSpinnerInline />);
@@ -210,6 +215,7 @@ export default function Etherpad() {
     const deletePad = async () => {
         // Confirm if the user really wants to remove/delete this pad ...
         let confirmDeletionMessage;
+
         if (myPadsObject) {
             confirmDeletionMessage = t('This is going to delete the pad and all of its content.');
         } else {
@@ -250,8 +256,6 @@ export default function Etherpad() {
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
-            console.log(etherpadId, _.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined);
-
             return <EtherpadListEntry
                 key={writeRoomId}
                 name={name}
@@ -268,6 +272,7 @@ export default function Etherpad() {
     // - user's Matrix display name as parameter so that it shows up in Etherpad as username
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     let iframeUrl;
+
     if (roomId && matrix.roomContents.get(roomId)?.body) {
         iframeUrl = new URL(matrix.roomContents.get(roomId).body);
         iframeUrl.searchParams.set('userName', auth.user.displayname);
@@ -276,7 +281,7 @@ export default function Etherpad() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 { !matrix.serviceSpaces.etherpad ? (
                     <>
                         <h2>{ etherpadPath }</h2>
@@ -298,28 +303,30 @@ export default function Etherpad() {
                         { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                     </>
                 ) }
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && matrix.roomContents.get(roomId) && (
-                <IframeLayout.IframeWrapper>
-                    <IframeLayout.IframeHeader>
+                <DefaultLayout.IframeWrapper>
+                    <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
-                        <IframeLayout.IframeHeaderButtonWrapper>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                                { isDeletingPad ?
+                                    <LoadingSpinnerInline />
+                                    :
+                                    <Icon>
+                                        <DeleteBinIcon />
+                                    </Icon>
+                                }
                             </TextButton>
-                        </IframeLayout.IframeHeaderButtonWrapper>
-                    </IframeLayout.IframeHeader>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader>
                     <iframe
                         title={etherpadPath}
                         src={iframeUrl.toString()}
                     />
-                </IframeLayout.IframeWrapper>
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-Etherpad.getLayout = () => {
-    return IframeLayout.Layout;
-};

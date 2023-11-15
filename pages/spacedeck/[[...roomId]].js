@@ -11,9 +11,10 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
+import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import IframeLayout from '../../components/layouts/iframe';
+import DefaultLayout from '../../components/layouts/default';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import ServiceLink from '../../components/UI/ServiceLink';
@@ -59,11 +60,13 @@ export default function Spacedeck() {
                     // Extract the spacedeck id from room content
                     const roomIdContent = matrix.roomContents.get(roomId);
                     const id = roomIdContent?.body.substring(roomIdContent.body.lastIndexOf('/') + 1);
+
                     if (!id) {
                         // If no content was found, it's likely a space with nested rooms, so continue searching
                         getAllMatrixSketches(roomId);
                         continue;
                     }
+
                     // Add the sketch information to matrixSketches object
                     matrixSketches[id] = {
                         name: matrix.rooms.get(roomId).name,
@@ -77,12 +80,14 @@ export default function Spacedeck() {
         const updateStructure = async (object, parent) => {
             for (const sketch of Object.values(object)) {
                 if (!sketch.id) continue;
+
                 if (matrixSketches[sketch.id]) {
                     if (sketch.name !== matrixSketches[sketch.id].name) {
                         // If the sketch names differ, update the Matrix room name
                         logger.debug('changing name for ' + matrixSketches[sketch.id]);
                         await matrixClient.setRoomName(matrixSketches[sketch.id].id, sketch.name);
                     }
+
                     continue;
                 }
 
@@ -128,6 +133,7 @@ export default function Spacedeck() {
 
     useEffect(() => {
         let cancelled = false;
+
         const populateSketchesfromServer = async (recursion) => {
             if (!_.isEmpty(spacedeck.getStructure())) {
                 setServerSketches(spacedeck.getStructure());
@@ -136,6 +142,7 @@ export default function Spacedeck() {
                 populateSketchesfromServer(true);
             }
         };
+
         !cancelled && getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl && populateSketchesfromServer();
 
         return () => {
@@ -192,12 +199,14 @@ export default function Spacedeck() {
     const removeSketch = async () => {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
-        if (!remove || remove.ok) {
+
+        if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
             return;
         }
+
         await auth.getAuthenticationProvider('matrix').removeSpaceChild(serviceSpaceId, roomId);
         await matrix.leaveRoom(roomId);
         router.push(`${spacedeckPath}`);
@@ -206,7 +215,7 @@ export default function Spacedeck() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
@@ -240,28 +249,30 @@ export default function Spacedeck() {
                     </>
 
                 }
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && content && (
-                <IframeLayout.IframeWrapper>
-                    <IframeLayout.IframeHeader>
+                <DefaultLayout.IframeWrapper>
+                    <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
-                        <IframeLayout.IframeHeaderButtonWrapper>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="24" height="24" fill="var(--color-foreground)" /> }
+                                { isDeletingSketch ?
+                                    <LoadingSpinnerInline />
+                                    :
+                                    <Icon>
+                                        <DeleteBinIcon />
+                                    </Icon>
+                                }
                             </TextButton>
-                        </IframeLayout.IframeHeaderButtonWrapper>
-                    </IframeLayout.IframeHeader>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader>
                     <iframe
                         title={spacedeckPath}
                         src={content.body}
                     />
-                </IframeLayout.IframeWrapper>
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-Spacedeck.getLayout = () => {
-    return IframeLayout.Layout;
-};
