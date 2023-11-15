@@ -27,6 +27,7 @@ const LameColumn = styled.div`
 `;
 
 const Sidebar = styled.div`
+  position: relative;
   height: 100%;
   padding: var(--margin);
   background: var(--color-background-alpha);
