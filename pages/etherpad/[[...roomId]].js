@@ -132,6 +132,7 @@ export default function Etherpad() {
 
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
+
         const createRoomForPad = async () => {
             return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
         };
@@ -163,6 +164,7 @@ export default function Etherpad() {
             await etherpad.syncAllPads();
             setServerPads(etherpad.getAllPads());
         }
+
         setErrorMessage('');
 
         return room;
@@ -197,6 +199,7 @@ export default function Etherpad() {
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
+
             setIsSyncingServerPads(false);
             setUserFeedback('');
         };
