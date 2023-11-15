@@ -6,6 +6,6 @@
     "Link to sketch": "Link zum Sketch",
     "Can't connect with the provided /sketch server. Please try again later": "Es kann keine Verbindung zum /sketch Server hergestellt werden. Bitte probiere es später nochmal.",
     "Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.": "Beim Versuch, den Sketch zu löschen, ist etwas schief gelaufen. Bitte versuche es noch einmal, oder wenn der Fehler weiterhin besteht, logge dich aus und wieder ein.",
-    "Syncing {{name}} from server" : "Synchronisierung von {{name}} vom Server",
+    "Syncing {{name}} from server" : "Synchronisierung von {{name}} mit dem Server",
     "Delete sketch": "Sketch löschen"
 }
