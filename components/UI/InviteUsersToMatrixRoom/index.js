@@ -62,9 +62,11 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     const fetchUsersForContributorSearch = useCallback(async (a) => {
         try {
             const users = await matrixClient.searchUserDirectory({ term: a });
+            // always filter ourselves; we most likely do not want to invite ourselves to something, i guess?!
+            const usersWithoutMyself = _.filter(users.results, (user) => user.user_id !== matrixClient.getUserId());
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
             // const filterResults = users.results.filter(item => _.isEqual(item, option));
-            setSearchResults(users.results);
+            setSearchResults(usersWithoutMyself);
         } catch (err) {
             logger.error(t('Error while trying to fetch users: ') + err);
         }
