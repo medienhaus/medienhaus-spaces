@@ -23,7 +23,7 @@ const Row = styled(ServiceTable.Row)`
     text-decoration: underline;
   }
 
-  text-decoration: ${props => props.focused && 'underline' };
+  text-decoration: ${props => props.$focused && 'underline' };
 `;
 
 const InviteUserForm = styled(Form)`
@@ -205,7 +205,7 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
     return (
         <Row
             key={index}
-            focused={focus}
+            $focused={focus}
             onKeyDown={handleKeyDown} // Add onKeyDown event
 
         >
