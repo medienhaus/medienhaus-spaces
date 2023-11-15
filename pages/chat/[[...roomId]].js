@@ -6,13 +6,13 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import IframeLayout from '../../components/layouts/iframe';
+import DefaultLayout from '../../components/layouts/default';
+import { breakpoints } from '../../components/_breakpoints';
 
 const sortRooms = function(room) {
     return [
-        room.notificationCount == 0,
+        room.notificationCount === 0,
         room.name,
     ];
 };
@@ -34,7 +34,14 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
+
+  /*
   background: var(--color-foreground);
+  */
+
+  &.placeholder {
+    backdrop-filter: invert(100%);
+  }
 `;
 
 const SidebarListEntryWrapper = styled.a`
@@ -53,7 +60,7 @@ const RoomName = styled.span`
   white-space: nowrap;
 `;
 
-const SidebarListEntry = function({ room, onClick }) {
+const SidebarListEntry = function({ room }) {
     return (
         <Link href={`/chat/${room.roomId}`} passHref>
             <SidebarListEntryWrapper>
@@ -62,7 +69,7 @@ const SidebarListEntry = function({ room, onClick }) {
                     <Avatar src={room.avatar} alt={room.name} />
                 ) : (
                     // Render an empty GIF if we don't have an avatar
-                    <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+                    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                 ) }
                 <RoomName>{ room.name }</RoomName>
                 { room.notificationCount > 0 && (
@@ -73,17 +80,17 @@ const SidebarListEntry = function({ room, onClick }) {
     );
 };
 
-export default function RoomId() {
-    const auth = useAuth();
+export default function Chat() {
     const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
-        if (!iframe.current) return;
+        const iframeReference = iframe.current;
+        if (!iframeReference) return;
 
         const injectCss = () => {
             const styleTag = document.createElement('style');
@@ -194,40 +201,68 @@ export default function RoomId() {
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
                 .mx_RoomHeader_name { pointer-events: none }
                 .mx_RoomHeader_chevron { display: none }
+                /* Hides the "Logout" button at the bottom of Element when loading for the first time */
+                .mx_MatrixChat_splashButtons { display: none }
+                /* Hide the search bar buttons to only allow searching inside current room */
+                .mx_SearchBar_buttons { display: none !important }
 
-                /* @TODO: This can be improved... and should probably not target mobile viewports. It's to make the */
-                /* header look like it's on line with our header elements from first & second sidebar. */
-                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: none }
-                .mx_RoomHeader { flex: unset; -webkit-box-flex: unset; padding: 2.85rem 0 } 
-                .mx_RoomHeader_name { font-weight: bold }
+                .mx_RoomHeader {
+                    position: absolute; right: 0; left: 0; z-index: 10;
+                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
+                    padding: 1.65rem 0;
+                } 
+                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: unset }
+                .mx_SearchBar {
+                    position: absolute; right: 0; left: 0; bottom: 0; z-index: 10;
+                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
+                    border-top: 1px solid var(--roomlist-separator-color);
+                }
+                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; } 
+                .mx_RoomView_messageListWrapper { padding-top: 140px; }
+
+                @media ${breakpoints.phoneOnly} {
+                    .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
+                    
+                    .mx_RoomHeader_wrapper { flex-wrap: wrap }
+                    .mx_RoomHeader_avatar { flex: 0 1 1% }
+                    .mx_RoomHeader_name { font-weight: bold; flex: 1 0 }
+                    .mx_RoomTopic { flex: 0 0 100%; margin: 12px 6px }
+
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset }
+                }
             `);
             styleTag.appendChild(styleContent);
-            iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
+            iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
         };
 
-        iframe.current.addEventListener('load', injectCss);
+        iframeReference.addEventListener('load', injectCss);
 
         return () => {
-            iframe.current && iframe.current.removeEventListener('load', injectCss);
+            iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms);
+    // filtering invites for all invitations without a dev.medienhaus.meta event.
+    // for now normal chat rooms don't have this event.
+    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
+    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
+        .filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... are medienhaus/ CMS related rooms (so if they have a dev.medienhaus.meta event which is NOT "type: chat")
-        .reject(room => room.events.get('dev.medienhaus.meta') && room.events.get('dev.medienhaus.meta').values().next().value.getContent()?.type !== 'chat')
+        // ... contain a dev.medienhaus.meta state event)
+        .reject(room => room.events.get('dev.medienhaus.meta'))
         .sortBy(sortRooms)
         .value();
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 <h2>/chat</h2>
-                { matrix.invites.size > 0 && (
+                { invites.length > 0 && (
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
@@ -246,16 +281,16 @@ export default function RoomId() {
                     { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
                 </details>
                 <br />
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && (
-                <IframeLayout.IframeWrapper>
-                    <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`} ref={iframe} />
-                </IframeLayout.IframeWrapper>
+                <DefaultLayout.IframeWrapper>
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                    />
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-RoomId.getLayout = () => {
-    return IframeLayout.Layout;
-};

@@ -33,6 +33,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
 
             // Remove the first entry, which is the context we retrieved the children for
             roomHierarchy.rooms.shift();
+
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
                 const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
@@ -45,9 +46,11 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
                 // ... otherwise show this space child:
                 newChildContexts.push(room);
             }
+
             if (sortAlphabetically) {
                 newChildContexts = _.sortBy(newChildContexts, 'name');
             }
+
             if (!isSubscribed) return;
             onFetchedChildren(newChildContexts.length > 0);
             setChildContexts(newChildContexts);
@@ -113,7 +116,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
  * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
  *
- * @return {React.ReactElement}
+ * @return {React.ReactNode}
  */
 const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {

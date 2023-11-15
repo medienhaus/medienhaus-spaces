@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   traefik:
     image: traefik:latest
@@ -21,15 +19,23 @@ services:
   spaces:
     build:
       context: .
-    command: dev
+      target: "development-runner"
     labels:
       traefik.enable: "true"
       traefik.http.routers.spaces.entrypoints: "web"
       traefik.http.routers.spaces.rule: "PathPrefix(`/`)"
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/.next
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - .next/
+            - node_modules/
+        - action: rebuild
+          path: ./package.json
+    environment:
+      - NODE_ENV=development
 
   element:
     image: vectorim/element-web:latest
