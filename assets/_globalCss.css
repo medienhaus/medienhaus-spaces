@@ -190,7 +190,7 @@ input[type='password'][disabled] {
 
 .my-node-enter-active {
   opacity: 1;
-  transition: all 300ms ease-in-out;
+  transition: all 230ms ease-in-out;
   transform: translateY(0);
 }
 
@@ -201,6 +201,6 @@ input[type='password'][disabled] {
 
 .my-node-exit-active {
   opacity: 0;
-  transition: all 300ms ease-in-out;
+  transition: all 230ms ease-in-out;
   transform: translateY(-5%);
 }
