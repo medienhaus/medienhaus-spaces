@@ -35,6 +35,10 @@ const InviteUserForm = styled(Form)`
   }
 `;
 
+const TableWrapper = styled.section`
+  overflow-x: auto;
+`;
+
 export default function DataList({ options, onInputChange, keysToDisplay, onSubmit }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -140,42 +144,44 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     ref={inputRef}
                 />
                 { (options.length > 0 || selected.length > 0) && (
-                    <ServiceTable>
-                        <ServiceTable.Body>
-                            { isOpen && filteredOptions.map((option, index) => {
-                                return <DataListRow
-                                    key={index}
-                                    option={option}
-                                    focus={selectedIndex === index}
-                                    index={index}
-                                    keysToDisplay={keysToDisplay}
-                                    handleSelect={handleSelect}
-                                    isChecked={checked.includes(option)}
-                                    handleKeyDown={handleKeyDown}
-                                    setSelectedIndex={setSelectedIndex}
-                                    // ref={checkboxRef}
-                                />;
-                            })
-                            }
-                            { selected.map((option, index) => {
-                                return (
-                                    <DataListRow
+                    <TableWrapper>
+                        <ServiceTable>
+                            <ServiceTable.Body>
+                                { isOpen && filteredOptions.map((option, index) => {
+                                    return <DataListRow
                                         key={index}
                                         option={option}
-                                        // we need to add the number of options to the index to highlight the correct item in the list
-                                        // and not have multiple items show up as selected
-                                        focus={selectedIndex === index + filteredOptions.length}
-                                        index={index + filteredOptions.length}
+                                        focus={selectedIndex === index}
+                                        index={index}
                                         keysToDisplay={keysToDisplay}
-                                        handleSelect={handleRemove}
-                                        isChecked={selected.includes(option)}
+                                        handleSelect={handleSelect}
+                                        isChecked={checked.includes(option)}
                                         handleKeyDown={handleKeyDown}
                                         setSelectedIndex={setSelectedIndex}
-                                    />
-                                );
-                            }) }
-                        </ServiceTable.Body>
-                    </ServiceTable>
+                                    // ref={checkboxRef}
+                                    />;
+                                })
+                                }
+                                { selected.map((option, index) => {
+                                    return (
+                                        <DataListRow
+                                            key={index}
+                                            option={option}
+                                            // we need to add the number of options to the index to highlight the correct item in the list
+                                            // and not have multiple items show up as selected
+                                            focus={selectedIndex === index + filteredOptions.length}
+                                            index={index + filteredOptions.length}
+                                            keysToDisplay={keysToDisplay}
+                                            handleSelect={handleRemove}
+                                            isChecked={selected.includes(option)}
+                                            handleKeyDown={handleKeyDown}
+                                            setSelectedIndex={setSelectedIndex}
+                                        />
+                                    );
+                                }) }
+                            </ServiceTable.Body>
+                        </ServiceTable>
+                    </TableWrapper>
                 ) }
                 <button disabled={selected.length === 0 && checked.length === 0}>{ t('invite') }</button>
             </>

@@ -21,6 +21,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
+import { breakpoints } from '../../_breakpoints';
 
 const ActionWrapper = styled.section`
   display: grid;
@@ -28,7 +29,11 @@ const ActionWrapper = styled.section`
   justify-self: start;
   width: 100%;
   height: 100%;
-  padding: 0 calc(var(--margin) *1.5) ;
+  padding: 0 var(--margin);
+
+  @media ${breakpoints.tabletAndAbove} {
+    padding: 0 calc(var(--margin) * 1.5);
+  }
 
   h3 {
     line-height: calc(var(--margin) *3);
