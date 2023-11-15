@@ -11,8 +11,12 @@ import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
 import DefaultLayout from '../../components/layouts/default';
 
-const TableSection = styled.section`
+const CardSection = styled.section`
   overflow-x: auto;
+
+  > * + * {
+    margin-top: var(--margin);
+  }
 `;
 
 export default function Dashboard() {
@@ -96,65 +100,44 @@ export default function Dashboard() {
             <h2>/dashboard</h2>
 
             { matrix.invites.size > 0 &&
-                       <TableSection>
-                           <ServiceTable>
-                               <ServiceTable.Caption>
-                                   { t('Invitations') }
-                               </ServiceTable.Caption>
-                               <ServiceTable.Head>
-                                   <ServiceTable.Row>
-                                       <ServiceTable.Header align="left">
-                                           { t('App') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="left">
-                                           { t('Item') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="left">
-                                           { t('From') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="center">
-                                           { t('Accept') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="center">
-                                           { t('Decline') }
-                                       </ServiceTable.Header>
-                                   </ServiceTable.Row>
-                               </ServiceTable.Head>
-                               <ServiceTable.Body>
-                                   { contextInvitations && _.map(contextInvitations, (invite) => {
-                                       return <DisplayInvitations
-                                           key={invite.roomId}
-                                           path="/explore"
-                                           invite={invite}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   }) }
-                                   { _.map(serviceSpaces, (id, service) => {
-                                       if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
+                <>
+                    <h3>{ t('Invitations') }</h3>
 
-                                       return <ServiceInvitations
-                                           key={id}
-                                           id={id}
-                                           service={service}
-                                           invitations={serviceInvitations}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   })
-                                   }
-                                   { chatInvitations && _.map(chatInvitations, (invite) => {
-                                       return <DisplayInvitations
-                                           key={invite.roomId}
-                                           path="/chat"
-                                           invite={invite}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   }) }
-                               </ServiceTable.Body>
-                           </ServiceTable>
-                       </TableSection>
+                    <CardSection>
+
+                        { contextInvitations && _.map(contextInvitations, (invite) => {
+                            return <DisplayInvitations
+                                key={invite.roomId}
+                                path="/explore"
+                                invite={invite}
+                                acceptMatrixInvite={acceptMatrixInvite}
+                                declineMatrixInvite={declineMatrixInvite}
+                            />;
+                        }) }
+                        { _.map(serviceSpaces, (id, service) => {
+                            if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
+
+                            return <ServiceInvitations
+                                key={id}
+                                id={id}
+                                service={service}
+                                invitations={serviceInvitations}
+                                acceptMatrixInvite={acceptMatrixInvite}
+                                declineMatrixInvite={declineMatrixInvite}
+                            />;
+                        })
+                        }
+                        { chatInvitations && _.map(chatInvitations, (invite) => {
+                            return <DisplayInvitations
+                                key={invite.roomId}
+                                path="/chat"
+                                invite={invite}
+                                acceptMatrixInvite={acceptMatrixInvite}
+                                declineMatrixInvite={declineMatrixInvite}
+                            />;
+                        }) }
+                    </CardSection>
+                </>
             }
         </DefaultLayout.LameColumn>
     );

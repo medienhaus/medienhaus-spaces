@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import { CheckIcon, CloseIcon } from '@remixicons/react/line';
+import styled from 'styled-components';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 
 /**
  * Callback definitions
@@ -32,6 +34,13 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
  *
  * @returns {React.ReactNode}
 */
+
+const InvitationCard = styled.div`
+  > * + * {
+    margin-top: var(--margin);
+  }
+`;
+
 export default function DisplayInvitations({ invite, path, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
@@ -64,40 +73,46 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
     };
 
     return (
-        <ServiceTable.Row>
-            <ServiceTable.Cell>
-                { path }
-            </ServiceTable.Cell>
-            <ServiceTable.Cell>
+        <InvitationCard>
+            <h4>
                 { link ?
                     <Link href={link}>{ invite.name }</Link>
                     : invite.name }
-            </ServiceTable.Cell>
-            <ServiceTable.Cell title={invite.inviter?.userId}>
-                { invite.inviter?.displayName }
-            </ServiceTable.Cell>
-            <ServiceTable.Cell title={t('accept invitation')}>
-                <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isAcceptingInvite ?
-                        <LoadingSpinnerInline />
-                        :
-                        <Icon>
-                            <CheckIcon />
-                        </Icon>
-                    }
-                </TextButton>
-            </ServiceTable.Cell>
-            <ServiceTable.Cell title={t('decline invitation')}>
-                <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isDecliningInvite ?
-                        <LoadingSpinnerInline />
-                        :
-                        <Icon>
-                            <CloseIcon />
-                        </Icon>
-                    }
-                </TextButton>
-            </ServiceTable.Cell>
-        </ServiceTable.Row>
+            </h4>
+            { /*<ServiceTable.Cell>*/ }
+            { /*    { path }*/ }
+            { /*</ServiceTable.Cell>*/ }
+            <p title={invite.inviter?.userId}>
+                { invite.inviter?.displayName }<em>  invited you to join this   </em>{ path } <em>item</em>
+            </p>
+            <ConfirmCancelButtons
+                onClick={(e) => {handleAccept(e, invite.roomId); }}
+                onCancel={(e) => handleDecline(e, invite.roomId)}
+                disabled={isDecliningInvite || isAcceptingInvite}
+                cancelLabel={t('reject')}
+                confirmLabel={t('accept')}
+            />
+
+            { /*    <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>*/ }
+            { /*        { isAcceptingInvite ?*/ }
+            { /*            <LoadingSpinnerInline />*/ }
+            { /*            :*/ }
+            { /*            <Icon>*/ }
+            { /*                <CheckIcon />*/ }
+            { /*            </Icon>*/ }
+            { /*        }*/ }
+            { /*    </TextButton>*/ }
+            { /*</ServiceTable.Cell>*/ }
+            { /*<ServiceTable.Cell title={t('decline invitation')}>*/ }
+            { /*    <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>*/ }
+            { /*        { isDecliningInvite ?*/ }
+            { /*            <LoadingSpinnerInline />*/ }
+            { /*            :*/ }
+            { /*            <Icon>*/ }
+            { /*                <CloseIcon />*/ }
+            { /*            </Icon>*/ }
+            { /*        }*/ }
+            { /*    </TextButton>*/ }
+        </InvitationCard>
     );
 }

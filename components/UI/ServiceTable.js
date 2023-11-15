@@ -33,6 +33,8 @@
 
 import styled from 'styled-components';
 
+import { breakpoints } from '../_breakpoints';
+
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -46,6 +48,9 @@ const TableCaption = styled.caption`
 `;
 
 const TableHead = styled.thead`
+  @media ${breakpoints.phoneOnly} {
+    display: none;
+  }
 `;
 
 const TableBody = styled.tbody`
@@ -58,6 +63,12 @@ const TableRow = styled.tr`
 
   > * + * {
     padding-left: var(--margin);
+  }
+
+  @media ${breakpoints.phoneOnly} {
+    > td {
+      display: block;
+    }
   }
 `;
 
