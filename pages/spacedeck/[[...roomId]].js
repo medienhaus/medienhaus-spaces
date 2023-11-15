@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -54,7 +53,7 @@ export default function Spacedeck() {
         const matrixSketches = {};
 
         // Function to recursively collect all Matrix sketches within a space
-        const getAllMatrixSketches = (id, parent) => {
+        const getAllMatrixSketches = (id) => {
             if (matrix?.spaces.get(id)?.children) {
                 for (const roomId of spacedeckChildren) {
                     // Extract the spacedeck id from room content
@@ -179,6 +178,7 @@ export default function Spacedeck() {
 
         // Log debug information about current progress
         logger.debug('Added %s to parent %s', name, parent);
+
         // Send the message to the room with retry handling
         const sendMessage = async () => {
             await matrixClient.sendMessage(room, {
