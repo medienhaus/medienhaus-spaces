@@ -20,14 +20,10 @@ const sortRooms = function(room) {
 const UnreadNotificationBadge = styled.div`
   display: grid;
   place-content: center;
-  width: 2rem;
-  height: 2rem;
-  color: var(--color-notification);
-  background-color: var(--color-background);
-  border-color: var(--color-notification);
-  border-style: solid;
-  border-width: calc(var(--margin) * 0.1);
-  border-radius: 50%;
+  width: 3ch;
+  height: var(--line-height);
+  color: rgb(255 255 255);
+  background-color: var(--color-notification);
 
   > small {
     font-weight: 600;
