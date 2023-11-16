@@ -13,7 +13,7 @@
  */
 
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import styled from 'styled-components';
@@ -48,9 +48,9 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
+    const { t } = useTranslation('invitationModal');
     const [userFeedback, setUserFeedback] = useState('');
     const [errorFeedback, setErrorFeedback] = useState([]);
-    const { t } = useTranslation('invitationModal');
 
     const handleChange = (searchString) => {
         debouncedFetchUsersForContributorSearch(searchString);
@@ -98,7 +98,7 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and {{needs}} to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was', needs: successAmount > 1 ? 'needs' : 'need' }));
+        successAmount > 0 && setUserFeedback('✓ ' + <Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
         await new Promise(() => setTimeout(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
