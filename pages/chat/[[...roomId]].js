@@ -219,19 +219,19 @@ export default function Chat() {
                     position: absolute; right: 0; left: 0; z-index: 10;
                     background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
                     padding: 1.65rem 0;
-                } 
+                }
                 .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: unset }
                 .mx_SearchBar {
                     position: absolute; right: 0; left: 0; bottom: 0; z-index: 10;
                     background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
                     border-top: 1px solid var(--roomlist-separator-color);
                 }
-                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; } 
+                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; }
                 .mx_RoomView_messageListWrapper { padding-top: 140px; }
 
                 @media ${breakpoints.phoneOnly} {
                     .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
-                    
+
                     .mx_RoomHeader_wrapper { flex-wrap: wrap }
                     .mx_RoomHeader_avatar { flex: 0 1 1% }
                     .mx_RoomHeader_name { font-weight: bold; flex: 1 0 }
