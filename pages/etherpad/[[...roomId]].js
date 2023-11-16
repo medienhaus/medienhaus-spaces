@@ -3,12 +3,10 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
-import Icon from '../../components/UI/Icon';
 import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import { ServiceTable } from '../../components/UI/ServiceTable';

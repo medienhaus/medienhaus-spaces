@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import IframeLayout from '../../components/layouts/iframe';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -18,11 +17,13 @@ import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import DefaultLayout from '../../components/layouts/default';
 
 const ServiceTableWrapper = styled.div`
   width: 100%;
   overflow: auto;
 `;
+
 /**
  * Explore component for managing room hierarchies and content.
  *
@@ -58,9 +59,11 @@ export default function Explore() {
     useEffect(() => {
         const controller = new AbortController();
         const signal = controller.signal;
+
         const checkForRoomContent = async () => {
             await matrix.hydrateRoomContent(iframeRoomId, signal);
         };
+
         iframeRoomId && checkForRoomContent();
 
         return () => controller.abort();
@@ -123,6 +126,7 @@ export default function Explore() {
         setSelectedSpaceChildren((prevState) => {
             // Check if the selected roomId is already inside the array
             let indexOfParent = null;
+
             for (const [index, children] of prevState.entries()) {
                 if (children[0].room_id === roomId) {
                     // If there is a match, return the position and exit the loop
@@ -130,6 +134,7 @@ export default function Explore() {
                     break;
                 }
             }
+
             // If indexOfParent is 0 or the context root ID defined in the config, return the new spaceHierarchy
             if (indexOfParent === 0 || roomId === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return [spaceHierarchy];
             // Otherwise, delete all entries starting with the found index
@@ -165,7 +170,7 @@ export default function Explore() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 <h2 ref={dimensionsRef}>/explore   { _.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline /> }</h2>
                 <ServiceTableWrapper>
                     { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
@@ -177,9 +182,9 @@ export default function Explore() {
                         />
                     }
                 </ServiceTableWrapper>
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
 
-            <IframeLayout.IframeWrapper>
+            <DefaultLayout.IframeWrapper>
                 { iframeRoomId && !_.isEmpty(selectedSpaceChildren)? (
                     <ExploreIframeViews
                         currentTemplate={currentTemplate}
@@ -222,6 +227,7 @@ export default function Explore() {
                                                 Thank you, { auth.user.displayname }! But our item is in another context! 🍄
                                             </ErrorMessage>;
                                         }
+
                                         if (index === 0) return null;
 
                                         // Sort the array to display objects of type 'item' before others
@@ -240,12 +246,7 @@ export default function Explore() {
                 </>
                 }
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </IframeLayout.IframeWrapper>
+            </DefaultLayout.IframeWrapper>
         </>
     );
 }
-
-// Set the layout for the Explore component
-Explore.getLayout = () => {
-    return IframeLayout.Layout;
-};
