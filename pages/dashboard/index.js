@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
 import styled from 'styled-components';
@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ServiceInvitations from './ServiceInvitations';
-import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
 import DefaultLayout from '../../components/layouts/default';
 
@@ -22,26 +20,26 @@ const CardSection = styled.section`
 export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
+    const matrixInvites = matrix.invites;
     const { t } = useTranslation('dashboard');
-    const [serviceInvitations, setServiceInvitations] = useState([]);
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const serviceSpaces = matrix.serviceSpaces;
-    const [chatInvitations, setChatInvitations] = useState([]);
-    const [contextInvitations, setContextInvitations] = useState([]);
+    const [invitations, setInvitations] = useState([]);
+
+    const hydrateMetaEvent = useCallback((roomId) => {
+        return matrix.hydrateMetaEvent(roomId);
+    }, [matrix]);
 
     useEffect(() => {
         let cancelled = false;
 
         const hydrateInvitationMetaEvents = async () => {
-            const serviceInvitationsArray = [];
+            // @TODO invites get updated after accepting or rejecting, invite should move to handled object
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
-            const chatInvitationsArray = [];
+            const invitationsArray = [];
 
-            const contextInvitationsArray = [];
-
-            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
+            const sortAndHydrateInvitations = Array.from(matrixInvites.values()).map(async invitation => {
                 const room = await matrixClient.getRoom(invitation.roomId);
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
@@ -50,28 +48,24 @@ export default function Dashboard() {
 
                 if (!invitation.meta) {
                     // if there is no meta key yet, we manually check for one
-                    const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
+                    const metaEvent = await hydrateMetaEvent(invitation.roomId)
                         .catch(() => { });
                     invitation.meta = metaEvent;
+
+                    if (metaEvent) {
+                        if (invitation.meta.type !== 'context') {
+                            const path = getConfig().publicRuntimeConfig.authProviders[invitation.meta.template].path || invitation.meta.template;
+                            invitation.service = path;
+                        }
+                    }
                 }
 
-                if (invitation.meta) {
-                    //  if (invitation.meta.type === 'context' && getConfig().publicRuntimeConfig.templates.context.includes(invitation.meta.template)) { // @TODO: needs to be discussed if we want to show all or not
-                    if (invitation.meta.type === 'context') {
-                        contextInvitationsArray.push(invitation);
-                    } else {
-                        serviceInvitationsArray.push(invitation);
-                    }
-                } else {
-                    chatInvitationsArray.push(invitation);
-                }
+                invitationsArray.push(invitation);
             });
 
             await Promise.all(sortAndHydrateInvitations);
 
-            setServiceInvitations(serviceInvitationsArray);
-            setChatInvitations(chatInvitationsArray);
-            setContextInvitations(contextInvitationsArray);
+            setInvitations(invitationsArray);
         };
 
         if (!cancelled) hydrateInvitationMetaEvents();
@@ -79,7 +73,7 @@ export default function Dashboard() {
         return () => {
             cancelled = true;
         };
-    }, [matrix, matrix.invites, matrixClient]);
+    }, [hydrateMetaEvent, matrixClient, matrixInvites]);
 
     // functions which interact with matrix server
     const declineMatrixInvite = async (roomId) => {
@@ -100,44 +94,24 @@ export default function Dashboard() {
             <h2>/dashboard</h2>
 
             { matrix.invites.size > 0 &&
-                <>
-                    <h3>{ t('Invitations') }</h3>
-
                     <CardSection>
+                        { /*<h3>{ t('Invitations') }</h3>*/ }
+                        { invitations && _.map(invitations, (invite, index) => {
+                            console.log(invite);
 
-                        { contextInvitations && _.map(contextInvitations, (invite) => {
-                            return <DisplayInvitations
-                                key={invite.roomId}
-                                path="/explore"
-                                invite={invite}
-                                acceptMatrixInvite={acceptMatrixInvite}
-                                declineMatrixInvite={declineMatrixInvite}
-                            />;
-                        }) }
-                        { _.map(serviceSpaces, (id, service) => {
-                            if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
-
-                            return <ServiceInvitations
-                                key={id}
-                                id={id}
-                                service={service}
-                                invitations={serviceInvitations}
-                                acceptMatrixInvite={acceptMatrixInvite}
-                                declineMatrixInvite={declineMatrixInvite}
-                            />;
-                        })
-                        }
-                        { chatInvitations && _.map(chatInvitations, (invite) => {
-                            return <DisplayInvitations
-                                key={invite.roomId}
-                                path="/chat"
-                                invite={invite}
-                                acceptMatrixInvite={acceptMatrixInvite}
-                                declineMatrixInvite={declineMatrixInvite}
-                            />;
+                            return <>
+                                { index > 0 && <hr /> }
+                                <DisplayInvitations
+                                    key={invite.roomId}
+                                    path={invite.meta ? invite.service || '/explore' : '/chat'}
+                                    invite={invite}
+                                    service={invite.meta?.template}
+                                    acceptMatrixInvite={acceptMatrixInvite}
+                                    declineMatrixInvite={declineMatrixInvite}
+                                />
+                            </>;
                         }) }
                     </CardSection>
-                </>
             }
         </DefaultLayout.LameColumn>
     );

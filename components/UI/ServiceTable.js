@@ -48,9 +48,6 @@ const TableCaption = styled.caption`
 `;
 
 const TableHead = styled.thead`
-  @media ${breakpoints.phoneOnly} {
-    display: none;
-  }
 `;
 
 const TableBody = styled.tbody`
@@ -63,12 +60,6 @@ const TableRow = styled.tr`
 
   > * + * {
     padding-left: var(--margin);
-  }
-
-  @media ${breakpoints.phoneOnly} {
-    > td {
-      display: block;
-    }
   }
 `;
 
