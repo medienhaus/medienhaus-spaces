@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import { CheckIcon, CloseIcon } from '@remixicons/react/line';
 import styled from 'styled-components';
 
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import Icon from '../../components/UI/Icon';
-import TextButton from '../../components/UI/TextButton';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
+import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '../../lib/Matrix';
 
 /**
  * Callback definitions
@@ -41,12 +38,14 @@ const InvitationCard = styled.div`
   }
 `;
 
-export default function DisplayInvitations({ invite, path, acceptMatrixInvite, declineMatrixInvite }) {
+export default function DisplayInvitations({ invite, path, service, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
     const [link, setLink] = useState();
     const [wasHandled, setWasHandled] = useState(false);
+    const matrix = useMatrix();
+    const MatrixAuthProvider = useAuth().getAuthenticationProvider('matrix');
 
     const handleDecline = async (e, roomId) => {
         e.preventDefault();
@@ -68,8 +67,14 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
             return;
         }
 
+        if (service) {
+            await MatrixAuthProvider.addSpaceChild(matrix.serviceSpaces[service], roomId).catch(() => {});
+        }
+
         setLink(forwardingUrl);
         setWasHandled(true);
+
+        return forwardingUrl;
     };
 
     return (
@@ -79,40 +84,16 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
                     <Link href={link}>{ invite.name }</Link>
                     : invite.name }
             </h4>
-            { /*<ServiceTable.Cell>*/ }
-            { /*    { path }*/ }
-            { /*</ServiceTable.Cell>*/ }
             <p title={invite.inviter?.userId}>
                 { invite.inviter?.displayName }<em>  invited you to join this   </em>{ path } <em>item</em>
             </p>
             <ConfirmCancelButtons
                 onClick={(e) => {handleAccept(e, invite.roomId); }}
                 onCancel={(e) => handleDecline(e, invite.roomId)}
-                disabled={isDecliningInvite || isAcceptingInvite}
+                disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
                 cancelLabel={t('reject')}
                 confirmLabel={t('accept')}
             />
-
-            { /*    <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>*/ }
-            { /*        { isAcceptingInvite ?*/ }
-            { /*            <LoadingSpinnerInline />*/ }
-            { /*            :*/ }
-            { /*            <Icon>*/ }
-            { /*                <CheckIcon />*/ }
-            { /*            </Icon>*/ }
-            { /*        }*/ }
-            { /*    </TextButton>*/ }
-            { /*</ServiceTable.Cell>*/ }
-            { /*<ServiceTable.Cell title={t('decline invitation')}>*/ }
-            { /*    <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>*/ }
-            { /*        { isDecliningInvite ?*/ }
-            { /*            <LoadingSpinnerInline />*/ }
-            { /*            :*/ }
-            { /*            <Icon>*/ }
-            { /*                <CloseIcon />*/ }
-            { /*            </Icon>*/ }
-            { /*        }*/ }
-            { /*    </TextButton>*/ }
         </InvitationCard>
     );
 }
