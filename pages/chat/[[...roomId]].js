@@ -17,16 +17,21 @@ const sortRooms = function(room) {
     ];
 };
 
-const UnreadNotificationBadge = styled.span`
-  position: relative;
-  display: flex;
-  flex: 0 0;
-  padding: 0.1rem 0.5rem;
-  margin-left: 0.6rem;
-  color: white;
-  text-decoration: none;
-  background: red;
-  border-radius: 2rem;
+const UnreadNotificationBadge = styled.div`
+  display: grid;
+  place-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-notification);
+  background-color: var(--color-background);
+  border-color: var(--color-notification);
+  border-style: solid;
+  border-width: calc(var(--margin) * 0.1);
+  border-radius: 50%;
+
+  > small {
+    font-weight: 700;
+  }
 `;
 
 const Avatar = styled.img`
@@ -73,7 +78,11 @@ const SidebarListEntry = function({ room }) {
                 ) }
                 <RoomName>{ room.name }</RoomName>
                 { room.notificationCount > 0 && (
-                    <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                    <UnreadNotificationBadge>
+                        <small>
+                            { room.notificationCount }
+                        </small>
+                    </UnreadNotificationBadge>
                 ) }
             </SidebarListEntryWrapper>
         </Link>
