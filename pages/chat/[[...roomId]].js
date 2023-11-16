@@ -80,7 +80,7 @@ const SidebarListEntry = function({ room }) {
                 { room.notificationCount > 0 && (
                     <UnreadNotificationBadge>
                         <small>
-                            { room.notificationCount }
+                            { room.notificationCount < 100 ? room.notificationCount : '99+' }
                         </small>
                     </UnreadNotificationBadge>
                 ) }
