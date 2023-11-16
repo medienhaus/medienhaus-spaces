@@ -154,44 +154,22 @@ export default function Spacedeck() {
         setUserFeedback(t('Syncing {{name}} from server', { name: name }));
 
         // Create the room with retry handling
-        const createRoomForSketch = async () => {
-            return await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck');
-        };
-
-        const room = await createRoomForSketch()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => createRoomForSketch())
-                    .catch(error => setErrorMessage(error.message));
-            });
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck')
+            .catch(error => setErrorMessage(error));
 
         // Log debug information about current progress
         logger.debug(`Created room for ${name} with id ${room}`);
 
         // Add the room as a child to the parent space
-        const addSpaceChild = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room);
-
-        await addSpaceChild()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => addSpaceChild())
-                    .catch(error => setErrorMessage(error.message));
-            });
+        await matrix.addSpaceChild(parent, room)
+            .catch(error => setErrorMessage(error));
 
         // Log debug information about current progress
         logger.debug('Added %s to parent %s', name, parent);
 
         // Send the message to the room with retry handling
-        const sendMessage = async () => {
-            await matrixClient.sendMessage(room, {
-                msgtype: 'm.text',
-                body: link,
-            });
-        };
-
-        await sendMessage()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => sendMessage())
-                    .catch(error => setErrorMessage(error.message));
-            });
+        await matrix.sendMessage(room, link)
+            .catch(error => setErrorMessage(error));
 
         return room;
     }
