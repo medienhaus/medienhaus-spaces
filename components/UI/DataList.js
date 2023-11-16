@@ -7,13 +7,13 @@ import { ServiceTable } from './ServiceTable';
 import Form from './Form';
 
 /**
- * An input component that functions as a datalist and can be controlled with arrow keys and mouse clicks.
+ * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
  *
+ * @component
  * @param {Object[]} options - An array of Objects for the datalist.
  * @param {function} onInputChange - Function to execute when input changes, receives string as the first parameter.
  * @param {function} onSubmit - Function to execute when the form is submitted, receives an array of selected options.
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results.
- *
  * @returns {React.JSX.Element} - The Datalist component.
  */
 
@@ -48,7 +48,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     const [filteredOptions, setFilteredOptions] = useState([]);
     const inputRef = useRef(null);
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('invitationModal');
 
     useEffect(() => {
         setFilteredOptions(options.filter(option => {
@@ -179,6 +179,20 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
         </InviteUserForm>
     );
 }
+/**
+ * Row component for the Datalist that represents a selectable option.
+ *
+ * @component
+ * @param {Object} option - The option to display in the row.
+ * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results.
+ * @param {function} handleSelect - Function to execute when an option is selected or deselected.
+ * @param {number} index - Index of the option in the list.
+ * @param {boolean} isChecked - Flag indicating whether the option is checked.
+ * @param {function} handleKeyDown - Function to handle keydown events.
+ * @param {boolean} focus - Flag indicating whether the row has focus.
+ * @param {function} setSelectedIndex - Function to set the selected index.
+ * @returns {React.JSX.Element} - The DataListRow component.
+ */
 
 const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, handleKeyDown, focus, setSelectedIndex }) => {
     const ref = useRef(null);
