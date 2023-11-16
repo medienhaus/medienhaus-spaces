@@ -123,7 +123,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
  * @param {React.setState} setSelectedContextName- Oprional setter function for parent name
  *
- * @return {React.ReactElement}
+ * @return {React.ReactNode}
  */
 const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter, setSelectedContextName }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {

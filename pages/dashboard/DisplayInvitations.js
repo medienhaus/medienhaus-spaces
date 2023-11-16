@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CheckIcon, CloseIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
+import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
@@ -29,7 +30,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
  * @param {acceptMatrixInvite} props.acceptMatrixInvite
  * @param {declineMatrixInvite} props.declineMatrixInvite
  *
- * @returns {React.JSX.Element}
+ * @returns {React.ReactNode}
 */
 export default function DisplayInvitations({ invite, path, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
@@ -77,12 +78,24 @@ export default function DisplayInvitations({ invite, path, acceptMatrixInvite, d
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('accept invitation')}>
                 <TextButton onClick={(e) => { handleAccept(e, invite.roomId); }} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isAcceptingInvite ? <LoadingSpinnerInline /> : <CheckIcon width="var(--icon-size)" height="var(--icon-size)" /> }
+                    { isAcceptingInvite ?
+                        <LoadingSpinnerInline />
+                        :
+                        <Icon>
+                            <CheckIcon />
+                        </Icon>
+                    }
                 </TextButton>
             </ServiceTable.Cell>
             <ServiceTable.Cell title={t('decline invitation')}>
                 <TextButton onClick={(e) => {handleDecline(e, invite.roomId);}} disabled={isDecliningInvite || isAcceptingInvite || wasHandled}>
-                    { isDecliningInvite ? <LoadingSpinnerInline /> : <CloseIcon width="var(--icon-size)" height="var(--icon-size)" /> }
+                    { isDecliningInvite ?
+                        <LoadingSpinnerInline />
+                        :
+                        <Icon>
+                            <CloseIcon />
+                        </Icon>
+                    }
                 </TextButton>
             </ServiceTable.Cell>
         </ServiceTable.Row>

@@ -4,7 +4,6 @@ const ErrorMessage = styled.p`
   position: relative;
   padding-left: calc(1.4 * var(--margin));
   margin-bottom: var(--margin);
-  font-size: 85%;
 
   &::before {
     position: absolute;

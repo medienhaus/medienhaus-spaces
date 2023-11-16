@@ -59,6 +59,11 @@
         {
           "blankLine": "always",
           "prev": "*",
+          "next": "export"
+        },
+        {
+          "blankLine": "always",
+          "prev": "*",
           "next": "multiline-block-like"
         },
         {

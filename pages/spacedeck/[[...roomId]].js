@@ -4,22 +4,23 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
+import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import IframeLayout from '../../components/layouts/iframe';
+import DefaultLayout from '../../components/layouts/default';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
-import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
+import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -201,7 +202,7 @@ export default function Spacedeck() {
         setIsDeletingSketch(true);
         const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
 
-        if (!remove || remove.ok) {
+        if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
             alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
 
@@ -216,7 +217,7 @@ export default function Spacedeck() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
                 <ServiceSubmenu
                     title={<h2>{ spacedeckPath }</h2>}
                     subheadline={t('What would you like to do?')}
@@ -252,21 +253,29 @@ export default function Spacedeck() {
                     </>
 
                 }
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
             { roomId && content && (
-                <IframeLayout.IframeWrapper>
-                    <IframeLayout.IframeHeader>
+                <DefaultLayout.IframeWrapper>
+                    <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
-                        <IframeLayout.IframeHeaderButtonWrapper>
-                            <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
-                                { isInviteUsersOpen ? <UserUnfollowIcon width="24" height="24" fill="var(--color-foreground)" /> : <UserAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
-                            </TextButton>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom.Button
+                                name={matrix.rooms.get(roomId).name}
+                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen}
+                            />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
+                                { isDeletingSketch ?
+                                    <LoadingSpinnerInline />
+                                    :
+                                    <Icon>
+                                        <DeleteBinIcon />
+                                    </Icon>
+                                }
                             </TextButton>
-                        </IframeLayout.IframeHeaderButtonWrapper>
-                    </IframeLayout.IframeHeader>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader>
                     { isInviteUsersOpen ?
                         <InviteUserToMatrixRoom
                             roomId={roomId}
@@ -279,12 +288,8 @@ export default function Spacedeck() {
                         />
                     }
 
-                </IframeLayout.IframeWrapper>
+                </DefaultLayout.IframeWrapper>
             ) }
         </>
     );
 }
-
-Spacedeck.getLayout = () => {
-    return IframeLayout.Layout;
-};

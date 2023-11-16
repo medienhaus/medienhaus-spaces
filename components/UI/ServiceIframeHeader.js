@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { DeleteBinIcon, FolderIcon, ListSettingsIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 import React from 'react';
 
-import IframeLayout from '../../components/layouts/iframe';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import TextButton from './TextButton';
+import DefaultLayout from '../layouts/default';
 
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
@@ -22,9 +22,9 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject
     console.log(isInviteUsersOpen);
 
     return (
-        <IframeLayout.IframeHeader>
+        <DefaultLayout.IframeHeader>
             <h2>{ title }</h2>
-            <IframeLayout.IframeHeaderButtonWrapper>
+            <DefaultLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
@@ -54,8 +54,8 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject
 
                     )
                 ) }
-            </IframeLayout.IframeHeaderButtonWrapper>
-        </IframeLayout.IframeHeader>
+            </DefaultLayout.IframeHeaderButtonWrapper>
+        </DefaultLayout.IframeHeader>
     );
 };
 

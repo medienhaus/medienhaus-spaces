@@ -1,31 +1,30 @@
 /**
- * This component provides a user interface for inviting other users to a Matrix room.
- * It includes a form for searching and inviting users, and provides feedback to the user.
+ * Provides a user interface for inviting other users to a Matrix room.
  *
- * @param {string} roomId - The valid Matrix room ID to which you want to invite a user.
+ * @param {string} roomId - The ID of the Matrix room to invite users to.
  * @param {string} roomName - The name of the Matrix room.
- * @param {Function} onSuccess - An optional callback function to execute after a successful invitation.
-
- * @returns {React.ReactElement} - A React element representing the component.
-
+ * @param {Function} onSuccess - An optional callback executed after a successful invitation.
+ *
+ * @returns {React.ReactElement} - A React component representing the invitation UI.
+ *
  * @example
  * // Example usage of the InviteUserToMatrixRoom component:
  * <InviteUserToMatrixRoom roomId="your-room-id" roomName="Your Room" onSuccess={handleSuccess} />
  */
 
 import React, { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import styled from 'styled-components';
-import { CloseIcon } from '@remixicons/react/line';
+import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
-import Form from '../Form';
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
-import { ServiceTable } from '../ServiceTable';
+import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
+import Icon from '../Icon';
 
 const ActionWrapper = styled.section`
   display: grid;
@@ -33,30 +32,28 @@ const ActionWrapper = styled.section`
   justify-self: start;
   width: 100%;
   height: 100%;
-  padding: 0 calc(var(--margin) *1.5) ;
+  padding: 0 var(--margin);
+
+  @media ${breakpoints.tabletAndAbove} {
+    padding: 0 calc(var(--margin) * 1.5);
+  }
 
   h3 {
     line-height: calc(var(--margin) *3);
   }
 `;
 
-const InviteUserForm = styled(Form)`
-  display: grid;
-  height: 100%;
-
-  > :last-child {
-    align-self: end;
-  }
+const FeedbackWrapper = styled.div`
+  margin-top: var(--margin);
 `;
 
-export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
+export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
-    const [userFeedback, setUserFeedback] = useState('');
-    const [errorFeedback, setErrorFeedback] = useState();
-    const [selectedUsers, setSelectedUsers] = useState([]);
     const { t } = useTranslation('invitationModal');
+    const [userFeedback, setUserFeedback] = useState('');
+    const [errorFeedback, setErrorFeedback] = useState([]);
 
     const handleChange = (searchString) => {
         debouncedFetchUsersForContributorSearch(searchString);
@@ -68,9 +65,11 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     const fetchUsersForContributorSearch = useCallback(async (a) => {
         try {
             const users = await matrixClient.searchUserDirectory({ term: a });
+            // always filter ourselves; we most likely do not want to invite ourselves to something, i guess?!
+            const usersWithoutMyself = _.filter(users.results, (user) => user.user_id !== matrixClient.getUserId());
             // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
             // const filterResults = users.results.filter(item => _.isEqual(item, option));
-            setSearchResults(users.results);
+            setSearchResults(usersWithoutMyself);
         } catch (err) {
             logger.error(t('Error while trying to fetch users: ') + err);
         }
@@ -79,81 +78,83 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
     function clearInputs() {
         setUserFeedback('');
         setSearchResults([]);
-        setSelectedUsers([]);
     }
 
-    const handleInvite = async (e) => {
-        e.preventDefault();
+    const handleInvite = async (selectedUsers) => {
+        setErrorFeedback([]);
         const errors = [];
 
         for (const user of selectedUsers) {
             await matrixClient.invite(roomId, user.user_id)
-                .catch(async err => {
-                    errors.push(err);
+                .catch(async error => {
+                    // avoid adding duplicates
+                    if (errors.includes(error.data.error)) return;
+                    errors.push(error.data.error);
                 });
         }
 
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
-            setErrorFeedback(errors.map(err => <ErrorMessage key={err.data?.error}>{ err.data?.error }</ErrorMessage>));
+            setErrorFeedback(errors);
         }
 
         const successAmount = selectedUsers.length - errors.length;
 
-        // if everything is okay, we let the user know and exit the modal view.
-        setUserFeedback('✓ ' + successAmount + ' ' + t('{{user}} invited and needs to accept your invitation', { user: successAmount > 1 ? 'users were' : 'user was' }));
+        // if everything is okay, we let the user know and exit the view.
+        successAmount > 0 && setUserFeedback('✓ ' + <Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
         await new Promise(() => setTimeout(() => {
             clearInputs();
-            onSuccess && successAmount === selectedUsers.length && onSuccess();
+            if (onSuccess && successAmount === selectedUsers.length) onSuccess();
         }, 3000));
-    };
-
-    const handleUserSelect = (user) => {
-        const find = selectedUsers.some(selectedUser => selectedUser?.user_id === user.user_id);
-        if (find) return;
-        setSelectedUsers(prevState => [...prevState, user]);
-    };
-
-    const handleRemove = (user) => {
-        const filteredArray = selectedUsers.filter(selectedUser => selectedUser?.user_id !== user.user_id);
-        setSelectedUsers(filteredArray);
     };
 
     return <ActionWrapper>
         <h3>{ t('Invite users') }</h3>
-        <InviteUserForm onSubmit={handleInvite}>
-            { userFeedback && !errorFeedback ? <div>{ userFeedback }</div> :
-                <>
-                    <Datalist
-                        options={searchResults}
-                        onChange={handleChange}
-                        keysToDisplay={['display_name', 'user_id']}
-                        selected={selectedUsers}
-                        onSelect={handleUserSelect}
-                    />
-                    { selectedUsers.length !== 0 && <ServiceTable>{ selectedUsers.map(user => {
-                        return <DisplaySelectedUser key={user.display_name} user={user} handleRemove={handleRemove} />;
-                    },
-                    ) }
-                    </ServiceTable> }
-                    <button disabled={selectedUsers.length === 0}>{ t('invite') }</button>
-                </>
-            }
-            { userFeedback && errorFeedback && userFeedback }
-            { errorFeedback && errorFeedback }
-        </InviteUserForm>
-    </ActionWrapper>;
-}
+        { userFeedback && _.isEmpty(errorFeedback) ? <div>{ userFeedback }</div> :
+            <>
+                <Datalist
+                    options={searchResults}
+                    onInputChange={handleChange}
+                    keysToDisplay={['display_name', 'user_id']}
+                    onSubmit={handleInvite}
+                />
 
-const DisplaySelectedUser = ({ user, handleRemove }) => {
-    return <ServiceTable.Row>
-        <ServiceTable.Cell>
-            { user.display_name }
-        </ServiceTable.Cell>
-        <ServiceTable.Cell align="right">
-            <TextButton onClick={() => handleRemove(user)}>
-                <CloseIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
-            </TextButton>
-        </ServiceTable.Cell>
-    </ServiceTable.Row>;
+                <FeedbackWrapper>
+                    { userFeedback && errorFeedback && userFeedback }
+                    { !_.isEmpty(errorFeedback) && errorFeedback.map(error => <ErrorMessage key={error}>{ error }</ErrorMessage>) }
+                </FeedbackWrapper>
+            </>
+        }
+    </ActionWrapper>;
 };
+
+/**
+ * Button component for toggling the invitation UI for the Matrix room.
+ *
+ * @component
+ * @param {boolean} inviteUsersOpen - Flag indicating whether the invitation UI is open.
+ * @param {Function} onClick - Function to execute when the button is clicked.
+ * @param {string} name - The name of the Matrix room.
+ * @returns {React.ReactElement} - A React component representing the button for inviting users.
+ */
+const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
+    const { t } = useTranslation('invitationModal');
+
+    return (
+        <TextButton
+            onClick={onClick}
+            title={t('Invite users to {{name}}', { name: name })}>
+            { inviteUsersOpen ?
+                <Icon>
+                    <UserUnfollowIcon />
+                </Icon>
+                :
+                <Icon>
+                    <UserAddIcon />
+                </Icon>
+            }
+        </TextButton>
+    );
+};
+
+InviteUserToMatrixRoom.Button = InviteUsersButton;

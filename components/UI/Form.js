@@ -11,4 +11,5 @@ const Form = styled.form`
     margin-top: calc(var(--margin) / 1.5);
   }
 `;
+
 export default Form;

@@ -7,12 +7,12 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
+import DefaultLayout from '../components/layouts/default';
 
 const ProfileSection = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-gap: calc(var(--margin) * var(--line-height));
-  max-width: 55ch;
 
   & > form {
     grid-row: 2 / 3;
@@ -214,7 +214,7 @@ export default function Account() {
     }
 
     return (
-        <>
+        <DefaultLayout.LameColumn>
             <h2>/account</h2>
             <ProfileSection>
                 { profileInfo.avatar_url ? (
@@ -260,6 +260,6 @@ export default function Account() {
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </form>
             </ProfileSection>
-        </>
+        </DefaultLayout.LameColumn>
     );
 }
