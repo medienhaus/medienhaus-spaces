@@ -30,7 +30,7 @@ const UnreadNotificationBadge = styled.div`
   border-radius: 50%;
 
   > small {
-    font-weight: 700;
+    font-weight: 600;
   }
 `;
 
