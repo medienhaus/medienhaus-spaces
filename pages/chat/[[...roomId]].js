@@ -40,10 +40,6 @@ const Avatar = styled.img`
   height: 2rem;
   margin-right: 0.6rem;
 
-  /*
-  background: var(--color-foreground);
-  */
-
   &.placeholder {
     backdrop-filter: invert(100%);
   }
