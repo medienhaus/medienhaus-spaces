@@ -99,7 +99,7 @@ const Nav = styled.nav`
 
 const Footer = styled.footer`
   font-weight: 700;
-  color: rgb(0 0 0 / 10%);
+  color: var(--color-foreground-alpha);
   white-space: nowrap;
   cursor: default;
 `;

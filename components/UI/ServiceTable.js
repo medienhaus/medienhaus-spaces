@@ -36,7 +36,7 @@ import styled from 'styled-components';
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  border-top: 1px solid rgb(0 0 0 / 5%);
+  border-top: 1px solid var(--color-foreground-alpha);
 `;
 
 const TableCaption = styled.caption`
@@ -53,8 +53,8 @@ const TableBody = styled.tbody`
 
 const TableRow = styled.tr`
   text-decoration: ${props => props.disabled && 'none'};
-  border-top: 1px solid rgb(0 0 0 / 5%);
-  border-bottom: 1px solid rgb(0 0 0 / 5%);
+  border-top: 1px solid var(--color-foreground-alpha);
+  border-bottom: 1px solid var(--color-foreground-alpha);
 
   > * + * {
     padding-left: var(--margin);

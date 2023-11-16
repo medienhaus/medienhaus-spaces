@@ -61,7 +61,7 @@ const IframeWrapper = styled.div`
     border: none;
 
     @media ${breakpoints.phoneOnly} {
-      border-top: 1px solid rgb(0 0 0 / 5%);
+      border-top: 1px solid var(--color-foreground-alpha);
     }
   }
 `;
