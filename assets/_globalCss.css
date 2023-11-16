@@ -22,7 +22,7 @@
     --color-foreground: rgb(255 255 255);
     --color-disabled: rgb(128 128 128);
     --color-selection: rgb(128 196 255);
-    --color-notification: rgb(255 96 96);
+    --color-notification: rgb(96 64 255);
     --color-background-alpha: hsl(0deg 0% 5%);
     --color-background-beta: hsl(0deg 0% 8%);
     --color-foreground-alpha: rgb(255 255 255 / 14%);
