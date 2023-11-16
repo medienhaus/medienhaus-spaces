@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -21,7 +21,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
-import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
+import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -228,9 +228,11 @@ export default function Spacedeck() {
                     <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
-                                { isInviteUsersOpen ? <UserUnfollowIcon width="24" height="24" fill="var(--color-foreground)" /> : <UserAddIcon width="24" height="24" fill="var(--color-foreground)" /> }
-                            </TextButton>
+                            <InviteUserToMatrixRoom.Button
+                                name={matrix.rooms.get(roomId).name}
+                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen}
+                            />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ?

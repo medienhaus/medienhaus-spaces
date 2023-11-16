@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { DeleteBinIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -22,7 +22,7 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
-import InviteUserToMatrixRoom from '../../components/UI/InviteUsersToMatrixRoom';
+import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
@@ -287,19 +287,14 @@ export default function Etherpad() {
                     <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            <TextButton title={t('Invite users to' + ' ' + matrix.rooms.get(roomId).name)} onClick={() => setIsInviteUsersOpen(prevState => !prevState)}>
-                                { isInviteUsersOpen ?
-                                    <Icon>
-                                        <UserUnfollowIcon />
-                                    </Icon>
-                                    :
-                                    <Icon>
-                                        <UserAddIcon />
-                                    </Icon>
-                                }
-                            </TextButton>
-                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
-                            <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
+                            <InviteUserToMatrixRoom.Button
+                                name={matrix.rooms.get(roomId).name}
+                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen} />
+                            <CopyToClipboard title={t('Copy pad link to clipboard')}
+                                content={matrix.roomContents.get(roomId)?.body} />
+                            <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')}
+                                onClick={deletePad}>
                                 { isDeletingPad ?
                                     <LoadingSpinnerInline />
                                     :
