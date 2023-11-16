@@ -16,7 +16,7 @@ const LostConnectionView = styled.div`
   color: white;
   text-transform: uppercase;
   background-color: #ff2f4f;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 `;
 
 const LostConnection = () => {
