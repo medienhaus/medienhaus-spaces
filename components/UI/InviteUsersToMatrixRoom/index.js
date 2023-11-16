@@ -17,11 +17,14 @@ import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import styled from 'styled-components';
+import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
+import TextButton from '../TextButton';
+import Icon from '../Icon';
 
 const ActionWrapper = styled.section`
   display: grid;
@@ -44,7 +47,7 @@ const FeedbackWrapper = styled.div`
   margin-top: var(--margin);
 `;
 
-export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
+export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
@@ -123,4 +126,35 @@ export default function InviteUserToMatrixRoom({ roomId, onSuccess }) {
             </>
         }
     </ActionWrapper>;
-}
+};
+
+/**
+ * Button component for toggling the invitation UI for the Matrix room.
+ *
+ * @component
+ * @param {boolean} inviteUsersOpen - Flag indicating whether the invitation UI is open.
+ * @param {Function} onClick - Function to execute when the button is clicked.
+ * @param {string} name - The name of the Matrix room.
+ * @returns {React.ReactElement} - A React component representing the button for inviting users.
+ */
+const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
+    const { t } = useTranslation('invitationModal');
+
+    return (
+        <TextButton
+            onClick={onClick}
+            title={t('Invite users to {{name}}', { name: name })}>
+            { inviteUsersOpen ?
+                <Icon>
+                    <UserUnfollowIcon />
+                </Icon>
+                :
+                <Icon>
+                    <UserAddIcon />
+                </Icon>
+            }
+        </TextButton>
+    );
+};
+
+InviteUserToMatrixRoom.Button = InviteUsersButton;
