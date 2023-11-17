@@ -10,8 +10,7 @@
   --color-notification: rgb(255 96 96);
   --color-background-alpha: hsl(0deg 0% 97%);
   --color-background-beta: hsl(0deg 0% 94%);
-  --color-foreground-alpha: rgb(0 0 0 / 10%);
-  --color-foreground-beta: rgb(0 0 0 / 5%);
+  --color-foreground-alpha: rgb(0 0 0 / 5%);
 
   /* size definitions */
   --border-radius: 4px;
@@ -29,8 +28,7 @@
     --color-notification: rgb(96 64 255);
     --color-background-alpha: hsl(0deg 0% 5%);
     --color-background-beta: hsl(0deg 0% 8%);
-    --color-foreground-alpha: rgb(255 255 255 / 14%);
-    --color-foreground-beta: rgb(255 255 255 / 7%);
+    --color-foreground-alpha: rgb(255 255 255 / 7%);
   }
 }
 
