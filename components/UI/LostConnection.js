@@ -15,7 +15,7 @@ const LostConnectionView = styled.div`
   padding: calc(var(--margin)/2) var(--margin);
   color: white;
   text-transform: uppercase;
-  background-color: #ff2f4f;
+  background-color: var(--color-notification);
   border-radius: var(--border-radius);
 `;
 
