@@ -184,7 +184,7 @@ export default function Explore() {
                 </ServiceTableWrapper>
             </DefaultLayout.Sidebar>
 
-            <DefaultLayout.IframeWrapper>
+            <DefaultLayout.Wrapper>
                 { iframeRoomId && !_.isEmpty(selectedSpaceChildren)? (
                     <ExploreIframeViews
                         currentTemplate={currentTemplate}
@@ -246,7 +246,7 @@ export default function Explore() {
                 </>
                 }
                 { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </DefaultLayout.IframeWrapper>
+            </DefaultLayout.Wrapper>
         </>
     );
 }

@@ -15,6 +15,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
 
     useEffect(() => {
         let cancelled = false;
+
         const fetchRoomName = async () => {
             const nameEvent = await matrixClient.getStateEvent(
                 iframeRoomId,
@@ -40,7 +41,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                             title={title}
                             removeLink={() => console.log('removing pad from parent')}
                             removingLink={false} />
-                        <iframe src={matrix.roomContents.get(iframeRoomId)?.body} />
+                        <iframe title="studentproject" src={matrix.roomContents.get(iframeRoomId)?.body} />
                     </>
                 );
             case 'sketch-link':
@@ -51,7 +52,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                             title={title}
                             removeLink={() => console.log('removing sketch from parent')}
                             removingLink={false} />
-                        <iframe src={matrix.roomContents.get(iframeRoomId)?.body} />
+                        <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
                     </>
                 );
             default:
@@ -62,10 +63,11 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                             title={title}
                             removeLink={() => console.log('removing chat from parent')}
                             removingLink={false} />
-                        <ChatIframeView src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />
+                        <ChatIframeView title="chat" src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />
                     </>
                 );
         }
     })();
 };
+
 export default ExploreIframeViews;
