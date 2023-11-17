@@ -64,7 +64,7 @@ export default function Etherpad() {
 
     const etherpad = auth.getAuthenticationProvider('etherpad');
 
-    const [serverPads, setServerPads] = useState(null);
+    const [serverPads, setServerPads] = useState([]);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     const [isSyncingServerPads, setIsSyncingServerPads] = useState(false);
