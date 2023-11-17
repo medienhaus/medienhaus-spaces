@@ -22,7 +22,7 @@ import CreatePasswordPad from './actions/CreatePasswordPad';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
 
-const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
+const EtherpadListEntry = memo(({ isPasswordProtected, writeRoomId, name, href, etherpadId, ref, selected, path }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
 
     const [showLock, setShowLock] = useState(isPasswordProtected);
@@ -45,6 +45,8 @@ const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, r
 
     return <ServiceLink
         key={etherpadId}
+        roomId={writeRoomId}
+        path={path}
         name={name}
         href={href}
         passwordProtected={showLock}
@@ -241,13 +243,16 @@ export default function Etherpad() {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map(writeRoomId => {
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
             const etherpadId = matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1);
-
+            console.log(name);
+            console.log(etherpadId);
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
             return <EtherpadListEntry
                 key={writeRoomId}
+                writeRoomId={writeRoomId}
                 name={name}
+                path={etherpadPath}
                 href={`${etherpadPath}/${writeRoomId}`}
                 isPasswordProtected={_.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined}
                 etherpadId={etherpadId}
@@ -286,23 +291,6 @@ export default function Etherpad() {
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
                         { !isSyncingServerPads && <ServiceTable>
                             <ServiceTable.Body>
-                                { matrix.spaces.get(matrix.serviceSpaces.etherpad).children?.map(writeRoomId => {
-                                    const name = _.get(matrix.rooms.get(writeRoomId), 'name');
-
-                                    // if the room name is undefined we don't want to display it
-                                    if (!name) return;
-
-                                    return <ServiceLink
-                                        key={writeRoomId}
-                                        roomId={writeRoomId}
-                                        name={_.get(matrix.rooms.get(writeRoomId), 'name')}
-                                        href={`${etherpadPath}/${writeRoomId}`}
-                                        path={etherpadPath}
-                                        passwordProtected={serverPads[matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1)]?.visibility === 'private'}
-                                        selected={writeRoomId === roomId}
-                                        ref={writeRoomId === roomId ? selectedPadRef : null}
-                                    />;
-                                }) }
                                 { listEntries }
                             </ServiceTable.Body>
                         </ServiceTable> }
