@@ -243,8 +243,6 @@ export default function Etherpad() {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map(writeRoomId => {
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
             const etherpadId = matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1);
-            console.log(name);
-            console.log(etherpadId);
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
