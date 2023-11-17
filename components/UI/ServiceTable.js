@@ -89,7 +89,6 @@ const TableCell = styled.td`
       cursor: ${props => props.selected && 'not-allowed' };
     }
   }
-
 `;
 
 export const ServiceTable = Table;
