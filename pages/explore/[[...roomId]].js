@@ -18,6 +18,7 @@ import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
+import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 
 const ServiceTableWrapper = styled.div`
   width: 100%;
@@ -35,6 +36,7 @@ export default function Explore() {
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     const dimensionsRef = useRef();
     const router = useRouter();
     const auth = useAuth();
@@ -200,47 +202,55 @@ export default function Explore() {
                         manageContextActionToggle={manageContextActionToggle}
                         myPowerLevel={myPowerLevel}
                         setManageContextActionToggle={setManageContextActionToggle}
+                        isInviteUsersOpen={isInviteUsersOpen}
+                        setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
                     />
                     <ServiceTableWrapper>
-                        { manageContextActionToggle ?
-                            <ExploreMatrixActions
-                                myPowerLevel={myPowerLevel}
-                                currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                                children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
-                                callApiAndAddToObject={callApiAndAddToObject}
-                            />
-                            : <ServiceTable>
-                                { selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                    .sort(function(a, b) {
-                                        if (a.type === 'item' && b.type !== 'item') {
-                                            return -1; // 'a' comes before 'b'
-                                        } else if (a.type !== 'item' && b.type === 'item') {
-                                            return 1; // 'a' comes after 'b'
-                                        } else {
-                                            return 0; // No sorting necessary
-                                        }
-                                    })
-                                    .map((leaf, index) => {
-                                        if (leaf.length <= 1) {
-                                            return <ErrorMessage key="error-message">
+                        { isInviteUsersOpen ?
+                            <InviteUserToMatrixRoom
+                                roomId={roomId}
+                                roomName={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                onSuccess={() => setIsInviteUsersOpen(false)}
+                            /> :
+                            manageContextActionToggle ?
+                                <ExploreMatrixActions
+                                    myPowerLevel={myPowerLevel}
+                                    currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                    parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                                    children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                                    callApiAndAddToObject={callApiAndAddToObject}
+                                />
+                                : <ServiceTable>
+                                    { selectedSpaceChildren[selectedSpaceChildren.length - 1]
+                                        .sort(function(a, b) {
+                                            if (a.type === 'item' && b.type !== 'item') {
+                                                return -1; // 'a' comes before 'b'
+                                            } else if (a.type !== 'item' && b.type === 'item') {
+                                                return 1; // 'a' comes after 'b'
+                                            } else {
+                                                return 0; // No sorting necessary
+                                            }
+                                        })
+                                        .map((leaf, index) => {
+                                            if (leaf.length <= 1) {
+                                                return <ErrorMessage key="error-message">
                                                 Thank you, { auth.user.displayname }! But our item is in another context! 🍄
-                                            </ErrorMessage>;
-                                        }
+                                                </ErrorMessage>;
+                                            }
 
-                                        if (index === 0) return null;
+                                            if (index === 0) return null;
 
-                                        // Sort the array to display objects of type 'item' before others
-                                        return <TreeLeaves
-                                            depth={selectedSpaceChildren.length}
-                                            leaf={leaf}
-                                            parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                            key={leaf.room_id + '_' + index}
-                                            iframeRoomId={iframeRoomId}
-                                            isFetchingContent={isFetchingContent}
-                                        />;
-                                    }) }
-                            </ServiceTable>
+                                            // Sort the array to display objects of type 'item' before others
+                                            return <TreeLeaves
+                                                depth={selectedSpaceChildren.length}
+                                                leaf={leaf}
+                                                parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
+                                                key={leaf.room_id + '_' + index}
+                                                iframeRoomId={iframeRoomId}
+                                                isFetchingContent={isFetchingContent}
+                                            />;
+                                        }) }
+                                </ServiceTable>
                         }
                     </ServiceTableWrapper>
                 </>

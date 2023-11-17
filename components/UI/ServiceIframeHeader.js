@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { DeleteBinIcon, FolderIcon, ListSettingsIcon, UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { DeleteBinIcon, FolderIcon, ListSettingsIcon } from '@remixicons/react/line';
 import React from 'react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
@@ -20,7 +20,6 @@ const ToggleButton = styled.button`
 
 const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen }) => {
     const { t } = useTranslation('write');
-    console.log(isInviteUsersOpen);
 
     return (
         <DefaultLayout.IframeHeader>
@@ -32,11 +31,17 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject
                 </TextButton> }
                 <InviteUserToMatrixRoom.Button
                     name={title}
-                    onClick={setIsInviteUsersOpen}
+                    onClick={() => {
+                        if (manageContextActionToggle) setManageContextActionToggle(false);
+
+                        setIsInviteUsersOpen(prevState => !prevState);
+                    }}
                     inviteUsersOpen={isInviteUsersOpen} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
-                        <ToggleButton onClick={() => { setManageContextActionToggle(false); }}>
+                        <ToggleButton onClick={() => {
+                            setManageContextActionToggle(false);
+                        }}>
                             <FolderIcon
                                 width="var(--icon-size)"
                                 height="var(--icon-size)"
@@ -45,7 +50,10 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject
                             />
                         </ToggleButton>
                     ) : (
-                        <ToggleButton onClick={() => { setManageContextActionToggle(true); }}>
+                        <ToggleButton onClick={() => {
+                            if (isInviteUsersOpen) setIsInviteUsersOpen(false);
+                            setManageContextActionToggle(true);
+                        }}>
                             <ListSettingsIcon
                                 width="var(--icon-size)"
                                 height="var(--icon-size)"
