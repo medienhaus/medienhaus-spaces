@@ -99,9 +99,12 @@ const Nav = styled.nav`
 
 const Footer = styled.footer`
   font-weight: 700;
-  color: var(--color-foreground-alpha);
   white-space: nowrap;
   cursor: default;
+`;
+
+const CopyleftWrapper = styled.span`
+  opacity: 0.15;
 `;
 
 const Copyleft = styled.span`
@@ -137,7 +140,9 @@ export default function BaseLayout({ children }) {
                         <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
                     <Footer>
-                        <Copyleft>🄯</Copyleft> medienhaus/
+                        <CopyleftWrapper>
+                            <Copyleft>🄯</Copyleft> medienhaus/
+                        </CopyleftWrapper>
                         <LanguageChooser />
                     </Footer>
                 </Sidebar>
