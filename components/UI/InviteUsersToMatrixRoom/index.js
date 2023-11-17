@@ -101,7 +101,7 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback('✓ ' + <Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
+        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
         await new Promise(() => setTimeout(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
