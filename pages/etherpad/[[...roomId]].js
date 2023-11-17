@@ -62,7 +62,6 @@ export default function Etherpad() {
     const auth = useAuth();
     const matrix = useMatrix();
 
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
 
     const [serverPads, setServerPads] = useState(null);
@@ -136,32 +135,16 @@ export default function Etherpad() {
         if (!link || !name) return;
         logger.debug('Creating new Matrix room for pad', { link, name });
 
-        const createRoomForPad = async () => {
-            return await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
-        };
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad')
+            .catch(error => setErrorMessage(error.message));
 
-        const room = await createRoomForPad()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => createRoomForPad())
-                    .catch(error => setErrorMessage(error.message));
-            });
-        const addRoomToServiceSpace = async () => await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
-        await addRoomToServiceSpace()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => addRoomToServiceSpace())
-                    .catch(error => setErrorMessage(error.message));
-            });
+        await matrix.addSpaceChild(matrix.serviceSpaces.etherpad, room)
+            .catch(error => setErrorMessage(error.message));
 
-        const sendMessageToRoom = async () => await matrixClient.sendMessage(room, {
+        await matrix.sendMessage(room, {
             msgtype: 'm.text',
             body: link,
-        });
-
-        await sendMessageToRoom()
-            .catch(async (error) => {
-                return matrix.handleRateLimit(error, () => sendMessageToRoom())
-                    .catch(error => setErrorMessage(error.message));
-            });
+        }).catch(error => setErrorMessage(error.message));
 
         if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
             await etherpad.syncAllPads();
@@ -171,7 +154,7 @@ export default function Etherpad() {
         setErrorMessage('');
 
         return room;
-    }, [auth, matrix, matrixClient, etherpad]);
+    }, [matrix, etherpad]);
 
     useEffect(() => {
         let cancelled = false;
