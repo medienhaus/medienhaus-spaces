@@ -201,3 +201,25 @@ input[type='password'][disabled] {
   cursor: not-allowed;
   border-color: var(--color-disabled);
 }
+
+.my-node-enter {
+  opacity: 0;
+  transform: translateY(-5%);
+}
+
+.my-node-enter-active {
+  opacity: 1;
+  transition: all 230ms ease-in-out;
+  transform: translateY(0);
+}
+
+.my-node-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.my-node-exit-active {
+  opacity: 0;
+  transition: all 230ms ease-in-out;
+  transform: translateY(-5%);
+}
