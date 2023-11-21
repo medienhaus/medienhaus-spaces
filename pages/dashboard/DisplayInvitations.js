@@ -92,7 +92,6 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
                     values={{ name: invite.inviter?.displayName, service: path }}
                     components={{ italic: <em />, bold: <strong /> }}
                 />
-
             </p>
             <ConfirmCancelButtons
                 onClick={(e) => { handleAccept(e, invite.roomId); }}
