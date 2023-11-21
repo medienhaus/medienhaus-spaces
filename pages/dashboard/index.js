@@ -65,13 +65,9 @@ export default function Dashboard() {
             });
 
             await Promise.all(sortAndHydrateInvitations);
-            console.log('i fire once');
             if (!cancelled) setInvitations(updatedInvitations);
         };
 
-        console.log('here');
-        console.log(matrix);
-        console.log(matrixInvites.size);
         if (matrixInvites.size > 0) hydrateInvitationMetaEvents();
 
         return () => {
