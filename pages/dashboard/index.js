@@ -28,7 +28,6 @@ export default function Dashboard() {
         let cancelled = false;
 
         const hydrateInvitationMetaEvents = async () => {
-            // @TODO invites get updated after accepting or rejecting, invite should move to handled object
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
             // let invitationsObject = Object.assign({}, { ...invitations });
@@ -99,8 +98,6 @@ export default function Dashboard() {
                     <CardSection>
                         { /*<h3>{ t('Invitations') }</h3>*/ }
                         { invitations && _.map(invitations, (invite, index) => {
-                            console.log(invite);
-
                             return <>
                                 { index > 0 && <hr /> }
                                 <DisplayInvitations
