@@ -1,6 +1,6 @@
 {
   "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
-  "invitationCard": "<italic>{{name}}</italic> hat dich eingeladen, diesem <bold><italic>{{service}}</italic></bold> Item beizutreten",
-  "invitationCardHandled":"Du bist erfolgreich <1><2>{{name}}</2></1> beigetreten",
+  "invitationCard": "<italic>{{name}}</italic> möchte ein <bold><italic>{{service}}</italic></bold> mit dir teilen",
+  "invitationCardHandled":"Du kannst dir nun <1><2>{{name}}</2></1> ansehen",
   "You’ve declined the invitation": "Du hast die Einladung abgelehnt"
 }

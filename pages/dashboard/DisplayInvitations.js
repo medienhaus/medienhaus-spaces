@@ -88,7 +88,7 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
                 <Trans
                     t={t}
                     i18nKey="invitationCard"
-                    defaults="<italic>{{name}}</italic> invited you to join this <bold><italic>{{service}}</italic></bold> item"
+                    defaults="<italic>{{name}}</italic> wants to <bold><italic>{{service}}</italic></bold> with you"
                     values={{ name: invite.inviter?.displayName, service: path }}
                     components={{ italic: <em />, bold: <strong /> }}
                 />
@@ -118,7 +118,7 @@ const HandledInvitation = ({ name, link }) => {
                     t={t}
                     i18nKey="invitationCardHandled"
                 >
-                    You’ve successfully joined <Link href={link}><strong>{ { name } }</strong></Link></Trans>
+                    You can now view <Link href={link}><strong>{ { name } }</strong></Link></Trans>
             </p>
                 : <p> { t('You’ve declined the invitation') } </p>
             }
