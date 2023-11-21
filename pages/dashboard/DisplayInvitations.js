@@ -21,15 +21,15 @@ import { useMatrix } from '../../lib/Matrix';
 */
 
 /**
- * Displays an invitation for a matrix room/space within a <ServiceTable> component and gives users the option to accept or decline them.
+ * Displays an invitation for a matrix room/space and gives users the option to accept or decline them.
  *
- * @param {React.ComponentPropsWithoutRef} props
- * @param {Object} props.invite — object of the room the user was invited to
- * @param {String} props.path — name of the Application (i.e. the 'path' variable in the config)
- * @param {acceptMatrixInvite} props.acceptMatrixInvite
- * @param {declineMatrixInvite} props.declineMatrixInvite
+ * @param {Object} invite — object of the room the user was invited to
+ * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
+ * @param {String} service — name of the service
+ * @param {acceptMatrixInvite} acceptMatrixInvite
+ * @param {declineMatrixInvite} declineMatrixInvite
  *
- * @returns {React.ReactNode}
+ * @returns {React.Component} — JSX Element representing the invitation
 */
 
 const InvitationCard = styled.div`
@@ -38,7 +38,7 @@ const InvitationCard = styled.div`
   }
 `;
 
-export default function DisplayInvitations({ invite, path, service, acceptMatrixInvite, declineMatrixInvite, membership }) {
+export default function DisplayInvitations({ invite, path, service, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
@@ -94,7 +94,7 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
                 />
             </p>
             <ConfirmCancelButtons
-                onClick={(e) => { handleAccept(e, invite.roomId); }}
+                onClick={(e) => handleAccept(e, invite.roomId)}
                 onCancel={(e) => handleDecline(e, invite.roomId)}
                 disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
                 cancelLabel={t('Decline')}

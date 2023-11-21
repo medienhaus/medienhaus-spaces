@@ -30,7 +30,6 @@ export default function Dashboard() {
         const hydrateInvitationMetaEvents = async () => {
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
-            // let invitationsObject = Object.assign({}, { ...invitations });
             const updatedInvitations = [...invitations];
 
             const sortAndHydrateInvitations = Array.from(matrixInvites.values()).map(async invitation => {
@@ -58,9 +57,6 @@ export default function Dashboard() {
                 }
 
                 updatedInvitations.push(invitation);
-                // invitationsObject = Object.assign({}, invitationsObject, {
-                //     [invitation.name]: invitation,
-                // });
             });
 
             await Promise.all(sortAndHydrateInvitations);
