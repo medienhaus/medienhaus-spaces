@@ -6,9 +6,10 @@ import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Icon from '../../components/UI/Icon';
 import TextButton from '../../components/UI/TextButton';
@@ -34,9 +35,8 @@ export default function Spacedeck() {
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
-    const [syncingServerSketches, setSyncingServerSketches] = useState(false);
+    const [isSyncingSpacedeckServer, setIsSyncingSpacedeckServer] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
-    const [userFeedback, setUserFeedback] = useState('');
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -104,12 +104,12 @@ export default function Spacedeck() {
 
         // Function to sync spacedeck sketches with Matrix rooms
         const syncServerSketchesWithMatrix = async () => {
-            setSyncingServerSketches(true);
+            setIsSyncingSpacedeckServer(true);
 
             // Collect all Matrix sketches within the serviceSpaceId
             getAllMatrixSketches(serviceSpaceId);
 
-            // Sync all spacedeck spaces and sketches
+            // Sync all Spacedeck spaces and folders
             const syncSketches = await spacedeck.syncAllSpaces().catch((error) => {
                 logger.debug(error);
                 setIsSpacedeckServerDown(true);
@@ -117,16 +117,16 @@ export default function Spacedeck() {
 
             // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
-            setSyncingServerSketches(false);
-            setUserFeedback('');
+
+            setIsSyncingSpacedeckServer(false);
         };
 
         // Check if the useEffect is cancelled and required conditions are met to sync sketches
-        if (!cancelled && serviceSpaceId && serverSketches && !syncingServerSketches) {
+        if (!cancelled && serviceSpaceId && serverSketches && !isSyncingSpacedeckServer) {
             syncServerSketchesWithMatrix();
         }
 
-        return () => (cancelled = true);
+        return () => { cancelled = true; };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceSpaceId, serverSketches]);
 
@@ -150,9 +150,6 @@ export default function Spacedeck() {
     }, [spacedeck]);
 
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
-        // Log debugging information
-        setUserFeedback(t('Syncing {{name}} from server', { name: name }));
-
         // Create the room with retry handling
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck')
             .catch(error => setErrorMessage(error));
@@ -194,21 +191,35 @@ export default function Spacedeck() {
     return (
         <>
             <DefaultLayout.Sidebar>
-                <ServiceSubmenu
-                    title={<h2>{ spacedeckPath }</h2>}
-                    subheadline={t('What would you like to do?')}
-                    disabled={!serviceSpaceId}
-                    items={[
-                        { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
-                        { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
-                    ]}
-                />
-                { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
-                { !serviceSpaceId || syncingServerSketches ?
-                    <span>{ userFeedback } <LoadingSpinnerInline /></span> :
+                { /* Show only a loading spinner in the sidebar until we know about our Spacedeck service space ID */ }
+                { !serviceSpaceId ? (
                     <>
+                        <h2>{ spacedeckPath }</h2>
+                        <LoadingSpinner />
+                    </>
+                ) : (
+                    <>
+                        <ServiceSubmenu
+                            title={<h2>{ spacedeckPath }</h2>}
+                            subheadline={t('What would you like to do?')}
+                            items={[
+                                { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
+                                { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
+                            ]}
+                        />
+                        { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                         <ServiceTable>
                             <ServiceTable.Body>
+                                { isSyncingSpacedeckServer && (
+                                    <ServiceTable.Row>
+                                        <ServiceTable.Cell>
+                                            <LoadingSpinnerInline style={{ float: 'right', position: 'relative', top: '0.85rem' }} />
+                                            <span style={{ color: 'var(--color-disabled)' }}>
+                                                { t('Syncing more entries') } …
+                                            </span>
+                                        </ServiceTable.Cell>
+                                    </ServiceTable.Row>
+                                ) }
                                 { spacedeckChildren?.map(spacedeckRoomId => {
                                     const room = matrix.rooms.get(spacedeckRoomId);
                                     if (!room) return null;
@@ -225,8 +236,7 @@ export default function Spacedeck() {
                         </ServiceTable>
                         { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
                     </>
-
-                }
+                ) }
             </DefaultLayout.Sidebar>
             { roomId && content && (
                 <DefaultLayout.IframeWrapper>
