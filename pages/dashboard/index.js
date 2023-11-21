@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -21,14 +20,9 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixInvites = matrix.invites;
-    const { t } = useTranslation('dashboard');
 
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [invitations, setInvitations] = useState([]);
-
-    const hydrateMetaEvent = useCallback((roomId) => {
-        return matrix.hydrateMetaEvent(roomId);
-    }, [matrix]);
 
     useEffect(() => {
         let cancelled = false;
@@ -37,18 +31,22 @@ export default function Dashboard() {
             // @TODO invites get updated after accepting or rejecting, invite should move to handled object
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
-            const invitationsArray = [];
+            // let invitationsObject = Object.assign({}, { ...invitations });
+            const updatedInvitations = [...invitations];
 
             const sortAndHydrateInvitations = Array.from(matrixInvites.values()).map(async invitation => {
+                // if the invitation is already in the invitations object, we don't need to do anything
+                if (_.some(invitations, (invite) => _.values(invite).includes(invitation.roomId))) return;
+
+                // otherwise we need to fetch the room object to get the inviter and the meta event
                 const room = await matrixClient.getRoom(invitation.roomId);
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
-                const inviter = matrixClient.getUser(inviterName);
-                invitation.inviter = inviter;
+                invitation.inviter = matrixClient.getUser(inviterName);
 
                 if (!invitation.meta) {
                     // if there is no meta key yet, we manually check for one
-                    const metaEvent = await hydrateMetaEvent(invitation.roomId)
+                    const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
                         .catch(() => { });
                     invitation.meta = metaEvent;
 
@@ -60,20 +58,28 @@ export default function Dashboard() {
                     }
                 }
 
-                invitationsArray.push(invitation);
+                updatedInvitations.push(invitation);
+                // invitationsObject = Object.assign({}, invitationsObject, {
+                //     [invitation.name]: invitation,
+                // });
             });
 
             await Promise.all(sortAndHydrateInvitations);
-
-            setInvitations(invitationsArray);
+            console.log('i fire once');
+            if (!cancelled) setInvitations(updatedInvitations);
         };
 
-        if (!cancelled) hydrateInvitationMetaEvents();
+        console.log('here');
+        console.log(matrix);
+        console.log(matrixInvites.size);
+        if (matrixInvites.size > 0) hydrateInvitationMetaEvents();
 
         return () => {
             cancelled = true;
         };
-    }, [hydrateMetaEvent, matrixClient, matrixInvites]);
+        // excluding invitations from dependency array to circumvent endless loop
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [matrixClient, matrixInvites]);
 
     // functions which interact with matrix server
     const declineMatrixInvite = async (roomId) => {
@@ -93,7 +99,7 @@ export default function Dashboard() {
         <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
 
-            { matrix.invites.size > 0 &&
+            { !_.isEmpty(invitations) > 0 &&
                     <CardSection>
                         { /*<h3>{ t('Invitations') }</h3>*/ }
                         { invitations && _.map(invitations, (invite, index) => {
