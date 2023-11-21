@@ -33,8 +33,6 @@
 
 import styled from 'styled-components';
 
-import { breakpoints } from '../_breakpoints';
-
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
