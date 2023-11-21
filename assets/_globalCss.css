@@ -76,6 +76,13 @@ a:active {
   color: var(--color-foreground);
 }
 
+hr {
+  border-color: rgba(0 0 0 / 5%);
+  border-style: solid;
+  border-width: 0.5px;
+  border-radius: unset;
+}
+
 select {
   width: 100%;
   height: calc(var(--margin) * 3);
