@@ -4,6 +4,7 @@
   "Confirm": "Bestätigen",
   "Copy link to clipboard": "Link kopieren",
   "Connection lost": "Verbindung unterbrochen",
+  "Decline": "Ablehnen",
   "Delete": "Löschen",
   "From": "Von",
   "Invitations": "Einladungen",
@@ -17,6 +18,7 @@
   "select {{option}}": "{{option}} wählen",
   "Select action": "Aktion wählen",
   "Something went wrong. Please try again.": "Da ist etwas schief gelaufen, bitte versuche es nochmal",
+  "Syncing more entries": "Weitere Einträge werden geladen",
   "Upload": "Hochladen",
   "What would you like to do?": "Was möchtest Du tun?",
   "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."

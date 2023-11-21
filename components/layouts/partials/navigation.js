@@ -11,11 +11,11 @@ const List = styled.ul`
   padding: 0;
   margin: 0 0 calc(var(--margin) * 3);
   list-style: none;
-  border-top: 1px solid rgb(0 0 0 / 5%);
+  border-top: 1px solid var(--color-foreground-alpha);
 
   li {
     line-height: calc(var(--margin) * 3);
-    border-bottom: 1px solid rgb(0 0 0 / 5%);
+    border-bottom: 1px solid var(--color-foreground-alpha);
   }
 
   @media ${breakpoints.phoneOnly} {
