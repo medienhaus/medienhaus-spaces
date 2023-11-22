@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
+import { enableMapSet } from 'immer';
 
 import DefaultLayout from '../components/layouts/default';
 import { AuthContext, useAuthProvider } from '../lib/Auth';
@@ -9,6 +10,9 @@ import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
 import LostConnection from '../components/UI/LostConnection';
+
+// Enable immer support for Map() and Set()
+enableMapSet();
 
 const guestRoutes = ['/login'];
 
@@ -42,7 +46,7 @@ export default function App({ Component, pageProps }) {
                 <MatrixContext.Provider value={matrixData}>
                     { !matrixData.isConnectedToServer && <LostConnection /> }
                     <DefaultLayout.Layout>
-                        { (authData.user || guestRoutes.includes(router.route)) && (
+                        { ((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
                         ) }
                     </DefaultLayout.Layout>
