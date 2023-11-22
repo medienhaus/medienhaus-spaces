@@ -254,8 +254,8 @@ export default function Chat() {
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... contain a dev.medienhaus.meta state event)
-        .reject(room => room.events.get('dev.medienhaus.meta'))
+        // @TODO ... contain a dev.medienhaus.meta state event)
+        .reject(room => !!room.meta)
         .sortBy(sortRooms)
         .value();
 
