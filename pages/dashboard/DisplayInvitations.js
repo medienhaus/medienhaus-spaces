@@ -36,6 +36,22 @@ const InvitationCard = styled.div`
   > * + * {
     margin-top: var(--margin);
   }
+
+  /* unset or overwrite ConfirmCancelButton attributes */
+  > div {
+    width: fit-content;
+
+    button {
+      height: var(--line-height);
+      padding: 0 calc(var(--margin) * 0.25);
+      font-size: 70%;
+      border-width: calc(var(--margin) * 0.125);
+    }
+
+    button[type='reset'] {
+      font-weight: 600;
+    }
+  }
 `;
 
 export default function DisplayInvitations({ invite, path, service, acceptMatrixInvite, declineMatrixInvite }) {
