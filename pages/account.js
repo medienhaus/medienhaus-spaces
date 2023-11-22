@@ -204,9 +204,9 @@ export default function Account() {
                 <h2>/account</h2>
                 <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
                 <br />
-                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
-                    <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
-                    <ConfirmCancelButtons disabled={isSavingChanges} onCancel={() => setInputPassword('')} />
+                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
+                    <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <ConfirmCancelButtons disabled={isSavingChanges} />
                 </form>
                 { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
             </>
@@ -231,7 +231,7 @@ export default function Account() {
                         <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
                     ) }
                 </AvatarButtonContainer>
-                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }}>
+                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
                     <input
                         type="text"
                         value={inputDisplayname}
@@ -255,7 +255,7 @@ export default function Account() {
                         profileInfo.displayname !== inputDisplayname ||
                         inputNewEmail
                     ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges} onCancel={handleCancel}>{ t('Save changes') }</ConfirmCancelButtons>
+                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save changes') }</ConfirmCancelButtons>
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </form>

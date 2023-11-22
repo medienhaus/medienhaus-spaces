@@ -21,6 +21,7 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -114,7 +115,6 @@ export default function Spacedeck() {
                 logger.debug(error);
                 setIsSpacedeckServerDown(true);
             });
-
             // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
@@ -183,6 +183,8 @@ export default function Spacedeck() {
         router.push(`${spacedeckPath}`);
         setIsDeletingSketch(false);
     };
+
+    if (!auth.connectionStatus.spacedeck) return <DefaultLayout.LameColumn><LoginPrompt service={spacedeckPath} /></DefaultLayout.LameColumn>;
 
     return (
         <>
