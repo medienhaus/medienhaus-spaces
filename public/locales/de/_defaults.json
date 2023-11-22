@@ -18,6 +18,6 @@
   "From": "Von",
   "Accept": "Annehmen",
   "Decline": "Ablehnen",
-  "Your session has expired.": "Deine Sitzung ist abgelaufen.",
-  "Please sign in again in order to continue using {{service}}.": "Bitte melde Dich erneut an, um {{service}} wieder nutzen zu können."
+  "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
+  "Please enter your account password to continue using {{service}}:": "Bitte gib Dein Passwort ein, um {{service}} wieder nutzen zu können:"
 }
