@@ -5,18 +5,17 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { ClipboardIcon, DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
-import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import Bin from '../../assets/icons/bin.svg';
 import TextButton from '../../components/UI/TextButton';
-import ClipboardIcon from '../../assets/icons/clipboard.svg';
 import { breakpoints } from '../../components/_breakpoints';
+import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const sortRooms = function(room) {
     return [
@@ -46,6 +45,12 @@ const Avatar = styled.img`
 
   &.placeholder {
     backdrop-filter: invert(100%);
+  }
+`;
+
+const MobileBackButton = styled.div`
+  @media ${breakpoints.tabletAndAbove} {
+    display: none
   }
 `;
 
@@ -81,17 +86,17 @@ const SidebarListEntry = function({ room }) {
                         { room.name }
                         { room.notificationCount > 0 && (
                             <UnreadNotificationBadge>
-                        <small>
-                            { room.notificationCount < 100 ? room.notificationCount : '99+' }
-                        </small>
-                    </UnreadNotificationBadge>
+                                <small>
+                                    { room.notificationCount < 100 ? room.notificationCount : '99+' }
+                                </small>
+                            </UnreadNotificationBadge>
                         ) }
                     </span>
                 </Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Leave room and remove from my library')} onClick={() => handleLeave(room.roomId)}>
-                    { isLeavingRoom ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                    { isLeavingRoom ? <LoadingSpinnerInline /> : <DeleteBinIcon fill="var(--color-foreground)" /> }
                 </TextButton>
             </ServiceTable.Cell>
         </ServiceTable.Row>
@@ -99,28 +104,13 @@ const SidebarListEntry = function({ room }) {
 };
 
 export default function RoomId() {
-    const auth = useAuth();
     const iframe = useRef();
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix();
-    const [deviceType, setDeviceType] = useState(null);
     const [isRoomListVisible, setIsRoomListVisible] = useState(true);
-
-    // check and store user platform
-
-    useEffect(() => {
-        const platform = navigator.platform;
-
-        setDeviceType(
-            /iphone|ipad|ipod|android|webos|blackberry|windows phone/.test(
-                platform,
-            )
-                ? 'mobile'
-                : 'desktop',
-        );
-    }, []);
+    const [isLoadingIframe, setIsLoadingIframe] = useState(false);
 
     // Injecting custom CSS into the Element <iframe> and detecting platform
     useEffect(() => {
@@ -280,9 +270,12 @@ export default function RoomId() {
                     .mx_CreateRoomDialog.mx_Dialog_fixedWidth { width: 100% }
                     .mx_Dialog_fixedWidth { width: 100% }
                     .mx_Dropdown_menu { max-width: 100% }
+                    
                     #mx_JoinRuleDropdown__public { display: none }
 
                 }
+                .mx_HomePage_button_explore { display: none !important }
+                
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
@@ -312,14 +305,13 @@ export default function RoomId() {
     const toggleRoomListViewOnMobile = () => {
         // pushing /chat to router so, elements home screen is displayed on desktop browsers
         router.push('/chat');
+        if (isRoomListVisible) setIsLoadingIframe(true);
         setIsRoomListVisible(prevState => !prevState);
     };
 
     return (
         <>
             <DefaultLayout.Sidebar>
-                <h2>/chat</h2>
-
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
                     onClick={toggleRoomListViewOnMobile}
@@ -346,28 +338,37 @@ export default function RoomId() {
                 </details>
                 <br />
             </DefaultLayout.Sidebar>
-
-            {(deviceType !== 'mobile' || (deviceType === 'mobile' && roomId) || (deviceType === 'mobile' && !isRoomListVisible)) && (
+            { !isRoomListVisible && (<>
                 <DefaultLayout.IframeHeader>
-                    <h2>{matrix.rooms.get(roomId)?.name}</h2>
+                    <h2>{ matrix.rooms.get(roomId)?.name }</h2>
                     <DefaultLayout.IframeHeaderButtonWrapper>
-                        {roomId && <button title={t('Copy pad link to clipboard')}
-                                           onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
-                            <ClipboardIcon fill="var(--color-foreground)"/>
-                        </button>}
-                        {deviceType === 'mobile' && !roomId &&
-                            <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton>}
+                        <MobileBackButton>
+                            <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton>
+                        </MobileBackButton>
+                        { roomId && <button title={t('Copy pad link to clipboard')}
+                            onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
+                            <ClipboardIcon fill="var(--color-foreground)" />
+                        </button> }
                     </DefaultLayout.IframeHeaderButtonWrapper>
                 </DefaultLayout.IframeHeader>
-            ) } { roomId && (
-                <DefaultLayout.IframeWrapper>
-                    <iframe
-                        ref={iframe}
-                        title="/chat"
-                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
-                    />
-                </DefaultLayout.IframeWrapper>
-            ) }
+
+            </>) }
+            { !isRoomListVisible && <DefaultLayout.IframeWrapper>
+                { isLoadingIframe && <LoadingSpinner /> }
+                { /* The iframe can take a long time to load which is why we show a loading spinner.
+                The style hack is needed because setting 'display' to 'none' creates an error.
+                Element performs a view compatability checks before onLoaded fires.
+                Therefore, Element throws an error that the current browser is not supported.
+                Setting the height to 0px  centers the loading spinner.
+                */ }
+                <iframe
+                    ref={iframe}
+                    title="/chat"
+                    style={{ visibility: isLoadingIframe ? 'hidden' : 'visible', height: isLoadingIframe ? '0px' : '100%' }}
+                    onLoad={() => setIsLoadingIframe(false)}
+                    src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home'}`}
+                />
+            </DefaultLayout.IframeWrapper> }
         </>
     );
 }
