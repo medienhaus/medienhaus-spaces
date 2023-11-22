@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
+import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
-import CloseIcon from '../../assets/icons/close.svg';
-import MenuIcon from '../../assets/icons/menu.svg';
+import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
@@ -56,7 +56,7 @@ const Header = styled.header`
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
   width: unset;
-  height: calc(var(--margin) * 1.3);
+  height: calc(var(--margin) * var(--line-height));
   padding: unset;
   background-color: unset;
   border: unset;
@@ -99,9 +99,12 @@ const Nav = styled.nav`
 
 const Footer = styled.footer`
   font-weight: 700;
-  color: rgb(0 0 0 / 10%);
   white-space: nowrap;
   cursor: default;
+`;
+
+const CopyleftWrapper = styled.span`
+  opacity: 0.15;
 `;
 
 const Copyleft = styled.span`
@@ -120,11 +123,15 @@ export default function BaseLayout({ children }) {
                     <h1>{ getConfig().publicRuntimeConfig.name ?? 'medienhaus/' }</h1>
                     { isNavigationOpen ? (
                         <ToggleButton onClick={() => { setIsNavigationOpen(false); }}>
-                            <CloseIcon fill="var(--color-foreground)" />
+                            <Icon>
+                                <CloseIcon />
+                            </Icon>
                         </ToggleButton>
                     ) : (
                         <ToggleButton onClick={() => { setIsNavigationOpen(true); }}>
-                            <MenuIcon fill="var(--color-foreground)" />
+                            <Icon>
+                                <MenuIcon />
+                            </Icon>
                         </ToggleButton>
                     ) }
                 </Header>
@@ -133,7 +140,9 @@ export default function BaseLayout({ children }) {
                         <NavigationMenu closeNavigation={() => { setIsNavigationOpen(false); }} />
                     </Nav>
                     <Footer>
-                        <Copyleft>🄯</Copyleft> medienhaus/
+                        <CopyleftWrapper>
+                            <Copyleft>🄯</Copyleft> medienhaus/
+                        </CopyleftWrapper>
                         <LanguageChooser />
                     </Footer>
                 </Sidebar>

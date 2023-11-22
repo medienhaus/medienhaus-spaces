@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import DefaultLayout from '../../components/layouts/default';
 import IframeLayout from '../../components/layouts/iframe';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -24,16 +25,17 @@ const sortRooms = function(room) {
     ];
 };
 
-const UnreadNotificationBadge = styled.span`
-  position: relative;
-  display: flex;
-  flex: 0 0;
-  padding: 0.1rem 0.5rem;
-  margin-left: 0.6rem;
-  color: white;
-  text-decoration: none;
-  background: red;
-  border-radius: 2rem;
+const UnreadNotificationBadge = styled.div`
+  display: grid;
+  place-content: center;
+  width: 3ch;
+  height: var(--line-height);
+  color: rgb(255 255 255);
+  background-color: var(--color-notification);
+
+  > small {
+    font-weight: 600;
+  }
 `;
 
 const Avatar = styled.img`
@@ -41,10 +43,6 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
-
-  /*
-  background: var(--color-foreground);
-  */
 
   &.placeholder {
     backdrop-filter: invert(100%);
@@ -82,7 +80,11 @@ const SidebarListEntry = function({ room }) {
                     ) } */ }
                         { room.name }
                         { room.notificationCount > 0 && (
-                            <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                            <UnreadNotificationBadge>
+                        <small>
+                            { room.notificationCount < 100 ? room.notificationCount : '99+' }
+                        </small>
+                    </UnreadNotificationBadge>
                         ) }
                     </span>
                 </Link>
@@ -128,6 +130,107 @@ export default function RoomId() {
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
+                @media (prefers-color-scheme: dark) {
+                    body {
+                        color-scheme: dark !important;
+
+                        --accent: #3f3f3f !important;
+                        --accent-0pct: #3f3f3f00 !important;
+                        --accent-15pct: #3f3f3f26 !important;
+                        --accent-50pct: #3f3f3f7F !important;
+
+                        --accent-color: #3f3f3f !important;
+                        --accent-color-0pct: #3f3f3f00 !important;
+                        --accent-color-15pct: #3f3f3f26 !important;
+                        --accent-color-50pct: #3f3f3f7F !important;
+
+                        --icon-button-color: #3f3f3f !important;
+                        --icon-button-color-0pct: #3f3f3f00 !important;
+                        --icon-button-color-15pct: #3f3f3f26 !important;
+                        --icon-button-color-50pct: #3f3f3f7F !important;
+
+                        --primary-color: #f0f0f0 !important;
+                        --primary-color-0pct: #f0f0f000 !important;
+                        --primary-color-15pct: #f0f0f026 !important;
+                        --primary-color-50pct: #f0f0f07F !important;
+
+                        --roomlist-background-color: #0f0f0f !important;
+                        --roomlist-background-color-0pct: #0f0f0f00 !important;
+                        --roomlist-background-color-15pct: #0f0f0f26 !important;
+                        --roomlist-background-color-50pct: #0f0f0f7F !important;
+
+                        --roomlist-highlights-color: #1f1f1f !important;
+                        --roomlist-highlights-color-0pct: #1f1f1f00 !important;
+                        --roomlist-highlights-color-15pct: #1f1f1f26 !important;
+                        --roomlist-highlights-color-50pct: #1f1f1f7F !important;
+
+                        --roomlist-separator-color: #1f1f1f !important;
+                        --roomlist-separator-color-0pct: #1f1f1f00 !important;
+                        --roomlist-separator-color-15pct: #1f1f1f26 !important;
+                        --roomlist-separator-color-50pct: #1f1f1f7F !important;
+
+                        --roomlist-text-color: #f0f0f0 !important;
+                        --roomlist-text-color-0pct: #f0f0f000 !important;
+                        --roomlist-text-color-15pct: #f0f0f026 !important;
+                        --roomlist-text-color-50pct: #f0f0f07F !important;
+
+                        --roomlist-text-secondary-color: #f0f0f0 !important;
+                        --roomlist-text-secondary-color-0pct: #f0f0f000 !important;
+                        --roomlist-text-secondary-color-15pct: #f0f0f026 !important;
+                        --roomlist-text-secondary-color-50pct: #f0f0f07F !important;
+
+                        --sidebar-color: #0f0f0f !important;
+                        --sidebar-color-0pct: #0f0f0f00 !important;
+                        --sidebar-color-15pct: #0f0f0f26 !important;
+                        --sidebar-color-50pct: #0f0f0f7F !important;
+
+                        --timeline-background-color: #0f0f0f !important;
+                        --timeline-background-color-0pct: #0f0f0f00 !important;
+                        --timeline-background-color-15pct: #0f0f0f26 !important;
+                        --timeline-background-color-50pct: #0f0f0f7F !important;
+
+                        --timeline-highlights-color: #1a1f1c !important;
+                        --timeline-highlights-color-0pct: #1a1f1c00 !important;
+                        --timeline-highlights-color-15pct: #1a1f1c26 !important;
+                        --timeline-highlights-color-50pct: #1a1f1c7F !important;
+
+                        --timeline-text-color: #f0f0f0 !important;
+                        --timeline-text-color-0pct: #f0f0f000 !important;
+                        --timeline-text-color-15pct: #f0f0f026 !important;
+                        --timeline-text-color-50pct: #f0f0f07F !important;
+
+                        --timeline-text-secondary-color: #f0f0f0 !important;
+                        --timeline-text-secondary-color-0pct: #f0f0f000 !important;
+                        --timeline-text-secondary-color-15pct: #f0f0f026 !important;
+                        --timeline-text-secondary-color-50pct: #f0f0f07F !important;
+
+                        --warning-color: #ff4b55 !important;
+                        --warning-color-0pct: #ff4b5500 !important;
+                        --warning-color-15pct: #ff4b5526 !important;
+                        --warning-color-50pct: #ff4b557F !important;
+
+                        --avatar-background-colors_0: #1f1f1f !important;
+                        --avatar-background-colors_1: #1f1f1f !important;
+                        --avatar-background-colors_2: #1f1f1f !important;
+
+                        --username-colors_0: #f0f0f0 !important;
+                        --username-colors_1: #f0f0f0 !important;
+                        --username-colors_2: #f0f0f0 !important;
+                        --username-colors_3: #f0f0f0 !important;
+                        --username-colors_4: #f0f0f0 !important;
+                        --username-colors_5: #f0f0f0 !important;
+                        --username-colors_6: #f0f0f0 !important;
+                        --username-colors_7: #f0f0f0 !important;
+
+                        --font-family: "Inter" !important;
+
+                        /* @NOTE: the following variables are found throughout element-web's \`theme-light-custom.css\` (fallback: \`#2e2f32\`) and \`theme-dark-custom.css\` (fallback: \`#edf3ff\`) */
+                        --secondary-content: var(--primary-color-50pct) !important;
+                        --tertiary-content: var(--primary-color-50pct) !important;
+                        --quaternary-content: var(--primary-color-15pct) !important;
+                        --quinary-content: var(--primary-color-15pct) !important;
+                    }
+                }
                 * { border-radius: unset !important }
                 .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
                 .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
@@ -149,19 +252,19 @@ export default function RoomId() {
                     position: absolute; right: 0; left: 0; z-index: 10;
                     background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
                     padding: 1.65rem 0;
-                } 
+                }
                 .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: unset }
                 .mx_SearchBar {
                     position: absolute; right: 0; left: 0; bottom: 0; z-index: 10;
                     background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
                     border-top: 1px solid var(--roomlist-separator-color);
                 }
-                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; } 
+                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; }
                 .mx_RoomView_messageListWrapper { padding-top: 140px; }
 
                 @media ${breakpoints.phoneOnly} {
                     .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
-                    
+
                     .mx_RoomHeader_wrapper { flex-wrap: wrap }
                     .mx_RoomHeader_avatar { flex: 0 1 1% }
                     .mx_RoomHeader_name { font-weight: bold; flex: 1 0 }
@@ -214,12 +317,14 @@ export default function RoomId() {
 
     return (
         <>
-            <IframeLayout.Sidebar>
+            <DefaultLayout.Sidebar>
+                <h2>/chat</h2>
+
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
                     onClick={toggleRoomListViewOnMobile}
                 />
-                { matrix.invites.size > 0 && (
+                { invites.length > 0 && (
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
@@ -236,28 +341,33 @@ export default function RoomId() {
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
                     { otherRooms && otherRooms.map((room) => {
-                        return <ServiceTable><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
+                        return <ServiceTable key={room.roomId}><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
                     }) }
                 </details>
                 <br />
-            </IframeLayout.Sidebar>
+            </DefaultLayout.Sidebar>
 
-            { (deviceType !== 'mobile' || (deviceType === 'mobile' && roomId) || (deviceType === 'mobile' && !isRoomListVisible)) && <IframeLayout.IframeWrapper>
-                <IframeLayout.IframeHeader>
-                    <h2>{ matrix.rooms.get(roomId)?.name }</h2>
-                    <IframeLayout.IframeHeaderButtonWrapper>
-                        { roomId && <button title={t('Copy pad link to clipboard')} onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
-                            <ClipboardIcon fill="var(--color-foreground)" />
-                        </button> }
-                        { deviceType === 'mobile' && !roomId && <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton> }
-                    </IframeLayout.IframeHeaderButtonWrapper>
-                </IframeLayout.IframeHeader>
-                <iframe src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home' }`} ref={iframe} />
-            </IframeLayout.IframeWrapper> }
+            {(deviceType !== 'mobile' || (deviceType === 'mobile' && roomId) || (deviceType === 'mobile' && !isRoomListVisible)) && (
+                <DefaultLayout.IframeHeader>
+                    <h2>{matrix.rooms.get(roomId)?.name}</h2>
+                    <DefaultLayout.IframeHeaderButtonWrapper>
+                        {roomId && <button title={t('Copy pad link to clipboard')}
+                                           onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
+                            <ClipboardIcon fill="var(--color-foreground)"/>
+                        </button>}
+                        {deviceType === 'mobile' && !roomId &&
+                            <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton>}
+                    </DefaultLayout.IframeHeaderButtonWrapper>
+                </DefaultLayout.IframeHeader>
+            ) } { roomId && (
+                <DefaultLayout.IframeWrapper>
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                    />
+                </DefaultLayout.IframeWrapper>
+            ) }
         </>
     );
 }
-
-RoomId.getLayout = () => {
-    return IframeLayout.Layout;
-};

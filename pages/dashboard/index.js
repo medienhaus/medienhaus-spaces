@@ -9,6 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import ServiceInvitations from './ServiceInvitations';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import DisplayInvitations from './DisplayInvitations';
+import DefaultLayout from '../../components/layouts/default';
 
 const TableSection = styled.section`
   overflow-x: auto;
@@ -27,6 +28,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         let cancelled = false;
+
         const hydrateInvitationMetaEvents = async () => {
             const serviceInvitationsArray = [];
             // fetch information about pending invitations
@@ -90,7 +92,7 @@ export default function Dashboard() {
     };
 
     return (
-        <>
+        <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
 
             { matrix.invites.size > 0 &&
@@ -154,7 +156,6 @@ export default function Dashboard() {
                            </ServiceTable>
                        </TableSection>
             }
-        </>
+        </DefaultLayout.LameColumn>
     );
 }
-
