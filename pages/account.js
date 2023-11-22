@@ -10,7 +10,16 @@ import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 import DefaultLayout from '../components/layouts/default';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
-  > * + *,
+  /* TODO: these kind of layout spacings probably need to
+   * be refined across all pages once merged into main */
+  > * + * {
+    margin-top: calc(var(--margin) * 1.5);
+
+    @media (min-width: 1080px) {
+      margin-top: calc(var(--margin) * 2.5);
+    }
+  }
+
   > form > * + * {
     margin-top: var(--margin);
   }
