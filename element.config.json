@@ -5,36 +5,5 @@
     "feature_video_rooms": true,
     "feature_element_call_video_rooms": true
   },
-  "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json",
-  "default_theme": "custom-medienhaus",
-  "setting_defaults": {
-    "custom_themes": [
-      {
-        "name": "medienhaus",
-        "is_dark": false,
-        "fonts": {
-          "general": "\"Inter\""
-        },
-        "colors": {
-          "accent": "#0f0f0f",
-          "accent-color": "#0f0f0f",
-          "primary-color": "#0f0f0f",
-          "sidebar-color": "#ffffff",
-          "warning-color": "#ff4b55",
-          "icon-button-color": "#0f0f0f",
-          "roomlist-background-color": "#ffffff",
-          "roomlist-highlights-color": "#f0f0f0",
-          "roomlist-separator-color": "#f0f0f0",
-          "roomlist-text-color": "#0f0f0f",
-          "roomlist-text-secondary-color": "#0f0f0f",
-          "timeline-background-color": "#ffffff",
-          "timeline-highlights-color": "#fff8e3",
-          "timeline-text-color": "#0f0f0f",
-          "timeline-text-secondary-color": "#0f0f0f",
-          "avatar-background-colors": ["#0f0f0f", "#0f0f0f", "#0f0f0f"],
-          "username-colors": ["#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f", "#0f0f0f"]
-        }
-      }
-    ]
-  }
+  "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json"
 }
