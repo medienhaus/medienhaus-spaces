@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { ClipboardIcon, DeleteBinIcon } from '@remixicons/react/line';
+import { CloseIcon, DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -15,6 +15,8 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
 import { breakpoints } from '../../components/_breakpoints';
+import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import Icon from '../../components/UI/Icon';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const sortRooms = function(room) {
@@ -23,6 +25,22 @@ const sortRooms = function(room) {
         room.name,
     ];
 };
+
+const Sidebar = styled(DefaultLayout.Sidebar)`
+  @media ${breakpoints.phoneOnly} {
+    display: ${props => {
+        console.log(props);
+
+        return (props.roomId || !props.isRoomListVisible) ? 'none' : 'initial !important';
+    }};
+  }
+`;
+
+// const IframeWrapper = styled(DefaultLayout.IframeWrapper)`
+// @media ${breakpoints.phoneOnly} {
+//   display: ${props => props.isRoomListVisible && 'initial !important'}
+// }
+// `;
 
 const UnreadNotificationBadge = styled.div`
   display: grid;
@@ -48,9 +66,12 @@ const Avatar = styled.img`
   }
 `;
 
-const MobileBackButton = styled.div`
+const MobileBackButton = styled(TextButton)`
+  display: grid;
+  place-content: start;
+
   @media ${breakpoints.tabletAndAbove} {
-    display: none
+    display: none;
   }
 `;
 
@@ -109,6 +130,7 @@ export default function RoomId() {
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix();
+    const [windowWidth, setWindowWidth] = useState(null);
     const [isRoomListVisible, setIsRoomListVisible] = useState(true);
     const [isLoadingIframe, setIsLoadingIframe] = useState(false);
 
@@ -287,6 +309,7 @@ export default function RoomId() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
+
     // filtering invites for all invitations without a dev.medienhaus.meta event.
     // for now normal chat rooms don't have this event.
     // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
@@ -303,15 +326,29 @@ export default function RoomId() {
         .value();
 
     const toggleRoomListViewOnMobile = () => {
-        // pushing /chat to router so, elements home screen is displayed on desktop browsers
+        setIsRoomListVisible(prevState => {
+            return !prevState;
+        });
         router.push('/chat');
-        if (isRoomListVisible) setIsLoadingIframe(true);
-        setIsRoomListVisible(prevState => !prevState);
     };
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowWidth(window.innerWidth);
+        }
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('load', handleResize);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <>
-            <DefaultLayout.Sidebar>
+            <Sidebar roomId={!!roomId} isRoomListVisible={isRoomListVisible}>
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
                     onClick={toggleRoomListViewOnMobile}
@@ -337,23 +374,21 @@ export default function RoomId() {
                     }) }
                 </details>
                 <br />
-            </DefaultLayout.Sidebar>
-            { !isRoomListVisible && (<>
+            </Sidebar>
+            <DefaultLayout.IframeWrapper>
+
                 <DefaultLayout.IframeHeader>
                     <h2>{ matrix.rooms.get(roomId)?.name }</h2>
                     <DefaultLayout.IframeHeaderButtonWrapper>
-                        <MobileBackButton>
-                            <TextButton onClick={toggleRoomListViewOnMobile}>←</TextButton>
+                        { roomId && <CopyToClipboard text={roomId} /> }
+                        <MobileBackButton onClick={toggleRoomListViewOnMobile}>
+                            <Icon>
+                                <CloseIcon />
+                            </Icon>
                         </MobileBackButton>
-                        { roomId && <button title={t('Copy pad link to clipboard')}
-                            onClick={() => navigator.clipboard.writeText(`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`)}>
-                            <ClipboardIcon fill="var(--color-foreground)" />
-                        </button> }
                     </DefaultLayout.IframeHeaderButtonWrapper>
                 </DefaultLayout.IframeHeader>
 
-            </>) }
-            { !isRoomListVisible && <DefaultLayout.IframeWrapper>
                 { isLoadingIframe && <LoadingSpinner /> }
                 { /* The iframe can take a long time to load which is why we show a loading spinner.
                 The style hack is needed because setting 'display' to 'none' creates an error.
@@ -361,14 +396,17 @@ export default function RoomId() {
                 Therefore, Element throws an error that the current browser is not supported.
                 Setting the height to 0px  centers the loading spinner.
                 */ }
-                <iframe
+                { (!isRoomListVisible || windowWidth > breakpoints.phoneBreakpoint) && <iframe
                     ref={iframe}
                     title="/chat"
-                    style={{ visibility: isLoadingIframe ? 'hidden' : 'visible', height: isLoadingIframe ? '0px' : '100%' }}
+                    style={{
+                        visibility: isLoadingIframe ? 'hidden' : 'visible',
+                        height: isLoadingIframe ? '0px' : '100%',
+                    }}
                     onLoad={() => setIsLoadingIframe(false)}
                     src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home'}`}
-                />
-            </DefaultLayout.IframeWrapper> }
+                /> }
+            </DefaultLayout.IframeWrapper>
         </>
     );
 }
