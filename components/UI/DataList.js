@@ -14,7 +14,8 @@ import Form from './Form';
  * @param {function} onInputChange - Function to execute when input changes, receives string as the first parameter.
  * @param {function} onSubmit - Function to execute when the form is submitted, receives an array of selected options.
  * @param {Array} keysToDisplay - Array of strings of key values to be displayed as results.
- * @returns {React.JSX.Element} - The Datalist component.
+ *
+ * @returns {React.ReactNode}
  */
 
 const Row = styled(ServiceTable.Row)`
@@ -192,7 +193,8 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
  * @param {function} handleKeyDown - Function to handle keydown events.
  * @param {boolean} focus - Flag indicating whether the row has focus.
  * @param {function} setSelectedIndex - Function to set the selected index.
- * @returns {React.JSX.Element} - The DataListRow component.
+ *
+ * @returns {React.ReactNode}
  */
 
 const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, handleKeyDown, focus, setSelectedIndex }) => {
