@@ -325,12 +325,20 @@ export default function RoomId() {
         .sortBy(sortRooms)
         .value();
 
-    const toggleRoomListViewOnMobile = () => {
+    const toggleRoomListView = () => {
+        if (!roomId) setIsLoadingIframe(true);
         setIsRoomListVisible(prevState => {
             return !prevState;
         });
         router.push('/chat');
     };
+
+    useEffect(() => {
+        if (roomId) {
+            setIsLoadingIframe(true);
+            setIsRoomListVisible(false);
+        }
+    }, [roomId]);
 
     useEffect(() => {
         function handleResize() {
@@ -351,7 +359,7 @@ export default function RoomId() {
             <Sidebar roomId={!!roomId} isRoomListVisible={isRoomListVisible}>
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
-                    onClick={toggleRoomListViewOnMobile}
+                    onClick={toggleRoomListView}
                 />
                 { invites.length > 0 && (
                     <>
@@ -377,19 +385,19 @@ export default function RoomId() {
             </Sidebar>
             <DefaultLayout.IframeWrapper>
 
-                <DefaultLayout.IframeHeader>
-                    <h2>{ matrix.rooms.get(roomId)?.name }</h2>
-                    <DefaultLayout.IframeHeaderButtonWrapper>
-                        { roomId && <CopyToClipboard text={roomId} /> }
-                        <MobileBackButton onClick={toggleRoomListViewOnMobile}>
-                            <Icon>
-                                <CloseIcon />
-                            </Icon>
-                        </MobileBackButton>
-                    </DefaultLayout.IframeHeaderButtonWrapper>
-                </DefaultLayout.IframeHeader>
+                { isLoadingIframe ? <LoadingSpinner />
+                    : <DefaultLayout.IframeHeader>
+                        <h2>{ matrix.rooms.get(roomId)?.name }</h2>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
+                            { roomId && <CopyToClipboard text={roomId} /> }
+                            <MobileBackButton onClick={toggleRoomListView}>
+                                <Icon>
+                                    <CloseIcon />
+                                </Icon>
+                            </MobileBackButton>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader> }
 
-                { isLoadingIframe && <LoadingSpinner /> }
                 { /* The iframe can take a long time to load which is why we show a loading spinner.
                 The style hack is needed because setting 'display' to 'none' creates an error.
                 Element performs a view compatability checks before onLoaded fires.
