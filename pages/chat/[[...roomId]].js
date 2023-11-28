@@ -326,8 +326,10 @@ export default function RoomId() {
         .value();
 
     const toggleRoomListView = () => {
-        if (!roomId) setIsLoadingIframe(true);
         setIsRoomListVisible(prevState => {
+            if (prevState) setIsLoadingIframe(true);
+            else setIsLoadingIframe(false);
+
             return !prevState;
         });
         router.push('/chat');
@@ -337,6 +339,8 @@ export default function RoomId() {
         if (roomId) {
             setIsLoadingIframe(true);
             setIsRoomListVisible(false);
+        } else {
+            setIsLoadingIframe(false);
         }
     }, [roomId]);
 
@@ -386,7 +390,7 @@ export default function RoomId() {
             <DefaultLayout.IframeWrapper>
 
                 { isLoadingIframe ? <LoadingSpinner />
-                    : <DefaultLayout.IframeHeader>
+                    : !isRoomListVisible && <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId)?.name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             { roomId && <CopyToClipboard text={roomId} /> }

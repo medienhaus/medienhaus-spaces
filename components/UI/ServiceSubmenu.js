@@ -35,7 +35,7 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
+export function ServiceSubmenu({ title, icon, subheadline, items, disabled, onClick }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -53,7 +53,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                 { title && title }
                 <ToggleButton
                     disabled={disabled}
-                    onClick={handleMenuToggle}>
+                    onClick={onClick || handleMenuToggle}>
                     { icon ?
                         icon
                         :
@@ -63,7 +63,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                     }
                 </ToggleButton>
             </Header>
-            { isOpen && (
+            { isOpen && items && (
                 <Submenu>
                     { subheadline && <h3>{ subheadline }</h3> }
                     <select
