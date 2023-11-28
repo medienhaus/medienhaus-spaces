@@ -319,7 +319,7 @@ export default function RoomId() {
 
     const toggleRoomListView = () => {
         setIsRoomListVisible(prevState => {
-            if (prevState) setIsLoadingIframe(true);
+            if (!iframe.current) setIsLoadingIframe(true);
             else setIsLoadingIframe(false);
 
             return !prevState;
@@ -329,7 +329,10 @@ export default function RoomId() {
 
     useEffect(() => {
         if (roomId) {
-            setIsLoadingIframe(true);
+            if (!iframe.current) {
+                setIsLoadingIframe(true);
+            }
+
             setIsRoomListVisible(false);
         } else {
             setIsLoadingIframe(false);
@@ -382,7 +385,7 @@ export default function RoomId() {
             <DefaultLayout.IframeWrapper>
 
                 { isLoadingIframe ? <LoadingSpinner />
-                    : !isRoomListVisible && <DefaultLayout.IframeHeader>
+                    : iframe.current && <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId)?.name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             { roomId && <CopyToClipboard text={roomId} /> }
