@@ -3,7 +3,9 @@
     "feature_spotlight": true,
     "feature_thread": true,
     "feature_video_rooms": true,
-    "feature_element_call_video_rooms": true
+    "feature_element_call_video_rooms": true,
+    "feature_group_calls": true,
+    "feature_new_room_decoration_ui": true
   },
   "map_style_url": "https://osm.udk-berlin.de/styles/udk-berlin/style.json"
 }
