@@ -29,18 +29,10 @@ const sortRooms = function(room) {
 const Sidebar = styled(DefaultLayout.Sidebar)`
   @media ${breakpoints.phoneOnly} {
     display: ${props => {
-        console.log(props);
-
         return (props.roomId || !props.isRoomListVisible) ? 'none' : 'initial !important';
     }};
   }
 `;
-
-// const IframeWrapper = styled(DefaultLayout.IframeWrapper)`
-// @media ${breakpoints.phoneOnly} {
-//   display: ${props => props.isRoomListVisible && 'initial !important'}
-// }
-// `;
 
 const UnreadNotificationBadge = styled.div`
   display: grid;
