@@ -21,6 +21,8 @@ import ServiceLink from '../../components/UI/ServiceLink';
 import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
+import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -37,6 +39,7 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -53,7 +56,7 @@ export default function Spacedeck() {
         const matrixSketches = {};
 
         // Function to recursively collect all Matrix sketches within a space
-        const getAllMatrixSketches = (id, parent) => {
+        const getAllMatrixSketches = (id) => {
             if (matrix?.spaces.get(id)?.children) {
                 for (const roomId of spacedeckChildren) {
                     // Extract the spacedeck id from room content
@@ -114,7 +117,6 @@ export default function Spacedeck() {
                 logger.debug(error);
                 setIsSpacedeckServerDown(true);
             });
-
             // Update the Matrix structure based on spacedeck sketches
             syncSketches && await updateStructure(spacedeck.getStructure());
             setSyncingServerSketches(false);
@@ -184,6 +186,8 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
+    if (!auth.connectionStatus.spacedeck) return <DefaultLayout.LameColumn><LoginPrompt service={spacedeckPath} /></DefaultLayout.LameColumn>;
+
     return (
         <>
             <DefaultLayout.Sidebar>
@@ -226,6 +230,11 @@ export default function Spacedeck() {
                     <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId).name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom.Button
+                                name={matrix.rooms.get(roomId).name}
+                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen}
+                            />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ?
@@ -238,10 +247,18 @@ export default function Spacedeck() {
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    <iframe
-                        title={spacedeckPath}
-                        src={content.body}
-                    />
+                    { isInviteUsersOpen ?
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        /> :
+                        <iframe
+                            title={spacedeckPath}
+                            src={content.body}
+                        />
+                    }
+
                 </DefaultLayout.IframeWrapper>
             ) }
         </>

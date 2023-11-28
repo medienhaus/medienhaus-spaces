@@ -37,7 +37,9 @@ export default function Dashboard() {
 
             const contextInvitationsArray = [];
 
-            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
+            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitationOriginal => {
+                const invitation = { ...invitationOriginal };
+
                 const room = await matrixClient.getRoom(invitation.roomId);
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
