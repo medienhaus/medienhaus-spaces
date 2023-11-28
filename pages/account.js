@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
 import styled from 'styled-components';
 
@@ -9,22 +9,38 @@ import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 import DefaultLayout from '../components/layouts/default';
 
+const AccountSection = styled(DefaultLayout.LameColumn)`
+  /* TODO: these kind of layout spacings probably need to
+   * be refined across all pages once merged into main */
+  > * + * {
+    margin-top: calc(var(--margin) * 1.5);
+
+    @media (min-width: 1080px) {
+      margin-top: calc(var(--margin) * 2.5);
+    }
+  }
+
+  > form > * + * {
+    margin-top: var(--margin);
+  }
+`;
+
 const ProfileSection = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr;
-  grid-gap: calc(var(--margin) * var(--line-height));
+  grid-gap: var(--margin);
 
-  & > form {
+  > form {
     grid-row: 2 / 3;
     grid-column: 1 / -1;
   }
 
-  & > form > * + * {
-    margin-top: calc(var(--margin) * var(--line-height));
+  > form > * + * {
+    margin-top: var(--margin);
   }
 
   @media (min-width: 40em) {
-    & > form {
+    > form {
       grid-row: 2 / 3;
       grid-column: 2;
     }
@@ -38,13 +54,6 @@ const Avatar = styled.img`
   width: calc(var(--margin) * 7.3);
   aspect-ratio: 1;
 
-  /*
-  background: var(--color-foreground);
-  border-color: var(--color-foreground);
-  border-style: solid;
-  border-width: calc(var(--margin) * 0.2);
-  */
-
   &.placeholder {
     backdrop-filter: invert(100%);
   }
@@ -57,7 +66,7 @@ const Avatar = styled.img`
 
 const AvatarButtonContainer = styled.div`
   display: grid;
-  grid-gap: calc(var(--margin) * var(--line-height));
+  grid-gap: var(--margin);
 
   @media (min-width: 40em) {
     grid-template-columns: repeat(auto-fit, minmax(calc(50% - (var(--margin) * 0.65)), 1fr));
@@ -200,22 +209,27 @@ export default function Account() {
 
     if (hasToConfirmNewEmail) {
         return (
-            <>
+            <AccountSection>
                 <h2>/account</h2>
                 <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
-                <br />
-                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }}>
-                    <input type="password" placeholder={t('password')} onChange={(event) => { setInputPassword(event.target.value);}} />
-                    <ConfirmCancelButtons disabled={isSavingChanges} onCancel={() => setInputPassword('')} />
+                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
+                    <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <ConfirmCancelButtons disabled={isSavingChanges} />
                 </form>
                 { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
-            </>
+            </AccountSection>
         );
     }
 
     return (
-        <DefaultLayout.LameColumn>
+        <AccountSection>
             <h2>/account</h2>
+            <Trans
+                t={t}
+                i18nKey="introduction"
+                defaults="Here you can modify your display name and profile image, which might be shared with other accounts when, for example, interacting with them via <bold>/chat</bold>, <bold>/write</bold>, or <bold>/sketch</bold>."
+                components={{ bold: <strong /> }}
+            />
             <ProfileSection>
                 { profileInfo.avatar_url ? (
                     // Render the avatar if we have one
@@ -231,7 +245,7 @@ export default function Account() {
                         <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
                     ) }
                 </AvatarButtonContainer>
-                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }}>
+                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
                     <input
                         type="text"
                         value={inputDisplayname}
@@ -255,11 +269,11 @@ export default function Account() {
                         profileInfo.displayname !== inputDisplayname ||
                         inputNewEmail
                     ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges} onCancel={handleCancel}>{ t('Save changes') }</ConfirmCancelButtons>
+                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save changes') }</ConfirmCancelButtons>
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </form>
             </ProfileSection>
-        </DefaultLayout.LameColumn>
+        </AccountSection>
     );
 }

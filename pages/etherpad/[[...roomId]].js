@@ -21,6 +21,7 @@ import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
+import LoginPrompt from '../../components/UI/LoginPrompt';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, writeRoomId, name, href, etherpadId, ref, selected, path }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -158,6 +159,25 @@ export default function Etherpad() {
         return room;
     }, [matrix, etherpad]);
 
+    /**
+     * Creates an Etherpad and navigates to it based on the provided name, visibility, and password.
+     *
+     * @param {string} name - The name of the Etherpad to create.
+     * @param {string} visibility - The visibility setting for the Etherpad. Expects 'private' or 'public'.
+     * @param {string} password - The password for accessing the Etherpad (if private).
+     * @returns {Promise<boolean|void>} - A Promise that resolves 'true' indicating the success of pad creation and navigates to the Etherpad's URL.
+     */
+
+    const createPadAndOpen = async (name, visibility, password) => {
+        const padObject = await etherpad.createPad(name, visibility, password);
+        if (!padObject || !padObject.success) throw new Error('The following error occurred', { cause: padObject });
+
+        const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
+        const roomId = await createWriteRoom(link, name);
+
+        return router.push(`${etherpadPath}/${roomId}`);
+    };
+
     useEffect(() => {
         let cancelled = false;
 
@@ -235,8 +255,8 @@ export default function Etherpad() {
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />, label: t('Add existing pad') },
         { value: 'anonymousPad', actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />, label: t('Create new anonymous pad') },
-        isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createWriteRoom={createWriteRoom} />, label: t('Create new authored pad') },
-        isMyPadsApiEnabled && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createWriteRoom={createWriteRoom} />, label: t('Create password protected pad') },
+        isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />, label: t('Create new authored pad') },
+        isMyPadsApiEnabled && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createPadAndOpen={createPadAndOpen} />, label: t('Create password protected pad') },
     ]);
 
     const listEntries = useMemo(() => {
@@ -271,6 +291,8 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('userName', auth.user.displayname);
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
+
+    if (!auth.connectionStatus.etherpad) return <DefaultLayout.LameColumn><LoginPrompt service={etherpadPath} /></DefaultLayout.LameColumn>;
 
     return (
         <>

@@ -57,7 +57,7 @@ export default function Navigation({ closeNavigation }) {
                 { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
             <List>
-                <li><Link href="/">/chat</Link></li>
+                <li><Link href="/chat">/chat</Link></li>
                 { Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
                     // we skip the matrix config since it's already displayed in chat
                     // @TODO enabkle custom path name for chat

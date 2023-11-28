@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const ErrorMessage = styled.p`
   position: relative;
   padding-left: calc(1.4 * var(--margin));
-  margin-bottom: var(--margin);
 
   &::before {
     position: absolute;
