@@ -18,12 +18,13 @@ import Form from './Form';
  */
 
 const Row = styled(ServiceTable.Row)`
+  text-decoration: ${props => props.$focused && 'underline' };
+  cursor: pointer;
+
   &:hover,
   &:focus {
     text-decoration: underline;
   }
-
-  text-decoration: ${props => props.$focused && 'underline' };
 `;
 
 const InviteUserForm = styled(Form)`
@@ -203,16 +204,12 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
         }
     }, [focus]);
 
-    const handleOnCheck = () => {
-        handleSelect(option);
-    };
-
     return (
         <Row
             key={index}
             $focused={focus}
+            onClick={() => { handleSelect(option); }}
             onKeyDown={handleKeyDown} // Add onKeyDown event
-
         >
             <ServiceTable.Cell>
                 <input
@@ -222,7 +219,7 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     type="checkbox"
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
-                    onChange={handleOnCheck}
+                    onChange={() => { handleSelect(option); }}
                     onMouseUp={() => {
                         // make sure element gets deselected on mouse press
                         if (focus) setSelectedIndex(-1);
