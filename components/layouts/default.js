@@ -8,6 +8,7 @@ export const Main = styled.main`
   display: flex;
   flex: 1 0;
   flex-direction: column;
+  overflow-y: auto;
 
   @media ${breakpoints.tabletAndAbove} {
     flex-direction: row;
@@ -23,6 +24,13 @@ const LameColumn = styled.div`
     width: 100%;
     max-width: 55ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+  }
+
+  /* NOTE: force-add some padding below very last element
+   * TODO: these kind of layout spacings probably need to
+   * be refined across all pages once merged into main */
+  > :last-child {
+    padding-bottom: calc(var(--margin) * 3);
   }
 `;
 
