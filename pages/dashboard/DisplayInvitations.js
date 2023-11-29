@@ -7,32 +7,7 @@ import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-/**
- * Callback definitions
-*/
-/**
- * @callback acceptMatrixInvite
- * @param {string} roomId
- * @param {string} path
-*/
-/**
- * @callback declineMatrixInvite
- * @param {string} roomId
-*/
-
-/**
- * Displays an invitation for a matrix room/space and gives users the option to accept or decline them.
- *
- * @param {Object} invite — object of the room the user was invited to
- * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
- * @param {String} service — name of the service
- * @param {acceptMatrixInvite} acceptMatrixInvite
- * @param {declineMatrixInvite} declineMatrixInvite
- *
- * @returns {React.Component} — JSX Element representing the invitation
-*/
-
-const InvitationCard = styled.form`
+const InvitationCard = React.memo(styled.form`
   > * + * {
     margin-top: var(--margin);
   }
@@ -52,8 +27,51 @@ const InvitationCard = styled.form`
       font-weight: 600;
     }
   }
-`;
+`);
 
+const HandledInvitation = React.memo(({ name, link }) => {
+    const { t } = useTranslation('dashboard');
+
+    return (
+        <InvitationCard>
+            <h4>{ name }</h4>
+            { link ? (
+                <p>
+                    <Trans t={t} i18nKey="invitationCardHandled">
+                        You can now view <Link href={link}><strong>{ { name } }</strong></Link>
+                    </Trans>
+                </p>
+            ) : (
+                <p>{ t('You’ve declined the invitation.') }</p>
+            ) }
+        </InvitationCard>
+    );
+});
+
+/**
+ * Callback definitions
+ */
+/**
+ * @callback acceptMatrixInvite
+ * @param {string} roomId
+ * @param {string} path
+ */
+/**
+ * @callback declineMatrixInvite
+ * @param {string} roomId
+ */
+
+/**
+ * Displays an invitation for a matrix room/space and gives users the option to accept or decline them.
+ *
+ * @param {Object} invite — object of the room the user was invited to
+ * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
+ * @param {String} service — name of the service
+ * @param {acceptMatrixInvite} acceptMatrixInvite
+ * @param {declineMatrixInvite} declineMatrixInvite
+ *
+ * @returns {React.ReactNode}
+ */
 export default function DisplayInvitations({ invite, path, service, acceptMatrixInvite, declineMatrixInvite }) {
     const { t } = useTranslation('dashboard');
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
@@ -120,22 +138,3 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
         </InvitationCard>
     );
 }
-
-const HandledInvitation = ({ name, link }) => {
-    const { t } = useTranslation('dashboard');
-
-    return (
-        <InvitationCard>
-            <h4>{ name }</h4>
-            { link ? (
-                <p>
-                    <Trans t={t} i18nKey="invitationCardHandled">
-                        You can now view <Link href={link}><strong>{ { name } }</strong></Link>
-                    </Trans>
-                </p>
-            ) : (
-                <p>{ t('You’ve declined the invitation.') }</p>
-            ) }
-        </InvitationCard>
-    );
-};
