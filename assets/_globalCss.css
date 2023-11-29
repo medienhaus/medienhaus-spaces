@@ -56,7 +56,8 @@ body {
 
 @supports (font-variation-settings: normal) {
   body {
-    font-family: 'Inter var', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: InterVariable, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-optical-sizing: auto;
   }
 }
 
@@ -116,7 +117,7 @@ select {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 
@@ -183,7 +184,7 @@ input[type='url'] {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 
