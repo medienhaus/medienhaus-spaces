@@ -26,11 +26,9 @@ const LameColumn = styled.div`
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
   }
 
-  /* NOTE: force-add some padding below very last element
-   * TODO: these kind of layout spacings probably need to
-   * be refined across all pages once merged into main */
+  /* force-add some whitespace at the bottom of our LameColumn's contents */
   > :last-child {
-    padding-bottom: calc(var(--margin) * 3);
+    margin-bottom: calc(var(--margin) * 3);
   }
 `;
 
