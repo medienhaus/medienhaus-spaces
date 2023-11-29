@@ -104,9 +104,8 @@ export default function Chat() {
                     --cpd-avatar-color: #ffffff !important;
                     --cpd-color-text-action-accent: #000 !important;
                     --color-foreground-alpha: rgb(0 0 0 / 5%);
-                    
-                    /* You know why... */
-                    border-radius: unset !important;
+
+                    border-radius: 4px !important;
                 }
                 
                 @media (prefers-color-scheme: dark) {
