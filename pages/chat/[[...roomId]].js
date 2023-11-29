@@ -131,7 +131,7 @@ export default function Chat() {
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
                 /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.795) calc(var(--margin) * 1.5); }
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
                 .mx_RoomHeader_heading { font-weight: 900; }
                 /* Hide avatar of the user we're chatting with */
                 .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
