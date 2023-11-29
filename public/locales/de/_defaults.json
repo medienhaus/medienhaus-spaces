@@ -5,16 +5,19 @@
   "Connection lost": "Verbindung unterbrochen",
   "Delete": "Löschen",
   "Make sure your link includes \"{{url}}\"": "Dein Link muss \"{{url}}\" beinhalten",
+  "Username": "Benutzername",
   "Name": "Bezeichnung",
   "Password": "Passwort",
   "password protected": "Passwortgeschützt",
   "Upload": "Hochladen",
-  "Save changes": "Änderungen speichern",
+  "Save": "Speichern",
   "Select action": "Aktion wählen",
   "What would you like to do?": "Was möchtest Du tun?",
   "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
   "Invitations": "Einladungen",
   "From": "Von",
   "Accept": "Annehmen",
-  "Decline": "Ablehnen"
+  "Decline": "Ablehnen",
+  "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
+  "Please enter your account password to continue using {{service}}:": "Bitte gib Dein Passwort ein, um {{service}} wieder nutzen zu können:"
 }

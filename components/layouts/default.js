@@ -13,6 +13,7 @@ export const Main = styled.main`
     flex-direction: row;
     grid-row: 1/4;
     grid-column: 2;
+    overflow-y: auto;
   }
 `;
 
@@ -23,6 +24,11 @@ const LameColumn = styled.div`
     width: 100%;
     max-width: 55ch;
     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+  }
+
+  /* force-add some whitespace at the bottom of our LameColumn's contents */
+  > :last-child {
+    margin-bottom: calc(var(--margin) * 3);
   }
 `;
 
@@ -61,7 +67,7 @@ const IframeWrapper = styled.div`
     border: none;
 
     @media ${breakpoints.phoneOnly} {
-      border-top: 1px solid rgb(0 0 0 / 5%);
+      border-top: 1px solid var(--color-foreground-alpha);
     }
   }
 `;
@@ -69,6 +75,7 @@ const IframeWrapper = styled.div`
 const IframeHeader = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
   width: 100%;
   padding: var(--margin);
 

@@ -2,16 +2,34 @@
 @import '../public/assets/fonts/inter/inter.css';
 
 :root {
+  /* color definitions */
   --color-background: rgb(255 255 255);
   --color-foreground: rgb(0 0 0);
   --color-disabled: rgb(128 128 128);
   --color-selection: rgb(255 240 170);
   --color-notification: rgb(255 96 96);
+  --color-background-alpha: hsl(0deg 0% 97%);
+  --color-background-beta: hsl(0deg 0% 94%);
+  --color-foreground-alpha: rgb(0 0 0 / 5%);
+
+  /* size definitions */
+  --border-radius: 4px;
   --margin: 1rem;
   --line-height: 1.3;
   --icon-size: calc(1rem * var(--line-height));
-  --color-background-alpha: hsl(0deg 0% 97%);
-  --color-background-beta: hsl(0deg 0% 94%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: hsl(0deg 0% 8%);
+    --color-foreground: rgb(255 255 255);
+    --color-disabled: rgb(128 128 128);
+    --color-selection: rgb(128 196 255);
+    --color-notification: rgb(96 64 255);
+    --color-background-alpha: hsl(0deg 0% 5%);
+    --color-background-beta: hsl(0deg 0% 0%);
+    --color-foreground-alpha: rgb(255 255 255 / 7%);
+  }
 }
 
 *,
@@ -38,7 +56,8 @@ body {
 
 @supports (font-variation-settings: normal) {
   body {
-    font-family: 'Inter var', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: InterVariable, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-optical-sizing: auto;
   }
 }
 
@@ -99,7 +118,7 @@ select {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 
@@ -135,6 +154,7 @@ input[type='submit'] {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
+  border-radius: var(--border-radius);
   appearance: none;
 }
 
@@ -165,7 +185,7 @@ input[type='url'] {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 

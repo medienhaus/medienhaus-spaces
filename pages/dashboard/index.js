@@ -32,7 +32,8 @@ export default function Dashboard() {
             // i.e. who sent it, what are we being invited to (service, chat)
             const updatedInvitations = [...invitations];
 
-            const sortAndHydrateInvitations = Array.from(matrixInvites.values()).map(async invitation => {
+            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitationOriginal => {
+                const invitation = { ...invitationOriginal };
                 // if the invitation is already in the invitations object, we don't need to do anything
                 if (_.some(invitations, (invite) => _.values(invite).includes(invitation.roomId))) return;
 

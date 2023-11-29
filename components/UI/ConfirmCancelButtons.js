@@ -27,13 +27,13 @@ const CancelButton = styled.button`
   }
 `;
 
-const ConfirmCancelButtons = ({ disabled, onClick, onCancel, confirmLabel, cancelLabel }) => {
+const ConfirmCancelButtons = ({ children, disabled }) => {
     const { t } = useTranslation();
 
     return (
         <ConfirmCancelButtonsWrapper>
-            <CancelButton type="reset" disabled={disabled} onClick={onCancel}>{ cancelLabel || t('Cancel') }</CancelButton>
-            <ConfirmButton type="submit" disabled={disabled} onClick={onClick}>{ confirmLabel || t('Confirm') }</ConfirmButton>
+            <CancelButton type="reset" disabled={disabled}>{ t('Cancel') }</CancelButton>
+            <ConfirmButton type="submit" disabled={disabled}>{ children ? children : t('Confirm') }</ConfirmButton>
         </ConfirmCancelButtonsWrapper>
     );
 };

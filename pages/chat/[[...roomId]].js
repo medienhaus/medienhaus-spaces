@@ -17,16 +17,17 @@ const sortRooms = function(room) {
     ];
 };
 
-const UnreadNotificationBadge = styled.span`
-  position: relative;
-  display: flex;
-  flex: 0 0;
-  padding: 0.1rem 0.5rem;
-  margin-left: 0.6rem;
-  color: white;
-  text-decoration: none;
-  background: red;
-  border-radius: 2rem;
+const UnreadNotificationBadge = styled.div`
+  display: grid;
+  place-content: center;
+  width: 3ch;
+  height: var(--line-height);
+  color: rgb(255 255 255);
+  background-color: var(--color-notification);
+
+  > small {
+    font-weight: 600;
+  }
 `;
 
 const Avatar = styled.img`
@@ -34,10 +35,6 @@ const Avatar = styled.img`
   width: 2rem;
   height: 2rem;
   margin-right: 0.6rem;
-
-  /*
-  background: var(--color-foreground);
-  */
 
   &.placeholder {
     backdrop-filter: invert(100%);
@@ -73,7 +70,11 @@ const SidebarListEntry = function({ room }) {
                 ) }
                 <RoomName>{ room.name }</RoomName>
                 { room.notificationCount > 0 && (
-                    <UnreadNotificationBadge>{ room.notificationCount }</UnreadNotificationBadge>
+                    <UnreadNotificationBadge>
+                        <small>
+                            { room.notificationCount < 100 ? room.notificationCount : '99+' }
+                        </small>
+                    </UnreadNotificationBadge>
                 ) }
             </SidebarListEntryWrapper>
         </Link>
@@ -95,41 +96,57 @@ export default function Chat() {
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
-                * { border-radius: unset !important }
-                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
-                .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
-                .mx_RoomHeader_name { pointer-events: none }
-                .mx_RoomHeader_chevron { display: none }
-                /* Hides the "Logout" button at the bottom of Element when loading for the first time */
-                .mx_MatrixChat_splashButtons { display: none }
-                /* Hide the search bar buttons to only allow searching inside current room */
-                .mx_SearchBar_buttons { display: none !important }
+                * {
+                    --margin: 1rem;
 
-                .mx_RoomHeader {
-                    position: absolute; right: 0; left: 0; z-index: 10;
-                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
-                    padding: 1.65rem 0;
-                } 
-                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: unset }
-                .mx_SearchBar {
-                    position: absolute; right: 0; left: 0; bottom: 0; z-index: 10;
-                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
-                    border-top: 1px solid var(--roomlist-separator-color);
+                    --cpd-color-theme-bg: rgb(255 255 255) !important; 
+                    --cpd-avatar-bg: #000000 !important;
+                    --cpd-avatar-color: #ffffff !important;
+                    --cpd-color-text-action-accent: #000 !important;
+                    --color-foreground-alpha: rgb(0 0 0 / 5%);
+
+                    border-radius: 4px !important;
                 }
-                .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; } 
-                .mx_RoomView_messageListWrapper { padding-top: 140px; }
-
-                @media ${breakpoints.phoneOnly} {
-                    .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
+                
+                @media (prefers-color-scheme: dark) {
+                    * {
+                        --cpd-color-theme-bg: hsl(0deg 0% 8%) !important;
+                        --cpd-avatar-bg: #ffffff !important;
+                        --cpd-avatar-color: #000000 !important;
+                        --cpd-color-text-action-accent: #fff !important;
+                        --color-foreground-alpha: rgb(255 255 255 / 7%);
+                    }
                     
-                    .mx_RoomHeader_wrapper { flex-wrap: wrap }
-                    .mx_RoomHeader_avatar { flex: 0 1 1% }
-                    .mx_RoomHeader_name { font-weight: bold; flex: 1 0 }
-                    .mx_RoomTopic { flex: 0 0 100%; margin: 12px 6px }
+                    .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
+                        background-color: #ffffff !important;
+                        color: #000000 !important;
+                    }
+                }
 
+                /* Hide the left sidebar and that drag-to-resize thingy */
+                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle { display: none; !important }
+                /* Hides the "Logout" button at the bottom of Element when loading for the first time */
+                .mx_MatrixChat_splashButtons { display: none; }
+                /* Hide the search bar buttons to only allow searching inside current room */
+                .mx_SearchBar_buttons { display: none !important; }
+                /* Make the header look like the "header" component we use in other pages */
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.795) calc(var(--margin) * 1.5); }
+                .mx_RoomHeader_heading { font-weight: 900; }
+                /* Hide avatar of the user we're chatting with */
+                .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
+                /* Override all of the colorful usernames with the default text color */
+                .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
+
+                @media (max-device-width: 1079px) {
+                    .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); }
+                    
+                    /* Make the "right panel" cover the full screen */
+                    .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; }
+
+                    /* More breathing room in the main timeline of a chat */
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
-                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset }
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset; }
                 }
             `);
             styleTag.appendChild(styleContent);
@@ -152,8 +169,8 @@ export default function Chat() {
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
         .reject(room => matrix.directMessages.has(room.roomId))
-        // ... contain a dev.medienhaus.meta state event)
-        .reject(room => room.events.get('dev.medienhaus.meta'))
+        // @TODO ... contain a dev.medienhaus.meta state event)
+        .reject(room => !!room.meta)
         .sortBy(sortRooms)
         .value();
 
