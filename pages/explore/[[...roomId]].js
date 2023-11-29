@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { EventTimeline } from 'matrix-js-sdk';
 
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -32,22 +33,30 @@ const ServiceTableWrapper = styled.div`
  * @returns {JSX.Element} The rendered Explore component.
  */
 export default function Explore() {
+    const router = useRouter();
+    const { t } = useTranslation('explore');
+
+    const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    const dimensionsRef = useRef();
-    const router = useRouter();
-    const auth = useAuth();
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-    const { t } = useTranslation('explore');
 
     // Extract roomId and iframeRoomId from the query parameters
-    const roomId = _.get(router, 'query.roomId[0]');
-    const iframeRoomId = _.get(router, 'query.roomId[1]');
-    const myPowerLevel = matrix.spaces.get(roomId)?.events?.get('m.room.power_levels').values().next().value.getContent().users[matrixClient.getUserId()];
+    /** @type {string|undefined} */
+    const roomId = _.get(router, 'query.roomId.0');
+    /** @type {string|undefined} */
+    const iframeRoomId = _.get(router, 'query.roomId.1');
+    /**
+     * If we have access to the room/space "roomId", this variable contains our own power level for the given room
+     * @type {number|undefined}
+     */
+    const myPowerLevel = _.get(matrixClient.getRoom(roomId)?.getLiveTimeline().getState(EventTimeline.FORWARDS)?.getStateEvents('m.room.power_levels', '')?.getContent(), ['users', matrixClient.getUserId()]);
+    /** @type {string|undefined} */
     const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => space.room_id === iframeRoomId).template;
 
     // Redirect to the default room if no roomId is provided
@@ -173,10 +182,9 @@ export default function Explore() {
     return (
         <>
             <DefaultLayout.Sidebar>
-                <h2 ref={dimensionsRef}>/explore   { _.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline /> }</h2>
+                <h2>/explore   { _.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline /> }</h2>
                 <ServiceTableWrapper>
-                    { !navigator.userAgent.includes('iPhone') && !navigator.userAgent.includes('Android') &&
-                        !_.isEmpty(selectedSpaceChildren) &&
+                    { !_.isEmpty(selectedSpaceChildren) &&
                         <TreePath
                             selectedSpaceChildren={selectedSpaceChildren}
                             isFetchingContent={isFetchingContent}
