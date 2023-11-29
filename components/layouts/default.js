@@ -75,7 +75,6 @@ const IframeWrapper = styled.div`
 const IframeHeader = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: center;
   width: 100%;
   padding: var(--margin);
 
