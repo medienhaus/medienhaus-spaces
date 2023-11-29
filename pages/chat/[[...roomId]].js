@@ -66,24 +66,35 @@ const MobileBackButton = styled(TextButton)`
   }
 `;
 
+const SidebarListEntryWrapper = styled.a`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 0.3rem;
+`;
+const RoomName = styled.span`
+  flex: 1 0;
+  height: 2rem;
+  overflow: hidden;
+  line-height: 2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const SidebarListEntry = function({ room }) {
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell selected={false}>
                 <Link href={`/chat/${room.roomId}`} passHref>
-                    <span>
-                        { room.avatar && (
-                        // Render the avatar if we have one
+                    <SidebarListEntryWrapper>
+                        { room.avatar ? (
+                            // Render the avatar if we have one
                             <Avatar src={room.avatar} alt={room.name} />
+                        ) : (
+                            // Render an empty GIF if we don't have an avatar
+                            <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                         ) }
-                        { /* { room.avatar ? (
-                    // Render the avatar if we have one
-                        <Avatar src={room.avatar} alt={room.name} />
-                    ) : (
-                    // Render an empty GIF if we don't have an avatar
-                        <Avatar src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                    ) } */ }
-                        { room.name }
+                        <RoomName>{ room.name }</RoomName>
                         { room.notificationCount > 0 && (
                             <UnreadNotificationBadge>
                                 <small>
@@ -91,7 +102,7 @@ const SidebarListEntry = function({ room }) {
                                 </small>
                             </UnreadNotificationBadge>
                         ) }
-                    </span>
+                    </SidebarListEntryWrapper>
                 </Link>
             </ServiceTable.Cell>
         </ServiceTable.Row>
@@ -157,28 +168,42 @@ export default function RoomId() {
                 .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
                 /* Override all of the colorful usernames with the default text color */
                 .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
-
-                /* @TODO: This can be improved... and should probably not target mobile viewports. It's to make the */
-                /* header look like it's on line with our header elements from first & second sidebar. */
-                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: none }
-                .mx_RoomHeader { flex: unset; -webkit-box-flex: unset; padding: 2.85rem 0 } 
-                .mx_RoomHeader_name { font-weight: bold }
+                
+                /* Don't display explore public rooms option */
+                .mx_HomePage_button_explore { display: none !important }
                 .mx_HomePage_default_buttons { display: initial !important }
+                /* Don't display element welcome message */
                 .mx_HomePage_default_wrapper > div:first-child { display: none }
-                .mx_RoomHeader {
-                    position: absolute; right: 0; left: 0; z-index: 10;
-                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
-                    padding: 1.65rem 0;
-                }
-                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: unset }
+
                 .mx_SearchBar {
                     position: absolute; right: 0; left: 0; bottom: 0; z-index: 10;
-                    background: rgba(255, 255, 255, 90%); backdrop-filter: blur(4px);
+                    background: var( --cpd-color-theme-bg);
                     border-top: 1px solid var(--roomlist-separator-color);
+                    z-index: 999999999;
+                   
                 }
+                
+                .mx_SearchWarning { 
+                    background-color: var(--cpd-avatar-color);
+                    padding: 1rem;
+                    z-index: 9999999999;
+                }
+                
                 .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; }
                 .mx_RoomView_messageListWrapper { padding-top: 140px; }
+                
+                
+                 @media (max-device-width: 1079px) {
+                    .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); 
+                    }
+                    
+                    /* Make the "right panel" cover the full screen */
+                    .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; 
+                    }
+                    
 
+                
+                
                 @media ${breakpoints.phoneOnly} {
                     .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
 
@@ -186,12 +211,9 @@ export default function RoomId() {
                     .mx_RoomHeader_avatar { flex: 0 1 1% }
                     .mx_RoomHeader_name { font-weight: bold; flex: 1 0 }
                     .mx_RoomTopic { flex: 0 0 100%; margin: 12px 6px }
-
-                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
-                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset; }
 
-                    /* moda overlay when creating rooms */
+                    /* modal overlay when creating rooms */
 
                     .mx_Dialog { width: 80% }
                     .mx_CreateRoomDialog.mx_Dialog_fixedWidth { width: 100% }
@@ -200,7 +222,6 @@ export default function RoomId() {
                     
                     #mx_JoinRuleDropdown__public { display: none }
                 }
-                .mx_HomePage_button_explore { display: none !important }
                 
             `);
             styleTag.appendChild(styleContent);
@@ -284,21 +305,33 @@ export default function RoomId() {
                     <>
                         <details open>
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
-                            { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                            <ServiceTable>
+                                <ServiceTable.Body>
+                                    { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                                </ServiceTable.Body>
+                            </ServiceTable>
                         </details>
                         <br />
                     </>
                 ) }
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
-                    { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                    <ServiceTable>
+                        <ServiceTable.Body>
+                            { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
                 </details>
                 <br />
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
-                    { otherRooms && otherRooms.map((room) => {
-                        return <ServiceTable key={room.roomId}><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
-                    }) }
+                    <ServiceTable>
+                        <ServiceTable.Body>
+                            { otherRooms && otherRooms.map((room) => {
+                                return <ServiceTable key={room.roomId}><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
+                            }) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
                 </details>
                 <br />
             </Sidebar>
