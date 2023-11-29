@@ -32,7 +32,7 @@ import { useMatrix } from '../../lib/Matrix';
  * @returns {React.Component} — JSX Element representing the invitation
 */
 
-const InvitationCard = styled.div`
+const InvitationCard = styled.form`
   > * + * {
     margin-top: var(--margin);
   }
@@ -94,7 +94,10 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
     if (wasHandled) return <HandledInvitation name={invite.name} link={link} />;
 
     return (
-        <InvitationCard>
+        <InvitationCard
+            onSubmit={(e) => handleAccept(e, invite.roomId)}
+            onCancel={(e) => handleDecline(e, invite.roomId)}
+        >
             <h4>
                 { link ?
                     <Link href={link}>{ invite.name }</Link>
@@ -110,8 +113,6 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
                 />
             </p>
             <ConfirmCancelButtons
-                onClick={(e) => handleAccept(e, invite.roomId)}
-                onCancel={(e) => handleDecline(e, invite.roomId)}
                 disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
                 cancelLabel={t('Decline')}
                 confirmLabel={t('Accept')}
