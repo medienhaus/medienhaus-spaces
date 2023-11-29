@@ -44,7 +44,7 @@ const InvitationCard = styled.form`
     button {
       height: var(--line-height);
       padding: 0 calc(var(--margin) * 0.25);
-      font-size: 70%;
+      font-size: 80%;
       border-width: calc(var(--margin) * 0.125);
     }
 
@@ -107,9 +107,9 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
                 <Trans
                     t={t}
                     i18nKey="invitationCard"
-                    defaults="<italic>{{name}}</italic> wants to <bold><italic>{{service}}</italic></bold> with you"
+                    defaults="<italic>{{name}}</italic> wants to {{service}} with you."
                     values={{ name: invite.inviter?.displayName, service: path }}
-                    components={{ italic: <em />, bold: <strong /> }}
+                    components={{ italic: <em /> }}
                 />
             </p>
             <ConfirmCancelButtons
