@@ -12,66 +12,55 @@ import DefaultLayout from '../components/layouts/default';
 const AccountSection = styled(DefaultLayout.LameColumn)`
   /* TODO: these kind of layout spacings probably need to
    * be refined across all pages once merged into main */
-  > * + * {
-    margin-top: calc(var(--margin) * 1.5);
 
-    @media (min-width: 1080px) {
-      margin-top: calc(var(--margin) * 2.5);
-    }
+  > * + * {
+    margin-top: calc(var(--margin) * var(--line-height) * 2);
   }
 
-  > form > * + * {
-    margin-top: var(--margin);
+  > * > * + * {
+    margin-top: calc(var(--margin) * var(--line-height));
+  }
+
+  /* NOTE: selector for the email confirmation page form */
+  form {
+    > * + * {
+      margin-top: var(--margin);
+    }
   }
 `;
 
-const ProfileSection = styled.div`
+const AvatarSection = styled.div`
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-auto-flow: row;
   grid-gap: var(--margin);
 
-  > form {
-    grid-row: 2 / 3;
-    grid-column: 1 / -1;
-  }
-
-  > form > * + * {
-    margin-top: var(--margin);
-  }
-
   @media (min-width: 40em) {
-    > form {
-      grid-row: 2 / 3;
-      grid-column: 2;
-    }
+    grid-template-columns: 1fr 1fr;
   }
 `;
 
 const Avatar = styled.img`
-  display: block;
-  grid-row: 1 / 2;
-  grid-column: 1;
-  width: calc(var(--margin) * 7.3);
-  aspect-ratio: 1;
+  width: 50%;
 
   &.placeholder {
     backdrop-filter: invert(100%);
   }
 
   @media (min-width: 40em) {
-    grid-row: 1 / 3;
-    width: calc(var(--margin) * 11.6);
+    width: 70%;
   }
 `;
 
 const AvatarButtonContainer = styled.div`
   display: grid;
+  grid-auto-flow: row;
   grid-gap: var(--margin);
+  align-content: start;
+`;
 
-  @media (min-width: 40em) {
-    grid-template-columns: repeat(auto-fit, minmax(calc(50% - (var(--margin) * 0.65)), 1fr));
-    grid-row: 1;
-    grid-column: 2;
+const ProfileSection = styled.form`
+  > * + * {
+    margin-top: var(--margin);
   }
 `;
 
@@ -210,42 +199,54 @@ export default function Account() {
     if (hasToConfirmNewEmail) {
         return (
             <AccountSection>
-                <h2>/account</h2>
-                <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
-                <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
-                    <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
-                    <ConfirmCancelButtons disabled={isSavingChanges} />
-                </form>
-                { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+                <div>
+                    <h2>/account</h2>
+                    <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
+                    <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
+                        <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                        <ConfirmCancelButtons disabled={isSavingChanges} />
+                    </form>
+                    { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+                </div>
             </AccountSection>
         );
     }
 
     return (
         <AccountSection>
-            <h2>/account</h2>
-            <Trans
-                t={t}
-                i18nKey="introduction"
-                defaults="Here you can modify your display name and profile image, which might be shared with other accounts when, for example, interacting with them via <bold>/chat</bold>, <bold>/write</bold>, or <bold>/sketch</bold>."
-                components={{ bold: <strong /> }}
-            />
-            <ProfileSection>
-                { profileInfo.avatar_url ? (
+            <div>
+                <h2>/account</h2>
+                <p>
+                    <Trans
+                        t={t}
+                        i18nKey="introduction"
+                        defaults="Here you can modify your display name and profile image, which might be shared with other accounts when, for example, interacting with them via <bold>/chat</bold>, <bold>/write</bold>, or <bold>/sketch</bold>."
+                        components={{ bold: <strong /> }}
+                    />
+                </p>
+            </div>
+            <div>
+                <h3>{ t('Avatar — Profile Image') }</h3>
+                <AvatarSection>
+                    { profileInfo.avatar_url ? (
                     // Render the avatar if we have one
-                    <Avatar src={matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop')} />
-                ) : (
+                        <Avatar src={matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop')} />
+                    ) : (
                     // Render an empty GIF if we don't have an avatar
-                    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                ) }
-                <AvatarButtonContainer>
-                    <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                    <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Upload') } …</button>
-                    { profileInfo.avatar_url && (
-                        <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
+                        <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                     ) }
-                </AvatarButtonContainer>
-                <form onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
+                    <AvatarButtonContainer>
+                        <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
+                        <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</button>
+                        { profileInfo.avatar_url && (
+                            <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
+                        ) }
+                    </AvatarButtonContainer>
+                </AvatarSection>
+            </div>
+            <div>
+                <h3>{ t('Display Name & Email Addresses') }</h3>
+                <ProfileSection onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
                     <input
                         type="text"
                         value={inputDisplayname}
@@ -253,6 +254,11 @@ export default function Account() {
                         placeholder={matrixClient.getUserId()}
                         onChange={(event) => { setInputDisplayname(event.target.value); }}
                     />
+                    { (
+                        profileInfo.displayname !== inputDisplayname
+                    ) && (
+                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save') }</ConfirmCancelButtons>
+                    ) }
                     { emails.map((email, index) => (
                         <input key={email} type="email" value={email} disabled />
                     )) }
@@ -266,14 +272,13 @@ export default function Account() {
                         />
                     ) }
                     { (
-                        profileInfo.displayname !== inputDisplayname ||
                         inputNewEmail
                     ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save changes') }</ConfirmCancelButtons>
+                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save') }</ConfirmCancelButtons>
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
-                </form>
-            </ProfileSection>
+                </ProfileSection>
+            </div>
         </AccountSection>
     );
 }
