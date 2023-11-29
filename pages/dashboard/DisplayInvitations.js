@@ -126,18 +126,16 @@ const HandledInvitation = ({ name, link }) => {
 
     return (
         <InvitationCard>
-            <h4>
-                { name }
-            </h4>
-            { link ? <p>
-                <Trans
-                    t={t}
-                    i18nKey="invitationCardHandled"
-                >
-                    You can now view <Link href={link}><strong>{ { name } }</strong></Link></Trans>
-            </p>
-                : <p> { t('You’ve declined the invitation') } </p>
-            }
+            <h4>{ name }</h4>
+            { link ? (
+                <p>
+                    <Trans t={t} i18nKey="invitationCardHandled">
+                        You can now view <Link href={link}><strong>{ { name } }</strong></Link>
+                    </Trans>
+                </p>
+            ) : (
+                <p>{ t('You’ve declined the invitation.') }</p>
+            ) }
         </InvitationCard>
     );
 };
