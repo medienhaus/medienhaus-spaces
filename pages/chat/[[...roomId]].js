@@ -70,8 +70,8 @@ const SidebarListEntryWrapper = styled.a`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 0.3rem;
 `;
+
 const RoomName = styled.span`
   flex: 1 0;
   height: 2rem;
@@ -87,13 +87,14 @@ const SidebarListEntry = function({ room }) {
             <ServiceTable.Cell selected={false}>
                 <Link href={`/chat/${room.roomId}`} passHref>
                     <SidebarListEntryWrapper>
-                        { room.avatar ? (
-                            // Render the avatar if we have one
-                            <Avatar src={room.avatar} alt={room.name} />
-                        ) : (
-                            // Render an empty GIF if we don't have an avatar
-                            <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                        ) }
+                        { /* @TODO this breaks the css layout at the moment */ }
+                        { /*{ room.avatar ? (*/ }
+                        { /*    // Render the avatar if we have one*/ }
+                        { /*    <Avatar src={room.avatar} alt={room.name} />*/ }
+                        { /*) : (*/ }
+                        { /*    // Render an empty GIF if we don't have an avatar*/ }
+                        { /*    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />*/ }
+                        { /*) }*/ }
                         <RoomName>{ room.name }</RoomName>
                         { room.notificationCount > 0 && (
                             <UnreadNotificationBadge>
