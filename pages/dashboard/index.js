@@ -98,17 +98,18 @@ export default function Dashboard() {
                     <CardSection>
                         <h3>{ t('Invitations') }</h3>
                         { invitations && _.map(invitations, (invite, index) => {
-                            return <>
-                                { index > 0 && <hr /> }
-                                <DisplayInvitations
-                                    key={invite.roomId}
-                                    path={invite.meta ? invite.service || '/explore' : '/chat'}
-                                    invite={invite}
-                                    service={invite.meta?.template}
-                                    acceptMatrixInvite={acceptMatrixInvite}
-                                    declineMatrixInvite={declineMatrixInvite}
-                                />
-                            </>;
+                            return (
+                                <div key={invite.roomId}>
+                                    { index > 0 && <hr /> }
+                                    <DisplayInvitations
+                                        path={invite.meta ? invite.service || '/explore' : '/chat'}
+                                        invite={invite}
+                                        service={invite.meta?.template}
+                                        acceptMatrixInvite={acceptMatrixInvite}
+                                        declineMatrixInvite={declineMatrixInvite}
+                                    />
+                                </div>
+                            );
                         }) }
                     </CardSection>
             }
