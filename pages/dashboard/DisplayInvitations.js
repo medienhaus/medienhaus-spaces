@@ -96,7 +96,7 @@ export default function DisplayInvitations({ invite, path, service, acceptMatrix
     return (
         <InvitationCard
             onSubmit={(e) => handleAccept(e, invite.roomId)}
-            onCancel={(e) => handleDecline(e, invite.roomId)}
+            onReset={(e) => handleDecline(e, invite.roomId)}
         >
             <h4>
                 { link ?
