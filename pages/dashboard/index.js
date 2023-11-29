@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -17,6 +18,8 @@ const CardSection = styled.section`
 `;
 
 export default function Dashboard() {
+    const { t } = useTranslation('dashboard');
+
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixInvites = matrix.invites;
@@ -93,7 +96,7 @@ export default function Dashboard() {
 
             { !_.isEmpty(invitations) > 0 &&
                     <CardSection>
-                        { /*<h3>{ t('Invitations') }</h3>*/ }
+                        <h3>{ t('Invitations') }</h3>
                         { invitations && _.map(invitations, (invite, index) => {
                             return <>
                                 { index > 0 && <hr /> }
