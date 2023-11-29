@@ -5,19 +5,18 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { CloseIcon, DeleteBinIcon } from '@remixicons/react/line';
+import { ChatNewIcon, CloseIcon, DeleteBinIcon } from '@remixicons/react/line';
 
-import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
 import { breakpoints } from '../../components/_breakpoints';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import Icon from '../../components/UI/Icon';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
+import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 
 const sortRooms = function(room) {
     return [
@@ -68,18 +67,6 @@ const MobileBackButton = styled(TextButton)`
 `;
 
 const SidebarListEntry = function({ room }) {
-    const [isLeavingRoom, setIsLeavingRoom] = useState(false);
-    const { t } = useTranslation();
-    const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
-
-    const handleLeave = async (roomId) => {
-        setIsLeavingRoom(true);
-        await matrix.leaveRoom(roomId)
-            .catch(error => console.debug(error));
-        setIsLeavingRoom(false);
-    };
-
     return (
         <ServiceTable.Row>
             <ServiceTable.Cell selected={false}>
@@ -107,11 +94,6 @@ const SidebarListEntry = function({ room }) {
                     </span>
                 </Link>
             </ServiceTable.Cell>
-            <ServiceTable.Cell>
-                <TextButton title={t('Leave room and remove from my library')} onClick={() => handleLeave(room.roomId)}>
-                    { isLeavingRoom ? <LoadingSpinnerInline /> : <DeleteBinIcon fill="var(--color-foreground)" /> }
-                </TextButton>
-            </ServiceTable.Cell>
         </ServiceTable.Row>
     );
 };
@@ -125,6 +107,7 @@ export default function RoomId() {
     const [windowWidth, setWindowWidth] = useState(null);
     const [isRoomListVisible, setIsRoomListVisible] = useState(true);
     const [isLoadingIframe, setIsLoadingIframe] = useState(false);
+    const [isLeavingRoom, setIsLeavingRoom] = useState(false);
 
     // Injecting custom CSS into the Element <iframe> and detecting platform
     useEffect(() => {
@@ -257,6 +240,13 @@ export default function RoomId() {
         router.push('/chat');
     };
 
+    const handleLeave = async (roomId) => {
+        setIsLeavingRoom(true);
+        await matrix.leaveRoom(roomId)
+            .catch(error => console.debug(error));
+        setIsLeavingRoom(false);
+    };
+
     useEffect(() => {
         if (roomId) {
             if (!iframe.current) {
@@ -289,6 +279,7 @@ export default function RoomId() {
                 <ServiceSubmenu
                     title={<h2>/chat</h2>}
                     onClick={toggleRoomListView}
+                    icon={<Icon><ChatNewIcon /></Icon>}
                 />
                 { invites.length > 0 && (
                     <>
@@ -318,7 +309,12 @@ export default function RoomId() {
                     : iframe.current && <DefaultLayout.IframeHeader>
                         <h2>{ matrix.rooms.get(roomId)?.name }</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            { roomId && <CopyToClipboard text={roomId} /> }
+                            { roomId && <>
+                                <CopyToClipboard text={roomId} />
+                                <TextButton title={t('Leave room and remove from my library')} onClick={() => handleLeave(roomId)}>
+                                    { isLeavingRoom ? <LoadingSpinnerInline /> : <Icon><DeleteBinIcon /></Icon> }
+                                </TextButton>
+                            </> }
                             <MobileBackButton onClick={toggleRoomListView}>
                                 <Icon>
                                     <CloseIcon />
