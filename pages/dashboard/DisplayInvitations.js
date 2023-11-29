@@ -43,7 +43,7 @@ const InvitationCard = styled.form`
 
     button {
       height: var(--line-height);
-      padding: 0 calc(var(--margin) * 0.25);
+      padding: calc(var(--margin) * 0.1) calc(var(--margin) * 0.35);
       font-size: 80%;
       border-width: calc(var(--margin) * 0.125);
     }
