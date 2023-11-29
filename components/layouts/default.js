@@ -8,12 +8,12 @@ export const Main = styled.main`
   display: flex;
   flex: 1 0;
   flex-direction: column;
-  overflow-y: auto;
 
   @media ${breakpoints.tabletAndAbove} {
     flex-direction: row;
     grid-row: 1/4;
     grid-column: 2;
+    overflow-y: auto;
   }
 `;
 
