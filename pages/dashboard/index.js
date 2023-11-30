@@ -45,8 +45,7 @@ export default function Dashboard() {
 
                     if (metaEvent) {
                         if (invitation.meta.type !== 'context') {
-                            const path = getConfig().publicRuntimeConfig.authProviders[invitation.meta.template].path || invitation.meta.template;
-                            invitation.service = path;
+                            invitation.service = getConfig().publicRuntimeConfig.authProviders[invitation.meta.template].path || invitation.meta.template;
                         }
                     }
                 }
@@ -73,10 +72,9 @@ export default function Dashboard() {
     };
 
     const acceptMatrixInvite = async (roomId, path) => {
-        await matrixClient.joinRoom(roomId)
-            .catch(() => {
-                return;
-            });
+        await matrixClient.joinRoom(roomId).catch(() => {
+            alert(t('Something went wrong! Please try again.'));
+        });
 
         return `${path}/${roomId}`;
     };
