@@ -86,11 +86,11 @@ export default function Dashboard() {
         <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
 
-            { !_.isEmpty(invitations) > 0 &&
+            { !_.isEmpty(invitations) &&
                 <>
                     <h3>{ t('Invitations') }</h3>
                     <br />
-                    { invitations && _.map(invitations, (invite, index) => {
+                    { _.map(invitations, (invite, index) => {
                         return (
                             <div key={invite.roomId}>
                                 { index > 0 && <><br /><hr /><br /></> }
