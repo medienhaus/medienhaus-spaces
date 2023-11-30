@@ -7,6 +7,21 @@ const ConfirmCancelButtonsWrapper = styled.div`
   grid-gap: var(--margin);
 `;
 
+const SmallConfirmCancelButtonsWrapper = styled(ConfirmCancelButtonsWrapper)`
+  width: fit-content;
+
+  button {
+    height: var(--line-height);
+    padding: calc(var(--margin) * 0.1) calc(var(--margin) * 0.35);
+    font-size: 80%;
+    border-width: calc(var(--margin) * 0.125);
+  }
+
+  button[type='reset'] {
+    font-weight: 600;
+  }
+`;
+
 const ConfirmButton = styled.button`
   color: var(--color-background);
   background-color: var(--color-foreground);
@@ -27,14 +42,19 @@ const CancelButton = styled.button`
   }
 `;
 
-const ConfirmCancelButtons = ({ children, disabled }) => {
+const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) => {
     const { t } = useTranslation();
 
+    // We might want to use a special wrapper if we want to use a small version of this component
+    const Wrapper = small
+        ? SmallConfirmCancelButtonsWrapper
+        : ConfirmCancelButtonsWrapper;
+
     return (
-        <ConfirmCancelButtonsWrapper>
-            <CancelButton type="reset" disabled={disabled}>{ t('Cancel') }</CancelButton>
-            <ConfirmButton type="submit" disabled={disabled}>{ children ? children : t('Confirm') }</ConfirmButton>
-        </ConfirmCancelButtonsWrapper>
+        <Wrapper>
+            <CancelButton type="reset" disabled={disabled}>{ cancelLabel || t('Cancel') }</CancelButton>
+            <ConfirmButton type="submit" disabled={disabled}>{ confirmLabel || t('Confirm') }</ConfirmButton>
+        </Wrapper>
     );
 };
 
