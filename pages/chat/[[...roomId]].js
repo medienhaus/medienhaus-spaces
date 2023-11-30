@@ -70,7 +70,7 @@ export default function RoomId() {
                 * {
                     --margin: 1rem;
 
-                    --cpd-color-theme-bg: rgb(255 255 255) !important; 
+                    --cpd-color-theme-bg: rgb(255 255 255) !important;
                     --cpd-avatar-bg: #000000 !important;
                     --cpd-avatar-color: #ffffff !important;
                     --cpd-color-text-action-accent: #000 !important;
@@ -78,7 +78,7 @@ export default function RoomId() {
 
                     border-radius: 4px !important;
                 }
-                
+
                 @media (prefers-color-scheme: dark) {
                     * {
                         --cpd-color-theme-bg: hsl(0deg 0% 8%) !important;
@@ -87,7 +87,7 @@ export default function RoomId() {
                         --cpd-color-text-action-accent: #fff !important;
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
-                    
+
                     .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
                         background-color: #ffffff !important;
                         color: #000000 !important;
@@ -107,7 +107,7 @@ export default function RoomId() {
                 .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
                 /* Override all of the colorful usernames with the default text color */
                 .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
-                
+
                 /* Don't display explore public rooms option */
                 .mx_HomePage_button_explore { display: none !important }
                 .mx_HomePage_default_buttons { display: initial !important }
@@ -119,30 +119,26 @@ export default function RoomId() {
                     background: var( --cpd-color-theme-bg);
                     border-top: 1px solid var(--roomlist-separator-color);
                     z-index: 999999999;
-                   
+
                 }
-                
-                .mx_SearchWarning { 
+
+                .mx_SearchWarning {
                     background-color: var(--cpd-avatar-color);
                     padding: 1rem;
                     z-index: 9999999999;
                 }
-                
+
                 .mx_RoomView_searchResultsPanel .mx_RoomView_messageListWrapper { padding-bottom: 80px; }
                 .mx_RoomView_messageListWrapper { padding-top: 140px; }
-                
-                
+
                  @media (max-device-width: 1079px) {
                     .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); 
                     }
-                    
+
                     /* Make the "right panel" cover the full screen */
                     .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; 
                     }
-                    
 
-                
-                
                 @media ${breakpoints.phoneOnly} {
                     .mx_RoomHeader { padding: 1rem var(--RoomView_MessageList-padding) }
 
@@ -158,10 +154,9 @@ export default function RoomId() {
                     .mx_CreateRoomDialog.mx_Dialog_fixedWidth { width: 100% }
                     .mx_Dialog_fixedWidth { width: 100% }
                     .mx_Dropdown_menu { max-width: 100% }
-                    
+
                     #mx_JoinRuleDropdown__public { display: none }
                 }
-                
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
