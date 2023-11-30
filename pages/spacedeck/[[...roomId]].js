@@ -153,7 +153,7 @@ export default function Spacedeck() {
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
         // eslint-disable-next-line no-undef
         logger.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck').catch(() => {
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck', parent).catch(() => {
             setErrorMessage(t('Something went wrong when trying to create a new room'));
         });
         await auth.getAuthenticationProvider('matrix').addSpaceChild(parent, room).catch(() => {
