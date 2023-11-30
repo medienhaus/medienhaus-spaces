@@ -134,6 +134,7 @@ export default function Etherpad() {
         };
     }, [etherpad, syncServerPadsAndSet]);
 
+    // @TODO function creates infinite loop in useEffect below
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
         logger.debug('Creating new Matrix room for pad', { link, name });
@@ -217,8 +218,9 @@ export default function Etherpad() {
         return () => { cancelled = true; };
         // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within MyPads that are then synced here.
         // therefore we need to disable the linter for the next line
+        // createWriteRoom is not listed as a dependency because it leads to an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrix.serviceSpaces.etherpad, serverPads, createWriteRoom]);
+    }, [matrix.serviceSpaces.etherpad, serverPads]);
 
     /**
      * Removes the given pad from the user's library, and also deletes the pad entirely via API if possible.
