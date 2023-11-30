@@ -37,9 +37,21 @@ export default function Dashboard() {
 
                 // otherwise we need to fetch the room object to get the inviter and the meta event
                 const room = await matrixClient.getRoom(invitation.roomId);
+
+                // store join rule for each invite
+                invitation.joinRule = room.getJoinRule();
+
+                // if the room is a direct message, dmInviter will return the user_id, else undefined
+                const dmInviter = room.getDMInviter();
+
+                if (dmInviter) {
+                    invitation.dm = true;
+                    invitation.inviter = matrixClient.getUser(dmInviter);
+                } else {
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
-                const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
-                invitation.inviter = matrixClient.getUser(inviterName);
+                    const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
+                    invitation.inviter = matrixClient.getUser(inviterName);
+                }
 
                 if (cancelled) return;
 
