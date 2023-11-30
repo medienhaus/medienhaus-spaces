@@ -298,9 +298,9 @@ export default function RoomId() {
 
                 { /* The iframe can take a long time to load which is why we show a loading spinner.
                 The style hack is needed because setting 'display' to 'none' creates an error.
-                Element performs a view compatability checks before onLoaded fires.
-                Therefore, Element throws an error that the current browser is not supported.
-                Setting the height to 0px  centers the loading spinner.
+                Element performs a few compatability checks before onLoaded fires.
+                Therefore, Element throws an error, saying the current browser is not supported.
+                Setting the height to 0px centers the loading spinner before the iframe is ready.
                 */ }
                 { (!isRoomListVisible || windowWidth > breakpoints.phoneBreakpoint) && <iframe
                     ref={iframe}
