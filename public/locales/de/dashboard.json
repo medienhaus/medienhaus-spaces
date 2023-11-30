@@ -1,5 +1,9 @@
 {
-  "invitationCard": "<italic>{{name}}</italic> hat dich eingeladen.",
+  "invitationCard": "<bold>{{ name }}</bold> hat dich zu <bold>{{service}}</bold> eingeladen.",
   "invitationCardHandled": "Du kannst dir nun <1><strong>{{name}}</strong></1> ansehen.",
-  "You’ve declined the invitation.": "Du hast die Einladung abgelehnt."
+  "You’ve declined the invitation.": "Du hast die Einladung abgelehnt.",
+  "invitationTitleDM": "<italic>Nachricht</italic> von {{ name }}",
+  "invitationTitleRoom": "{{ name }} <italic>({{ join_rule }})</italic>",
+  "public": "öffentlich",
+  "private": "privat"
 }

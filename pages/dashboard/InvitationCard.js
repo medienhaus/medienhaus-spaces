@@ -45,6 +45,10 @@ export default function InvitationCard({ invite, path, service, acceptMatrixInvi
     const [link, setLink] = useState();
     const [wasHandled, setWasHandled] = useState(false);
 
+    // we want to differentiate between private (invite, knock, etc.) and
+    // public rooms for displaying this information in the invitation card
+    const joinRule = invite.joinRule === 'public' ? t('public') : t('private');
+
     const handleDecline = async (e, roomId) => {
         e.preventDefault();
         setIsDecliningInvite(true);
@@ -80,7 +84,25 @@ export default function InvitationCard({ invite, path, service, acceptMatrixInvi
             onSubmit={(e) => handleAccept(e, invite.roomId)}
             onReset={(e) => handleDecline(e, invite.roomId)}
         >
-            <h4>{ invite.name }</h4>
+            <h4>
+                { invite.dm ?
+                    <Trans
+                        t={t}
+                        i18nKey="invitationTitleDM"
+                        defaults="<italic>Message</italic> from {{ name }}"
+                        values={{ name: invite.name }}
+                        components={{ italic: <em /> }}
+                    />
+                    :
+                    <Trans
+                        t={t}
+                        i18nKey="invitationTitleRoom"
+                        defaults="{{ name }} <italic>({{ join_rule }})</italic>"
+                        values={{ name: invite.name, join_rule: joinRule }}
+                        components={{ italic: <em /> }}
+                    />
+                }
+            </h4>
             { wasHandled ? (
                 <TextParagraph>
                     { link ? (
@@ -100,9 +122,9 @@ export default function InvitationCard({ invite, path, service, acceptMatrixInvi
                         <Trans
                             t={t}
                             i18nKey="invitationCard"
-                            defaults="<italic>{{name}}</italic> wants to {{service}} with you."
+                            defaults="<bold>{{name}}</bold> wants to <bold>{{service}}</bold> with you."
                             values={{ name: invite.inviter?.displayName, service: path }}
-                            components={{ italic: <em /> }}
+                            components={{ bold: <strong /> }}
                         />
                     </TextParagraph>
                     <ConfirmCancelButtons
