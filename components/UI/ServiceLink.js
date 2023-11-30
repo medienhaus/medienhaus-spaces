@@ -18,11 +18,11 @@ const LockIconWrapper = styled(Icon)`
   }
 `;
 
-const NotificationBadge = styled.div`
-  display: inline;
-  height: var(--line-height);
-  padding: calc(var(--margin) / 4);
-  margin-left: calc(var(--margin) / 2);
+const NotificationBadge = styled.span`
+  display: inline-grid;
+  place-content: center;
+  height: calc(1rem * var(--line-height));
+  padding: 0 calc(var(--margin) / 4);
   color: rgb(255 255 255);
   background-color: var(--color-notification);
 
