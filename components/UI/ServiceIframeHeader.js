@@ -18,12 +18,12 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
     const { t } = useTranslation('write');
 
     return (
         <DefaultLayout.IframeHeader>
-            <h2>{ title }</h2>
+            <h2>{ title } { joinRule === 'knock' && '✊' }</h2>
             <DefaultLayout.IframeHeaderButtonWrapper>
                 <CopyToClipboard content={content} />
                 { deleteContent && <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>

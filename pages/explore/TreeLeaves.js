@@ -25,7 +25,7 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small }) => {
             >
                 { leaf.missingMetaEvent ?
                     <em> <Link disabled={isFetchingContent} href={`/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link></em>
-                    :<Link disabled={isFetchingContent} href={getConfig().publicRuntimeConfig.templates?.item.includes(leaf.template) ? `/explore/${parentId}/${roomId}` : `/explore/${roomId}`}>{ leaf.name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
+                    :<Link disabled={isFetchingContent} href={getConfig().publicRuntimeConfig.templates?.item.includes(leaf.template) ? `/explore/${parentId}/${roomId}` : `/explore/${roomId}`}>{ leaf.name } { leaf.join_rule === 'knock' && '✊' }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
                 }
             </ServiceTable.Cell>
             <ServiceTable.Cell title={leaf.template}>

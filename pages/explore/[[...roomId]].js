@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
@@ -211,6 +211,7 @@ export default function Explore() {
                         myPowerLevel={myPowerLevel}
                         setManageContextActionToggle={setManageContextActionToggle}
                         isInviteUsersOpen={isInviteUsersOpen}
+                        joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                         setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
                     />
                     <ServiceTableWrapper>
