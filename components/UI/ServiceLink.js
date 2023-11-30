@@ -10,7 +10,6 @@ import Icon from './Icon';
 const LockIconWrapper = styled(Icon)`
   position: relative;
   top: 0.195rem;
-  display: inline-block;
   margin-left: calc(var(--margin) / 2);
   transform: scale(70%);
 
@@ -19,11 +18,41 @@ const LockIconWrapper = styled(Icon)`
   }
 `;
 
-const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref) => {
+const NotificationBadge = styled.div`
+  display: inline;
+  padding: calc(var(--margin) / 4);
+  height: var(--line-height);
+  margin-left: calc(var(--margin) / 2);
+  color: rgb(255 255 255);
+  background-color: var(--color-notification);
+
+  > small {
+    font-weight: 600;
+  }
+`;
+
+const Avatar = styled.img`
+  position: relative;
+  float: left;
+  width: 2rem;
+  height: 2rem;
+  //margin-right: 0.6rem;
+  background-color: var(--color-foreground);
+
+  &.placeholder {
+    backdrop-filter: invert(100%);
+  }
+`;
+
+const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, notifications, avatar }, ref) => {
     const { t } = useTranslation();
 
     return (
         <ServiceTable.Row>
+            { /*{ avatar && (*/ }
+            { /*    <ServiceTable.Cell>*/ }
+            { /*        <Avatar src={avatar} alt={name} />*/ }
+            { /*    </ServiceTable.Cell>) }*/ }
             <ServiceTable.Cell>
                 { /* Tell if this is our active item by displaying an arrow */ }
                 { selected && <span style={{ float: 'right' }}>→</span> }
@@ -33,6 +62,12 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected }, ref
                     href={href}
                 >
                     { name }
+                    { /* Show notification badge if there are notifications */ }
+                    { notifications && <NotificationBadge>
+                        <small>
+                            { notifications < 100 ? notifications : '99+' }
+                        </small>
+                    </NotificationBadge> }
                     { /* Show a lock icon if this Link is password protected */ }
                     { passwordProtected && <LockIconWrapper title={t('password protected')}><LockIcon /></LockIconWrapper> }
                 </Link>
