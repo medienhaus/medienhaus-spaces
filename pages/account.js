@@ -257,7 +257,7 @@ export default function Account() {
                     { (
                         profileInfo.displayname !== inputDisplayname
                     ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save') }</ConfirmCancelButtons>
+                        <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
                     { emails.map((email, index) => (
                         <input key={email} type="email" value={email} disabled />
@@ -274,7 +274,7 @@ export default function Account() {
                     { (
                         inputNewEmail
                     ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges}>{ t('Save') }</ConfirmCancelButtons>
+                        <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </ProfileSection>

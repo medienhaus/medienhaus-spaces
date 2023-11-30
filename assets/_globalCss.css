@@ -69,14 +69,8 @@ h5,
 h6 {
   margin: unset;
   font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-}
-
-h1,
-h2,
-h3 {
   font-weight: bold;
+  line-height: inherit;
 }
 
 a:link {
@@ -99,6 +93,13 @@ a:focus {
 
 a:active {
   color: var(--color-foreground);
+}
+
+hr {
+  border-color: var(--color-foreground-alpha);
+  border-style: solid;
+  border-width: 0.5px;
+  border-radius: unset;
 }
 
 select {

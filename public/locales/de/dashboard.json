@@ -1,5 +1,5 @@
 {
-  "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
-  "accept invitation": "Einladung annehmen",
-  "decline invitation": "Einladung ablehnen"
+  "invitationCard": "<italic>{{name}}</italic> hat dich eingeladen.",
+  "invitationCardHandled": "Du kannst dir nun <1><strong>{{name}}</strong></1> ansehen.",
+  "You’ve declined the invitation.": "Du hast die Einladung abgelehnt."
 }
