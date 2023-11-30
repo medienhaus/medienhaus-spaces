@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import DisplayInvitations from './DisplayInvitations';
+import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
 
 export default function Dashboard() {
@@ -94,7 +93,7 @@ export default function Dashboard() {
                         return (
                             <div key={invite.roomId}>
                                 { index > 0 && <><br /><hr /><br /></> }
-                                <DisplayInvitations
+                                <InvitationCard
                                     path={invite.meta ? invite.service || '/explore' : '/chat'}
                                     invite={invite}
                                     service={invite.meta?.template}
