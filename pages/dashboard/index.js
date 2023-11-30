@@ -106,6 +106,7 @@ export default function Dashboard() {
                     }) }
                 </>
             }
+            { /* show pending knocks here */ }
         </DefaultLayout.LameColumn>
     );
 }
