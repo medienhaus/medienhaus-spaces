@@ -20,8 +20,8 @@ const LockIconWrapper = styled(Icon)`
 
 const NotificationBadge = styled.div`
   display: inline;
-  padding: calc(var(--margin) / 4);
   height: var(--line-height);
+  padding: calc(var(--margin) / 4);
   margin-left: calc(var(--margin) / 2);
   color: rgb(255 255 255);
   background-color: var(--color-notification);
@@ -31,18 +31,19 @@ const NotificationBadge = styled.div`
   }
 `;
 
+/*
 const Avatar = styled.img`
   position: relative;
   float: left;
   width: 2rem;
   height: 2rem;
-  //margin-right: 0.6rem;
   background-color: var(--color-foreground);
 
   &.placeholder {
     backdrop-filter: invert(100%);
   }
 `;
+*/
 
 const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, notifications, avatar }, ref) => {
     const { t } = useTranslation();
