@@ -9,14 +9,6 @@ import { useMatrix } from '../../lib/Matrix';
 import DisplayInvitations from './DisplayInvitations';
 import DefaultLayout from '../../components/layouts/default';
 
-const CardSection = styled.section`
-  overflow-x: auto;
-
-  > * + * {
-    margin-top: var(--margin);
-  }
-`;
-
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
 
@@ -95,23 +87,24 @@ export default function Dashboard() {
             <h2>/dashboard</h2>
 
             { !_.isEmpty(invitations) > 0 &&
-                    <CardSection>
-                        <h3>{ t('Invitations') }</h3>
-                        { invitations && _.map(invitations, (invite, index) => {
-                            return (
-                                <div key={invite.roomId}>
-                                    { index > 0 && <hr /> }
-                                    <DisplayInvitations
-                                        path={invite.meta ? invite.service || '/explore' : '/chat'}
-                                        invite={invite}
-                                        service={invite.meta?.template}
-                                        acceptMatrixInvite={acceptMatrixInvite}
-                                        declineMatrixInvite={declineMatrixInvite}
-                                    />
-                                </div>
-                            );
-                        }) }
-                    </CardSection>
+                <>
+                    <h3>{ t('Invitations') }</h3>
+                    <br />
+                    { invitations && _.map(invitations, (invite, index) => {
+                        return (
+                            <div key={invite.roomId}>
+                                { index > 0 && <><br /><hr /><br /></> }
+                                <DisplayInvitations
+                                    path={invite.meta ? invite.service || '/explore' : '/chat'}
+                                    invite={invite}
+                                    service={invite.meta?.template}
+                                    acceptMatrixInvite={acceptMatrixInvite}
+                                    declineMatrixInvite={declineMatrixInvite}
+                                />
+                            </div>
+                        );
+                    }) }
+                </>
             }
         </DefaultLayout.LameColumn>
     );
