@@ -30,6 +30,13 @@ const ConfirmButton = styled.button`
     color: var(--color-background);
     background-color: var(--color-disabled);
   }
+
+  &:hover {
+    color: rgb(255 255 255);
+    background-color: var(--color-notification);
+    border-color: var(--color-notification);
+    transition: all 200ms ease;
+  }
 `;
 
 const CancelButton = styled.button`
@@ -39,6 +46,13 @@ const CancelButton = styled.button`
   &:disabled {
     color: var(--color-disabled);
     background-color: var(--color-background);
+  }
+
+  &:hover {
+    color: var(--color-notification);
+    background-color: var(--color-background);
+    border-color: var(--color-notification);
+    transition: all 200ms ease;
   }
 `;
 

@@ -11,6 +11,15 @@ const PasswordInputButtonContainer = styled.div`
   & > * {
     margin-top: unset;
   }
+
+  > button {
+    &:hover {
+      color: rgb(255 255 255);
+      background-color: var(--color-notification);
+      border-color: var(--color-notification);
+      transition: all 200ms ease;
+    }
+  }
 `;
 
 export default function PasswordInputButton({ placeholder, value, onChange, disabled, label }) {

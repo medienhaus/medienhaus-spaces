@@ -23,6 +23,13 @@ const TextButton = styled.button`
       fill: var(--color-disabled);
     }
   }
+
+  &:hover {
+    svg {
+      fill: var(--color-notification);
+      transition: all 200ms ease;
+    }
+  }
 `;
 
 export default TextButton;
