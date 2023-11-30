@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { ChatNewIcon, CloseIcon, DeleteBinIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
@@ -17,6 +16,7 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import Icon from '../../components/UI/Icon';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
+import ServiceLink from '../../components/UI/ServiceLink';
 
 const sortRooms = function(room) {
     return [
@@ -33,30 +33,6 @@ const Sidebar = styled(DefaultLayout.Sidebar)`
   }
 `;
 
-const UnreadNotificationBadge = styled.div`
-  display: grid;
-  place-content: center;
-  width: 3ch;
-  height: var(--line-height);
-  color: rgb(255 255 255);
-  background-color: var(--color-notification);
-
-  > small {
-    font-weight: 600;
-  }
-`;
-
-const Avatar = styled.img`
-  position: relative;
-  width: 2rem;
-  height: 2rem;
-  margin-right: 0.6rem;
-
-  &.placeholder {
-    backdrop-filter: invert(100%);
-  }
-`;
-
 const MobileBackButton = styled(TextButton)`
   display: grid;
   place-content: start;
@@ -66,47 +42,11 @@ const MobileBackButton = styled(TextButton)`
   }
 `;
 
-const SidebarListEntryWrapper = styled.a`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
+const SidebarListEntry = function({ room, selected }) {
+    const avatar = room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-const RoomName = styled.span`
-  flex: 1 0;
-  height: 2rem;
-  overflow: hidden;
-  line-height: 2rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const SidebarListEntry = function({ room }) {
     return (
-        <ServiceTable.Row>
-            <ServiceTable.Cell selected={false}>
-                <Link href={`/chat/${room.roomId}`} passHref>
-                    <SidebarListEntryWrapper>
-                        { /* @TODO this breaks the css layout at the moment */ }
-                        { /*{ room.avatar ? (*/ }
-                        { /*    // Render the avatar if we have one*/ }
-                        { /*    <Avatar src={room.avatar} alt={room.name} />*/ }
-                        { /*) : (*/ }
-                        { /*    // Render an empty GIF if we don't have an avatar*/ }
-                        { /*    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />*/ }
-                        { /*) }*/ }
-                        <RoomName>{ room.name }</RoomName>
-                        { room.notificationCount > 0 && (
-                            <UnreadNotificationBadge>
-                                <small>
-                                    { room.notificationCount < 100 ? room.notificationCount : '99+' }
-                                </small>
-                            </UnreadNotificationBadge>
-                        ) }
-                    </SidebarListEntryWrapper>
-                </Link>
-            </ServiceTable.Cell>
-        </ServiceTable.Row>
+        <ServiceLink name={room.name} href={`/chat/${room.roomId}`} selected={selected} notifications={10} avatar={avatar} />
     );
 };
 
@@ -308,7 +248,7 @@ export default function RoomId() {
                             <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
                             <ServiceTable>
                                 <ServiceTable.Body>
-                                    { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                                    { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} />) }
                                 </ServiceTable.Body>
                             </ServiceTable>
                         </details>
@@ -319,7 +259,7 @@ export default function RoomId() {
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                            { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} />) }
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
@@ -329,7 +269,7 @@ export default function RoomId() {
                     <ServiceTable>
                         <ServiceTable.Body>
                             { otherRooms && otherRooms.map((room) => {
-                                return <ServiceTable key={room.roomId}><SidebarListEntry key={room.roomId} room={room} /></ServiceTable>;
+                                return <ServiceTable key={room.roomId}><SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} /></ServiceTable>;
                             }) }
                         </ServiceTable.Body>
                     </ServiceTable>
