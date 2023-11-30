@@ -40,6 +40,13 @@ const MobileBackButton = styled(TextButton)`
   }
 `;
 
+const Summary = styled.summary`
+  h3 {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+`;
+
 const SidebarListEntry = function({ room, selected }) {
     const avatar = room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
@@ -238,7 +245,7 @@ export default function RoomId() {
                 { invites.length > 0 && (
                     <>
                         <details open>
-                            <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
+                            <Summary><h3>{ t('Invites') }</h3></Summary>
                             <ServiceTable>
                                 <ServiceTable.Body>
                                     { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} />) }
@@ -249,7 +256,7 @@ export default function RoomId() {
                     </>
                 ) }
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
+                    <Summary><h3>{ t('People') }</h3></Summary>
                     <ServiceTable>
                         <ServiceTable.Body>
                             { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} />) }
@@ -258,7 +265,7 @@ export default function RoomId() {
                 </details>
                 <br />
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
+                    <Summary><h3>{ t('Rooms') }</h3></Summary>
                     <ServiceTable>
                         <ServiceTable.Body>
                             { otherRooms && otherRooms.map((room) => {
