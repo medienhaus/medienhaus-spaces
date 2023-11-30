@@ -9,8 +9,8 @@ import Icon from './Icon';
 
 const LockIconWrapper = styled(Icon)`
   position: relative;
-  display: inline-block;
   top: 0.195rem;
+  display: inline-block;
   margin-left: calc(var(--margin) / 2);
   transform: scale(70%);
 
