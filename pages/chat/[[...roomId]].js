@@ -27,9 +27,7 @@ const sortRooms = function(room) {
 
 const Sidebar = styled(DefaultLayout.Sidebar)`
   @media ${breakpoints.phoneOnly} {
-    display: ${props => {
-        return (props.roomId || !props.isRoomListVisible) ? 'none' : 'initial !important';
-    }};
+    display: ${props => { return (props.roomId || !props.isRoomListVisible) ? 'none' : 'initial !important'; }};
   }
 `;
 
@@ -305,10 +303,7 @@ export default function RoomId() {
                 { (!isRoomListVisible || windowWidth > breakpoints.phoneBreakpoint) && <iframe
                     ref={iframe}
                     title="/chat"
-                    style={{
-                        visibility: isLoadingIframe ? 'hidden' : 'visible',
-                        height: isLoadingIframe ? '0px' : '100%',
-                    }}
+                    style={{ visibility: isLoadingIframe ? 'hidden' : 'visible', height: isLoadingIframe ? '0px' : '100%' }}
                     onLoad={() => setIsLoadingIframe(false)}
                     src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId ? 'room/' + roomId : 'home'}`}
                 /> }
