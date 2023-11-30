@@ -9,7 +9,12 @@ module.exports = {
     },
     output: 'standalone',
     rewrites: () => {
-        const rewriteConfig = [];
+        const rewriteConfig = [
+            {
+                source: '/',
+                destination: '/dashboard',
+            },
+        ];
 
         if (SpacesConfig.authProviders.etherpad) {
             rewriteConfig.push({
