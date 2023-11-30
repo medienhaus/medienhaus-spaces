@@ -9,6 +9,7 @@ import Icon from './Icon';
 
 const LockIconWrapper = styled(Icon)`
   position: relative;
+  display: inline-block;
   top: 0.195rem;
   margin-left: calc(var(--margin) / 2);
   transform: scale(70%);
@@ -18,34 +19,8 @@ const LockIconWrapper = styled(Icon)`
   }
 `;
 
-const StyledServiceTableRow = styled(ServiceTable.Row)`
-  display: grid;
-
-  /* NOTE: if we _do_not_ display avatar, then ... */
-
-  grid-template-columns: max-content 1fr max-content;
-
-  /* NOTE: if we display avatar, then ... */
-
-  /*
-  grid-template-columns: max-content 1fr max-content;
-  */
-
-  align-items: center;
-
-  > :last-child:not(:only-child) {
-    justify-self: end;
-  }
-`;
-
-const ServiceTableLink = styled(Link)`
+const BlockLink = styled(Link)`
   display: block;
-`;
-
-const SelectedMarker = styled.span`
-  /*
-  float: right;
-  */
 `;
 
 const NotificationBadge = styled.span`
@@ -76,30 +51,30 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, notif
     const { t } = useTranslation();
 
     return (
-        <StyledServiceTableRow>
+        <ServiceTable.Row>
             { avatar && (
                 <ServiceTable.Cell>
                     <Avatar src={avatar} alt={name} />
                 </ServiceTable.Cell>)
             }
-            <ServiceTable.Cell>
-                <ServiceTableLink
+            <ServiceTable.Cell width="100%">
+                <BlockLink
                     ref={ref}
                     href={href}
                 >
                     { name }
                     { /* Show a lock icon if this Link is password protected */ }
                     { passwordProtected && <LockIconWrapper title={t('password protected')}><LockIcon /></LockIconWrapper> }
-                </ServiceTableLink>
+                </BlockLink>
             </ServiceTable.Cell>
             { /* Tell if this is our active item by displaying an arrow */ }
             { selected &&
-                <ServiceTable.Cell>
-                    <SelectedMarker>→</SelectedMarker>
+                <ServiceTable.Cell align="right">
+                    →
                 </ServiceTable.Cell>
             }
             { /* Show notification badge if there are notifications */ }
-            { !selected && notifications &&
+            { !selected && notifications > 0 &&
                 <ServiceTable.Cell>
                     <NotificationBadge>
                         <small>
@@ -108,7 +83,7 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, notif
                     </NotificationBadge>
                 </ServiceTable.Cell>
             }
-        </StyledServiceTableRow>
+        </ServiceTable.Row>
     );
 });
 ServiceLink.displayName = 'ServiceLink';

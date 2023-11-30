@@ -44,7 +44,7 @@ const SidebarListEntry = function({ room, selected }) {
     const avatar = room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
     return (
-        <ServiceLink name={room.name} href={`/chat/${room.roomId}`} selected={selected} notifications={10} avatar={avatar} />
+        <ServiceLink name={room.name} href={`/chat/${room.roomId}`} selected={selected} notifications={room.notificationCount} avatar={avatar} />
     );
 };
 
