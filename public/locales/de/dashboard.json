@@ -4,7 +4,6 @@
   "You’ve declined the invitation.": "Du hast die Einladung abgelehnt.",
   "invitationTitleDM": "<italic>Nachricht</italic> von {{ name }}",
   "invitationTitleRoom": "{{ name }} <italic>({{ join_rule }})</italic>",
-  "{{ name }} ({{ join_rule }})": "{{ name }} ({{ join_rule }})",
   "public": "öffentlich",
   "private": "privat"
 }
