@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { useImmer } from 'use-immer';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
@@ -13,10 +14,13 @@ export default function Dashboard() {
 
     const auth = useAuth();
     const matrix = useMatrix();
-    const matrixInvites = matrix.invites;
-
+    const livePendingMatrixInvites = matrix.invites;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const [invitations, setInvitations] = useState([]);
+
+    // We are going to intentionally store a copy of every invitation in the following array, that we're going to append
+    // to only, but never remove any entries. This is in order to keep a list of all handled invitations while looking
+    // at this page. Only when leaving the page and returning back to it, we start from scratch.
+    const [invitations, setInvitations] = useImmer([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -24,9 +28,9 @@ export default function Dashboard() {
         const hydrateInvitationMetaEvents = async () => {
             // fetch information about pending invitations
             // i.e. who sent it, what are we being invited to (service, chat)
-            const updatedInvitations = [...invitations];
+            Array.from(livePendingMatrixInvites.values()).map(async (invitationOriginal, index) => {
+                if (cancelled) return;
 
-            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitationOriginal => {
                 const invitation = { ...invitationOriginal };
                 // if the invitation is already in the invitations object, we don't need to do anything
                 if (_.some(invitations, (invite) => _.values(invite).includes(invitation.roomId))) return;
@@ -36,6 +40,8 @@ export default function Dashboard() {
                 // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
                 const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
                 invitation.inviter = matrixClient.getUser(inviterName);
+
+                if (cancelled) return;
 
                 if (!invitation.meta) {
                     // if there is no meta key yet, we manually check for one
@@ -50,21 +56,18 @@ export default function Dashboard() {
                     }
                 }
 
-                updatedInvitations.push(invitation);
+                setInvitations(draft => {
+                    draft[index] = invitation;
+                });
             });
-
-            await Promise.all(sortAndHydrateInvitations);
-            if (!cancelled) setInvitations(updatedInvitations);
         };
 
-        if (matrixInvites.size > 0) hydrateInvitationMetaEvents();
+        if (livePendingMatrixInvites.size > 0) hydrateInvitationMetaEvents();
 
         return () => {
             cancelled = true;
         };
-        // excluding invitations from dependency array to circumvent endless loop
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [matrixClient, matrixInvites]);
+    }, [invitations, matrix, matrixClient, setInvitations, livePendingMatrixInvites]);
 
     // functions which interact with matrix server
     const declineMatrixInvite = async (roomId) => {
