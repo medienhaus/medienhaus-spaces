@@ -138,6 +138,7 @@ select[disabled] {
   border-color: var(--color-disabled);
 }
 
+/*
 button {
   text-transform: uppercase;
 }
@@ -164,6 +165,7 @@ input[type='submit'][disabled] {
   background-color: var(--color-disabled);
   border-color: var(--color-disabled);
 }
+*/
 
 input[id*='datalist'],
 input[type='color'],
