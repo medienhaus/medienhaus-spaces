@@ -7,7 +7,16 @@
   --color-foreground: rgb(0 0 0);
   --color-disabled: rgb(128 128 128);
   --color-selection: rgb(255 240 170);
+  /* red color value we used initially */
   --color-notification: rgb(255 96 96);
+  /* red color value taken from udk-berlin.de */
+  /*
+  --color-notification: rgb(231 0 54);
+  */
+  /* red color value which actually looks better */
+  /*
+  --color-notification: rgb(255 34 68);
+  */
   --color-background-alpha: hsl(0deg 0% 97%);
   --color-background-beta: hsl(0deg 0% 94%);
   --color-foreground-alpha: rgb(0 0 0 / 5%);
