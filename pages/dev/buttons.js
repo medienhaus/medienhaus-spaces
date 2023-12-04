@@ -38,7 +38,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;Button /&gt;</code>
                     <Button>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -48,7 +48,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;Button disabled /&gt;</code>
                     <Button disabled>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -58,7 +58,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonPrimary /&gt;</code>
                     <ButtonPrimary>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -68,7 +68,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonPrimary disabled /&gt;</code>
                     <ButtonPrimary disabled>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -78,7 +78,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonSecondary /&gt;</code>
                     <ButtonSecondary>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -88,7 +88,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonSecondary disabled /&gt;</code>
                     <ButtonSecondary disabled>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -98,7 +98,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonInlineText /&gt;</code>
                     <ButtonInlineText>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
@@ -108,7 +108,7 @@ export default function devButtons() {
                 <Container>
                     <code>&lt;ButtonInlineText disabled/&gt;</code>
                     <ButtonInlineText disabled>
-                        🧩 HAMBURGEFONTSIV
+                        🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
