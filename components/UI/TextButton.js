@@ -1,35 +1,15 @@
 import styled from 'styled-components';
 
-const TextButton = styled.button`
-  display: grid;
-  place-content: center;
+import ButtonInlineIcon from './ButtonInlineIcon';
+
+const TextButton = styled(ButtonInlineIcon)`
+  place-content: unset;
   width: unset;
-  min-width: 24px;
   height: unset;
-  padding: 0;
-  margin: 0 auto;
-  font: inherit;
-  color: var(--color-foreground);
-  cursor: pointer;
+  padding: unset;
+  margin: unset;
   background: none;
   border: none;
-  outline: inherit;
-
-  &:disabled {
-    color: var(--color-disabled);
-    background: none;
-
-    svg {
-      fill: var(--color-disabled);
-    }
-  }
-
-  &:hover {
-    svg {
-      fill: var(--color-notification);
-      transition: all 200ms ease;
-    }
-  }
 `;
 
 export default TextButton;
