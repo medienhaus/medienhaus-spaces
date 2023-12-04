@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
@@ -23,7 +24,7 @@ export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
             <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+            <ButtonPrimary type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</ButtonPrimary>
         </Form>
     );
 }

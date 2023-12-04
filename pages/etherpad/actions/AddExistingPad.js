@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
+import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -43,6 +44,6 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
                     { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl }) }
                 </ErrorMessage>
             ) }
-            <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
+            <ButtonPrimary type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</ButtonPrimary>
         </Form>);
 }
