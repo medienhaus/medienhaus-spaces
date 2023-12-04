@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
+import ButtonPrimary from './ButtonPrimary';
+// import ButtonSecondary from './ButtonSecondary';
+
 const PasswordInputButtonContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr min-content;
@@ -10,15 +13,6 @@ const PasswordInputButtonContainer = styled.div`
   /* it might work, but i really don’t like it */
   & > * {
     margin-top: unset;
-  }
-
-  > button {
-    &:hover {
-      color: rgb(255 255 255);
-      background-color: var(--color-notification);
-      border-color: var(--color-notification);
-      transition: all 200ms ease;
-    }
   }
 `;
 
@@ -31,6 +25,6 @@ export default function PasswordInputButton({ placeholder, value, onChange, disa
             value={value}
             onChange={onChange}
         />
-        <button type="submit" disabled={disabled}>{ label || t('Login') }</button>
+        <ButtonPrimary type="submit" disabled={disabled}>{ label || t('Login') }</ButtonPrimary>
     </PasswordInputButtonContainer>;
 }
