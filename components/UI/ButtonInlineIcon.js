@@ -21,6 +21,9 @@ const ButtonInlineIcon = styled(Button)`
   */
 
   &:not(:disabled):hover {
+    color: var(--color-notification);
+    transition: all 200ms ease;
+
     svg {
       fill: var(--color-notification) !important;
       transition: all 200ms ease;
