@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import ButtonPrimary from './ButtonPrimary';
-// import ButtonSecondary from './ButtonSecondary';
 
 const PasswordInputButtonContainer = styled.div`
   display: grid;
@@ -10,10 +9,22 @@ const PasswordInputButtonContainer = styled.div`
   grid-gap: 0 calc(var(--margin) / var(--line-height));
   align-items: start;
 
-  /* it might work, but i really don’t like it */
-  & > * {
-    margin-top: unset;
+  /* make button child element the same height as input child element *
+   * NOTE: input height is styled globally via /assets/_globalCss.css */
+  > * {
+    height: 100%;
   }
+
+  /* NOTE: once input elements are no longer styled globally, we could *
+   * set the container height, and change the selector as done below … *
+
+  height: calc(1rem * var(--line-height) * 4);
+
+  > input,
+  > button {
+    height: 100%;
+  }
+  */
 `;
 
 export default function PasswordInputButton({ placeholder, value, onChange, disabled, label }) {
