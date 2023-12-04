@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
+import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -46,7 +47,7 @@ const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parse
             <input type="text" placeholder={t('Link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
             { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
 
-            <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add sketch') }</button>
+            <ButtonPrimary type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add sketch') }</ButtonPrimary>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>);
 };

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../../lib/Auth';
+import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -39,7 +40,7 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
             <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
+            <ButtonPrimary type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</ButtonPrimary>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>);
 };
