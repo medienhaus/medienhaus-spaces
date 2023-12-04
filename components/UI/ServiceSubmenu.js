@@ -13,7 +13,9 @@ const Header = styled.header`
 `;
 
 const ToggleButton = styled(TextButton)`
+  /*
   height: calc(var(--margin) * var(--line-height));
+  */
 `;
 
 const Submenu = styled.aside`
