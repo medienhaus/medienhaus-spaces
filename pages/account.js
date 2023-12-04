@@ -7,6 +7,8 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
+import ButtonPrimary from '../components/UI/ButtonPrimary';
+import ButtonSecondary from '../components/UI/ButtonSecondary';
 import DefaultLayout from '../components/layouts/default';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
@@ -56,34 +58,6 @@ const AvatarButtonContainer = styled.div`
   grid-auto-flow: row;
   grid-gap: var(--margin);
   align-content: start;
-
-  /* NOTE: copied from components/UI/ConfirmCancelButtons.js */
-
-  > button.primary {
-    &:hover {
-      color: rgb(255 255 255);
-      background-color: var(--color-notification);
-      border-color: var(--color-notification);
-      transition: all 200ms ease;
-    }
-  }
-
-  > button.secondary {
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-
-    &:disabled {
-      color: var(--color-disabled);
-      background-color: var(--color-background);
-    }
-
-    &:hover {
-      color: var(--color-notification);
-      background-color: var(--color-background);
-      border-color: var(--color-notification);
-      transition: all 200ms ease;
-    }
-  }
 `;
 
 const ProfileSection = styled.form`
@@ -265,9 +239,9 @@ export default function Account() {
                     ) }
                     <AvatarButtonContainer>
                         <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                        <button type="button" className="primary" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</button>
+                        <ButtonPrimary type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</ButtonPrimary>
                         { profileInfo.avatar_url && (
-                            <button type="button" className="secondary" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
+                            <ButtonSecondary type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</ButtonSecondary>
                         ) }
                     </AvatarButtonContainer>
                 </AvatarSection>
