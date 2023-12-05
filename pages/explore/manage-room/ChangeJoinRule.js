@@ -28,13 +28,15 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
     const handleChangeJoinRule = async (e) => {
         e.preventDefault();
         setChangingJoinRule(true);
-        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', {}, { join_rule: joinRule })
+        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', { join_rule: joinRule })
             .catch((error) => {
                 setErrorMessage(error.data?.error);
                 setJoinRule(currentJoinRule);
             });
         setChangingJoinRule(false);
     };
+
+    console.log(joinRule);
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
