@@ -16,7 +16,7 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
     const livePendingMatrixInvites = matrix.invites;
-    const pendingKnocks = matrix.knockedMembers;
+    const pendingKnocks = matrix.knockingMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     // We are going to intentionally store a copy of every invitation in the following array, that we're going to append
