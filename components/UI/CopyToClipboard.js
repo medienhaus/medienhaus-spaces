@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, ClipboardIcon } from '@remixicons/react/line';
 
+import ButtonInline from './ButtonInline';
 import Icon from './Icon';
-import TextButton from './TextButton';
 
 const CopyToClipboard = ({ content, title }) => {
     const [wasContentCopied, setWasContentCopied] = useState(false);
@@ -17,7 +17,7 @@ const CopyToClipboard = ({ content, title }) => {
     };
 
     return (
-        <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
+        <ButtonInline title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
             { wasContentCopied ?
                 <Icon>
                     <CheckIcon />
@@ -27,7 +27,7 @@ const CopyToClipboard = ({ content, title }) => {
                     <ClipboardIcon />
                 </Icon>
             }
-        </TextButton>
+        </ButtonInline>
     );
 };
 
