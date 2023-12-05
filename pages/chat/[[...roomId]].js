@@ -8,7 +8,6 @@ import Link from 'next/link';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
-import { breakpoints } from '../../components/_breakpoints';
 
 const sortRooms = function(room) {
     return [
@@ -159,11 +158,7 @@ export default function Chat() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-    // filtering invites for all invitations without a dev.medienhaus.meta event.
-    // for now normal chat rooms don't have this event.
-    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
-        .filter(invite => !invite.meta);
+
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
@@ -178,15 +173,6 @@ export default function Chat() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>/chat</h2>
-                { invites.length > 0 && (
-                    <>
-                        <details open>
-                            <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Invites') }</h3></summary>
-                            { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
-                        </details>
-                        <br />
-                    </>
-                ) }
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
                     { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
