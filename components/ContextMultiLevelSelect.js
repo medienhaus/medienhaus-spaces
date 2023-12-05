@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { useAuth } from '../lib/Auth';
+import Select from './UI/Select';
 
 const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics }) => {
     const auth = useAuth();
@@ -73,7 +74,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
     }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
     if (isLoading) {
-        return <select key="loading" disabled><option>loading...</option></select>;
+        return <Select key="loading" disabled><option>loading...</option></Select>;
     }
 
     if (childContexts.length < 1) {
@@ -81,7 +82,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
     }
 
     return (
-        <select
+        <Select
             value={selectedContextRoomId}
             onChange={(e) => {
                 onSelect(parentSpaceRoomId, e.target.value);
@@ -101,7 +102,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
                     { showTopics && room.topic && (` (${room.topic})`) }
                 </option>
             )) }
-        </select>
+        </Select>
     );
 };
 
