@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
