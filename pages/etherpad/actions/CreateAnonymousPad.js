@@ -5,6 +5,7 @@ import getConfig from 'next/config';
 
 import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import Form from '../../../components/UI/Form';
+import Input from '../../../components/UI/Input';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path as etherpadPath } from '../../../lib/Etherpad';
 
@@ -38,7 +39,7 @@ export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
-            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <ButtonPrimary type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</ButtonPrimary>
         </Form>
     );

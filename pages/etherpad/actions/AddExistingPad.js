@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import Form from '../../../components/UI/Form';
+import Input from '../../../components/UI/Input';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path as etherpadPath } from '../../../lib/Etherpad';
@@ -37,8 +38,8 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
-            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
+            <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <Input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
             { !validLink && padLink && (
                 <ErrorMessage>
                     { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl }) }

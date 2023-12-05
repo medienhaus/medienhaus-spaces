@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import Form from '../../../components/UI/Form';
+import Input from '../../../components/UI/Input';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
 
@@ -25,9 +26,9 @@ export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
     };
 
     return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-        <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-        <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+        <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+        <Input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
         <ButtonPrimary type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</ButtonPrimary>
     </Form>);
 }
