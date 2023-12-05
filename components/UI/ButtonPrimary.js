@@ -11,17 +11,6 @@ const ButtonPrimary = styled(Button)`
     fill: var(--color-background) !important;
   }
 
-  /*
-  &:disabled {
-    color: var(--color-disabled);
-    background-color: var(--color-background);
-
-    svg {
-      fill: var(--color-disabled) !important;
-    }
-  }
-  */
-
   &:not(:disabled):hover {
     color: rgb(255 255 255);
     background-color: var(--color-notification);

@@ -11,17 +11,6 @@ const ButtonSecondary = styled(Button)`
     fill: var(--color-foreground) !important;
   }
 
-  /*
-  &:disabled {
-    color: var(--color-disabled);
-    background-color: var(--color-background);
-
-    svg {
-      fill: var(--color-disabled) !important;
-    }
-  }
-  */
-
   &:not(:disabled):hover {
     color: var(--color-notification);
     background-color: var(--color-background);
