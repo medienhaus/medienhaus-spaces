@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
+import KnockCard from './KnockCard';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
@@ -15,6 +16,7 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
     const livePendingMatrixInvites = matrix.invites;
+    const pendingKnocks = matrix.knockedMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     // We are going to intentionally store a copy of every invitation in the following array, that we're going to append
@@ -118,6 +120,29 @@ export default function Dashboard() {
                     }) }
                 </>
             }
+
+            { pendingKnocks.size > 0 &&
+                <>
+                    <h3>{ t('Accept Knocks') }</h3>
+                    <br />
+                    { Array.from(pendingKnocks.values()).map((knock, index) => {
+                        return (
+                            <div key={knock.roomId}>
+                                { index > 0 && <><br /><hr /><br /></> }
+                                <KnockCard
+                                    roomId={knock.roomId}
+                                    roomName={knock.roomName}
+                                    user={knock.name}
+                                    userId={knock.userId}
+                                    acceptMatrixInvite={acceptMatrixInvite}
+                                    declineMatrixInvite={declineMatrixInvite}
+                                />
+                            </div>
+                        );
+                    }) }
+                </>
+            }
+
         </DefaultLayout.LameColumn>
     );
 }
