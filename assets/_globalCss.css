@@ -103,6 +103,7 @@ hr {
   border-radius: unset;
 }
 
+/*
 select {
   width: 100%;
   height: calc(var(--margin) * 3);
@@ -118,7 +119,7 @@ select {
   background-size: var(--margin);
   border-color: var(--color-foreground);
   border-style: solid;
-  border-width: calc(var(--margin) * 0.2);
+  border-width: var(--border-width);
   border-radius: var(--border-radius);
   appearance: none;
 }
@@ -138,6 +139,7 @@ select[disabled] {
   cursor: not-allowed;
   border-color: var(--color-disabled);
 }
+*/
 
 /*
 button {
@@ -155,7 +157,7 @@ input[type='submit'] {
   background-color: var(--color-foreground);
   border-color: var(--color-foreground);
   border-style: solid;
-  border-width: calc(var(--margin) * 0.2);
+  border-width: var(--border-width);
   border-radius: var(--border-radius);
   appearance: none;
 }
@@ -168,6 +170,7 @@ input[type='submit'][disabled] {
 }
 */
 
+/*
 input[id*='datalist'],
 input[type='color'],
 input[type='date'],
@@ -187,7 +190,7 @@ input[type='url'] {
   background-color: var(--color-background);
   border-color: var(--color-foreground);
   border-style: solid;
-  border-width: calc(var(--margin) * 0.2);
+  border-width: var(--border-width);
   border-radius: var(--border-radius);
   appearance: none;
 }
@@ -206,3 +209,4 @@ input[type='password'][disabled] {
   cursor: not-allowed;
   border-color: var(--color-disabled);
 }
+*/
