@@ -9,6 +9,7 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { waitFor } from '../../../lib/Utils';
 
 const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
     const auth = useAuth();
@@ -27,11 +28,13 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
         e.preventDefault();
         //first of all some content checking otherwise displaying custom error messages
         setIsLoading(true);
+
         if (!name) {
             setCreateNewContextErrorMessage('name not set');
 
             return;
         }
+
         if (!template) {
             setCreateNewContextErrorMessage('template not selected');
 
@@ -47,6 +50,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
         if (!powerLevels) {
             setPowerLevels('default');
         }
+
         // create the new context space
         const createNewSubContext = await matrix.createRoom(
             name,
@@ -60,8 +64,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
             'world_readable',
             'public_chat').catch(async (err) => {
             setCreateNewContextErrorMessage(err.message);
-            await new Promise(r => setTimeout(r, 3000));
-            setCreateNewContextErrorMessage('');
+            await waitFor(() => setCreateNewContextErrorMessage(''));
 
             return;
         });
@@ -70,13 +73,13 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
         if (createNewSubContext) {
             await auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
-                await new Promise(r => setTimeout(r, 3000));
-                setCreateNewContextErrorMessage('');
+                await waitFor(() => setCreateNewContextErrorMessage(''));
 
                 return;
             },
             );
         }
+
         await callApiAndAddToObject(null, currentId);
         setName('');
         setTopic('');

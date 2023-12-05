@@ -4,6 +4,7 @@ import { CheckIcon, ClipboardIcon } from '@remixicons/react/line';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
+import { waitFor } from '../../lib/Utils';
 
 const CopyToClipboard = ({ content, title }) => {
     const [wasContentCopied, setWasContentCopied] = useState(false);
@@ -12,8 +13,7 @@ const CopyToClipboard = ({ content, title }) => {
     const copyToClipboard = async () => {
         navigator.clipboard.writeText(content);
         setWasContentCopied(true);
-        await new Promise(r => setTimeout(r, 2000));
-        setWasContentCopied(false);
+        await waitFor(() => setWasContentCopied(false));
     };
 
     return (

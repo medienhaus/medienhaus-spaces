@@ -25,6 +25,7 @@ import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
 import Icon from '../Icon';
+import { waitFor } from '../../../lib/Utils';
 
 const ActionWrapper = styled.section`
   display: grid;
@@ -102,10 +103,10 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
 
         // if everything is okay, we let the user know and exit the view.
         successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
-        await new Promise(() => setTimeout(() => {
+        await waitFor(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
-        }, 3000));
+        }, 3000);
     };
 
     return <ActionWrapper>
