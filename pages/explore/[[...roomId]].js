@@ -209,6 +209,7 @@ export default function Explore() {
                         roomId={roomId}
                         manageContextActionToggle={manageContextActionToggle}
                         myPowerLevel={myPowerLevel}
+                        isMember={!!matrix.spaces.get(router.query.roomId[0])}
                         setManageContextActionToggle={setManageContextActionToggle}
                         isInviteUsersOpen={isInviteUsersOpen}
                         joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
