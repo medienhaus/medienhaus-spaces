@@ -11,7 +11,7 @@ const ButtonInline = styled(Button)`
   margin: unset;
   color: var(--color-foreground);
   background: unset;
-  border: unset;
+  border: none;
 
   svg {
     fill: var(--color-foreground) !important;
