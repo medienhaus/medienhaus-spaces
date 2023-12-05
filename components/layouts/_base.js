@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
+import ButtonInline from '../UI/ButtonInline';
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
@@ -23,8 +24,8 @@ const Wrapper = styled.div`
     padding: unset;
   }
 
-  // This will add a bottom margin to all page-level headings (h2) that is in line with the
-  // whitespace between the logo and the first entry of the navigation.
+  /* This will add a bottom margin to all page-level headings (h2) that is in line *
+   * with the whitespace between the logo and the first entry of the navigation. */
   & > main h2:first-child {
     margin-bottom: var(--margin);
 
@@ -53,14 +54,7 @@ const Header = styled.header`
   }
 `;
 
-const ToggleButton = styled.button`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
-  height: calc(var(--margin) * var(--line-height));
-  padding: unset;
-  background-color: unset;
-  border: unset;
-
+const ToggleButton = styled(ButtonInline)`
   @media ${breakpoints.tabletAndAbove} {
     display: none;
   }
