@@ -6,28 +6,20 @@ import { filter, map } from 'lodash';
 import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
-import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
+import DefaultLayout from '../components/layouts/default';
 import ButtonPrimary from '../components/UI/ButtonPrimary';
 import ButtonSecondary from '../components/UI/ButtonSecondary';
-import DefaultLayout from '../components/layouts/default';
+import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
+import Form from '../components/UI/Form';
+import Input from '../components/UI/Input';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
-  /* TODO: these kind of layout spacings probably need to
-   * be refined across all pages once merged into main */
-
   > * + * {
     margin-top: calc(var(--margin) * var(--line-height) * 2);
   }
 
   > * > * + * {
     margin-top: calc(var(--margin) * var(--line-height));
-  }
-
-  /* NOTE: selector for the email confirmation page form */
-  form {
-    > * + * {
-      margin-top: var(--margin);
-    }
   }
 `;
 
@@ -56,14 +48,8 @@ const Avatar = styled.img`
 const AvatarButtonContainer = styled.div`
   display: grid;
   grid-auto-flow: row;
-  grid-gap: var(--margin);
+  grid-gap: calc(var(--margin) / 1.5);
   align-content: start;
-`;
-
-const ProfileSection = styled.form`
-  > * + * {
-    margin-top: var(--margin);
-  }
 `;
 
 export default function Account() {
@@ -204,10 +190,10 @@ export default function Account() {
                 <div>
                     <h2>/account</h2>
                     <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
-                    <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
-                        <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <Form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
+                        <Input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
                         <ConfirmCancelButtons disabled={isSavingChanges} />
-                    </form>
+                    </Form>
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
                 </div>
             </AccountSection>
@@ -238,7 +224,7 @@ export default function Account() {
                         <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                     ) }
                     <AvatarButtonContainer>
-                        <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
+                        <Input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
                         <ButtonPrimary type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</ButtonPrimary>
                         { profileInfo.avatar_url && (
                             <ButtonSecondary type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</ButtonSecondary>
@@ -248,8 +234,8 @@ export default function Account() {
             </div>
             <div>
                 <h3>{ t('Display Name & Email Addresses') }</h3>
-                <ProfileSection onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
-                    <input
+                <Form onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
+                    <Input
                         type="text"
                         value={inputDisplayname}
                         disabled={isSavingChanges}
@@ -262,10 +248,10 @@ export default function Account() {
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
                     { emails.map((email, index) => (
-                        <input key={email} type="email" value={email} disabled />
+                        <Input key={email} type="email" value={email} disabled />
                     )) }
                     { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
-                        <input
+                        <Input
                             type="email"
                             value={inputNewEmail}
                             disabled={isSavingChanges}
@@ -279,7 +265,7 @@ export default function Account() {
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
-                </ProfileSection>
+                </Form>
             </div>
         </AccountSection>
     );
