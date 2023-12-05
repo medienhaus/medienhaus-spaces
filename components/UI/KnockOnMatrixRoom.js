@@ -14,16 +14,29 @@ const KnockOnMatrixRoom = ({ roomName, roomId }) => {
     const [wasSuccessful, setWasSuccessful] = useState(false);
     const { t } = useTranslation();
     const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     const requestAccess = async () => {
         setIsKnocking(true);
         const knock = await auth.getAuthenticationProvider('matrix').knockOnRoom(roomId)
             .catch((error) => {
+                if (error.data.error === 'You are already invited to this room') {
+                    // if the user is already invited, we don't want to show an error message and instead join the room
+                    logger.debug('User is already invited to room, accepting invite instead');
+                    matrixClient.joinRoom(roomId)
+                        .catch((error) => {
+                            alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
+                        });
+
+                    return;
+                }
+
                 logger.error('Failed to knock on room:', error);
-                alert(t('The following error occurred: {{error}}', { error: error.message }));
+                alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
             }).finally(() => {
                 setIsKnocking(false);
             });
+        if (!knock) return;
 
         if (knock.room_id) {
             // if call was successful, we want to show the checkmark for a short time so users know their request was sent
