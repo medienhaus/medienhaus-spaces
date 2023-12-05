@@ -50,7 +50,7 @@ export default function KnockCard({ roomId, roomName, user, userId }) {
                 <TextParagraph>
                     <Trans
                         t={t}
-                        i18nKey="invitationCard"
+                        i18nKey="knockCard"
                         defaults="<bold>{{user}}</bold> wants to join <bold>{{name}}</bold>."
                         values={{ user: user, name: roomName }}
                         components={{ bold: <strong /> }}
