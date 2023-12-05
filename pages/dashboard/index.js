@@ -15,86 +15,83 @@ export default function Dashboard() {
 
     const auth = useAuth();
     const matrix = useMatrix();
-    const livePendingMatrixInvites = matrix.invites;
     const pendingKnocks = matrix.knockingMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
-    // We are going to intentionally store a copy of every invitation in the following array, that we're going to append
-    // to only, but never remove any entries. This is in order to keep a list of all handled invitations while looking
-    // at this page. Only when leaving the page and returning back to it, we start from scratch.
-    const [invitations, setInvitations] = useImmer([]);
+    // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
+    // But we will never remove any entries. This is in order to keep a list of all invitations handled while looking
+    // at this page. Only when leaving the page and returning back to it, we start with an empty map from scratch.
+    const [invitations, setInvitations] = useImmer(new Map());
 
     useEffect(() => {
         let cancelled = false;
 
-        const hydrateInvitationMetaEvents = async () => {
-            // fetch information about pending invitations
-            // i.e. who sent it, what are we being invited to (service, chat)
-            Array.from(livePendingMatrixInvites.values()).map(async (invitationOriginal, index) => {
-                if (cancelled) return;
+        // fetch information about pending invitations
+        // i.e. who sent it, what are we being invited to (service, chat)
+        const hydrateInternalState = async () => {
+            for (const roomId of matrix.invites) {
+                if (cancelled) continue;
 
-                const invitation = { ...invitationOriginal };
-                // if the invitation is already in the invitations object, we don't need to do anything
-                if (_.some(invitations, (invite) => _.values(invite).includes(invitation.roomId))) return;
+                const room = matrixClient.getRoom(roomId);
+                if (!room) continue;
 
-                // otherwise we need to fetch the room object to get the inviter and the meta event
-                const room = await matrixClient.getRoom(invitation.roomId);
+                // If we're displaying this invitation already, we don't need to do anything
+                if (invitations.has(roomId)) continue;
 
-                // store join rule for each invite
-                invitation.joinRule = room.getJoinRule();
+                // Make sure we have the meta event ready
+                const metaEvent = await matrix.getMetaEvent(roomId);
 
-                // if the room is a direct message, dmInviter will return the user_id, else undefined
-                const dmInviter = room.getDMInviter();
+                // If this is an invitation for a direct message, .getDMInviter() will return the user_id ...
+                let inviter = room.getDMInviter();
+                // ... otherwise https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
+                if (!inviter) inviter = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
 
-                if (dmInviter) {
-                    invitation.dm = true;
-                    invitation.inviter = matrixClient.getUser(dmInviter);
-                } else {
-                // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
-                    const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
-                    invitation.inviter = matrixClient.getUser(inviterName);
+                // Avatar
+                let avatar;
+
+                if (room.getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop')) {
+                    avatar = room.getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop');
+                } else if (room.getAvatarFallbackMember() && room.getAvatarFallbackMember().getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop')) {
+                    avatar = room.getAvatarFallbackMember().getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop');
                 }
 
-                if (cancelled) return;
-
-                if (!invitation.meta) {
-                    // if there is no meta key yet, we manually check for one
-                    const metaEvent = await matrix.hydrateMetaEvent(invitation.roomId)
-                        .catch(() => { });
-                    invitation.meta = metaEvent;
-
-                    if (metaEvent) {
-                        if (invitation.meta.type !== 'context') {
-                            invitation.service = getConfig().publicRuntimeConfig.authProviders[invitation.meta.template].path || invitation.meta.template;
-                        }
+                // Service & path
+                const service = (metaEvent && metaEvent.type !== 'context') && metaEvent.template;
+                const path = (() => {
+                    if (service) {
+                        // This is probably an invitation for an application service (such as Etherpad, Spacedeck, ...)
+                        // @TODO: This is nasty... let's see if we can do something like getAuthenticationProvider('service')?.getPath()
+                        return getConfig().publicRuntimeConfig.authProviders[service]?.path || `/${service}`;
+                    } else if (metaEvent && metaEvent.type === 'context') {
+                        // "Contexts" are Matrix space hierarchy elements which we manage via /explore
+                        return '/explore';
                     }
-                }
 
-                setInvitations(draft => {
-                    draft[index] = invitation;
+                    // ... otherwise /chat is our default fallback
+                    return '/chat';
+                })();
+
+                setInvitations(map => {
+                    map.set(roomId, {
+                        isDm: !!room.getDMInviter(),
+                        inviter: matrixClient.getUser(inviter),
+                        joinRule: room.getJoinRule(),
+                        name: room.name,
+                        avatar,
+                        service,
+                        path,
+                        roomId,
+                    });
                 });
-            });
+            }
         };
 
-        if (livePendingMatrixInvites.size > 0) hydrateInvitationMetaEvents();
+        if (matrix.invites.size > 0) hydrateInternalState();
 
         return () => {
             cancelled = true;
         };
-    }, [invitations, matrix, matrixClient, setInvitations, livePendingMatrixInvites]);
-
-    // functions which interact with matrix server
-    const declineMatrixInvite = async (roomId) => {
-        await matrix.leaveRoom(roomId);
-    };
-
-    const acceptMatrixInvite = async (roomId, path) => {
-        await matrixClient.joinRoom(roomId).catch(() => {
-            alert(t('Something went wrong! Please try again.'));
-        });
-
-        return `${path}/${roomId}`;
-    };
+    }, [matrixClient, matrix, invitations, setInvitations]);
 
     return (
         <DefaultLayout.LameColumn>
@@ -104,16 +101,19 @@ export default function Dashboard() {
                 <>
                     <h3>{ t('Invitations') }</h3>
                     <br />
-                    { _.map(invitations, (invite, index) => {
+                    { Array.from(invitations.values()).map((invitation, index) => {
                         return (
-                            <div key={invite.roomId}>
+                            <div key={invitation.roomId}>
                                 { index > 0 && <><br /><hr /><br /></> }
                                 <InvitationCard
-                                    path={invite.meta ? invite.service || '/explore' : '/chat'}
-                                    invite={invite}
-                                    service={invite.meta?.template}
-                                    acceptMatrixInvite={acceptMatrixInvite}
-                                    declineMatrixInvite={declineMatrixInvite}
+                                    path={invitation.path}
+                                    roomId={invitation.roomId}
+                                    roomName={invitation.name}
+                                    inviterUsername={invitation.inviter?.displayName}
+                                    isDm={invitation.isDm}
+                                    joinRule={invitation.joinRule}
+                                    service={invitation.service}
+                                    avatar={invitation.avatar}
                                 />
                             </div>
                         );

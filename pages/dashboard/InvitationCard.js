@@ -7,22 +7,26 @@ import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--margin);
+`;
+
+const Avatar = styled.img`
+  display: block;
+  flex-shrink: 0;
+  width: 2.5ch;
+  height: 2.5ch;
+  margin-right: var(--margin);
+  overflow: hidden;
+  background: var(--color-foreground);
+  border-radius: 50%;
+`;
+
 const TextParagraph = styled.p`
   margin: var(--margin) 0;
 `;
-
-/**
- * Callback definitions
- */
-/**
- * @callback acceptMatrixInvite
- * @param {string} roomId
- * @param {string} path
- */
-/**
- * @callback declineMatrixInvite
- * @param {string} roomId
- */
 
 /**
  * Displays one invitation for a matrix room/space and gives users the option to accept or decline them.
@@ -30,44 +34,38 @@ const TextParagraph = styled.p`
  * @param {Object} invite — object of the room the user was invited to
  * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
  * @param {String} service — name of the service
- * @param {acceptMatrixInvite} acceptMatrixInvite
- * @param {declineMatrixInvite} declineMatrixInvite
  *
  * @returns {React.ReactNode}
  */
-export default function InvitationCard({ invite, path, service, acceptMatrixInvite, declineMatrixInvite }) {
+export default function InvitationCard({ roomId, roomName, inviterUsername, avatar, isDm, joinRule, path, service }) {
+    const { t } = useTranslation('dashboard');
+
     const auth = useAuth();
     const matrix = useMatrix();
-    const { t } = useTranslation('dashboard');
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     const [isAcceptingInvite, setIsAcceptingInvite] = useState(false);
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
-    const [link, setLink] = useState();
+    const [link, setLink] = useState('');
     const [wasHandled, setWasHandled] = useState(false);
 
-    // we want to differentiate between private (invite, knock, etc.) and
-    // public rooms for displaying this information in the invitation card
-    const joinRule = invite.joinRule === 'public' ? t('public') : t('private');
-
-    const handleDecline = async (e, roomId) => {
+    const handleDecline = async (e) => {
         e.preventDefault();
         setIsDecliningInvite(true);
-        await declineMatrixInvite(roomId);
+        await matrixClient.leave(roomId);
         setWasHandled(true);
         setIsDecliningInvite(false);
     };
 
-    const handleAccept = async (e, roomId) => {
+    const handleAccept = async (e) => {
         e.preventDefault();
         setIsAcceptingInvite(true);
-        const forwardingUrl = await acceptMatrixInvite(roomId, path);
-        setIsAcceptingInvite(false);
 
-        if (!forwardingUrl) {
+        await matrixClient.joinRoom(roomId).catch(() => {
             alert(t('Something went wrong! Please try again.'));
+        });
 
-            return;
-        }
+        setIsAcceptingInvite(false);
 
         // If this invitation was for a service, e.g. Spacedeck, add the item to the user's "personal" Applications
         // sub-space for the given service.
@@ -75,40 +73,40 @@ export default function InvitationCard({ invite, path, service, acceptMatrixInvi
             await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces[service], roomId).catch(() => {});
         }
 
-        setLink(forwardingUrl);
+        setLink(`${path}/${roomId}`);
         setWasHandled(true);
     };
 
     return (
         <form
-            onSubmit={(e) => handleAccept(e, invite.roomId)}
-            onReset={(e) => handleDecline(e, invite.roomId)}
+            onSubmit={handleAccept}
+            onReset={handleDecline}
         >
-            <h4>
-                { invite.dm ?
-                    <Trans
-                        t={t}
-                        i18nKey="invitationTitleDM"
-                        defaults="<italic>Message</italic> from {{ name }}"
-                        values={{ name: invite.name }}
-                        components={{ italic: <em /> }}
-                    />
-                    :
-                    <Trans
-                        t={t}
-                        i18nKey="invitationTitleRoom"
-                        defaults="{{ name }} <italic>({{ join_rule }})</italic>"
-                        values={{ name: invite.name, join_rule: joinRule }}
-                        components={{ italic: <em /> }}
-                    />
-                }
-            </h4>
+            <FlexContainer>
+                <Avatar src={avatar} alt={roomName} />
+                <h4>
+                    {
+                        // Invites for direct messages
+                        isDm ? (t('Direct Message')) : (
+                            // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
+                            service ? roomName : (
+                                // All other invitations
+                                <>
+                                    { roomName }
+                                    &nbsp;
+                                    <em>({ (joinRule === 'public' ? t('public') : t('private')) })</em>
+                                </>
+                            )
+                        )
+                    }
+                </h4>
+            </FlexContainer>
             { wasHandled ? (
                 <TextParagraph>
                     { link ? (
                         // Invitation accepted
-                        <Trans t={t} i18nKey="invitationCardHandled">
-                            You can now view <Link href={link}><strong>{ invite.name }</strong></Link>.
+                        <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
+                            You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
                         </Trans>
                     ) : (
                         // Invitation rejected
@@ -122,18 +120,20 @@ export default function InvitationCard({ invite, path, service, acceptMatrixInvi
                         <Trans
                             t={t}
                             i18nKey="invitationCard"
-                            defaults="<bold>{{name}}</bold> wants to <bold>{{service}}</bold> with you."
-                            values={{ name: invite.inviter?.displayName, service: path }}
+                            defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
+                            values={{ username: inviterUsername, service: path }}
                             components={{ bold: <strong /> }}
                         />
                     </TextParagraph>
-                    <ConfirmCancelButtons
-                        small
-                        disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                        cancelLabel={t('Decline')}
-                        confirmLabel={t('Accept')}
-                    />
                 </>
+            ) }
+            { !wasHandled && (
+                <ConfirmCancelButtons
+                    small
+                    disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
+                    cancelLabel={t('Decline')}
+                    confirmLabel={t('Accept')}
+                />
             ) }
         </form>
     );
