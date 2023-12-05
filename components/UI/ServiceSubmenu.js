@@ -6,6 +6,7 @@ import { MenuAddIcon } from '@remixicons/react/line';
 
 import ButtonInline from './ButtonInline';
 import Icon from './Icon';
+import Select from './Select';
 
 const Header = styled.header`
   display: grid;
@@ -27,6 +28,7 @@ const Submenu = styled.aside`
     border-bottom: 1px solid transparent;
   }
 
+  /*
   button {
     padding: calc(var(--margin) / 1.5);
     text-align: center;
@@ -35,6 +37,7 @@ const Submenu = styled.aside`
       margin-top: calc(var(--margin) / 1.5);
     }
   }
+  */
 `;
 
 export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
@@ -68,7 +71,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
             { isOpen && (
                 <Submenu>
                     { subheadline && <h3>{ subheadline }</h3> }
-                    <select
+                    <Select
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                     >
@@ -76,7 +79,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                         { items.map(({ value, label }) => (
                             <option key={value} value={value}>{ label }</option>
                         )) }
-                    </select>
+                    </Select>
                     { value && ActionComponent }
                 </Submenu>
             ) }
