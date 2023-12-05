@@ -7,11 +7,11 @@ import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import ButtonInline from '../../components/UI/ButtonInline';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Icon from '../../components/UI/Icon';
 import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import TextButton from '../../components/UI/TextButton';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -315,7 +315,7 @@ export default function Etherpad() {
                                 inviteUsersOpen={isInviteUsersOpen} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')}
                                 content={matrix.roomContents.get(roomId)?.body} />
-                            <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')}
+                            <ButtonInline title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')}
                                 onClick={deletePad}>
                                 { isDeletingPad ?
                                     <LoadingSpinnerInline />
@@ -324,7 +324,7 @@ export default function Etherpad() {
                                         <DeleteBinIcon />
                                     </Icon>
                                 }
-                            </TextButton>
+                            </ButtonInline>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
                     { isInviteUsersOpen ?
