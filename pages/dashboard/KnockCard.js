@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
 import Form from '../../components/UI/Form';
 
 const TextParagraph = styled.p`
@@ -12,32 +11,16 @@ const TextParagraph = styled.p`
 `;
 
 /**
- * Callback definitions
- */
-/**
- * @callback acceptMatrixInvite
- * @param {string} roomId
- * @param {string} path
- */
-/**
- * @callback declineMatrixInvite
- * @param {string} roomId
- */
-
-/**
- * Displays one knock (request) for a matrix room/space and gives users the option to accept or decline them.
+ * A React component that represents a card for a knock request in a Matrix room.
  *
- * @param {Object} invite — object of the room the user was invited to
- * @param {String} path — name of the Application (i.e. the 'path' variable in the config)
- * @param {String} service — name of the service
- * @param {acceptMatrixInvite} acceptMatrixInvite
- * @param {declineMatrixInvite} declineMatrixInvite
- *
- * @returns {React.ReactNode}
+ * @param {string} roomId - The ID of the room where the knock request was made.
+ * @param {string} roomName - The name of the room where the knock request was made.
+ * @param {string} user - The name of the user who made the knock request.
+ * @param {string} userId - The ID of the user who made the knock request.
+ * @returns {JSX.Element} A form that allows the user to accept or decline the knock request.
  */
-export default function KnockCard({ roomId, roomName, user, userId, acceptMatrixInvite, declineMatrixInvite }) {
+export default function KnockCard({ roomId, roomName, user, userId }) {
     const auth = useAuth();
-    const matrix = useMatrix();
     const { t } = useTranslation('dashboard');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
