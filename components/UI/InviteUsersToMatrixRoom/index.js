@@ -20,10 +20,10 @@ import styled from 'styled-components';
 import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';
+import ButtonInline from '../ButtonInline';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
-import TextButton from '../TextButton';
 import Icon from '../Icon';
 
 const ActionWrapper = styled.section`
@@ -141,7 +141,7 @@ const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
     const { t } = useTranslation('invitationModal');
 
     return (
-        <TextButton
+        <ButtonInline
             onClick={onClick}
             title={t('Invite users to {{name}}', { name: name })}>
             { inviteUsersOpen ?
@@ -153,7 +153,7 @@ const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
                     <UserAddIcon />
                 </Icon>
             }
-        </TextButton>
+        </ButtonInline>
     );
 };
 
