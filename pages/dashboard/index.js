@@ -54,8 +54,20 @@ export default function Dashboard() {
                 }
 
                 // Service & path
-                const service = (metaEvent && metaEvent.type !== 'context') && (getConfig().publicRuntimeConfig.authProviders[metaEvent.template].path || '/' + metaEvent.template);
-                const path = metaEvent ? (service || '/explore') : '/chat';
+                const service = (metaEvent && metaEvent.type !== 'context') && metaEvent.template;
+                const path = (() => {
+                    if (service) {
+                        // This is probably an invitation for an application service (such as Etherpad, Spacedeck, ...)
+                        // @TODO: This is nasty... let's see if we can do something like getAuthenticationProvider('service')?.getPath()
+                        return getConfig().publicRuntimeConfig.authProviders[service]?.path || `/${service}`;
+                    } else if (metaEvent && metaEvent.type === 'context') {
+                        // "Contexts" are Matrix space hierarchy elements which we manage via /explore
+                        return '/explore';
+                    }
+
+                    // ... otherwise /chat is our default fallback
+                    return '/chat';
+                })();
 
                 setInvitations(map => {
                     map.set(roomId, {
