@@ -6,13 +6,13 @@ import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
+import ButtonInline from '../../components/UI/ButtonInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Icon from '../../components/UI/Icon';
-import TextButton from '../../components/UI/TextButton';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import DefaultLayout from '../../components/layouts/default';
 import { ServiceTable } from '../../components/UI/ServiceTable';
@@ -236,7 +236,7 @@ export default function Spacedeck() {
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
-                            <TextButton title={t('Delete sketch')} onClick={removeSketch}>
+                            <ButtonInline title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ?
                                     <LoadingSpinnerInline />
                                     :
@@ -244,7 +244,7 @@ export default function Spacedeck() {
                                         <DeleteBinIcon />
                                     </Icon>
                                 }
-                            </TextButton>
+                            </ButtonInline>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
                     { isInviteUsersOpen ?
