@@ -25,7 +25,8 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation('explore');
 
-    const handleChangeJoinRule = async () => {
+    const handleChangeJoinRule = async (e) => {
+        e.preventDefault();
         setChangingJoinRule(true);
         await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', {}, { join_rule: joinRule })
             .catch((error) => {
