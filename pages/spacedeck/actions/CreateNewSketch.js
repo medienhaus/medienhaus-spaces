@@ -7,6 +7,7 @@ import { useAuth } from '../../../lib/Auth';
 import ButtonPrimary from '../../../components/UI/ButtonPrimary';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
+import Input from '../../../components/UI/Input';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path } from '../../../lib/Spacedeck';
 
@@ -39,7 +40,7 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
-            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <Input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
             <ButtonPrimary type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</ButtonPrimary>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>);
