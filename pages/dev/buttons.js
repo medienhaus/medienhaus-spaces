@@ -4,8 +4,7 @@ import { ClipboardIcon } from '@remixicons/react/line';
 import Button from '../../components/UI/Button';
 import ButtonPrimary from '../../components/UI/ButtonPrimary';
 import ButtonSecondary from '../../components/UI/ButtonSecondary';
-import ButtonInlineIcon from '../../components/UI/ButtonInlineIcon';
-import ButtonInlineText from '../../components/UI/ButtonInlineText';
+import ButtonInline from '../../components/UI/ButtonInline';
 import DefaultLayout from '../../components/layouts/default';
 import Icon from '../../components/UI/Icon';
 
@@ -96,40 +95,24 @@ export default function devButtons() {
                     </ButtonSecondary>
                 </Container>
                 <Container>
-                    <code>&lt;ButtonInlineText /&gt;</code>
-                    <ButtonInlineText>
+                    <code>&lt;ButtonInline /&gt;</code>
+                    <ButtonInline>
                         🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
                         </Icon>
-                    </ButtonInlineText>
+                    </ButtonInline>
                 </Container>
                 <Container>
-                    <code>&lt;ButtonInlineText disabled/&gt;</code>
-                    <ButtonInlineText disabled>
+                    <code>&lt;ButtonInline disabled/&gt;</code>
+                    <ButtonInline disabled>
                         🧩 HAMBURGEFONSTIV
                         <ClipboardIcon />
                         <Icon>
                             <ClipboardIcon />
                         </Icon>
-                    </ButtonInlineText>
-                </Container>
-                <Container>
-                    <code>&lt;ButtonInlineIcon /&gt;</code>
-                    <ButtonInlineIcon>
-                        <Icon>
-                            <ClipboardIcon />
-                        </Icon>
-                    </ButtonInlineIcon>
-                </Container>
-                <Container>
-                    <code>&lt;ButtonInlineIcon disabled /&gt;</code>
-                    <ButtonInlineIcon disabled>
-                        <Icon>
-                            <ClipboardIcon />
-                        </Icon>
-                    </ButtonInlineIcon>
+                    </ButtonInline>
                 </Container>
             </Wrapper>
         </DefaultLayout.LameColumn>
