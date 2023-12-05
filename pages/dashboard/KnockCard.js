@@ -47,7 +47,6 @@ export default function KnockCard({ roomId, roomName, user, userId, acceptMatrix
     const handleDecline = async (e, roomId) => {
         e.preventDefault();
         setIsDecliningKnock(true);
-        await declineMatrixInvite(roomId);
         setIsDecliningKnock(false);
     };
 
