@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';
 
+import ButtonInline from './ButtonInline';
 import Icon from './Icon';
-import TextButton from './TextButton';
 
 const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
 `;
 
-const ToggleButton = styled(TextButton)`
+const ToggleButton = styled(ButtonInline)`
   /*
   height: calc(var(--margin) * var(--line-height));
   */
