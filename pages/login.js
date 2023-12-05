@@ -6,13 +6,11 @@ import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
+import Form from '../components/UI/Form';
+import Input from '../components/UI/Input';
 import PasswordInputButton from '../components/UI/PasswordInputButton';
 
 const LoginSection = styled.div`
-  & > form > * + * {
-    margin-top: var(--margin);
-  }
-
   & > pre {
     overflow-x: scroll;
   }
@@ -24,14 +22,14 @@ const UsernameHomeserverContainer = styled.div`
 
 const Homeserver = styled.span`
   position: absolute;
+  top: 50%;
   right: var(--margin);
   max-width: 40%;
   overflow: hidden;
-  line-height: calc(var(--margin) * 3);
-  color: var(--color-me);
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
+  transform: translateY(-50%);
 `;
 
 export default function Login() {
@@ -75,12 +73,12 @@ export default function Login() {
         <DefaultLayout.LameColumn>
             <h2>/login</h2>
             <LoginSection>
-                <form onSubmit={(e) => {
+                <Form onSubmit={(e) => {
                     e.preventDefault();
                     onSubmitLoginForm();
                 }}>
                     <UsernameHomeserverContainer>
-                        <input type="text"
+                        <Input type="text"
                             placeholder={t('Username')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -101,7 +99,7 @@ export default function Login() {
                         disabled={isTryingToSignIn}
                     />
                     { errorMessage && (<p>❗️ { errorMessage }</p>) }
-                </form>
+                </Form>
             </LoginSection>
         </DefaultLayout.LameColumn>
     );
