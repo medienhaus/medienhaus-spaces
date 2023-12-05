@@ -8,6 +8,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import TextButton from './TextButton';
 import DefaultLayout from '../layouts/default';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
+import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
@@ -18,13 +19,14 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
     const { t } = useTranslation('write');
 
     return (
         <DefaultLayout.IframeHeader>
-            <h2>{ title } { joinRule === 'knock' && '✊' }</h2>
+            <h2>{ title }</h2>
             <DefaultLayout.IframeHeaderButtonWrapper>
+                { joinRule === 'knock' && <KnockOnMatrixRoom roomId={roomId} roomName={title} /> }
                 <CopyToClipboard content={content} />
                 { deleteContent && <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
