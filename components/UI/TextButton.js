@@ -1,15 +1,10 @@
 import styled from 'styled-components';
 
-import ButtonInlineIcon from './ButtonInlineIcon';
+import ButtonInline from './ButtonInline';
 
-const TextButton = styled(ButtonInlineIcon)`
-  place-content: unset;
-  width: unset;
-  height: unset;
-  padding: unset;
-  margin: unset;
-  background: none;
-  border: none;
+const TextButton = styled(ButtonInline)`
+  /* NOTE: superseded by /components/UI/ButtonInline.js; leaving this here, for now, *
+   * to not break now deprecated usage of TextButton after merging pull-requests ... */
 `;
 
 export default TextButton;
