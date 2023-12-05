@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
+/* TODO: needs Button…, Input, and Select components instead *
+ * of elements once DataList is used anywhere in main branch */
+
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
 
