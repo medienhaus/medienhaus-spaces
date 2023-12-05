@@ -134,8 +134,6 @@ export default function Dashboard() {
                                     roomName={knock.roomName}
                                     user={knock.name}
                                     userId={knock.userId}
-                                    acceptMatrixInvite={acceptMatrixInvite}
-                                    declineMatrixInvite={declineMatrixInvite}
                                 />
                             </div>
                         );
