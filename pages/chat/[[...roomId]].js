@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
@@ -176,11 +176,6 @@ export default function RoomId() {
         };
     });
 
-    // filtering invites for all invitations without a dev.medienhaus.meta event.
-    // for now normal chat rooms don't have this event.
-    // why chat rooms don't have a custom state event: https://github.com/medienhaus/medienhaus-spaces/pull/49#discussion_r1310225770
-    const invites = _.sortBy([...matrix.invites.values()], sortRooms)
-        .filter(invite => !invite.meta);
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
@@ -242,19 +237,6 @@ export default function RoomId() {
                     onClick={toggleRoomListView}
                     icon={<Icon><ChatNewIcon /></Icon>}
                 />
-                { invites.length > 0 && (
-                    <>
-                        <details open>
-                            <Summary><h3>{ t('Invites') }</h3></Summary>
-                            <ServiceTable>
-                                <ServiceTable.Body>
-                                    { invites && invites.map((room) => <SidebarListEntry key={room.roomId} room={room} selected={room.roomId === roomId} />) }
-                                </ServiceTable.Body>
-                            </ServiceTable>
-                        </details>
-                        <br />
-                    </>
-                ) }
                 <details open>
                     <Summary><h3>{ t('People') }</h3></Summary>
                     <ServiceTable>

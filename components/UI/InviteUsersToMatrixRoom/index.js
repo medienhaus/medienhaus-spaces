@@ -16,7 +16,7 @@ import React, { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';

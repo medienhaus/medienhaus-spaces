@@ -1,5 +1,5 @@
 import React, { cloneElement, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';

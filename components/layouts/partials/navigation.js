@@ -1,5 +1,5 @@
 import { default as NextLink } from 'next/link';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
@@ -53,7 +53,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/dashboard">/dashboard { matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
+                <li><Link href="/dashboard">/dashboard{ matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>

@@ -12,12 +12,13 @@
   "Upload": "Hochladen",
   "Save": "Speichern",
   "Select action": "Aktion wählen",
-  "What would you like to do?": "Was möchtest Du tun?",
+  "What would you like to do?": "Was möchtest du tun?",
   "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden.",
   "Invitations": "Einladungen",
   "From": "Von",
   "Accept": "Annehmen",
   "Decline": "Ablehnen",
   "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
-  "Please enter your account password to continue using {{service}}:": "Bitte gib Dein Passwort ein, um {{service}} wieder nutzen zu können:"
+  "Please enter your account password to continue using {{service}}:": "Bitte gib dein Passwort ein, um {{service}} wieder nutzen zu können:",
+  "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut."
 }

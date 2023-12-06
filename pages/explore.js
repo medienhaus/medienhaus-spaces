@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -66,7 +66,7 @@ export default function Explore() {
     // If there's no context root space set in our configuration we can't make any use of the /explore page at
     // the moment, so we forward the user to `/`
     if (!getConfig().publicRuntimeConfig.contextRootSpaceRoomId) {
-        router.replace('/');
+        router.replace('/dashboard');
 
         return null;
     }
