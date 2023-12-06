@@ -5,9 +5,12 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { ChatNewIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
+import TextButton from '../../components/UI/TextButton';
+import Icon from '../../components/UI/Icon';
 
 const sortRooms = function(room) {
     return [
@@ -172,7 +175,10 @@ export default function Chat() {
     return (
         <>
             <DefaultLayout.Sidebar>
-                <h2>/chat</h2>
+                <h2>
+                    <TextButton onClick={() => { router.push('/chat/new'); }} style={{ float: 'right' }}><Icon><ChatNewIcon /></Icon></TextButton>
+                    /chat
+                </h2>
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
                     { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
@@ -189,7 +195,7 @@ export default function Chat() {
                     <iframe
                         ref={iframe}
                         title="/chat"
-                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
             ) }
