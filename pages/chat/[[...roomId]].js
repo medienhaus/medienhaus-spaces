@@ -5,9 +5,12 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { ChatNewIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
+import TextButton from '../../components/UI/TextButton';
+import Icon from '../../components/UI/Icon';
 
 const sortRooms = function(room) {
     return [
@@ -146,7 +149,20 @@ export default function Chat() {
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset; }
+                    
+                    /* Make all Element modal dialogs span across the whole screen; this also affects dialogs on the "new chat" home screen */ 
+                    .mx_Dialog { position: absolute; top: 0; left: 0; right: 0; bottom: 0; max-height: unset !important; border-radius: 0 !important; }
+                    .mx_Dialog_fixedWidth { width: 100% !important; max-width: unset !important; }
                 }
+
+                /**
+                 * ===================== Element Home Screen (the one we use to create new chats) =====================
+                 */
+                /* Don't display the "explore public rooms" button */
+                .mx_HomePage_button_explore { display: none !important }
+                .mx_HomePage_default_buttons { display: initial !important }
+                /* Don't display Element welcome message */
+                .mx_HomePage_default_wrapper > div:first-child { display: none }
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
@@ -172,7 +188,10 @@ export default function Chat() {
     return (
         <>
             <DefaultLayout.Sidebar>
-                <h2>/chat</h2>
+                <h2>
+                    <TextButton onClick={() => { router.push('/chat/new'); }} style={{ float: 'right' }}><Icon><ChatNewIcon /></Icon></TextButton>
+                    /chat
+                </h2>
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
                     { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
@@ -189,7 +208,7 @@ export default function Chat() {
                     <iframe
                         ref={iframe}
                         title="/chat"
-                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${roomId}`}
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
             ) }
