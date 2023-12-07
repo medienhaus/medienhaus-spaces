@@ -53,7 +53,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/dashboard">/dashboard{ (matrix.invites.size > 0 || matrix.knockedMembers.size > 0) && <NotificationBubble /> }</Link></li>
+                <li><Link href="/dashboard">/dashboard{ (matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>
