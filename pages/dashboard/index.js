@@ -125,19 +125,18 @@ export default function Dashboard() {
                 <>
                     <h3>{ t('Accept Knocks') }</h3>
                     <br />
-                    { Array.from(pendingKnocks.values()).map((knock, index) => {
-                        return (
-                            <div key={knock.roomId}>
-                                { index > 0 && <><br /><hr /><br /></> }
-                                <KnockCard
-                                    roomId={knock.roomId}
-                                    roomName={knock.roomName}
-                                    user={knock.name}
-                                    userId={knock.userId}
-                                />
-                            </div>
-                        );
-                    }) }
+                    { [...pendingKnocks].map(([key, knock], index) => (
+                        <div key={key}>
+                            { index > 0 && <><br /><hr /><br /></> }
+                            <KnockCard
+                                roomId={knock.roomId}
+                                roomName={matrix.rooms.get(knock.roomId)?.name}
+                                userId={knock.userId}
+                                user={matrixClient.getUser(knock.userId).displayName}
+                                reason={knock.reason}
+                            />
+                        </div>
+                    )) }
                 </>
             }
 
