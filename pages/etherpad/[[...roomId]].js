@@ -140,7 +140,7 @@ export default function Etherpad() {
 
         logger.debug('Creating new Matrix room for pad', { link, name });
 
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad');
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad);
         await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',

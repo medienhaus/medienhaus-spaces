@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
 import { CloseIcon, MenuIcon } from '@remixicons/react/line';
