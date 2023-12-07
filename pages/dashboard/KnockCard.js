@@ -17,9 +17,10 @@ const TextParagraph = styled.p`
  * @param {string} roomName - The name of the room where the knock request was made.
  * @param {string} user - The name of the user who made the knock request.
  * @param {string} userId - The ID of the user who made the knock request.
+ * @param {string} reason
  * @returns {JSX.Element} A form that allows the user to accept or decline the knock request.
  */
-export default function KnockCard({ roomId, roomName, user, userId }) {
+export default function KnockCard({ roomId, roomName, user, userId, reason }) {
     const auth = useAuth();
     const { t } = useTranslation('dashboard');
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -56,6 +57,9 @@ export default function KnockCard({ roomId, roomName, user, userId }) {
                         components={{ bold: <strong /> }}
                     />
                 </TextParagraph>
+                { reason && (
+                    <pre>{ reason }</pre>
+                ) }
                 <ConfirmCancelButtons
                     small
                     disabled={isDecliningKnock || isAcceptingKnock}
