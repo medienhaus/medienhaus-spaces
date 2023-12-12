@@ -7,8 +7,8 @@ import styled from 'styled-components';
 
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
-import ButtonPrimary from '../components/UI/ButtonPrimary';
-import ButtonSecondary from '../components/UI/ButtonSecondary';
+import ButtonPrimary from '../components/UI/buttons/ButtonPrimary';
+import ButtonSecondary from '../components/UI/buttons/ButtonSecondary';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 import Form from '../components/UI/Form';
 import Input from '../components/UI/Input';

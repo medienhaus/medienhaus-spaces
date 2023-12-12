@@ -3,11 +3,11 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { CloseIcon, MenuIcon } from '@remixicons/react/line';
 
-import ButtonInline from '../UI/ButtonInline';
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
 import { breakpoints } from '../_breakpoints';
+import ButtonInline from '../UI/buttons/ButtonInline';
 
 const Wrapper = styled.div`
   display: flex;

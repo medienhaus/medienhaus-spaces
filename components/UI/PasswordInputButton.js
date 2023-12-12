@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import ButtonPrimary from './ButtonPrimary';
+import ButtonPrimary from './buttons/ButtonPrimary';
 import Input from './Input';
 
 const PasswordInputButtonContainer = styled.div`

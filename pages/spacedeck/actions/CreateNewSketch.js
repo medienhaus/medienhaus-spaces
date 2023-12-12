@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../../lib/Auth';
-import ButtonPrimary from '../../../components/UI/ButtonPrimary';
+import ButtonPrimary from '../../../components/UI/buttons/ButtonPrimary';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import Input from '../../../components/UI/Input';

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import ButtonPrimary from './ButtonPrimary';
-import ButtonSecondary from './ButtonSecondary';
+import ButtonPrimary from './buttons/ButtonPrimary';
+import ButtonSecondary from './buttons/ButtonSecondary';
 
 const ConfirmCancelButtonsWrapper = styled.div`
   display: grid;

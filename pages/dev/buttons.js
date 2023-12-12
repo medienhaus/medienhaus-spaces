@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { ClipboardIcon } from '@remixicons/react/line';
 
-import Button from '../../components/UI/Button';
-import ButtonPrimary from '../../components/UI/ButtonPrimary';
-import ButtonSecondary from '../../components/UI/ButtonSecondary';
-import ButtonInline from '../../components/UI/ButtonInline';
+import Button from '../../components/UI/buttons/_base';
+import ButtonPrimary from '../../components/UI/buttons/ButtonPrimary';
+import ButtonSecondary from '../../components/UI/buttons/ButtonSecondary';
+import ButtonInline from '../../components/UI/buttons/ButtonInline';
 import DefaultLayout from '../../components/layouts/default';
 import Icon from '../../components/UI/Icon';
 

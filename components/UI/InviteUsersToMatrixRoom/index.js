@@ -20,7 +20,7 @@ import styled from 'styled-components';
 import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';
-import ButtonInline from '../ButtonInline';
+import ButtonInline from '../buttons/ButtonInline';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';

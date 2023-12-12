@@ -1,24 +1,21 @@
 import styled from 'styled-components';
 
-import Button from './Button';
+import BaseButton from './_base';
 
-const ButtonInlineText = styled(Button)`
+const ButtonInline = styled(BaseButton)`
   display: inline-grid;
+  place-content: unset;
+  width: unset;
+  height: unset;
+  padding: unset;
+  margin: unset;
   color: var(--color-foreground);
-  background-color: var(--color-background);
-  border-color: transparent;
+  background: unset;
+  border: none;
 
   svg {
     fill: var(--color-foreground) !important;
   }
-
-  /*
-  &:disabled {
-    svg {
-      fill: var(--color-disabled) !important;
-    }
-  }
-  */
 
   &:not(:disabled):hover {
     color: var(--color-notification);
@@ -29,10 +26,6 @@ const ButtonInlineText = styled(Button)`
       transition: all 200ms ease;
     }
   }
-
-  &:not(:disabled):focus {
-    border-color: var(--color-notification);
-  }
 `;
 
-export default ButtonInlineText;
+export default ButtonInline;

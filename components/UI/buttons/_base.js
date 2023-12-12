@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Button = styled.button`
+const BaseButton = styled.button`
   display: grid;
   grid-auto-flow: column;
   place-content: center;
@@ -29,4 +29,4 @@ const Button = styled.button`
   }
 `;
 
-export default Button;
+export default BaseButton;

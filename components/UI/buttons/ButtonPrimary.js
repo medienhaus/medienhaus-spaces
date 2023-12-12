@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import Button from './Button';
+import BaseButton from './_base';
 
-const ButtonPrimary = styled(Button)`
+const ButtonPrimary = styled(BaseButton)`
   color: var(--color-background);
   background-color: var(--color-foreground);
   border-color: var(--color-foreground);

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';
 
-import ButtonInline from './ButtonInline';
+import ButtonInline from './buttons/ButtonInline';
 import Icon from './Icon';
 import Select from './Select';
 

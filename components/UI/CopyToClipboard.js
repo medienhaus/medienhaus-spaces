@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, ClipboardIcon } from '@remixicons/react/line';
 
-import ButtonInline from './ButtonInline';
+import ButtonInline from './buttons/ButtonInline';
 import Icon from './Icon';
 
 const CopyToClipboard = ({ content, title }) => {

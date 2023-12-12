@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 
-import ButtonPrimary from '../../../components/UI/ButtonPrimary';
+import ButtonPrimary from '../../../components/UI/buttons/ButtonPrimary';
 import Form from '../../../components/UI/Form';
 import Input from '../../../components/UI/Input';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';

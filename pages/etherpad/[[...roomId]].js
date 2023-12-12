@@ -7,7 +7,7 @@ import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ButtonInline from '../../components/UI/ButtonInline';
+import ButtonInline from '../../components/UI/buttons/ButtonInline';
 import ErrorMessage from '../../components/UI/ErrorMessage';
 import Icon from '../../components/UI/Icon';
 import DefaultLayout from '../../components/layouts/default';
