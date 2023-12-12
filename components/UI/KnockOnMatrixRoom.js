@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, DoorClosedIcon } from '@remixicons/react/line';
+import _ from 'lodash';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { useAuth } from '../../lib/Auth';
-import { waitFor } from '../../lib/Utils';
 import logger from '../../lib/Logging';
 
 const KnockOnMatrixRoom = ({ roomName, roomId }) => {
@@ -41,7 +41,7 @@ const KnockOnMatrixRoom = ({ roomName, roomId }) => {
         if (knock.room_id) {
             // if call was successful, we want to show the checkmark for a short time so users know their request was sent
             setWasSuccessful(true);
-            await waitFor(() => setWasSuccessful(false));
+            _.delay(() => setWasSuccessful(false), 2500);
         }
     };
 

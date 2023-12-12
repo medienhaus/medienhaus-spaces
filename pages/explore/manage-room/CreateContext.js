@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import { useAuth } from '../../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
@@ -9,7 +10,6 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { waitFor } from '../../../lib/Utils';
 
 const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
     const auth = useAuth();
@@ -64,7 +64,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
             'world_readable',
             'public_chat').catch(async (err) => {
             setCreateNewContextErrorMessage(err.message);
-            await waitFor(() => setCreateNewContextErrorMessage(''));
+            _.delay(() => setCreateNewContextErrorMessage(''), 2500);
 
             return;
         });
@@ -73,9 +73,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
         if (createNewSubContext) {
             await auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
-                await waitFor(() => setCreateNewContextErrorMessage(''));
-
-                return;
+                _.delay(() => setCreateNewContextErrorMessage(''), 2500);
             },
             );
         }
