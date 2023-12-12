@@ -19,14 +19,14 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, isMember, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
     const { t } = useTranslation('write');
 
     return (
         <DefaultLayout.IframeHeader>
             <h2>{ title }</h2>
             <DefaultLayout.IframeHeaderButtonWrapper>
-                { joinRule === 'knock' && !isMember && <KnockOnMatrixRoom roomId={roomId} roomName={title} /> }
+                { joinRule === 'knock' && <KnockOnMatrixRoom roomId={roomId} roomName={title} /> }
                 <CopyToClipboard content={content} />
                 { deleteContent && <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
