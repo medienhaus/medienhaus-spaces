@@ -121,6 +121,11 @@ export default function Dashboard() {
                 </>
             }
 
+            { /* Add some space and a divider between pending invitations and knocks */ }
+            { invitations.size > 0 && pendingKnocks.size > 0 && (
+                <><br /><br /><hr /><br /><br /></>
+            ) }
+
             { pendingKnocks.size > 0 &&
                 <>
                     <h3>{ t('Accept Knocks') }</h3>
