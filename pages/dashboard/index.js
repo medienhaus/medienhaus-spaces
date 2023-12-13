@@ -128,7 +128,7 @@ export default function Dashboard() {
 
             { pendingKnocks.size > 0 &&
                 <>
-                    <h3>{ t('Accept Knocks') }</h3>
+                    <h3>{ t('Asking To Join') }</h3>
                     <br />
                     { [...pendingKnocks].map(([key, knock], index) => (
                         <div key={key}>

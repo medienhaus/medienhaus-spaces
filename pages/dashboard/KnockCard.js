@@ -47,27 +47,24 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
             onSubmit={(e) => handleAccept(e, roomId)}
             onReset={(e) => handleDecline(e, roomId)}
         >
-            <>
-                <TextParagraph>
-                    <Trans
-                        t={t}
-                        i18nKey="knockCard"
-                        defaults="<bold>{{user}}</bold> wants to join <bold>{{name}}</bold>."
-                        values={{ user: user, name: roomName }}
-                        components={{ bold: <strong /> }}
-                    />
-                </TextParagraph>
-                { reason && (
-                    <pre>{ reason }</pre>
-                ) }
-                <ConfirmCancelButtons
-                    small
-                    disabled={isDecliningKnock || isAcceptingKnock}
-                    cancelLabel={t('Decline')}
-                    confirmLabel={t('Accept')}
+            <TextParagraph>
+                <Trans
+                    t={t}
+                    i18nKey="knockCard"
+                    defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
+                    values={{ username: user, roomName: roomName }}
+                    components={{ bold: <strong /> }}
                 />
-            </>
-
+            </TextParagraph>
+            { reason && (
+                <pre>{ reason }</pre>
+            ) }
+            <ConfirmCancelButtons
+                small
+                disabled={isDecliningKnock || isAcceptingKnock}
+                cancelLabel={t('Decline')}
+                confirmLabel={t('Accept')}
+            />
         </Form>
     );
 }
