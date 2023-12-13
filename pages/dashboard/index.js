@@ -130,7 +130,7 @@ export default function Dashboard() {
                             { index > 0 && <><br /><hr /><br /></> }
                             <KnockCard
                                 roomId={knock.roomId}
-                                roomName={matrix.rooms.get(knock.roomId)?.name}
+                                roomName={knock.name}
                                 userId={knock.userId}
                                 user={matrixClient.getUser(knock.userId).displayName}
                                 reason={knock.reason}
