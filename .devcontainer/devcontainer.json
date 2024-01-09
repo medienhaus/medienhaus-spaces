@@ -1,0 +1,45 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
+// @TODO:
+// 1. I think the "image" param can be replaced by something like this: https://containers.dev/guide/dockerfile#docker-compose-dockerfile
+// 2. The "docker compose watch" output is not being shown currently; can this be fixed or should we instead show an info for the user to do so? Just like we ask someone to run `docker compose watch` in README.md already?
+// 3. When accessing the Traefik Dashboard it wrongly forwards you to `:8080/dashboard`, instead of just `/dashboard`
+{
+	"name": "medienhaus/spaces",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest",
+			"dockerDashComposeVersion": "v2",
+			"enableNonRootDocker": "true",
+			"moby": "true"
+		}
+	},
+
+	"portsAttributes": {
+		"80": {
+			"label": "medienhaus/spaces"
+		},
+		"8080": {
+			"label": "Traefik Dashboard"
+		}
+	},
+
+	// -n means "Do not overwrite an existing file"
+	"initializeCommand": "cp -n config.example.js config.js",
+	"updateContentCommand": "sudo docker compose build",
+	"postCreateCommand": "sudo docker compose watch",
+
+	// Configure tool-specific properties.
+    "customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"stylelint.vscode-stylelint",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+}

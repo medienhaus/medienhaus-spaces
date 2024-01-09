@@ -1,6 +1,6 @@
 import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 import { breakpoints } from '../../_breakpoints';
 import { useAuth } from '../../../lib/Auth';
@@ -52,7 +52,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/dashboard">/dashboard{ matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
+                <li><Link href="/dashboard">/dashboard{ (matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li><Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link></li> }
             </List>
@@ -60,7 +60,7 @@ export default function Navigation({ closeNavigation }) {
                 <li><Link href="/chat">/chat</Link></li>
                 { Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
                     // we skip the matrix config since it's already displayed in chat
-                    // @TODO enabkle custom path name for chat
+                    // @TODO enable custom path name for chat
                     if (authProvider === 'matrix') return null;
                     const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
 

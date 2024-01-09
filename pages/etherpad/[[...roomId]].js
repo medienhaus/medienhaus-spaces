@@ -70,9 +70,8 @@ export default function Etherpad() {
     const [serverPads, setServerPads] = useState([]);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    const [isSyncingServerPads, setIsSyncingServerPads] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [userFeedback, setUserFeedback] = useState('');
+
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
      * @type {string | undefined}
@@ -137,18 +136,15 @@ export default function Etherpad() {
     // @TODO function creates infinite loop in useEffect below
     const createWriteRoom = useCallback(async (link, name) => {
         if (!link || !name) return;
-        logger.debug('Creating new Matrix room for pad', { link, name });
 
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad')
+        logger.debug('Creating new Matrix room for pad', { link, name });
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad)
             .catch(error => setErrorMessage(error.message));
 
         await matrix.addSpaceChild(matrix.serviceSpaces.etherpad, room)
             .catch(error => setErrorMessage(error.message));
 
-        await matrix.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(error => setErrorMessage(error.message));
+        await matrix.sendMessage(room, link).catch(error => setErrorMessage(error.message));
 
         if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
             await etherpad.syncAllPads();
@@ -183,7 +179,6 @@ export default function Etherpad() {
         let cancelled = false;
 
         const syncServerPadsWithMatrix = async () => {
-            setIsSyncingServerPads(true);
             let matrixPads = {};
 
             if (matrix?.spaces.get(matrix.serviceSpaces.etherpad).children) {
@@ -203,17 +198,12 @@ export default function Etherpad() {
 
             for (const pad of Object.values(serverPads)) {
                 if (matrixPads[pad._id]) continue;
-                setUserFeedback(t('Syncing {{name}} from server', { name: pad.name }) + <LoadingSpinnerInline />);
-
                 const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + pad._id;
                 await createWriteRoom(link, pad.name);
             }
-
-            setIsSyncingServerPads(false);
-            setUserFeedback('');
         };
 
-        if (!cancelled && matrix.serviceSpaces.etherpad && serverPads) syncServerPadsWithMatrix();
+        !cancelled && matrix.serviceSpaces.etherpad && serverPads && syncServerPadsWithMatrix();
 
         return () => { cancelled = true; };
         // if we add matrix[key] to the dependency array we end up creating infinite loops in the event of someone creating pads within MyPads that are then synced here.
@@ -263,10 +253,13 @@ export default function Etherpad() {
 
     const listEntries = useMemo(() => {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map(writeRoomId => {
+            if (!matrix.roomContents?.get(writeRoomId)) return;
+
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
-            const etherpadId = matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1);
             // if the room name is undefined we don't want to display it
             if (!name) return;
+
+            const etherpadId = matrix.roomContents?.get(writeRoomId).body.substring(matrix.roomContents.get(writeRoomId).body.lastIndexOf('/') + 1);
 
             return <EtherpadListEntry
                 key={writeRoomId}
@@ -311,13 +304,12 @@ export default function Etherpad() {
                             subheadline={t('What would you like to do?')}
                             items={submenuItems} />
                         { getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && <ErrorMessage>{ t('Can\'t connect to the provided {{path}} server. Please try again later.', { path: etherpadPath }) }</ErrorMessage> }
-                        { !isSyncingServerPads && <ServiceTable>
+                        <ServiceTable>
                             <ServiceTable.Body>
                                 { listEntries }
                             </ServiceTable.Body>
-                        </ServiceTable> }
-                        { userFeedback && <span>{ userFeedback }</span> }
-                        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+                        </ServiceTable>
+                        { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
                     </>
                 ) }
             </DefaultLayout.Sidebar>
