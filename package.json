@@ -8,24 +8,26 @@
     "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
-    "i18next": "^23.5.1",
-    "i18next-browser-languagedetector": "^7.1.0",
-    "i18next-resources-to-backend": "^1.1.4",
+    "i18next": "^23.7.7",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-resources-to-backend": "^1.2.0",
+    "immer": "^10.0.3",
     "lodash": "^4.17.21",
-    "matrix-js-sdk": "^28.2.0",
-    "next": "^13.5.4",
+    "matrix-js-sdk": "^30.2.0",
+    "next": "^14.0.4-canary.41",
     "normalize.css": "^8.0.1",
-    "pino": "^8.15.6",
+    "pino": "^8.16.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.2.2",
-    "styled-components": "^6.0.8"
+    "react-i18next": "^13.5.0",
+    "styled-components": "^6.0.8",
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
     "@remixicons/react": "^1.0.0",
     "@stylelint/postcss-css-in-js": "^0.38.0",
-    "eslint": "^8.11.0",
-    "eslint-config-next": "^13.5.6",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^14.0.3",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-matrix-org": "^0.8.0",
     "stylelint": "^14.8.2",
@@ -76,8 +78,7 @@
       "jsx-quotes": [
         "error",
         "prefer-double"
-      ],
-      "import/no-named-as-default": "off"
+      ]
     }
   }
 }

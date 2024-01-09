@@ -31,7 +31,7 @@
 //   </ServiceTable.Body>
 // </ServiceTable>
 
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Table = styled.table`
   width: 100%;
@@ -52,6 +52,8 @@ const TableBody = styled.tbody`
 `;
 
 const TableRow = styled.tr`
+  max-width: 100%;
+  color: ${props => props.selected && 'var(--color-disabled)' };
   text-decoration: ${props => props.disabled && 'none'};
   border-top: 1px solid var(--color-foreground-alpha);
   border-bottom: 1px solid var(--color-foreground-alpha);

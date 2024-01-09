@@ -56,7 +56,8 @@ body {
 
 @supports (font-variation-settings: normal) {
   body {
-    font-family: 'Inter var', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: InterVariable, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-optical-sizing: auto;
   }
 }
 
@@ -68,14 +69,8 @@ h5,
 h6 {
   margin: unset;
   font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-}
-
-h1,
-h2,
-h3 {
   font-weight: bold;
+  line-height: inherit;
 }
 
 a:link {
@@ -100,6 +95,13 @@ a:active {
   color: var(--color-foreground);
 }
 
+hr {
+  border-color: var(--color-foreground-alpha);
+  border-style: solid;
+  border-width: 0.5px;
+  border-radius: unset;
+}
+
 select {
   width: 100%;
   height: calc(var(--margin) * 3);
@@ -116,7 +118,7 @@ select {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 
@@ -183,7 +185,7 @@ input[type='url'] {
   border-color: var(--color-foreground);
   border-style: solid;
   border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
+  border-radius: var(--border-radius);
   appearance: none;
 }
 

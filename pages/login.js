@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
+import PasswordInputButton from '../components/UI/PasswordInputButton';
 
 const LoginSection = styled.div`
-  & > * + *,
   & > form > * + * {
     margin-top: var(--margin);
   }
@@ -49,7 +49,7 @@ export default function Login() {
     const usernameInput = useRef();
 
     // If we are logged in... what do we want here? Let's forward the user to the dashboard!
-    if (auth.user) router.push('/');
+    if (auth.user) router.push('/dashboard');
 
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
@@ -58,6 +58,7 @@ export default function Login() {
             if (error.errcode === 'M_LIMIT_EXCEEDED') setErrorMessage(t('{{error}}, please wait {{time}} seconds.', { error: error.data.error, time: Math.round(error.data.retry_after_ms / 1000) }));
             else setErrorMessage(error.data?.error);
         });
+
         setIsTryingToSignIn(false);
     };
 
@@ -65,7 +66,7 @@ export default function Login() {
         setHomeserver(prompt(`${t('Set another homeserver')}:`, homeserver) ?? homeserver);
     };
 
-    // Automatically focus the username input on pageload
+    // Automatically focus the username input on page load
     useEffect(() => {
         usernameInput.current.focus();
     }, []);
@@ -74,15 +75,31 @@ export default function Login() {
         <DefaultLayout.LameColumn>
             <h2>/login</h2>
             <LoginSection>
-                <form onSubmit={(e) => { e.preventDefault(); onSubmitLoginForm(); }}>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    onSubmitLoginForm();
+                }}>
                     <UsernameHomeserverContainer>
-                        <input type="text" placeholder={t('username')} value={name} onChange={(e) => setName(e.target.value)} ref={usernameInput} />
-                        { (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                            <Homeserver onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }</Homeserver>
-                        ) }
+                        <input type="text"
+                            placeholder={t('Username')}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            ref={usernameInput} />
+                        {
+                            (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                                <Homeserver
+                                    onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }
+                                </Homeserver>
+                            )
+                        }
                     </UsernameHomeserverContainer>
-                    <input type="password" placeholder={t('password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <button type="submit" disabled={isTryingToSignIn}>{ t('Login') }</button>
+                    <PasswordInputButton placeholder={t('Password')}
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                        disabled={isTryingToSignIn}
+                    />
                     { errorMessage && (<p>❗️ { errorMessage }</p>) }
                 </form>
             </LoginSection>

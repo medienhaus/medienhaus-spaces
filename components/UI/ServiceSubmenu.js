@@ -1,23 +1,19 @@
 import React, { cloneElement, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { MenuAddIcon } from '@remixicons/react/line';
 
 import Icon from './Icon';
+import TextButton from './TextButton';
 
 const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
 `;
 
-const ToggleButton = styled.button`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
+const ToggleButton = styled(TextButton)`
   height: calc(var(--margin) * var(--line-height));
-  padding: unset;
-  background-color: unset;
-  border: unset;
 `;
 
 const Submenu = styled.aside`
@@ -55,7 +51,9 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
         <>
             <Header>
                 { title && title }
-                { !disabled && <ToggleButton onClick={handleMenuToggle}>
+                <ToggleButton
+                    disabled={disabled}
+                    onClick={handleMenuToggle}>
                     { icon ?
                         icon
                         :
@@ -63,7 +61,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                             <MenuAddIcon />
                         </Icon>
                     }
-                </ToggleButton> }
+                </ToggleButton>
             </Header>
             { isOpen && (
                 <Submenu>
