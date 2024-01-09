@@ -146,10 +146,7 @@ export default function Etherpad() {
         await matrix.addSpaceChild(matrix.serviceSpaces.etherpad, room)
             .catch(error => setErrorMessage(error.message));
 
-        await matrix.sendMessage(room, {
-            msgtype: 'm.text',
-            body: link,
-        }).catch(error => setErrorMessage(error.message));
+        await matrix.sendMessage(room, link).catch(error => setErrorMessage(error.message));
 
         if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
             await etherpad.syncAllPads();
@@ -258,11 +255,13 @@ export default function Etherpad() {
 
     const listEntries = useMemo(() => {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map(writeRoomId => {
-            const name = _.get(matrix.rooms.get(writeRoomId), 'name');
-            const etherpadId = matrix.roomContents.get(writeRoomId)?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1);
+            if (!matrix.roomContents?.get(writeRoomId)) return;
 
+            const name = _.get(matrix.rooms.get(writeRoomId), 'name');
             // if the room name is undefined we don't want to display it
             if (!name) return;
+
+            const etherpadId = matrix.roomContents?.get(writeRoomId).body.substring(matrix.roomContents.get(writeRoomId).body.lastIndexOf('/') + 1);
 
             return <EtherpadListEntry
                 key={writeRoomId}
