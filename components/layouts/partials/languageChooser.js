@@ -18,27 +18,41 @@ const LanguageSelect = styled.select`
     filter: brightness(0) invert(1);
   }
 `;
+/**
+ * Functional component for language selection. Handles language change events and
+ * persists the selected language in localStorage.
+ *
+ * @component
+ * @returns {JSX.Element} JSX element representing the LanguageChooser component.
+ */
 
 function LanguageChooser() {
     const { i18n } = useTranslation();
 
+    /**
+     * Callback function to handle preferred language selection.
+     * Uses the browser language if no language is present in localStorage,
+     * defaulting to the first option of the select if the language isn't unavailable.
+     *
+     * @function
+     * @param {string} lang - The preferred language.
+     * @returns {void}
+     */
     const preferredLanguage = useCallback((lang) => {
-        // use the browser language if no language was selected before,
-        // if this language is not available it will default to the first option of the select
         const preferredLanguage = lang || navigator.language.split('-')[0];
         // if the preferredLanguage is already selected we stop here
         if (preferredLanguage === i18n.language) return;
 
-        // change selected language
         i18n.changeLanguage(preferredLanguage);
     }, [i18n]);
 
     const changeLanguage = (lang) => {
-        localStorage.setItem('medienhaus_lang', lang); // save the default language to the local storage
+        localStorage.setItem('medienhaus_lang', lang); // save the default language to the localStorage
         i18n.changeLanguage(lang);
     };
 
     useEffect(() => {
+        // handle initial language setup based on localStorage.
         let cancelled = false;
 
         if (!cancelled) {
