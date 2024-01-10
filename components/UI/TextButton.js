@@ -1,9 +1,10 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const TextButton = styled.button`
   display: grid;
   place-content: center;
   width: unset;
+  min-width: 24px;
   height: unset;
   padding: 0;
   margin: 0 auto;
@@ -23,4 +24,5 @@ const TextButton = styled.button`
     }
   }
 `;
+
 export default TextButton;

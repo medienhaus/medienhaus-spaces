@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { BookmarkIcon, DeleteBinIcon } from '@remixicons/react/line';
 
-import Bookmark from '../../../assets/icons/bookmark.svg';
 import TextButton from '../TextButton';
 import { useMatrix } from '../../../lib/Matrix';
 import { useAuth } from '../../../lib/Auth';
-import CloseIcon from '../../../assets/icons/close.svg';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
+import Icon from '../Icon';
 
-const AddBookmark = ({ name, roomId }) => {
+const AddBookmark = ({ name }) => {
     const [contentCopied, setContentCopied] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix();
@@ -22,7 +22,9 @@ const AddBookmark = ({ name, roomId }) => {
 
     const errorHandling = async () => {
         setIsCreatingBookmark(false);
-        setErrorMessage(<CloseIcon fill="var(color-foreground)" />);
+        setErrorMessage(<Icon>
+            <DeleteBinIcon />
+        </Icon>);
         await new Promise(() => setTimeout(() => {
             setErrorMessage('');
         }, 2000));
@@ -31,10 +33,10 @@ const AddBookmark = ({ name, roomId }) => {
     const addBookmarkToMatrix = async () => {
         const checkExistingBookmarks = (service) => {
             const allBookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks).children;
-            const existingBookmark = allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
 
-            return existingBookmark;
+            return allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
         };
+
         logger.debug('creating bookmark room for ' + name);
         setIsCreatingBookmark(true);
         const link = location.href;
@@ -62,6 +64,7 @@ const AddBookmark = ({ name, roomId }) => {
         } else {
             // if the service already has a space, we check if the bookmark already exists
             const bookmarkExists = matrix.spaces.get(bookmarkSpace).children.some(child => matrix.rooms.get(child)?.name === name);
+
             if (bookmarkExists) {
                 //if it exists we display a check mark and return out of the function
                 setIsCreatingBookmark(false);
@@ -112,8 +115,9 @@ const AddBookmark = ({ name, roomId }) => {
                     '✔' :
                     errorMessage ?
                         errorMessage :
-                        <Bookmark fill="var(--color-foreground)" /> }
+                        <Icon><BookmarkIcon /></Icon> }
         </TextButton>
     );
 };
+
 export default AddBookmark;

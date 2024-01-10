@@ -1,5 +1,5 @@
 import { default as NextLink } from 'next/link';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
@@ -12,11 +12,11 @@ const List = styled.ul`
   padding: 0;
   margin: 0 0 calc(var(--margin) * 3);
   list-style: none;
-  border-top: 1px solid rgb(0 0 0 / 5%);
+  border-top: 1px solid var(--color-foreground-alpha);
 
   li {
     line-height: calc(var(--margin) * 3);
-    border-bottom: 1px solid rgb(0 0 0 / 5%);
+    border-bottom: 1px solid var(--color-foreground-alpha);
   }
 
   @media ${breakpoints.phoneOnly} {
@@ -53,7 +53,7 @@ export default function Navigation({ closeNavigation }) {
     return (
         <>
             <List>
-                <li><Link href="/dashboard">/dashboard { matrix.invites.size > 0 && <NotificationBubble /> }</Link></li>
+                <li><Link href="/dashboard">/dashboard{ (matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble /> }</Link></li>
                 <li><Link href="/account">/account</Link></li>
                 <li><Link href="/explore">/explore</Link></li>
             </List>

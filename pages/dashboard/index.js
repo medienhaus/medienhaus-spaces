@@ -1,166 +1,153 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import getConfig from 'next/config';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useImmer } from 'use-immer';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import ServiceInvitations from './ServiceInvitations';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import DisplayInvitations from './DisplayInvitations';
+import InvitationCard from './InvitationCard';
+import DefaultLayout from '../../components/layouts/default';
+import KnockCard from './KnockCard';
 import DisplayBookmarks from './DisplayBookmarks';
-
-const TableSection = styled.section`
-  overflow-x: auto;
-
-  & + section {
-    margin-top: calc(var(--margin) * 3 + 2px);
-  }
-`;
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Dashboard() {
+    const { t } = useTranslation('dashboard');
+
     const auth = useAuth();
     const matrix = useMatrix();
-    const { t } = useTranslation('dashboard');
-    const [serviceInvitations, setServiceInvitations] = useState([]);
-
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const serviceSpaces = matrix.serviceSpaces;
+    const pendingKnocks = matrix.knockingMembers;
     const bookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks)?.children;
-    const [chatInvitations, setChatInvitations] = useState([]);
-    const [contextInvitations, setContextInvitations] = useState([]);
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+
+    // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
+    // But we will never remove any entries. This is in order to keep a list of all invitations handled while looking
+    // at this page. Only when leaving the page and returning back to it, we start with an empty map from scratch.
+    const [invitations, setInvitations] = useImmer(new Map());
 
     useEffect(() => {
         let cancelled = false;
-        const hydrateInvitationMetaEvents = async () => {
-            const serviceInvitationsArray = [];
-            // fetch information about pending invitations
-            // i.e. who sent it, what are we being invited to (service, chat)
-            const chatInvitationsArray = [];
 
-            const contextInvitationsArray = [];
+        // fetch information about pending invitations
+        // i.e. who sent it, what are we being invited to (service, chat)
+        const hydrateInternalState = async () => {
+            for (const roomId of matrix.invites) {
+                if (cancelled) continue;
 
-            const sortAndHydrateInvitations = Array.from(matrix.invites.values()).map(async invitation => {
-                const room = await matrixClient.getRoom(invitation.roomId);
-                // https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
-                const inviterName = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
-                invitation.inviter = matrixClient.getUser(inviterName);
+                const room = matrixClient.getRoom(roomId);
+                if (!room) continue;
 
-                if (!invitation.meta) {
-                    // if there is no meta key yet, we manually check for one
-                    invitation.meta = await matrix.hydrateMetaEvent(invitation.roomId)
-                        .catch(() => { });
+                // If we're displaying this invitation already, we don't need to do anything
+                if (invitations.has(roomId)) continue;
+
+                // Make sure we have the meta event ready
+                const metaEvent = await matrix.getMetaEvent(roomId);
+
+                // If this is an invitation for a direct message, .getDMInviter() will return the user_id ...
+                let inviter = room.getDMInviter();
+                // ... otherwise https://github.com/cinnyapp/cinny/blob/47f6c44c17dcf2c03e3ce0cbd8fd352069560556/src/app/organisms/invite-list/InviteList.jsx#L63
+                if (!inviter) inviter = room.getMember(matrixClient.getUserId())?.events?.member?.getSender?.();
+
+                // Avatar
+                let avatar;
+
+                if (room.getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop')) {
+                    avatar = room.getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop');
+                } else if (room.getAvatarFallbackMember() && room.getAvatarFallbackMember().getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop')) {
+                    avatar = room.getAvatarFallbackMember().getAvatarUrl(matrixClient.getHomeserverUrl(), 100, 100, 'crop');
                 }
 
-                if (invitation.meta) {
-                    //  if (invitation.meta.type === 'context' && getConfig().publicRuntimeConfig.templates.context.includes(invitation.meta.template)) { // @TODO: needs to be discussed if we want to show all or not
-                    if (invitation.meta.type === 'context') {
-                        contextInvitationsArray.push(invitation);
-                    } else {
-                        serviceInvitationsArray.push(invitation);
+                // Service & path
+                const service = (metaEvent && metaEvent.type !== 'context') && metaEvent.template;
+                const path = (() => {
+                    if (service) {
+                        // This is probably an invitation for an application service (such as Etherpad, Spacedeck, ...)
+                        // @TODO: This is nasty... let's see if we can do something like getAuthenticationProvider('service')?.getPath()
+                        return getConfig().publicRuntimeConfig.authProviders[service]?.path || `/${service}`;
+                    } else if (metaEvent && metaEvent.type === 'context') {
+                        // "Contexts" are Matrix space hierarchy elements which we manage via /explore
+                        return '/explore';
                     }
-                } else {
-                    chatInvitationsArray.push(invitation);
-                }
-            });
 
-            await Promise.all(sortAndHydrateInvitations);
+                    // ... otherwise /chat is our default fallback
+                    return '/chat';
+                })();
 
-            setServiceInvitations(serviceInvitationsArray);
-            setChatInvitations(chatInvitationsArray);
-            setContextInvitations(contextInvitationsArray);
+                setInvitations(map => {
+                    map.set(roomId, {
+                        isDm: !!room.getDMInviter(),
+                        inviter: matrixClient.getUser(inviter),
+                        joinRule: room.getJoinRule(),
+                        name: room.name,
+                        avatar,
+                        service,
+                        path,
+                        roomId,
+                    });
+                });
+            }
         };
 
-        if (!cancelled) hydrateInvitationMetaEvents();
+        if (matrix.invites.size > 0) hydrateInternalState();
 
         return () => {
             cancelled = true;
         };
-    }, [matrix, matrix.invites, matrixClient]);
-
-    // functions which interact with matrix server
-    const declineMatrixInvite = async (roomId) => {
-        await matrix.leaveRoom(roomId);
-    };
-
-    const acceptMatrixInvite = async (roomId, path) => {
-        await matrixClient.joinRoom(roomId)
-            .catch(() => {
-                return;
-            });
-
-        return `${path}/${roomId}`;
-    };
+    }, [matrixClient, matrix, invitations, setInvitations]);
 
     return (
-        <>
+        <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
 
-            { matrix.invites.size > 0 &&
-                       <TableSection>
-                           <ServiceTable>
-                               <ServiceTable.Caption>
-                                   { t('Invitations') }
-                               </ServiceTable.Caption>
-                               <ServiceTable.Head>
-                                   <ServiceTable.Row>
-                                       <ServiceTable.Header align="left" width="20%">
-                                           { t('App') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="left" width="30%">
-                                           { t('Item') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="left" width="30%">
-                                           { t('From') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="center" width="10%">
-                                           { t('Accept') }
-                                       </ServiceTable.Header>
-                                       <ServiceTable.Header align="center" width="10%">
-                                           { t('Decline') }
-                                       </ServiceTable.Header>
-                                   </ServiceTable.Row>
-                               </ServiceTable.Head>
-                               <ServiceTable.Body>
-                                   { contextInvitations && _.map(contextInvitations, (invite) => {
-                                       return <DisplayInvitations
-                                           key={invite.roomId}
-                                           path="/explore"
-                                           invite={invite}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   }) }
-                                   { _.map(serviceSpaces, (id, service) => {
-                                       if (!getConfig().publicRuntimeConfig.authProviders[service]) return null; // don't return anything if the service is not in our config.
-
-                                       return <ServiceInvitations
-                                           key={id}
-                                           id={id}
-                                           service={service}
-                                           invitations={serviceInvitations}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   })
-                                   }
-                                   { chatInvitations && _.map(chatInvitations, (invite) => {
-                                       return <DisplayInvitations
-                                           key={invite.roomId}
-                                           path="/chat"
-                                           invite={invite}
-                                           acceptMatrixInvite={acceptMatrixInvite}
-                                           declineMatrixInvite={declineMatrixInvite}
-                                       />;
-                                   }) }
-                               </ServiceTable.Body>
-                           </ServiceTable>
-                       </TableSection>
+            { !_.isEmpty(invitations) &&
+                <>
+                    <h3>{ t('Invitations') }</h3>
+                    <br />
+                    { Array.from(invitations.values()).map((invitation, index) => {
+                        return (
+                            <div key={invitation.roomId}>
+                                { index > 0 && <><br /><hr /><br /></> }
+                                <InvitationCard
+                                    path={invitation.path}
+                                    roomId={invitation.roomId}
+                                    roomName={invitation.name}
+                                    inviterUsername={invitation.inviter?.displayName}
+                                    isDm={invitation.isDm}
+                                    joinRule={invitation.joinRule}
+                                    service={invitation.service}
+                                    avatar={invitation.avatar}
+                                />
+                            </div>
+                        );
+                    }) }
+                </>
             }
 
+            { /* Add some space and a divider between pending invitations and knocks */ }
+            { invitations.size > 0 && pendingKnocks.size > 0 && (
+                <><br /><br /><hr /><br /><br /></>
+            ) }
+
+            { pendingKnocks.size > 0 &&
+                <>
+                    <h3>{ t('Asking To Join') }</h3>
+                    <br />
+                    { [...pendingKnocks].map(([key, knock], index) => (
+                        <div key={key}>
+                            { index > 0 && <><br /><hr /><br /></> }
+                            <KnockCard
+                                roomId={knock.roomId}
+                                roomName={knock.name}
+                                userId={knock.userId}
+                                user={matrixClient.getUser(knock.userId).displayName}
+                                reason={knock.reason}
+                            />
+                        </div>
+                    )) }
+                </>
+            }
             { !_.isEmpty(bookmarks) &&
-                <TableSection>
                     <ServiceTable>
                         <ServiceTable.Caption>
                             { t('Bookmarks') }
@@ -195,9 +182,7 @@ export default function Dashboard() {
                         </ServiceTable.Body>
                     </ServiceTable>
 
-                </TableSection>
             }
-        </>
+        </DefaultLayout.LameColumn>
     );
 }
-

@@ -8,34 +8,28 @@
     "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
-    "i18next": "^23.5.1",
-    "i18next-browser-languagedetector": "^7.1.0",
-    "i18next-resources-to-backend": "^1.1.4",
+    "i18next": "^23.7.7",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-resources-to-backend": "^1.2.0",
+    "immer": "^10.0.3",
     "lodash": "^4.17.21",
-    "matrix-js-sdk": "^28.2.0",
-    "next": "^13.5.4",
+    "matrix-js-sdk": "^30.2.0",
+    "next": "^14.0.4-canary.41",
     "normalize.css": "^8.0.1",
-    "pino": "^8.15.6",
+    "pino": "^8.16.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.2.2",
-    "styled-components": "^6.0.8"
+    "react-i18next": "^13.5.0",
+    "styled-components": "^6.0.8",
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.0",
-    "@babel/eslint-parser": "^7.22.15",
-    "@babel/eslint-plugin": "^7.22.10",
-    "@next/eslint-plugin-next": "^13.5.4",
+    "@remixicons/react": "^1.0.0",
     "@stylelint/postcss-css-in-js": "^0.38.0",
-    "babel-plugin-inline-react-svg": "^2.0.1",
-    "babel-plugin-styled-components": "^2.1.4",
-    "eslint": "^8.11.0",
-    "eslint-config-google": "^0.14.0",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^14.0.3",
     "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-matrix-org": "^0.8.0",
-    "eslint-plugin-react": "^7.29.4",
-    "eslint-plugin-react-hooks": "^4.3.0",
     "stylelint": "^14.8.2",
     "stylelint-config-recess-order": "^3.0.0",
     "stylelint-config-standard": "^25.0.0",
@@ -47,13 +41,14 @@
       "matrix-org"
     ],
     "extends": [
-      "plugin:matrix-org/babel",
+      "next",
+      "plugin:matrix-org/javascript",
+      "plugin:matrix-org/a11y",
       "plugin:matrix-org/react",
-      "plugin:@next/next/recommended"
+      "plugin:import/recommended"
     ],
     "env": {
-      "browser": true,
-      "node": true
+      "es6": true
     },
     "rules": {
       "padding-line-between-statements": [
@@ -65,7 +60,17 @@
         },
         {
           "blankLine": "always",
-          "prev": "return",
+          "prev": "*",
+          "next": "export"
+        },
+        {
+          "blankLine": "always",
+          "prev": "*",
+          "next": "multiline-block-like"
+        },
+        {
+          "blankLine": "always",
+          "prev": "multiline-block-like",
           "next": "*"
         }
       ],
@@ -74,21 +79,6 @@
         "error",
         "prefer-double"
       ]
-    },
-    "settings": {
-      "react": {
-        "version": "detect"
-      }
-    },
-    "overrides": [
-      {
-        "files": [
-          "./*.js"
-        ],
-        "env": {
-          "node": true
-        }
-      }
-    ]
+    }
   }
 }

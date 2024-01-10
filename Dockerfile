@@ -27,6 +27,8 @@ ENV NODE_ENV=${NODE_ENV}
 ENV NEXT_TELEMETRY_DISABLED=1
 
 
+COPY . .
+
 EXPOSE 3000
 # Taken from https://github.com/vercel/next.js/blob/d21025cc3a50e2ff8a7137d5d5c94576218f01e7/package.json#L50
 CMD ["node", "--trace-deprecation", "--enable-source-maps", "node_modules/.bin/next"]
@@ -41,6 +43,7 @@ WORKDIR /app
 # Environment variables must be redefined at run time
 ARG NODE_ENV
 ENV NODE_ENV=${NODE_ENV}
+ENV NEXT_TELEMETRY_DISABLED=1
 
 
 COPY . .

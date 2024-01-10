@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { DeleteBinIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 import { useAuth } from '../../lib/Auth';
-import Bin from '../../assets/icons/bin.svg';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
+import Icon from '../../components/UI/Icon';
 
 /**
  * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
  * This component displays a list of bookmarks, allowing users to remove them.
  *
- * @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
+
+ @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
+ @param {string} name - the name of the origin of the bookmark.
  * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
  */
 
@@ -33,6 +36,7 @@ export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
         <>
             { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
                 return <Bookmark
+                    key={roomId}
                     parent={bookmarkSpaceId}
                     roomId={roomId}
                     link={matrix.roomContents.get(roomId).body}
@@ -43,6 +47,7 @@ export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
             }) }
         </>);
 }
+
 /**
  * Bookmark component for rendering a single bookmark entry.
  *
@@ -82,7 +87,9 @@ const Bookmark = ({ parent, roomId, link, name, origin, removeBookmark }) => {
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
-                    { removingBookmark ? <LoadingSpinnerInline /> : <Bin fill="var(--color-foreground)" /> }
+                    { removingBookmark ? <LoadingSpinnerInline /> : <Icon>
+                        <DeleteBinIcon />
+                    </Icon> }
                 </TextButton></ServiceTable.Cell>
         </ServiceTable.Row>
     );

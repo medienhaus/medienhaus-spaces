@@ -1,22 +1,19 @@
 import React, { cloneElement, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { MenuAddIcon } from '@remixicons/react/line';
 
-import MenuAddIcon from '../../assets/icons/menu-add.svg';
+import Icon from './Icon';
+import TextButton from './TextButton';
 
 const Header = styled.header`
   display: grid;
   grid-template-columns: 1fr auto;
 `;
 
-const ToggleButton = styled.button`
-  /* unset globally defined button styles; set height to line-height */
-  width: unset;
-  height: calc(var(--margin) * 1.3);
-  padding: unset;
-  background-color: unset;
-  border: unset;
+const ToggleButton = styled(TextButton)`
+  height: calc(var(--margin) * var(--line-height));
 `;
 
 const Submenu = styled.aside`
@@ -38,7 +35,7 @@ const Submenu = styled.aside`
   }
 `;
 
-export function ServiceSubmenu({ title, icon, subheadline, items }) {
+export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [value, setValue] = useState('');
@@ -54,8 +51,16 @@ export function ServiceSubmenu({ title, icon, subheadline, items }) {
         <>
             <Header>
                 { title && title }
-                <ToggleButton onClick={handleMenuToggle}>
-                    { icon ? icon : <MenuAddIcon fill="var(--color-foreground)" /> }
+                <ToggleButton
+                    disabled={disabled}
+                    onClick={handleMenuToggle}>
+                    { icon ?
+                        icon
+                        :
+                        <Icon>
+                            <MenuAddIcon />
+                        </Icon>
+                    }
                 </ToggleButton>
             </Header>
             { isOpen && (
