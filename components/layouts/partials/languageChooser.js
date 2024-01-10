@@ -1,5 +1,6 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect } from 'react';
 
 const LanguageSelect = styled.select`
   display: inline;
@@ -21,10 +22,37 @@ const LanguageSelect = styled.select`
 function LanguageChooser() {
     const { i18n } = useTranslation();
 
+    const preferredLanguage = useCallback((lang) => {
+        // use the browser language if no language was selected before,
+        // if this language is not available it will default to the first option of the select
+        const preferredLanguage = lang || navigator.language.split('-')[0];
+        // if the preferredLanguage is already selected we stop here
+        if (preferredLanguage === i18n.language) return;
+
+        // change selected language
+        i18n.changeLanguage(preferredLanguage);
+    }, [i18n]);
+
+    const changeLanguage = (lang) => {
+        localStorage.setItem('medienhaus_lang', lang); // save the default language to the local storage
+        i18n.changeLanguage(lang);
+    };
+
+    useEffect(() => {
+        let cancelled = false;
+
+        if (!cancelled) {
+            const localesSettings = localStorage.getItem('medienhaus_lang');
+            preferredLanguage(localesSettings);
+        }
+
+        return () => cancelled = true;
+    }, [preferredLanguage]);
+
     return (
         <>
             <LanguageSelect
-                onChange={(e) => { i18n.changeLanguage(e.target.value); }}
+                onChange={(e) => { changeLanguage(e.target.value); }}
                 value={i18n.language}
             >
                 <option value="en">en</option>
