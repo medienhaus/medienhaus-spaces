@@ -29,6 +29,11 @@ const LanguageSelect = styled.select`
 function LanguageChooser() {
     const { i18n } = useTranslation();
 
+    const changeLanguage = useCallback((lang) => {
+        localStorage.setItem('medienhaus_lang', lang); // save the default language to the localStorage
+        i18n.changeLanguage(lang);
+    }, [i18n]);
+
     /**
      * Callback function to handle preferred language selection.
      * Uses the browser language if no language is present in localStorage,
@@ -40,16 +45,10 @@ function LanguageChooser() {
      */
     const preferredLanguage = useCallback((lang) => {
         const preferredLanguage = lang || navigator.language.split('-')[0];
-        // if the preferredLanguage is already selected we stop here
-        if (preferredLanguage === i18n.language) return;
-
-        i18n.changeLanguage(preferredLanguage);
-    }, [i18n]);
-
-    const changeLanguage = (lang) => {
-        localStorage.setItem('medienhaus_lang', lang); // save the default language to the localStorage
-        i18n.changeLanguage(lang);
-    };
+        // if the preferredLanguage is already selected, and saved to the localStorage, we stop here
+        if (preferredLanguage === i18n.language && lang) return;
+        changeLanguage(preferredLanguage);
+    }, [changeLanguage, i18n.language]);
 
     useEffect(() => {
         // handle initial language setup based on localStorage.
