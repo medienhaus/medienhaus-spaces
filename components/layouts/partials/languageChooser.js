@@ -40,7 +40,7 @@ function LanguageChooser() {
      * defaulting to the first option of the select if the language isn't unavailable.
      *
      * @function
-     * @param {string} lang - The preferred language.
+     * @param {string} lang - The preferred language saved to localStorage.
      * @returns {void}
      */
     const preferredLanguage = useCallback((lang) => {
