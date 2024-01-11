@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { DeleteBinIcon, FolderIcon, ListSettingsIcon } from '@remixicons/react/line';
 import React from 'react';
@@ -9,6 +9,7 @@ import TextButton from './TextButton';
 import DefaultLayout from '../layouts/default';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
+import AddBookmark from './bookmarks/AddBookmark';
 
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
@@ -39,6 +40,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                         setIsInviteUsersOpen(prevState => !prevState);
                     }}
                     inviteUsersOpen={isInviteUsersOpen} />
+                <AddBookmark name={title} roomId={roomId} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => {

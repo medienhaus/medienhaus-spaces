@@ -259,7 +259,7 @@ export default function Account() {
                     ) && (
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
-                    { emails.map((email, index) => (
+                    { emails.map((email) => (
                         <input key={email} type="email" value={email} disabled />
                     )) }
                     { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (

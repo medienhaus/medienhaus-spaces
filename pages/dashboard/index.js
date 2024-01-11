@@ -9,6 +9,8 @@ import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
 import KnockCard from './KnockCard';
+import DisplayBookmarks from './DisplayBookmarks';
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
@@ -16,6 +18,7 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
     const pendingKnocks = matrix.knockingMembers;
+    const bookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks)?.children;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
@@ -144,7 +147,42 @@ export default function Dashboard() {
                     )) }
                 </>
             }
+            { !_.isEmpty(bookmarks) &&
+                    <ServiceTable>
+                        <ServiceTable.Caption>
+                            { t('Bookmarks') }
+                        </ServiceTable.Caption>
+                        <ServiceTable.Head>
+                            <ServiceTable.Row>
+                                <ServiceTable.Header align="left" width="20%">
+                                    { t('App') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="left" width="60%">
+                                    { t('Item') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    { t('Copy Link') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    { t('Remove') }
+                                </ServiceTable.Header>
+                            </ServiceTable.Row>
+                        </ServiceTable.Head>
+                        <ServiceTable.Body>
+                            { bookmarks.map(bookmarkSpace => {
+                                const spaceName = matrix.spaces.get(bookmarkSpace)?.name;
+                                const pathName = getConfig().publicRuntimeConfig.authProviders[spaceName]?.path;
 
+                                return <DisplayBookmarks
+                                    key={bookmarkSpace}
+                                    bookmarkSpaceId={bookmarkSpace}
+                                    name={pathName || spaceName}
+                                />;
+                            }) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
+
+            }
         </DefaultLayout.LameColumn>
     );
 }

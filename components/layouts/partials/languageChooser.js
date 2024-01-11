@@ -18,6 +18,7 @@ const LanguageSelect = styled.select`
     filter: brightness(0) invert(1);
   }
 `;
+
 /**
  * Functional component for language selection. Handles language change events and
  * persists the selected language in localStorage.

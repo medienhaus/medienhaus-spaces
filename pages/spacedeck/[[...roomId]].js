@@ -23,6 +23,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import LoginPrompt from '../../components/UI/LoginPrompt';
+import AddBookmark from '../../components/UI/bookmarks/AddBookmark';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -240,6 +241,7 @@ export default function Spacedeck() {
                                 onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
+                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ?
