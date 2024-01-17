@@ -9,7 +9,6 @@ import { ChatNewIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
-import ChatIframeView from './ChatIframeView';
 import TextButton from '../../components/UI/TextButton';
 import Icon from '../../components/UI/Icon';
 
@@ -215,8 +214,9 @@ export default function Chat() {
             </DefaultLayout.Sidebar>
             { roomId && (
                 <DefaultLayout.IframeWrapper>
-                    <ChatIframeView
-                        title="chat"
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
