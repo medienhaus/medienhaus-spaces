@@ -124,14 +124,14 @@ export default function Chat() {
                         color: #000000 !important;
                     }
                     
-                    .mx_AccessibleButton::before {
-                        background-color: #000000 !important;
-                    }
+                   .mx_HomePage_button_createGroup.mx_AccessibleButton::before, 
+                   .mx_HomePage_button_sendDm.mx_AccessibleButton::before {
+                        background-color: #000 !important;
+                   }
                     
-                    .mx_Dialog_primary{
-                     color: #000000 !important;
-                    }
-                     
+                  .mx_Dialog_primary {
+                        color: #000000 !important;
+                  }
                 }   
 
                 /* Hide the left sidebar and that drag-to-resize thingy */
