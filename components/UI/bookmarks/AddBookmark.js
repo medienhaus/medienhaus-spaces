@@ -48,6 +48,8 @@ const AddBookmark = ({ name, service }) => {
     };
 
     const addBookmarkToMatrix = async () => {
+        setIsCreatingBookmark(true);
+
         const getBookmarkRoomId = async () => {
             if (bookmarkSpace) return bookmarkSpace;
 
