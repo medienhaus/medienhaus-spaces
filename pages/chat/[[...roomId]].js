@@ -9,7 +9,6 @@ import { ChatNewIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
-import ChatIframeView from './ChatIframeView';
 import TextButton from '../../components/UI/TextButton';
 import Icon from '../../components/UI/Icon';
 
@@ -120,11 +119,20 @@ export default function Chat() {
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
                     
-                    .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
+                   .mx_HomePage_button_createGroup, .mx_HomePage_button_sendDm, .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
                         background-color: #ffffff !important;
                         color: #000000 !important;
                     }
-                }
+                    
+                    .mx_AccessibleButton::before {
+                        background-color: #000000 !important;
+                    }
+                    
+                    .mx_Dialog_primary{
+                     color: #000000 !important;
+                    }
+                     
+                }   
 
                 /* Hide the left sidebar and that drag-to-resize thingy */
                 .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle { display: none; !important }
@@ -206,8 +214,9 @@ export default function Chat() {
             </DefaultLayout.Sidebar>
             { roomId && (
                 <DefaultLayout.IframeWrapper>
-                    <ChatIframeView
-                        title="chat"
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
