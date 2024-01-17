@@ -213,7 +213,7 @@ export default function Explore() {
                         isInviteUsersOpen={isInviteUsersOpen}
                         joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                         setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
-                        service="explore"
+                        service="/explore"
                     />
                     <ServiceTableWrapper>
                         { isInviteUsersOpen ?
