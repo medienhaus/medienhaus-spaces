@@ -16,6 +16,7 @@ import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useMatrix } from '../../../lib/Matrix';
 import ChangeTopic from './ChangeTopic';
+import AddOrCreateChat from './AddOrCreateChat';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -105,6 +106,16 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+        case 'addOrCreateChat':
+            return <AddOrCreateChat
+                parentId={parentId}
+                parentName={roomName}
+                contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }}
+            />;
         case 'removeSpace':
             return <RemoveSpaceFromParent parentId={currentId}
                 parentName={roomName}
@@ -171,6 +182,11 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
                         <RadioWrapper>
                             <input type="radio" id="existingContext" name="action" value="existingContext" />
                             <label htmlFor="existingContext">{ t('Add existing context') }</label>
+                        </RadioWrapper>
+
+                        <RadioWrapper>
+                            <input type="radio" id="addOrCreateChat" name="action" value="addOrCreateChat" />
+                            <label htmlFor="addOrCreateChat">{ t('Add existing chat or create one') }</label>
                         </RadioWrapper>
 
                         <RadioWrapper>
