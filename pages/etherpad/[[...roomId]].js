@@ -323,6 +323,7 @@ export default function Etherpad() {
                         myPadsObject={myPadsObject}
                         isInviteUsersOpen={isInviteUsersOpen}
                         setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
+                        service="etherpad"
                     />
                     { isInviteUsersOpen ?
                         <InviteUserToMatrixRoom

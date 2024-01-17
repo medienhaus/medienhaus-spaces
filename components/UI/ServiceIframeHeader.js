@@ -20,7 +20,7 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule, service }) => {
     const { t } = useTranslation('write');
 
     return (
@@ -40,7 +40,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                         setIsInviteUsersOpen(prevState => !prevState);
                     }}
                     inviteUsersOpen={isInviteUsersOpen} />
-                <AddBookmark name={title} roomId={roomId} />
+                <AddBookmark name={title} roomId={roomId} service={service} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => {
