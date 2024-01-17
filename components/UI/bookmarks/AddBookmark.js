@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { logger } from 'matrix-js-sdk/lib/logger';
 import { BookmarkIcon, DeleteBinIcon } from '@remixicons/react/line';
 
 import TextButton from '../TextButton';
@@ -19,6 +18,30 @@ const AddBookmark = ({ name }) => {
     const router = useRouter();
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [currentService, setCurrentService] = useState('');
+    const [bookmarkSpace, setBookmarkSpace] = useState('');
+    const [bookmarkExists, setBookmarkExists] = useState(false);
+
+    useEffect(() => {
+        const checkExistingBookmarks = () => {
+            // first we find out which service we're currently using
+            const firstSlashIndex = router.route.indexOf('/');
+            const secondSlashIndex = router.route.indexOf('/', firstSlashIndex + 1);
+            const service = router.route.substring(1, secondSlashIndex);
+            setCurrentService(service);
+            const allBookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks).children;
+
+            // then we check if the service already has a bookmark space
+            return allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
+        };
+
+        matrix.serviceSpaces.bookmarks && setBookmarkSpace(checkExistingBookmarks());
+    }, [matrix.serviceSpaces.bookmarks, matrix.spaces, router.route]);
+
+    useEffect(() => {
+        // we check if the selected roomId is already bookmarked
+        bookmarkSpace && setBookmarkExists(matrix.spaces.get(bookmarkSpace).children.some(child => matrix.rooms.get(child)?.name === name));
+    }, [bookmarkSpace, matrix.rooms, matrix.spaces, name]);
 
     const errorHandling = async () => {
         setIsCreatingBookmark(false);
@@ -31,50 +54,29 @@ const AddBookmark = ({ name }) => {
     };
 
     const addBookmarkToMatrix = async () => {
-        const checkExistingBookmarks = (service) => {
-            const allBookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks).children;
+        const getBookmarkRoomId = async () => {
+            if (bookmarkSpace) return bookmarkSpace;
 
-            return allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
+            // if there is no bookmark space for the service yet, we create one
+            const newBookmarkSpace = await matrix.createRoom(currentService, true, '', 'invite', 'content', 'link')
+                .catch(() => {
+                    errorHandling();
+
+                    return;
+                });
+                // and add it to the bookmarks space
+            await auth.getAuthenticationProvider('matrix')
+                .addSpaceChild(matrix.serviceSpaces.bookmarks, newBookmarkSpace)
+                .catch(() => {
+                    errorHandling();
+
+                    return;
+                });
+
+            return newBookmarkSpace;
         };
 
-        logger.debug('creating bookmark room for ' + name);
-        setIsCreatingBookmark(true);
-        const link = location.href;
-        const firstSlashIndex = router.route.indexOf('/');
-        const secondSlashIndex = router.route.indexOf('/', firstSlashIndex + 1);
-        const service = router.route.substring(1, secondSlashIndex);
-        let bookmarkSpace = checkExistingBookmarks(service);
-
-        if (!bookmarkSpace) {
-            // if there is no bookmark space for the service yet, we create one
-            bookmarkSpace = await matrix.createRoom(service, true, '', 'invite', 'content', 'link')
-                .catch(() => {
-                    errorHandling();
-
-                    return;
-                });
-            // and add it to the bookmarks space
-            await auth.getAuthenticationProvider('matrix')
-                .addSpaceChild(matrix.serviceSpaces.bookmarks, bookmarkSpace)
-                .catch(() => {
-                    errorHandling();
-
-                    return;
-                });
-        } else {
-            // if the service already has a space, we check if the bookmark already exists
-            const bookmarkExists = matrix.spaces.get(bookmarkSpace).children.some(child => matrix.rooms.get(child)?.name === name);
-
-            if (bookmarkExists) {
-                //if it exists we display a check mark and return out of the function
-                setIsCreatingBookmark(false);
-                setContentCopied(true);
-                await new Promise(r => setTimeout(r, 2000));
-                setContentCopied(false);
-
-                return;
-            }
-        }
+        const bookmarkRoomId = await getBookmarkRoomId();
 
         // we create a room for the bookmark
         const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link')
@@ -85,7 +87,7 @@ const AddBookmark = ({ name }) => {
             });
         // and add it to the bookmark space
         await auth.getAuthenticationProvider('matrix')
-            .addSpaceChild(bookmarkSpace, room)
+            .addSpaceChild(bookmarkRoomId, room)
             .catch(() => {
                 errorHandling();
 
@@ -94,7 +96,7 @@ const AddBookmark = ({ name }) => {
         // then send the link of the bookmark as a message to the room
         await matrixClient.sendMessage(room, {
             msgtype: 'm.text',
-            body: link,
+            body: location.href,
         }).catch(() => {
             errorHandling();
 
@@ -108,7 +110,7 @@ const AddBookmark = ({ name }) => {
     };
 
     return (
-        <TextButton title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
+        <TextButton disabled={bookmarkExists} title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
             { isCreatingBookmark ?
                 <LoadingSpinnerInline /> :
                 contentCopied ?
