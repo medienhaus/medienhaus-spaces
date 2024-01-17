@@ -236,7 +236,7 @@ export default function Spacedeck() {
                                 onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
-                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} />
+                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} service="spacedeck" />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 { isDeletingSketch ?

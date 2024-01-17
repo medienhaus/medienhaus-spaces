@@ -9,7 +9,7 @@ import { useAuth } from '../../../lib/Auth';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import Icon from '../Icon';
 
-const AddBookmark = ({ name }) => {
+const AddBookmark = ({ name, service }) => {
     const [contentCopied, setContentCopied] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix();
@@ -18,25 +18,19 @@ const AddBookmark = ({ name }) => {
     const router = useRouter();
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [currentService, setCurrentService] = useState('');
     const [bookmarkSpace, setBookmarkSpace] = useState('');
     const [bookmarkExists, setBookmarkExists] = useState(false);
 
     useEffect(() => {
         const checkExistingBookmarks = () => {
-            // first we find out which service we're currently using
-            const firstSlashIndex = router.route.indexOf('/');
-            const secondSlashIndex = router.route.indexOf('/', firstSlashIndex + 1);
-            const service = router.route.substring(1, secondSlashIndex);
-            setCurrentService(service);
+            // we check if the service already has a bookmark space
             const allBookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks).children;
 
-            // then we check if the service already has a bookmark space
             return allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
         };
 
         matrix.serviceSpaces.bookmarks && setBookmarkSpace(checkExistingBookmarks());
-    }, [matrix.serviceSpaces.bookmarks, matrix.spaces, router.route]);
+    }, [matrix.serviceSpaces.bookmarks, matrix.spaces, router.route, service]);
 
     useEffect(() => {
         // we check if the selected roomId is already bookmarked
@@ -58,7 +52,7 @@ const AddBookmark = ({ name }) => {
             if (bookmarkSpace) return bookmarkSpace;
 
             // if there is no bookmark space for the service yet, we create one
-            const newBookmarkSpace = await matrix.createRoom(currentService, true, '', 'invite', 'content', 'link')
+            const newBookmarkSpace = await matrix.createRoom(service, true, '', 'invite', 'content', 'link')
                 .catch(() => {
                     errorHandling();
 
