@@ -73,6 +73,13 @@ export default function Navigation({ closeNavigation }) {
                         </Link>
                     </li>
                 ) }
+                { _.get(getConfig(), 'publicRuntimeConfig.authProviders.tldraw.path') && (
+                    <li>
+                        <Link href={getConfig().publicRuntimeConfig.authProviders.tldraw.path}>
+                            { getConfig().publicRuntimeConfig.authProviders.tldraw.path }
+                        </Link>
+                    </li>
+                ) }
             </List>
             <List>
                 <li><Link href="/logout">/logout</Link></li>

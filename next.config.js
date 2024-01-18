@@ -39,6 +39,18 @@ module.exports = {
                 });
         }
 
+        if (SpacesConfig.authProviders.tldraw) {
+            rewriteConfig.push(
+                {
+                    source: SpacesConfig.authProviders.tldraw.path,
+                    destination: '/draw',
+                },
+                {
+                    source: SpacesConfig.authProviders.tldraw.path + '/:roomId',
+                    destination: '/draw/:roomId',
+                });
+        }
+
         return rewriteConfig;
     },
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

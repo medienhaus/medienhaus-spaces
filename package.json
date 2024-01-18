@@ -8,6 +8,7 @@
     "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
+    "@tldraw/tldraw": "^2.0.0-canary.7f48194c8fca",
     "i18next": "^23.7.7",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
