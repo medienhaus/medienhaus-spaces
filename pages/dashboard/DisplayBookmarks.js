@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DeleteBinIcon } from '@remixicons/react/line';
+import getConfig from 'next/config';
 
-import { useMatrix } from '../../lib/Matrix';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import { useAuth } from '../../lib/Auth';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
@@ -21,55 +20,49 @@ import Icon from '../../components/UI/Icon';
  * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
  */
 
-export default function DisplayBookmarks({ bookmarkSpaceId, name }) {
-    const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+export default function DisplayBookmarks({ bookmarkObject, handleRemoveBookmark }) {
+    const getOrigin = () => {
+        if (bookmarkObject.meta) {
+            //check if there is a path name defined for the template, otherwise return the template name
+            if (bookmarkObject.meta.type === 'context') return '/explore';
 
-    const removeBookmark = async (parent, roomId) => {
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(parent, roomId);
-        await matrix.leaveRoom(roomId);
+            return getConfig().publicRuntimeConfig.authProviders[bookmarkObject.meta?.template]?.path || bookmarkObject.meta?.template;
+        } else return '/chat';
     };
 
-    if (!matrix.spaces.get(bookmarkSpaceId)) return null;
-
     return (
-        <>
-            { matrix.spaces.get(bookmarkSpaceId)?.children.map(roomId => {
-                return <Bookmark
-                    key={roomId}
-                    parent={bookmarkSpaceId}
-                    roomId={roomId}
-                    link={matrix.roomContents.get(roomId).body}
-                    name={matrix.rooms.get(roomId).name}
-                    origin={name}
-                    removeBookmark={removeBookmark}
-                />;
-            }) }
-        </>);
+        <Bookmark
+            key={bookmarkObject.roomId}
+            roomId={bookmarkObject.roomId}
+            link={`${getOrigin()}/${bookmarkObject.roomId}`}
+            name={bookmarkObject.name}
+            origin={getOrigin()}
+            handleRemoveBookmark={handleRemoveBookmark}
+        />
+    );
 }
 
 /**
  * Bookmark component for rendering a single bookmark entry.
  *
- * @param {string} parent - The ID of the parent space.
  * @param {string} roomId - The ID of the bookmarked room.
  * @param {string} link - The link associated with the bookmark.
  * @param {string} name - The name of the bookmarked room.
  * @param {string} origin - The name of the origin of the bookmarked room.
- * @param {Function} removeBookmark - A function to remove the bookmark.
+ * @param {Function} handleRemoveBookmark - A function to remove the bookmark.
  * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
  *
  * @TODO
  * origin only works
  */
-const Bookmark = ({ parent, roomId, link, name, origin, removeBookmark }) => {
+const Bookmark = ({ roomId, link, name, origin, handleRemoveBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
     const { t } = useTranslation();
 
     const handleRemove = async (e) => {
         e.preventDefault();
         setRemovingBookmark(true);
-        await removeBookmark(parent, roomId)
+        await handleRemoveBookmark(roomId)
             .catch(error => alert(error.data?.error));
         setRemovingBookmark(false);
     };

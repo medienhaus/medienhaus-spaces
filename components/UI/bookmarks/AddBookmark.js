@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { BookmarkIcon, DeleteBinIcon } from '@remixicons/react/line';
+import _ from 'lodash';
 
 import TextButton from '../TextButton';
 import { useMatrix } from '../../../lib/Matrix';
@@ -18,24 +19,8 @@ const AddBookmark = ({ name, service }) => {
     const router = useRouter();
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [bookmarkSpace, setBookmarkSpace] = useState('');
-    const [bookmarkExists, setBookmarkExists] = useState(false);
-
-    useEffect(() => {
-        const checkExistingBookmarks = () => {
-            // we check if the service already has a bookmark space
-            const allBookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks).children;
-
-            return allBookmarks.find(bookmark => matrix.spaces.get(bookmark)?.name === service);
-        };
-
-        matrix.serviceSpaces.bookmarks && setBookmarkSpace(checkExistingBookmarks());
-    }, [matrix.serviceSpaces.bookmarks, matrix.spaces, router.route, service]);
-
-    useEffect(() => {
-        // we check if the selected roomId is already bookmarked
-        bookmarkSpace && setBookmarkExists(matrix.spaces.get(bookmarkSpace).children.some(child => matrix.rooms.get(child)?.name === name));
-    }, [bookmarkSpace, matrix.rooms, matrix.spaces, name]);
+    const roomId = _.get(router, 'query.roomId.1') || _.get(router, 'query.roomId.0');
+    const bookmarks = matrix.bookmarks;
 
     const errorHandling = async () => {
         setIsCreatingBookmark(false);
@@ -50,54 +35,10 @@ const AddBookmark = ({ name, service }) => {
     const addBookmarkToMatrix = async () => {
         setIsCreatingBookmark(true);
 
-        const getBookmarkRoomId = async () => {
-            if (bookmarkSpace) return bookmarkSpace;
+        const accountData = { bookmarks: bookmarks || [] };
+        accountData.bookmarks.push(roomId);
 
-            // if there is no bookmark space for the service yet, we create one
-            const newBookmarkSpace = await matrix.createRoom(service, true, '', 'invite', 'content', 'link')
-                .catch(() => {
-                    errorHandling();
-
-                    return;
-                });
-                // and add it to the bookmarks space
-            await auth.getAuthenticationProvider('matrix')
-                .addSpaceChild(matrix.serviceSpaces.bookmarks, newBookmarkSpace)
-                .catch(() => {
-                    errorHandling();
-
-                    return;
-                });
-
-            return newBookmarkSpace;
-        };
-
-        const bookmarkRoomId = await getBookmarkRoomId();
-
-        // we create a room for the bookmark
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'link')
-            .catch(() => {
-                errorHandling();
-
-                return;
-            });
-        // and add it to the bookmark space
-        await auth.getAuthenticationProvider('matrix')
-            .addSpaceChild(bookmarkRoomId, room)
-            .catch(() => {
-                errorHandling();
-
-                return;
-            });
-        // then send the link of the bookmark as a message to the room
-        await matrixClient.sendMessage(room, {
-            msgtype: 'm.text',
-            body: location.href,
-        }).catch(() => {
-            errorHandling();
-
-            return;
-        });
+        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', accountData);
         setIsCreatingBookmark(false);
 
         setContentCopied(true);
@@ -106,7 +47,7 @@ const AddBookmark = ({ name, service }) => {
     };
 
     return (
-        <TextButton disabled={bookmarkExists} title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
+        <TextButton disabled={bookmarks?.includes(roomId)} title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
             { isCreatingBookmark ?
                 <LoadingSpinnerInline /> :
                 contentCopied ?
