@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { styled } from 'styled-components';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-import Form from '../../components/UI/Form';
-
-const TextParagraph = styled.p`
-  margin: var(--margin) 0;
-`;
 
 /**
  * A React component that represents a card for a knock request in a Matrix room.
@@ -43,28 +37,30 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
     };
 
     return (
-        <Form
+        <form
             onSubmit={(e) => handleAccept(e, roomId)}
             onReset={(e) => handleDecline(e, roomId)}
         >
-            <TextParagraph>
-                <Trans
-                    t={t}
-                    i18nKey="knockCard"
-                    defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
-                    values={{ username: user, roomName: roomName }}
-                    components={{ bold: <strong /> }}
+            <div>
+                <p>
+                    <Trans
+                        t={t}
+                        i18nKey="knockCard"
+                        defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
+                        values={{ username: user, roomName: roomName }}
+                        components={{ bold: <strong /> }}
+                    />
+                </p>
+                <br />
+                { /* Show the message/reasoning that a user might have provided */ }
+                { reason && <><pre>{ reason }</pre><br /></> }
+                <ConfirmCancelButtons
+                    small
+                    disabled={isDecliningKnock || isAcceptingKnock}
+                    cancelLabel={t('Decline')}
+                    confirmLabel={t('Accept')}
                 />
-            </TextParagraph>
-            { reason && (
-                <pre>{ reason }</pre>
-            ) }
-            <ConfirmCancelButtons
-                small
-                disabled={isDecliningKnock || isAcceptingKnock}
-                cancelLabel={t('Decline')}
-                confirmLabel={t('Accept')}
-            />
-        </Form>
+            </div>
+        </form>
     );
 }
