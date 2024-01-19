@@ -6,6 +6,7 @@ import ChatIframeView from '../chat/ChatIframeView';
 import ProjectView from './ProjectView';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+import DefaultLayout from '../../components/layouts/default';
 
 const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle }) => {
     const auth = useAuth();
@@ -29,11 +30,11 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
         return () => cancelled = true;
     }, [iframeRoomId, matrixClient, parsedTitle]);
 
-    return (() => {
+    const CurrentView = () => {
         switch (currentTemplate) {
             case 'studentproject':
                 return <ProjectView content={iframeRoomId} />;
-            case 'write-link':
+            case 'etherpad':
                 return (
                     <>
                         <ServiceIframeHeader
@@ -44,7 +45,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                         <iframe title="studentproject" src={matrix.roomContents.get(iframeRoomId)?.body} />
                     </>
                 );
-            case 'sketch-link':
+            case 'spacedeck':
                 return (
                     <>
                         <ServiceIframeHeader
@@ -57,17 +58,19 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                 );
             default:
                 return (
-                    <>
-                        <ServiceIframeHeader
-                            content={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
-                            title={title}
-                            removeLink={() => console.log('removing chat from parent')}
-                            removingLink={false} />
-                        <ChatIframeView title="chat" src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />
-                    </>
+
+                    <ChatIframeView title="chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />
+
                 );
         }
-    })();
+    };
+
+    return (
+        <DefaultLayout.IframeWrapper>
+            <CurrentView />
+        </DefaultLayout.IframeWrapper>
+    );
 };
 
 export default ExploreIframeViews;

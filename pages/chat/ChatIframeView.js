@@ -1,147 +1,108 @@
 import React, { useEffect, useRef } from 'react';
 
-const ChatIframeView = ({ src, title }) => {
+const ChatIframeView = ({ src }) => {
     const iframe = useRef();
-
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
-        if (!iframe.current) return;
-        // variable needed to make eslint happy
-        const currentRef = iframe.current;
+        const iframeReference = iframe.current;
+        if (!iframeReference) return;
 
         const injectCss = () => {
             const styleTag = document.createElement('style');
             const styleContent = document.createTextNode(`
-                @media (prefers-color-scheme: dark) {
-                    body {
-                        color-scheme: dark !important;
+                * {
+                    --margin: 1rem;
 
-                        --accent: #3f3f3f !important;
-                        --accent-0pct: #3f3f3f00 !important;
-                        --accent-15pct: #3f3f3f26 !important;
-                        --accent-50pct: #3f3f3f7F !important;
+                    --cpd-color-theme-bg: rgb(255 255 255) !important; 
+                    --cpd-avatar-bg: #000000 !important;
+                    --cpd-avatar-color: #ffffff !important;
+                    --cpd-color-text-action-accent: #000 !important;
+                    --color-foreground-alpha: rgb(0 0 0 / 5%);
 
-                        --accent-color: #3f3f3f !important;
-                        --accent-color-0pct: #3f3f3f00 !important;
-                        --accent-color-15pct: #3f3f3f26 !important;
-                        --accent-color-50pct: #3f3f3f7F !important;
-
-                        --icon-button-color: #3f3f3f !important;
-                        --icon-button-color-0pct: #3f3f3f00 !important;
-                        --icon-button-color-15pct: #3f3f3f26 !important;
-                        --icon-button-color-50pct: #3f3f3f7F !important;
-
-                        --primary-color: #f0f0f0 !important;
-                        --primary-color-0pct: #f0f0f000 !important;
-                        --primary-color-15pct: #f0f0f026 !important;
-                        --primary-color-50pct: #f0f0f07F !important;
-
-                        --roomlist-background-color: #0f0f0f !important;
-                        --roomlist-background-color-0pct: #0f0f0f00 !important;
-                        --roomlist-background-color-15pct: #0f0f0f26 !important;
-                        --roomlist-background-color-50pct: #0f0f0f7F !important;
-
-                        --roomlist-highlights-color: #1f1f1f !important;
-                        --roomlist-highlights-color-0pct: #1f1f1f00 !important;
-                        --roomlist-highlights-color-15pct: #1f1f1f26 !important;
-                        --roomlist-highlights-color-50pct: #1f1f1f7F !important;
-
-                        --roomlist-separator-color: #1f1f1f !important;
-                        --roomlist-separator-color-0pct: #1f1f1f00 !important;
-                        --roomlist-separator-color-15pct: #1f1f1f26 !important;
-                        --roomlist-separator-color-50pct: #1f1f1f7F !important;
-
-                        --roomlist-text-color: #f0f0f0 !important;
-                        --roomlist-text-color-0pct: #f0f0f000 !important;
-                        --roomlist-text-color-15pct: #f0f0f026 !important;
-                        --roomlist-text-color-50pct: #f0f0f07F !important;
-
-                        --roomlist-text-secondary-color: #f0f0f0 !important;
-                        --roomlist-text-secondary-color-0pct: #f0f0f000 !important;
-                        --roomlist-text-secondary-color-15pct: #f0f0f026 !important;
-                        --roomlist-text-secondary-color-50pct: #f0f0f07F !important;
-
-                        --sidebar-color: #0f0f0f !important;
-                        --sidebar-color-0pct: #0f0f0f00 !important;
-                        --sidebar-color-15pct: #0f0f0f26 !important;
-                        --sidebar-color-50pct: #0f0f0f7F !important;
-
-                        --timeline-background-color: #0f0f0f !important;
-                        --timeline-background-color-0pct: #0f0f0f00 !important;
-                        --timeline-background-color-15pct: #0f0f0f26 !important;
-                        --timeline-background-color-50pct: #0f0f0f7F !important;
-
-                        --timeline-highlights-color: #1a1f1c !important;
-                        --timeline-highlights-color-0pct: #1a1f1c00 !important;
-                        --timeline-highlights-color-15pct: #1a1f1c26 !important;
-                        --timeline-highlights-color-50pct: #1a1f1c7F !important;
-
-                        --timeline-text-color: #f0f0f0 !important;
-                        --timeline-text-color-0pct: #f0f0f000 !important;
-                        --timeline-text-color-15pct: #f0f0f026 !important;
-                        --timeline-text-color-50pct: #f0f0f07F !important;
-
-                        --timeline-text-secondary-color: #f0f0f0 !important;
-                        --timeline-text-secondary-color-0pct: #f0f0f000 !important;
-                        --timeline-text-secondary-color-15pct: #f0f0f026 !important;
-                        --timeline-text-secondary-color-50pct: #f0f0f07F !important;
-
-                        --warning-color: #ff4b55 !important;
-                        --warning-color-0pct: #ff4b5500 !important;
-                        --warning-color-15pct: #ff4b5526 !important;
-                        --warning-color-50pct: #ff4b557F !important;
-
-                        --avatar-background-colors_0: #1f1f1f !important;
-                        --avatar-background-colors_1: #1f1f1f !important;
-                        --avatar-background-colors_2: #1f1f1f !important;
-
-                        --username-colors_0: #f0f0f0 !important;
-                        --username-colors_1: #f0f0f0 !important;
-                        --username-colors_2: #f0f0f0 !important;
-                        --username-colors_3: #f0f0f0 !important;
-                        --username-colors_4: #f0f0f0 !important;
-                        --username-colors_5: #f0f0f0 !important;
-                        --username-colors_6: #f0f0f0 !important;
-                        --username-colors_7: #f0f0f0 !important;
-
-                        --font-family: "Inter" !important;
-
-                        /* @NOTE: the following variables are found throughout element-web's \`theme-light-custom.css\` (fallback: \`#2e2f32\`) and \`theme-dark-custom.css\` (fallback: \`#edf3ff\`) */
-                        --secondary-content: var(--primary-color-50pct) !important;
-                        --tertiary-content: var(--primary-color-50pct) !important;
-                        --quaternary-content: var(--primary-color-15pct) !important;
-                        --quinary-content: var(--primary-color-15pct) !important;
-                    }
+                    border-radius: 4px !important;
                 }
-                * { border-radius: unset !important }
-                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle_horizontal { display: none !important }
-                .mx_RightPanel_roomSummaryButton, .mx_RightPanel_notifsButton { display: none }
-                .mx_RoomHeader_name { pointer-events: none }
-                .mx_RoomHeader_chevron { display: none }
+                
+                @media (prefers-color-scheme: dark) {
+                    * {
+                        --cpd-color-theme-bg: hsl(0deg 0% 8%) !important;
+                        --cpd-avatar-bg: #ffffff !important;
+                        --cpd-avatar-color: #000000 !important;
+                        --cpd-color-text-action-accent: #fff !important;
+                        --color-foreground-alpha: rgb(255 255 255 / 7%);
+                    }
+                    
+                   .mx_HomePage_button_createGroup, .mx_HomePage_button_sendDm, .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
+                        background-color: #ffffff !important;
+                        color: #000000 !important;
+                    }
+                    
+                   .mx_HomePage_button_createGroup.mx_AccessibleButton::before, 
+                   .mx_HomePage_button_sendDm.mx_AccessibleButton::before {
+                        background-color: #000 !important;
+                   }
+                    
+                  .mx_Dialog_primary {
+                        color: #000000 !important;
+                  }
+                }   
 
-                /* @TODO: This can be improved... and should probably not target mobile viewports. It's to make the */
-                /* header look like it's on line with our header elements from first & second sidebar. */
-                .mx_RoomHeader_wrapper { height: unset; padding: 0; border-bottom: none }
-                .mx_RoomHeader { flex: unset; -webkit-box-flex: unset; padding: 2.85rem 0 } 
-                .mx_RoomHeader_name { font-weight: bold }
+                /* Hide the left sidebar and that drag-to-resize thingy */
+                .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle { display: none; !important }
+                /* Hides the "Logout" button at the bottom of Element when loading for the first time */
+                .mx_MatrixChat_splashButtons { display: none; }
+                /* Hide the search bar buttons to only allow searching inside current room */
+                .mx_SearchBar_buttons { display: none !important; }
+                /* Make the header look like the "header" component we use in other pages */
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
+                .mx_RoomHeader_heading { font-weight: 900; }
+                /* Hide avatar of the user we're chatting with */
+                .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
+                /* Override all of the colorful usernames with the default text color */
+                .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
+
+                @media (max-device-width: 1079px) {
+                    .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); }
+                    
+                    /* Make the "right panel" cover the full screen */
+                    .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; }
+
+                    /* More breathing room in the main timeline of a chat */
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
+                    .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset; }
+                    
+                    /* Make all Element modal dialogs span across the whole screen; this also affects dialogs on the "new chat" home screen */ 
+                    .mx_Dialog { position: absolute; top: 0; left: 0; right: 0; bottom: 0; max-height: unset !important; border-radius: 0 !important; }
+                    .mx_Dialog_fixedWidth { width: 100% !important; max-width: unset !important; }
+                }
+
+                /**
+                 * ===================== Element Home Screen (the one we use to create new chats) =====================
+                 */
+                /* Don't display the "explore public rooms" button */
+                .mx_HomePage_button_explore { display: none !important }
+                .mx_HomePage_default_buttons { display: initial !important }
+                /* Don't display Element welcome message */
+                .mx_HomePage_default_wrapper > div:first-child { display: none }
             `);
             styleTag.appendChild(styleContent);
-            iframe.current.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
+            iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
         };
 
-        iframe.current.addEventListener('load', injectCss);
+        iframeReference.addEventListener('load', injectCss);
 
         return () => {
-            currentRef && currentRef.removeEventListener('load', injectCss);
+            iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
 
     return (
         <iframe
-            title={title}
+            ref={iframe}
+            title="/chat"
             src={src}
-            ref={iframe} />
-
+        />
     );
 };
+
 export default ChatIframeView;

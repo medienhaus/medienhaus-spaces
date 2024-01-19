@@ -38,7 +38,7 @@ export default function Explore() {
 
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
 
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
@@ -58,7 +58,6 @@ export default function Explore() {
     const myPowerLevel = _.get(matrixClient.getRoom(roomId)?.getLiveTimeline().getState(EventTimeline.FORWARDS)?.getStateEvents('m.room.power_levels', '')?.getContent(), ['users', matrixClient.getUserId()]);
     /** @type {string|undefined} */
     const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => space.room_id === iframeRoomId).template;
-
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -111,7 +110,7 @@ export default function Explore() {
 
         const getMetaEvent = async (obj) => {
             logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
-            const metaEvent = async () => await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
+            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
 
             if (metaEvent) {
                 obj.type = metaEvent.type;
@@ -194,14 +193,14 @@ export default function Explore() {
                 </ServiceTableWrapper>
             </DefaultLayout.Sidebar>
 
-            <DefaultLayout.Wrapper>
-                { iframeRoomId && !_.isEmpty(selectedSpaceChildren)? (
-                    <ExploreIframeViews
-                        currentTemplate={currentTemplate}
-                        iframeRoomId={iframeRoomId}
-                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                    />
-                ) : !_.isEmpty(selectedSpaceChildren) && <>
+            { iframeRoomId ? (
+                <ExploreIframeViews
+                    currentTemplate={currentTemplate}
+                    iframeRoomId={iframeRoomId}
+                    title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                />
+            ) : !_.isEmpty(selectedSpaceChildren) && <>
+                <DefaultLayout.Wrapper>
                     <ServiceIframeHeader
                         content={window.location.href}
                         title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
@@ -253,6 +252,7 @@ export default function Explore() {
                                             return <TreeLeaves
                                                 depth={selectedSpaceChildren.length}
                                                 leaf={leaf}
+                                                isChat={(leaf.missingMetaEvent && !leaf.room_type) || (leaf.missingMetaEvent && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
                                                 parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                                 key={leaf.room_id + '_' + index}
                                                 iframeRoomId={iframeRoomId}
@@ -262,10 +262,10 @@ export default function Explore() {
                                 </ServiceTable>
                         }
                     </ServiceTableWrapper>
-                </>
-                }
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            </DefaultLayout.Wrapper>
+                </DefaultLayout.Wrapper>
+            </>
+            }
+            { /*{ errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }*/ }
         </>
     );
 }
