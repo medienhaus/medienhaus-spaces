@@ -20,7 +20,7 @@ import Form from '../../../components/UI/Form';
 
 const AddExistingItem = ({ currentId, onCancel }) => {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
     const applicationsFolder = matrix.applicationsFolder;
     // const templatesToDisplay = getConfig().publicRuntimeConfig.templates.item.concat(getConfig().publicRuntimeConfig.templates.context);
@@ -48,6 +48,7 @@ const AddExistingItem = ({ currentId, onCancel }) => {
                 setErrorMessage((error.data?.error || t('something went wrong, please try again'))),
             ]);
         setIsAddingContext(false);
+
         if (addChildToParent?.event_id) {
             setSelectedLevels([applicationsFolder]);
             setErrorMessage('');
