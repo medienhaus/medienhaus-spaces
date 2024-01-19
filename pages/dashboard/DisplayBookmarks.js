@@ -76,7 +76,7 @@ const Bookmark = ({ roomId, link, name, origin, handleRemoveBookmark }) => {
                 <Link href={link}>{ name }</Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
-                <CopyToClipboard content={link} />
+                <CopyToClipboard content={`${location.hostname}${link}`} />
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
