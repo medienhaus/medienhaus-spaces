@@ -18,9 +18,8 @@ export default function Dashboard() {
     const auth = useAuth();
     const matrix = useMatrix();
     const pendingKnocks = matrix.knockingMembers;
-    const bookmarks = matrix.spaces.get(matrix.serviceSpaces.bookmarks)?.children;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-
+    const bookmarks = matrix.bookmarks;
     // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
     // But we will never remove any entries. This is in order to keep a list of all invitations handled while looking
     // at this page. Only when leaving the page and returning back to it, we start with an empty map from scratch.
@@ -96,6 +95,21 @@ export default function Dashboard() {
         };
     }, [matrixClient, matrix, invitations, setInvitations]);
 
+    const handleRemoveBookmark = async (roomId) => {
+        // Find the index of the roomId in the bookmarks array
+        const index = bookmarks.indexOf(roomId);
+        // Check if the roomId is in the array
+        if (index === -1) return;
+        // Remove the element at the found index from the bookmarks array
+        bookmarks.splice(index, 1);
+        // // Update the account data with the modified bookmarks array
+        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', { bookmarks: bookmarks })
+            .catch((error) => {
+                //@TODO error handling
+                console.log(error);
+            });
+    };
+
     return (
         <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
@@ -170,13 +184,14 @@ export default function Dashboard() {
                         </ServiceTable.Head>
                         <ServiceTable.Body>
                             { bookmarks.map(bookmarkSpace => {
-                                const spaceName = matrix.spaces.get(bookmarkSpace)?.name;
-                                const pathName = getConfig().publicRuntimeConfig.authProviders[spaceName]?.path;
+                                const bookmarkObject = matrix.rooms.get(bookmarkSpace) || matrix.spaces.get(bookmarkSpace);
+
+                                if (!bookmarkObject) return;
 
                                 return <DisplayBookmarks
                                     key={bookmarkSpace}
-                                    bookmarkSpaceId={bookmarkSpace}
-                                    name={pathName || spaceName}
+                                    bookmarkObject={bookmarkObject}
+                                    handleRemoveBookmark={handleRemoveBookmark}
                                 />;
                             }) }
                         </ServiceTable.Body>
