@@ -8,12 +8,14 @@ import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
+import KnockCard from './KnockCard';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
 
     const auth = useAuth();
     const matrix = useMatrix();
+    const pendingKnocks = matrix.knockingMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
@@ -118,6 +120,31 @@ export default function Dashboard() {
                     }) }
                 </>
             }
+
+            { /* Add some space and a divider between pending invitations and knocks */ }
+            { invitations.size > 0 && pendingKnocks.size > 0 && (
+                <><br /><br /><hr /><br /><br /></>
+            ) }
+
+            { pendingKnocks.size > 0 &&
+                <>
+                    <h3>{ t('Asking To Join') }</h3>
+                    <br />
+                    { [...pendingKnocks].map(([key, knock], index) => (
+                        <div key={key}>
+                            { index > 0 && <><br /><hr /><br /></> }
+                            <KnockCard
+                                roomId={knock.roomId}
+                                roomName={knock.name}
+                                userId={knock.userId}
+                                user={matrixClient.getUser(knock.userId).displayName}
+                                reason={knock.reason}
+                            />
+                        </div>
+                    )) }
+                </>
+            }
+
         </DefaultLayout.LameColumn>
     );
 }
