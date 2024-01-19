@@ -77,7 +77,8 @@ export default function Chat() {
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
                 /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); border-radius: unset !important; }
+                .mx_RoomHeader:hover { background-color: unset; }
                 .mx_RoomHeader_heading { font-weight: 900; }
                 /* Hide avatar of the user we're chatting with */
                 .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
@@ -86,7 +87,9 @@ export default function Chat() {
 
                 @media (max-device-width: 1079px) {
                     .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); }
-                    
+                }
+
+                @media (max-width: 1079px) {
                     /* Make the "right panel" cover the full screen */
                     .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; }
 
