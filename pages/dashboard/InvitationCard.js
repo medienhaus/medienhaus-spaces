@@ -7,7 +7,7 @@ import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-const FlexContainer = styled.div`
+const InvitationCardHeader = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: var(--margin);
@@ -22,10 +22,6 @@ const Avatar = styled.img`
   overflow: hidden;
   background: var(--color-foreground);
   border-radius: 50%;
-`;
-
-const TextParagraph = styled.p`
-  margin: var(--margin) 0;
 `;
 
 /**
@@ -82,7 +78,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
             onSubmit={handleAccept}
             onReset={handleDecline}
         >
-            <FlexContainer>
+            <InvitationCardHeader>
                 <Avatar src={avatar} alt={roomName} />
                 <h4>
                     {
@@ -103,8 +99,8 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                         )
                     }
                 </h4>
-            </FlexContainer>
-            <TextParagraph>
+            </InvitationCardHeader>
+            <p>
                 { wasHandled ? (
                     link ? (
                         // Invitation accepted
@@ -125,14 +121,17 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                         components={{ bold: <strong /> }}
                     />
                 ) }
-            </TextParagraph>
+            </p>
             { !wasHandled && (
-                <ConfirmCancelButtons
-                    small
-                    disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                    cancelLabel={t('Decline')}
-                    confirmLabel={t('Accept')}
-                />
+                <>
+                    <br />
+                    <ConfirmCancelButtons
+                        small
+                        disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
+                        cancelLabel={t('Decline')}
+                        confirmLabel={t('Accept')}
+                    />
+                </>
             ) }
         </form>
     );
