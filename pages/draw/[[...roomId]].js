@@ -178,9 +178,14 @@ export default function Draw() {
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-
-                    { tldrawMatrix && tldrawMatrix.store && <Editor store={tldrawMatrix.store} updateStoreElement={tldrawMatrix.updateStoreElementInMatrix} addStoreElement={tldrawMatrix.addStoreElementToMatrix} deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix} /> }
-
+                    { isInviteUsersOpen ?
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        /> :
+                        tldrawMatrix && tldrawMatrix.store && <Editor store={tldrawMatrix.store} updateStoreElement={tldrawMatrix.updateStoreElementInMatrix} addStoreElement={tldrawMatrix.addStoreElementToMatrix} deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix} />
+                    }
                 </DefaultLayout.IframeWrapper>
             ) }
         </>
