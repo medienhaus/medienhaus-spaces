@@ -8,7 +8,7 @@ import RadioButton from '../../../../components/UI/RadioButton';
 import AddExistingChat from './AddExistingChat';
 import AddNewChat from './AddNewChat';
 
-const Index = ({ currentId, parentName, onCancel }) => {
+const Index = ({ currentId, parentName, callApiAndAddToObject, onCancel }) => {
     const matrix = useMatrix();
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const [selectedOption, setSelectedOption] = useState(''); // 'existing' or 'new'
@@ -35,6 +35,7 @@ const Index = ({ currentId, parentName, onCancel }) => {
             onSuccess={handleCancel}
             currentId={currentId}
             parentName={parentName}
+            updateRoomList={callApiAndAddToObject}
         />;
     }
 
@@ -44,6 +45,7 @@ const Index = ({ currentId, parentName, onCancel }) => {
             onSuccess={handleCancel}
             currentId={currentId}
             parentName={parentName}
+            updateRoomList={callApiAndAddToObject}
         />;
     }
 

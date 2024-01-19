@@ -9,7 +9,7 @@ import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
 
-export default function AddExistingChat({ allChatRooms, handleCancel, currentId, onSuccess, parentName }) {
+export default function AddExistingChat({ allChatRooms, handleCancel, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
     const [selectedRoom, setSelectedRoom] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,6 +29,8 @@ export default function AddExistingChat({ allChatRooms, handleCancel, currentId,
         if (addChildToParent.event_id) {
             logger.log('Added existing room to parentId:', currentId);
             setUserFeedback(`Successfully added to ${parentName}`);
+            await updateRoomList(e, currentId);
+
             _.delay(() => {
                 setSelectedRoom('');
                 setUserFeedback('');

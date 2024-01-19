@@ -10,7 +10,7 @@ import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
 
-export default function AddNewChat({ handleCancel, currentId, onSuccess, parentName }) {
+export default function AddNewChat({ handleCancel, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
     const [roomName, setRoomName] = useState('');
     const [roomTopic, setRoomTopic] = useState('');
@@ -39,6 +39,8 @@ export default function AddNewChat({ handleCancel, currentId, onSuccess, parentN
         if (addChildToParent.event_id) {
             logger.log('Adding new room to parentId:', currentId);
             setUserFeedback(`${roomName} was successfully created and added to ${parentName}`);
+            await updateRoomList(e, currentId);
+
             _.delay(() => {
                 setRoomName('');
                 setRoomTopic('');

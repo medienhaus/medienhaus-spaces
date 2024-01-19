@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
@@ -103,6 +103,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
             return <Index
                 currentId={currentId}
                 parentName={roomName}
+                callApiAndAddToObject={callApiAndAddToObject}
                 onCancel={() => {
                     setSelectedRadioButton('');
                     setSelectedAction('');
