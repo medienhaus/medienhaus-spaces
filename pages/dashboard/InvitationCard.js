@@ -93,8 +93,11 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                                 // All other invitations
                                 <>
                                     { roomName }
-                                    &nbsp;
-                                    <em>({ (joinRule === 'public' ? t('public') : t('private')) })</em>
+                                    { (joinRule === 'private' && (
+                                        <>
+                                            &nbsp;<em>({ t('private') })</em>
+                                        </>
+                                    )) }
                                 </>
                             )
                         )
