@@ -33,7 +33,7 @@ const AddBookmark = ({ name, service }) => {
     }, [matrix.serviceSpaces.bookmarks, matrix.spaces, router.route, service]);
 
     useEffect(() => {
-        // we check if the selected roomId is already bookmarked
+    // we check if the selected roomId is already bookmarked
         bookmarkSpace && setBookmarkExists(matrix.spaces.get(bookmarkSpace).children.some(child => matrix.rooms.get(child)?.name === name));
     }, [bookmarkSpace, matrix.rooms, matrix.spaces, name]);
 
@@ -60,7 +60,7 @@ const AddBookmark = ({ name, service }) => {
 
                     return;
                 });
-                // and add it to the bookmarks space
+            // and add it to the bookmarks space
             await auth.getAuthenticationProvider('matrix')
                 .addSpaceChild(matrix.serviceSpaces.bookmarks, newBookmarkSpace)
                 .catch(() => {
@@ -110,10 +110,11 @@ const AddBookmark = ({ name, service }) => {
             { isCreatingBookmark ?
                 <LoadingSpinnerInline /> :
                 contentCopied ?
-                    '✔' :
+                    <Icon><BookmarkIcon /></Icon> :
                     errorMessage ?
                         errorMessage :
-                        <Icon><BookmarkIcon /></Icon> }
+                        <Icon><BookmarkIcon /></Icon>
+            }
         </TextButton>
     );
 };
