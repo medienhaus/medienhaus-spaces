@@ -22,14 +22,14 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
     const [isAcceptingKnock, setIsAcceptingKnock] = useState(false);
     const [isDecliningKnock, setIsDecliningKnock] = useState(false);
 
-    const handleDecline = async (e, roomId) => {
+    const handleDecline = async (e) => {
         e.preventDefault();
         setIsDecliningKnock(true);
         await matrixClient.kick(roomId, userId);
         setIsDecliningKnock(false);
     };
 
-    const handleAccept = async (e, roomId) => {
+    const handleAccept = async (e) => {
         e.preventDefault();
         setIsAcceptingKnock(true);
         await matrixClient.invite(roomId, userId);
@@ -38,8 +38,8 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
 
     return (
         <form
-            onSubmit={(e) => handleAccept(e, roomId)}
-            onReset={(e) => handleDecline(e, roomId)}
+            onSubmit={handleAccept}
+            onReset={handleDecline}
         >
             <div>
                 <p>
