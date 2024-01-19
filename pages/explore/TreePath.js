@@ -4,7 +4,6 @@ import Link from 'next/link';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import ErrorMessage from '../../components/UI/ErrorMessage';
 import TreeLeaves from './TreeLeaves';
 
 const Leaf = styled(ServiceTable.Cell)`
@@ -54,6 +53,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                     if (leaf.length <= 1) {
                         return;
                     }
+
                     if (index === 0) return null;
 
                     // Sort the array to display objects of type 'item' before others
@@ -65,9 +65,11 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                         key={leaf.room_id + '_' + index}
                         iframeRoomId={iframeRoomId}
                         isFetchingContent={isFetchingContent}
+                        isChat={(leaf.missingMetaEvent && !leaf.room_type) || (leaf.missingMetaEvent && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
                     />;
                 }) }
         </ServiceTable>
     );
 };
+
 export default TreePath;
