@@ -4,6 +4,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
+
 /**
  * A React component that represents a card for a knock request in a Matrix room.
  *
@@ -41,26 +43,29 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
             onSubmit={handleAccept}
             onReset={handleDecline}
         >
-            <div>
-                <p>
-                    <Trans
-                        t={t}
-                        i18nKey="knockCard"
-                        defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
-                        values={{ username: user, roomName: roomName }}
-                        components={{ bold: <strong /> }}
+            <Card>
+                <CardHeader>
+                    <CardTitle>
+                        <Trans
+                            t={t}
+                            i18nKey="knockCard"
+                            defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
+                            values={{ username: user, roomName: roomName }}
+                            components={{ bold: <strong /> }}
+                        />
+                    </CardTitle>
+                    { /* Show the message/reasoning that a user might have provided */ }
+                    { reason && <CardDescription><pre>{ reason }</pre></CardDescription> }
+                </CardHeader>
+                <CardFooter>
+                    <ConfirmCancelButtons
+                        small
+                        disabled={isDecliningKnock || isAcceptingKnock}
+                        cancelLabel={t('Decline')}
+                        confirmLabel={t('Accept')}
                     />
-                </p>
-                <br />
-                { /* Show the message/reasoning that a user might have provided */ }
-                { reason && <><pre>{ reason }</pre><br /></> }
-                <ConfirmCancelButtons
-                    small
-                    disabled={isDecliningKnock || isAcceptingKnock}
-                    cancelLabel={t('Decline')}
-                    confirmLabel={t('Accept')}
-                />
-            </div>
+                </CardFooter>
+            </Card>
         </form>
     );
 }
