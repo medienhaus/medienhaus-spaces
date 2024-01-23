@@ -85,22 +85,22 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                     <CardTitle>
                         <InvitationCardHeader>
                             <Avatar src={avatar} alt={roomName} />{
-                        // Invites for direct messages
-                        isDm ? (t('Direct Message')) : (
-                            // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
-                            service ? roomName : (
-                                // All other invitations
-                                <>
-                                    { roomName }
-                                    { (joinRule === 'private' && (
+                                // Invites for direct messages
+                                isDm ? (t('Direct Message')) : (
+                                // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
+                                    service ? roomName : (
+                                    // All other invitations
                                         <>
+                                            { roomName }
+                                            { (joinRule === 'private' && (
+                                                <>
                                             &nbsp;<em>({ t('private') })</em>
+                                                </>
+                                            )) }
                                         </>
-                                    )) }
-                                </>
-                            )
-                        )
-                    }
+                                    )
+                                )
+                            }
                         </InvitationCardHeader>
                     </CardTitle>
                     <CardDescription>
@@ -141,6 +141,6 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                 </CardFooter>
             </Card>
         </form>
-        </>
+    </>
     );
 }
