@@ -3,7 +3,6 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 
 /**
