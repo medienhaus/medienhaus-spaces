@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { BookmarkIcon } from '@remixicons/react/line';
+import { BookmarkIcon, CheckIcon } from '@remixicons/react/line';
 import _ from 'lodash';
 
 import TextButton from '../TextButton';
@@ -50,7 +50,7 @@ const AddBookmark = () => {
         <TextButton disabled={bookmarks?.includes(roomId)} title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
             { isCreatingBookmark ?
                 <LoadingSpinnerInline /> :
-                contentCopied ? '✔' : <Icon><BookmarkIcon /></Icon> }
+                contentCopied ? <Icon><CheckIcon /></Icon> : <Icon><BookmarkIcon /></Icon> }
         </TextButton>
     );
 };
