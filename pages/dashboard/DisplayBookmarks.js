@@ -11,32 +11,43 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import Icon from '../../components/UI/Icon';
 
 /**
- * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
- * This component displays a list of bookmarks, allowing users to remove them.
- *
+ * Get the origin of the bookmarked room.
+ * If the bookmark is of the type 'context', return '/explore'.
+ * Otherwise, return the path of the auth provider. If the path is not found, return the template name.
+ * If the bookmark is not of the type 'context' and the template is not found, we can assume it's a chat room and return '/chat'.
+ * @function
+ * @param {Object} bookmarkObject - The object containing the bookmark data from the matrix account data.
+ * @returns {*|string} - The origin of the bookmarked room.
+ */
+const getOrigin = (bookmarkObject) => {
+    if (bookmarkObject.meta) {
+        if (bookmarkObject.meta.type === 'context') return '/explore';
 
- @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
- @param {string} name - the name of the origin of the bookmark.
+        return getConfig().publicRuntimeConfig.authProviders[bookmarkObject.meta?.template]?.path || bookmarkObject.meta?.template;
+    } else return '/chat';
+};
+
+/**
+ * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
+ * This component displays a list of bookmarks, stored in the matrix account data, allowing users to remove them.
+ *
+ * @component
+ * @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
+ * @param {Object} bookmarkObject - The object containing the bookmark data from the matrix account data.
+ * @param {Function} handleRemoveBookmark - A function to remove the bookmark.
  * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
  */
 
 export default function DisplayBookmarks({ bookmarkObject, handleRemoveBookmark }) {
-    const getOrigin = () => {
-        if (bookmarkObject.meta) {
-            //check if there is a path name defined for the template, otherwise return the template name
-            if (bookmarkObject.meta.type === 'context') return '/explore';
-
-            return getConfig().publicRuntimeConfig.authProviders[bookmarkObject.meta?.template]?.path || bookmarkObject.meta?.template;
-        } else return '/chat';
-    };
+    const origin = getOrigin(bookmarkObject);
 
     return (
         <Bookmark
             key={bookmarkObject.roomId}
             roomId={bookmarkObject.roomId}
-            link={`${getOrigin()}/${bookmarkObject.roomId}`}
+            link={`${origin}/${bookmarkObject.roomId}`}
             name={bookmarkObject.name}
-            origin={getOrigin()}
+            origin={origin}
             handleRemoveBookmark={handleRemoveBookmark}
         />
     );
@@ -52,8 +63,6 @@ export default function DisplayBookmarks({ bookmarkObject, handleRemoveBookmark 
  * @param {Function} handleRemoveBookmark - A function to remove the bookmark.
  * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
  *
- * @TODO
- * origin only works
  */
 const Bookmark = ({ roomId, link, name, origin, handleRemoveBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
