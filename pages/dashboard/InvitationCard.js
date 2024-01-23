@@ -7,7 +7,7 @@ import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 
 const InvitationCardHeader = styled.div`
   display: flex;
@@ -75,11 +75,16 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         setWasHandled(true);
     };
 
-    return (
-        <>
+    return (<>
+        <form
+            onSubmit={handleAccept}
+            onReset={handleDecline}
+        >
             <Card>
                 <CardHeader>
-                    <CardTitle>   <Avatar src={avatar} alt={roomName} />{
+                    <CardTitle>
+                        <InvitationCardHeader>
+                            <Avatar src={avatar} alt={roomName} />{
                         // Invites for direct messages
                         isDm ? (t('Direct Message')) : (
                             // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
@@ -95,33 +100,32 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                                 </>
                             )
                         )
-                    }</CardTitle>
+                    }
+                        </InvitationCardHeader>
+                    </CardTitle>
                     <CardDescription>
-
+                        { wasHandled ? (
+                            link ? (
+                                // Invitation accepted
+                                <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
+                                    You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
+                                </Trans>
+                            ) : (
+                                // Invitation rejected
+                                t('You’ve declined the invitation.')
+                            )
+                        ) : (
+                            // Invitation pending
+                            <Trans
+                                t={t}
+                                i18nKey="invitationCard"
+                                defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
+                                values={{ username: inviterUsername, service: path }}
+                                components={{ bold: <strong /> }}
+                            />
+                        ) }
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    { wasHandled ? (
-                        link ? (
-                            // Invitation accepted
-                            <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
-                                You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
-                            </Trans>
-                        ) : (
-                            // Invitation rejected
-                            t('You’ve declined the invitation.')
-                        )
-                    ) : (
-                        // Invitation pending
-                        <Trans
-                            t={t}
-                            i18nKey="invitationCard"
-                            defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
-                            values={{ username: inviterUsername, service: path }}
-                            components={{ bold: <strong /> }}
-                        />
-                    ) }
-                </CardContent>
                 <CardFooter>
                     { !wasHandled && (
                         <>
@@ -136,66 +140,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                     ) }
                 </CardFooter>
             </Card>
-            <form
-                onSubmit={handleAccept}
-                onReset={handleDecline}
-            >
-                <InvitationCardHeader>
-                    <Avatar src={avatar} alt={roomName} />
-                    <h4>
-                        {
-                        // Invites for direct messages
-                            isDm ? (t('Direct Message')) : (
-                            // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
-                                service ? roomName : (
-                                // All other invitations
-                                    <>
-                                        { roomName }
-                                        { (joinRule === 'private' && (
-                                            <>
-                                            &nbsp;<em>({ t('private') })</em>
-                                            </>
-                                        )) }
-                                    </>
-                                )
-                            )
-                        }
-                    </h4>
-                </InvitationCardHeader>
-                <p>
-                    { wasHandled ? (
-                        link ? (
-                        // Invitation accepted
-                            <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
-                            You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
-                            </Trans>
-                        ) : (
-                        // Invitation rejected
-                            t('You’ve declined the invitation.')
-                        )
-                    ) : (
-                    // Invitation pending
-                        <Trans
-                            t={t}
-                            i18nKey="invitationCard"
-                            defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
-                            values={{ username: inviterUsername, service: path }}
-                            components={{ bold: <strong /> }}
-                        />
-                    ) }
-                </p>
-                { !wasHandled && (
-                    <>
-                        <br />
-                        <ConfirmCancelButtons
-                            small
-                            disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                            cancelLabel={t('Decline')}
-                            confirmLabel={t('Accept')}
-                        />
-                    </>
-                ) }
-            </form>
+        </form>
         </>
     );
 }
