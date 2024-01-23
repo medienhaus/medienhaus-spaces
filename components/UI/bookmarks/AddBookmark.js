@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { BookmarkIcon, DeleteBinIcon } from '@remixicons/react/line';
+import { BookmarkIcon } from '@remixicons/react/line';
 import _ from 'lodash';
 
 import TextButton from '../TextButton';
@@ -10,7 +10,14 @@ import { useAuth } from '../../../lib/Auth';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import Icon from '../Icon';
 
-const AddBookmark = ({ name, service }) => {
+/**
+ * AddBookmark component for adding a bookmark to the matrix account data.
+ * This component displays a button that allows users to add a bookmark to the matrix account data.
+ * The button is disabled if the bookmark already exists.
+ * @component
+ * @returns {JSX.Element} - A JSX element containing the button to add a bookmark.
+ */
+const AddBookmark = () => {
     const [contentCopied, setContentCopied] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix();
@@ -18,19 +25,8 @@ const AddBookmark = ({ name, service }) => {
     const { t } = useTranslation();
     const router = useRouter();
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const roomId = _.get(router, 'query.roomId.1') || _.get(router, 'query.roomId.0');
+    const roomId = router.query.roomId?.[1] || router.query.roomId?.[0];
     const bookmarks = matrix.bookmarks;
-
-    const errorHandling = async () => {
-        setIsCreatingBookmark(false);
-        setErrorMessage(<Icon>
-            <DeleteBinIcon />
-        </Icon>);
-        await new Promise(() => setTimeout(() => {
-            setErrorMessage('');
-        }, 2000));
-    };
 
     const addBookmarkToMatrix = async () => {
         setIsCreatingBookmark(true);
@@ -38,23 +34,23 @@ const AddBookmark = ({ name, service }) => {
         const accountData = { bookmarks: bookmarks || [] };
         accountData.bookmarks.push(roomId);
 
-        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', accountData);
+        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', accountData)
+            .catch((error) => {
+                alert(error.data?.error);
+            });
         setIsCreatingBookmark(false);
 
         setContentCopied(true);
-        await new Promise(r => setTimeout(r, 2000));
-        setContentCopied(false);
+        _.delay(() => {
+            setContentCopied(false);
+        }, 2000);
     };
 
     return (
         <TextButton disabled={bookmarks?.includes(roomId)} title={t('Add to bookmarks')} onClick={addBookmarkToMatrix}>
             { isCreatingBookmark ?
                 <LoadingSpinnerInline /> :
-                contentCopied ?
-                    '✔' :
-                    errorMessage ?
-                        errorMessage :
-                        <Icon><BookmarkIcon /></Icon> }
+                contentCopied ? '✔' : <Icon><BookmarkIcon /></Icon> }
         </TextButton>
     );
 };
