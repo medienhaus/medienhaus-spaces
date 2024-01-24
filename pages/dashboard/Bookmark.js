@@ -16,14 +16,14 @@ import Icon from '../../components/UI/Icon';
  * Otherwise, return the path of the auth provider. If the path is not found, return the template name.
  * If the bookmark is not of the type 'context' and the template is not found, we can assume it's a chat room and return '/chat'.
  * @function
- * @param {Object} bookmarkObject - The object containing the bookmark data from the matrix account data.
+ * @param {Object} metaEvent - The meta event associated with the bookmark.
  * @returns {*|string} - The origin of the bookmarked room.
  */
-const getOrigin = (bookmarkObject) => {
-    if (bookmarkObject.meta) {
-        if (bookmarkObject.meta.type === 'context') return '/explore';
+const getOrigin = (metaEvent) => {
+    if (metaEvent) {
+        if (metaEvent.type === 'context') return '/explore';
 
-        return getConfig().publicRuntimeConfig.authProviders[bookmarkObject.meta?.template]?.path || bookmarkObject.meta?.template;
+        return getConfig().publicRuntimeConfig.authProviders[metaEvent?.template]?.path || metaEvent?.template;
     } else return '/chat';
 };
 
