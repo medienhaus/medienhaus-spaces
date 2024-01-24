@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 import { BookmarkIcon, CheckIcon } from '@remixicons/react/line';
 import _ from 'lodash';
 
@@ -15,17 +14,16 @@ import Icon from '../Icon';
  * This component displays a button that allows users to add a bookmark to the matrix account data.
  * The button is disabled if the bookmark already exists.
  * @component
+ * @param {string} roomId - The id of the room to add to the bookmarks.
  * @returns {JSX.Element} - A JSX element containing the button to add a bookmark.
  */
-const AddBookmark = () => {
+const AddBookmark = ({ roomId }) => {
     const [contentCopied, setContentCopied] = useState(false);
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation();
-    const router = useRouter();
     const [isCreatingBookmark, setIsCreatingBookmark] = useState(false);
-    const roomId = router.query.roomId?.[1] || router.query.roomId?.[0];
     const bookmarks = matrix.bookmarks;
 
     const addBookmarkToMatrix = async () => {

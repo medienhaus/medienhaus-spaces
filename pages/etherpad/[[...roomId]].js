@@ -311,7 +311,7 @@ export default function Etherpad() {
                                 name={matrix.rooms.get(roomId).name}
                                 onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen} />
-                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} service="etherpad" />
+                            <AddBookmark roomId={roomId} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')}
                                 content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')}
