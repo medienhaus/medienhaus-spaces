@@ -9,7 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 
-const InvitationCardHeader = styled.div`
+const InvitationCardHeading = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: var(--margin);
@@ -82,9 +82,10 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         >
             <Card>
                 <CardHeader>
-                    <CardTitle>
-                        <InvitationCardHeader>
-                            <Avatar src={avatar} alt={roomName} />{
+                    <InvitationCardHeading>
+                        <Avatar src={avatar} alt={roomName} />
+                        <CardTitle>
+                            {
                                 // Invites for direct messages
                                 isDm ? (t('Direct Message')) : (
                                 // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
@@ -101,8 +102,8 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                                     )
                                 )
                             }
-                        </InvitationCardHeader>
-                    </CardTitle>
+                        </CardTitle>
+                    </InvitationCardHeading>
                     <CardDescription>
                         { wasHandled ? (
                             link ? (
