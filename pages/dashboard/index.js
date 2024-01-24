@@ -9,7 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
 import KnockCard from './KnockCard';
-import DisplayBookmarks from './DisplayBookmarks';
+import Bookmark from './Bookmark';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Dashboard() {
@@ -188,8 +188,11 @@ export default function Dashboard() {
 
                                 if (!bookmarkObject) return;
 
-                                return <DisplayBookmarks
+                                return <Bookmark
                                     key={bookmarkSpace}
+                                    metaEvent={bookmarkObject.meta}
+                                    roomId={bookmarkSpace}
+                                    name={bookmarkObject.name}
                                     bookmarkObject={bookmarkObject}
                                     handleRemoveBookmark={handleRemoveBookmark}
                                 />;

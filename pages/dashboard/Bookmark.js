@@ -28,44 +28,19 @@ const getOrigin = (bookmarkObject) => {
 };
 
 /**
- * DisplayBookmarks component for rendering and managing bookmarks within a specified space.
- * This component displays a list of bookmarks, stored in the matrix account data, allowing users to remove them.
- *
- * @component
- * @param {string} bookmarkSpaceId - The ID of the space containing bookmarks.
- * @param {Object} bookmarkObject - The object containing the bookmark data from the matrix account data.
- * @param {Function} handleRemoveBookmark - A function to remove the bookmark.
- * @returns {JSX.Element|null} - A JSX element containing the list of bookmarks, or null if the space is not found.
- */
-
-export default function DisplayBookmarks({ bookmarkObject, handleRemoveBookmark }) {
-    const origin = getOrigin(bookmarkObject);
-
-    return (
-        <Bookmark
-            key={bookmarkObject.roomId}
-            roomId={bookmarkObject.roomId}
-            link={`${origin}/${bookmarkObject.roomId}`}
-            name={bookmarkObject.name}
-            origin={origin}
-            handleRemoveBookmark={handleRemoveBookmark}
-        />
-    );
-}
-
-/**
  * Bookmark component for rendering a single bookmark entry.
  *
  * @param {string} roomId - The ID of the bookmarked room.
- * @param {string} link - The link associated with the bookmark.
+ * @param {Object} metaEvent - The meta event associated with the bookmark.
  * @param {string} name - The name of the bookmarked room.
- * @param {string} origin - The name of the origin of the bookmarked room.
  * @param {Function} handleRemoveBookmark - A function to remove the bookmark.
  * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
  *
  */
-const Bookmark = ({ roomId, link, name, origin, handleRemoveBookmark }) => {
+const Bookmark =({ roomId, metaEvent, name, handleRemoveBookmark }) => {
     const [removingBookmark, setRemovingBookmark] = useState(false);
+    const origin = getOrigin(metaEvent);
+    const link=`${origin}/${roomId}`;
     const { t } = useTranslation();
 
     const handleRemove = async (e) => {
@@ -96,3 +71,5 @@ const Bookmark = ({ roomId, link, name, origin, handleRemoveBookmark }) => {
         </ServiceTable.Row>
     );
 };
+
+export default Bookmark;
