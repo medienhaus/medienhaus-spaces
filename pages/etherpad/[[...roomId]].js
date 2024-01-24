@@ -18,13 +18,11 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import logger from '../../lib/Logging';
 import ServiceLink from '../../components/UI/ServiceLink';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
-import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
-import CreateAuthoredPad from './actions/CreateAuthoredPad';
-import CreatePasswordPad from './actions/CreatePasswordPad';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
 import LoginPrompt from '../../components/UI/LoginPrompt';
+import CreateNewPad from '@/pages/etherpad/actions/CreateNewPad';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -240,9 +238,9 @@ export default function Etherpad() {
 
     const submenuItems = _.filter([
         { value: 'existingPad', actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />, label: t('Add existing pad') },
-        { value: 'anonymousPad', actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />, label: t('Create new anonymous pad') },
-        isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />, label: t('Create new authored pad') },
-        isMyPadsApiEnabled && { value: 'passwordPad', actionComponentToRender: <CreatePasswordPad createPadAndOpen={createPadAndOpen} />, label: t('Create password protected pad') },
+        // { value: 'anonymousPad', actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />, label: t('Create new anonymous pad') },
+        // isMyPadsApiEnabled && { value: 'authoredPad', actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />, label: t('Create new authored pad') },
+        { value: 'passwordPad', actionComponentToRender: <CreateNewPad createPadAndOpen={createPadAndOpen} isMyPadsApiEnabled={isMyPadsApiEnabled} />, label: t('Create new pad') },
     ]);
 
     const listEntries = useMemo(() => {
