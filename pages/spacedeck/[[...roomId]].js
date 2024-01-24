@@ -23,6 +23,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import LoginPrompt from '../../components/UI/LoginPrompt';
+import { useToast } from '@/components/UI/use-toast';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -40,6 +41,7 @@ export default function Spacedeck() {
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
+    const { toast } = useToast();
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -175,7 +177,11 @@ export default function Spacedeck() {
 
         if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
-            alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
+            toast({
+                variant: 'destructive',
+                title: 'Uh oh! Something went wrong.',
+                description: t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'),
+            });
 
             return;
         }
