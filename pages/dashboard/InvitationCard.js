@@ -6,8 +6,8 @@ import { styled } from 'styled-components';
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
+
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
-import { useToast } from '@/components/UI/use-toast';
 
 const InvitationCardHeader = styled.div`
   display: flex;
@@ -46,7 +46,6 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
     const [isDecliningInvite, setIsDecliningInvite] = useState(false);
     const [link, setLink] = useState('');
     const [wasHandled, setWasHandled] = useState(false);
-    const { toast } = useToast();
 
     const handleDecline = async (e) => {
         e.preventDefault();
@@ -61,11 +60,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         setIsAcceptingInvite(true);
 
         await matrixClient.joinRoom(roomId).catch(() => {
-            toast({
-                variant: 'destructive',
-                title: 'Uh oh! Something went wrong.',
-                description: t('Something went wrong! Please try again.'),
-            });
+            alert(t('Something went wrong! Please try again.'));
         });
 
         setIsAcceptingInvite(false);

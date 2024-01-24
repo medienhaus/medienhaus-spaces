@@ -12,7 +12,6 @@ import '../assets/shadecn.css';
 import '../assets/_globalCss.css';
 
 import LostConnection from '../components/UI/LostConnection';
-import { Toaster } from '@/components/UI/toaster';
 
 // Enable immer support for Map() and Set()
 enableMapSet();
@@ -48,7 +47,6 @@ export default function App({ Component, pageProps }) {
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     { !matrixData.isConnectedToServer && <LostConnection /> }
-                    <Toaster />
                     <DefaultLayout.Layout>
                         { ((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
                             <Component {...pageProps} />
