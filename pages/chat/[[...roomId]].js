@@ -1,86 +1,22 @@
 import React, { useEffect, useRef } from 'react';
-import { styled } from 'styled-components';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { ChatNewIcon } from '@remixicons/react/line';
 
 import { useMatrix } from '../../lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
 import TextButton from '../../components/UI/TextButton';
 import Icon from '../../components/UI/Icon';
+import { ServiceTable } from '../../components/UI/ServiceTable';
+import ServiceLink from '../../components/UI/ServiceLink';
 
 const sortRooms = function(room) {
     return [
         room.notificationCount === 0,
         room.name,
     ];
-};
-
-const UnreadNotificationBadge = styled.div`
-  display: grid;
-  place-content: center;
-  width: 3ch;
-  height: var(--line-height);
-  color: rgb(255 255 255);
-  background-color: var(--color-notification);
-
-  > small {
-    font-weight: 600;
-  }
-`;
-
-const Avatar = styled.img`
-  position: relative;
-  width: 2rem;
-  height: 2rem;
-  margin-right: 0.6rem;
-
-  &.placeholder {
-    backdrop-filter: invert(100%);
-  }
-`;
-
-const SidebarListEntryWrapper = styled.a`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 0.3rem;
-`;
-
-const RoomName = styled.span`
-  flex: 1 0;
-  height: 2rem;
-  overflow: hidden;
-  line-height: 2rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const SidebarListEntry = function({ room }) {
-    return (
-        <Link href={`/chat/${room.roomId}`} passHref>
-            <SidebarListEntryWrapper>
-                { room.avatar ? (
-                    // Render the avatar if we have one
-                    <Avatar src={room.avatar} alt={room.name} />
-                ) : (
-                    // Render an empty GIF if we don't have an avatar
-                    <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                ) }
-                <RoomName>{ room.name }</RoomName>
-                { room.notificationCount > 0 && (
-                    <UnreadNotificationBadge>
-                        <small>
-                            { room.notificationCount < 100 ? room.notificationCount : '99+' }
-                        </small>
-                    </UnreadNotificationBadge>
-                ) }
-            </SidebarListEntryWrapper>
-        </Link>
-    );
 };
 
 export default function Chat() {
@@ -119,11 +55,20 @@ export default function Chat() {
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
                     
-                    .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
+                   .mx_HomePage_button_createGroup, .mx_HomePage_button_sendDm, .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
                         background-color: #ffffff !important;
                         color: #000000 !important;
                     }
-                }
+                    
+                   .mx_HomePage_button_createGroup.mx_AccessibleButton::before, 
+                   .mx_HomePage_button_sendDm.mx_AccessibleButton::before {
+                        background-color: #000 !important;
+                   }
+                    
+                  .mx_Dialog_primary {
+                        color: #000000 !important;
+                  }
+                }   
 
                 /* Hide the left sidebar and that drag-to-resize thingy */
                 .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle { display: none; !important }
@@ -132,7 +77,8 @@ export default function Chat() {
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
                 /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); border-radius: unset !important; }
+                .mx_RoomHeader:hover { background-color: unset; }
                 .mx_RoomHeader_heading { font-weight: 900; }
                 /* Hide avatar of the user we're chatting with */
                 .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
@@ -141,7 +87,9 @@ export default function Chat() {
 
                 @media (max-device-width: 1079px) {
                     .mx_RoomHeader { padding: calc(var(--margin) * 0.75) var(--margin); border-bottom: 1px solid var(--color-foreground-alpha); }
-                    
+                }
+
+                @media (max-width: 1079px) {
                     /* Make the "right panel" cover the full screen */
                     .mx_RightPanel { position: fixed; left: 0; right: 0; bottom: 0; top: 0; z-index: 999999; }
 
@@ -194,12 +142,38 @@ export default function Chat() {
                 </h2>
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
-                    { directMessages && directMessages.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                    <ServiceTable>
+                        <ServiceTable.Body>
+                            { directMessages && directMessages.map((room) => (
+                                <ServiceLink
+                                    key={room.roomId}
+                                    href={`/chat/${room.roomId}`}
+                                    name={room.name}
+                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
+                                    notificationCount={room.notificationCount}
+                                    selected={roomId === room.roomId}
+                                />
+                            )) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
                 </details>
                 <br />
                 <details open>
                     <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
-                    { otherRooms && otherRooms.map((room) => <SidebarListEntry key={room.roomId} room={room} />) }
+                    <ServiceTable>
+                        <ServiceTable.Body>
+                            { otherRooms && otherRooms.map((room) => (
+                                <ServiceLink
+                                    key={room.roomId}
+                                    href={`/chat/${room.roomId}`}
+                                    name={room.name}
+                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
+                                    notificationCount={room.notificationCount}
+                                    selected={roomId === room.roomId}
+                                />
+                            )) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
                 </details>
                 <br />
             </DefaultLayout.Sidebar>
