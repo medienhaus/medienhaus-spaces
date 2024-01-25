@@ -21,8 +21,8 @@
   --primary-foreground: 210 20% 98%;
   --secondary: 220 14.3% 95.9%;
   --secondary-foreground: 220.9 39.3% 11%;
-  --muted: 220 14.3% 95.9%;
-  --muted-foreground: 220 8.9% 46.1%;
+  --muted: var(--color-disabled);
+  --muted-foreground: var(--color-disabled);
   --accent: 220 14.3% 95.9%;
   --accent-foreground: 220.9 39.3% 11%;
   --destructive: var(--color-notification);
@@ -58,8 +58,8 @@
     --primary-foreground: 210 20% 98%;
     --secondary: 215 27.9% 16.9%;
     --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
+    --muted: var(--color-disabled);
+    --muted-foreground: var(--color-disabled);
     --accent: 215 27.9% 16.9%;
     --accent-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;

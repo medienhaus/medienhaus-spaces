@@ -6,7 +6,7 @@ const Card = React.forwardRef(({ className, ...props }, ref) => (
     <div
         ref={ref}
         className={cn(
-            'tw-rounded-lg tw-border tw-bg-card tw-text-card-foreground tw-shadow-sm',
+            'tw-rounded-lg tw-border tw-bg-card tw-text-card-foreground tw-border-solid',
             className,
         )}
         {...props} />
@@ -16,41 +16,39 @@ Card.displayName = 'Card';
 const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
     <div
         ref={ref}
-        className={cn('tw-flex tw-flex-col tw-space-y-1.5 tw-py-6', className)}
+        className={cn('tw-flex tw-flex-col tw-space-y-1.5 tw-p-6', className)}
         {...props} />
 ));
 CardHeader.displayName = 'CardHeader';
 
-const CardTitle = React.forwardRef(({ className, children, ...props }, ref) => (
+const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
     <h3
         ref={ref}
         className={cn(
-            'tw-leading-none tw-tracking-tight',
+            'tw-text-2xl tw-font-semibold tw-leading-none tw-tracking-tight',
             className,
         )}
-        {...props}>
-        { children }
-    </h3>
+        {...props} />
 ));
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
     <p
         ref={ref}
-        className={cn('', className)}
+        className={cn('tw-text-sm tw-text-muted-foreground', className)}
         {...props} />
 ));
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('tw-py-6 tw-pt-0', className)} {...props} />
+    <div ref={ref} className={cn('tw-p-6 tw-pt-0', className)} {...props} />
 ));
 CardContent.displayName = 'CardContent';
 
 const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
     <div
         ref={ref}
-        className={cn('tw-flex tw-items-center tw-py-6 tw-pt-0', className)}
+        className={cn('tw-flex tw-items-center tw-p-6 tw-pt-0', className)}
         {...props} />
 ));
 CardFooter.displayName = 'CardFooter';
