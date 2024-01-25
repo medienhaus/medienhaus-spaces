@@ -95,21 +95,6 @@ export default function Dashboard() {
         };
     }, [matrixClient, matrix, invitations, setInvitations]);
 
-    const handleRemoveBookmark = async (roomId) => {
-        // Find the index of the roomId in the bookmarks array
-        const index = bookmarks.indexOf(roomId);
-        // Check if the roomId is in the array
-        if (index === -1) return;
-        // Remove the element at the found index from the bookmarks array
-        bookmarks.splice(index, 1);
-        // // Update the account data with the modified bookmarks array
-        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', { bookmarks: bookmarks })
-            .catch((error) => {
-                //@TODO error handling
-                console.log(error);
-            });
-    };
-
     return (
         <DefaultLayout.LameColumn>
             <h2>/dashboard</h2>
@@ -193,8 +178,6 @@ export default function Dashboard() {
                                     metaEvent={bookmarkObject.meta}
                                     roomId={bookmarkSpace}
                                     name={bookmarkObject.name}
-                                    bookmarkObject={bookmarkObject}
-                                    handleRemoveBookmark={handleRemoveBookmark}
                                 />;
                             }) }
                         </ServiceTable.Body>
