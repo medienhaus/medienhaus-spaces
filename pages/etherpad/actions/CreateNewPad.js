@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { styled } from 'styled-components';
 
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
+
 import { Switch } from '@/components/UI/switch.jsx';
+
+const SwitchContainer = styled.div`
+  display: flex;
+  gap: var(--margin);
+  align-items: center;
+  justify-content: space-between;
+`;
 
 export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, callbackDone }) {
     const { t } = useTranslation('etherpad');
@@ -27,16 +36,18 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
 
     return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
         <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-        { isMyPadsApiEnabled && <div>
-            <label htmlFor="passwordProtected">{ t('Password protected') }</label>
-            <Switch
-                id="passwordProtected"
-                checked={passwordProtected}
-                onCheckedChange={() => setPasswordProtected(prevState => !prevState)}
-            />
-        </div> }
+        { isMyPadsApiEnabled &&
+      <SwitchContainer>
+          <label htmlFor="passwordProtected">{ t('Password protected') }</label>
+          <Switch
+              id="passwordProtected"
+              checked={passwordProtected}
+              onCheckedChange={() => setPasswordProtected(prevState => !prevState)}
+          />
+      </SwitchContainer>
+        }
         <input type="password" disabled={!passwordProtected} placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
         <input type="password" disabled={!passwordProtected} placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-        <button type="submit" disabled={!padName || (passwordProtected && !password || password !== validatePassword)}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+        <button type="submit" disabled={!padName || (passwordProtected && !password || password !== validatePassword)}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
     </Form>);
 }
