@@ -1,4 +1,6 @@
+/*
 @import 'normalize.css/normalize.css';
+*/
 @import '../public/assets/fonts/inter/inter.css';
 
 :root {
@@ -68,6 +70,7 @@
   }
 }
 
+/*
 *,
 *::before,
 *::after {
@@ -75,6 +78,7 @@
   padding: unset;
   margin: unset;
 }
+*/
 
 *::selection {
   background-color: var(--color-selection);
@@ -97,6 +101,7 @@ body {
   }
 }
 
+/*
 h1,
 h2,
 h3,
@@ -108,6 +113,7 @@ h6 {
   font-weight: bold;
   line-height: inherit;
 }
+*/
 
 a:link {
   color: var(--color-foreground);
@@ -131,13 +137,16 @@ a:active {
   color: var(--color-foreground);
 }
 
+/*
 hr {
   border-color: var(--color-foreground-alpha);
   border-style: solid;
   border-width: 0.5px;
   border-radius: unset;
 }
+*/
 
+/*
 select {
   width: 100%;
   height: calc(var(--margin) * 3);
@@ -201,18 +210,6 @@ input[type='submit'][disabled] {
   border-color: var(--color-disabled);
 }
 
-.resetButtonStyle {
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  outline: inherit;
-}
-
 input[id*='datalist'],
 input[type='color'],
 input[type='date'],
@@ -251,3 +248,4 @@ input[type='password'][disabled] {
   cursor: not-allowed;
   border-color: var(--color-disabled);
 }
+*/
