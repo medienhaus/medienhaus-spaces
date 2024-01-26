@@ -1,6 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    darkMode: ['media'],
+    darkMode: [
+        'media',
+    ],
     content: [
         './pages/**/*.{js,jsx}',
         './components/**/*.{js,jsx}',
@@ -8,9 +10,8 @@ module.exports = {
         './src/**/*.{js,jsx}',
     ],
     corePlugins: {
-        preflight: false,
+        preflight: true,
     },
-    prefix: 'tw-',
     theme: {
         container: {
             center: true,
