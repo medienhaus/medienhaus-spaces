@@ -35,11 +35,11 @@
 
 :root {
   /* color definitions (legacy support) */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-disabled: rgb(128 128 128);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-disabled: hsl(var(--muted));
   --color-selection: rgb(255 240 170);
-  --color-notification: rgb(255 96 96);
+  --color-notification: hsl(var(--accent));
   --color-background-alpha: hsl(0deg 0% 97%);
   --color-background-beta: hsl(0deg 0% 94%);
   --color-foreground-alpha: rgb(0 0 0 / 5%);
@@ -74,11 +74,11 @@
     --ring: 0 0% 0%;
 
     /* color definitions (legacy support) */
-    --color-background: hsl(0deg 0% 8%);
-    --color-foreground: rgb(255 255 255);
-    --color-disabled: rgb(128 128 128);
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
+    --color-disabled: hsl(var(--muted));
     --color-selection: rgb(128 196 255);
-    --color-notification: rgb(96 64 255);
+    --color-notification: hsl(var(--accent));
     --color-background-alpha: hsl(0deg 0% 5%);
     --color-background-beta: hsl(0deg 0% 0%);
     --color-foreground-alpha: rgb(255 255 255 / 7%);
