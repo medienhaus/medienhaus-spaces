@@ -5,8 +5,8 @@ import Link from 'next/link';
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
 
 /**
  * Displays one invitation for a matrix room/space and gives users the option to accept or decline them.
