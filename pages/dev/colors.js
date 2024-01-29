@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 export default function Colors() {
     return (
         <DefaultLayout.LameColumn>
-            <h2>/login</h2>
+            <h2>/dev/colors</h2>
             <Wrapper>
                 <div>
                     background:
