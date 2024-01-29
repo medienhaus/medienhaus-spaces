@@ -32,7 +32,7 @@ const Homeserver = styled.span`
   max-width: 40%;
   overflow: hidden;
   line-height: calc(var(--margin) * 3);
-  color: var(--color-me);
+  color: hsl(var(--muted-foreground));
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
