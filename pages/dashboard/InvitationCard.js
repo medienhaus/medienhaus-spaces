@@ -64,7 +64,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         >
             <Card>
                 <CardHeader>
-                    <CardTitle className="tw-flex tw-items-center tw-gap-4">
+                    <CardTitle className="flex items-center gap-4">
                         <Avatar>
                             <AvatarImage src={avatar} />
                             <AvatarFallback />
