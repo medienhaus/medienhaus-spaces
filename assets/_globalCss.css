@@ -73,8 +73,8 @@
     --ring: 0 0% 0%;
 
     /* color definitions (legacy support) */
-    --color-background: hsl(var(--background));
-    --color-foreground: hsl(var(--foreground));
+    --color-background: hsl(var(--foreground));
+    --color-foreground: hsl(var(--background));
     --color-disabled: hsl(var(--muted));
     --color-notification: hsl(var(--accent));
     --color-background-alpha: hsl(0deg 0% 5%);
