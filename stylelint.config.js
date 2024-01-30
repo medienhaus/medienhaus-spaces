@@ -1,30 +1,30 @@
 /** @type {import('stylelint').Config} */
 module.exports = {
-    'files': ['assets/*.css', 'components/**/*.{js,jsx}', 'pages/**/*.js'],
-    'rules': {
+    files: ['assets/*.css', 'components/**/*.{js,jsx}', 'pages/**/*.js'],
+    rules: {
         'max-empty-lines': 1,
         'max-line-length': null,
         'string-quotes': 'single',
     },
-    'overrides': [
+    overrides: [
         {
-            'files': ['**/*.css'],
-            'extends': [
+            files: ['**/*.css'],
+            extends: [
                 'stylelint-config-standard',
                 'stylelint-config-recess-order',
                 'stylelint-config-tailwindcss',
             ],
         },
         {
-            'files': ['**/*.js'],
-            'customSyntax': '@stylelint/postcss-css-in-js',
-            'extends': [
+            files: ['**/*.js'],
+            customSyntax: '@stylelint/postcss-css-in-js',
+            extends: [
                 'stylelint-config-standard',
                 'stylelint-config-styled-components',
                 'stylelint-config-recess-order',
             ],
-            'rules': {
-                'indentation': [2, { 'baseIndentLevel': 1 }],
+            rules: {
+                indentation: [2, { baseIndentLevel: 1 }],
                 'no-empty-first-line': null,
                 'no-invalid-double-slash-comments': null,
                 'value-keyword-case': null, // Disabled because this rule clashes when using props with camel-case names
