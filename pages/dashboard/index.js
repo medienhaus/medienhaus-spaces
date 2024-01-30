@@ -6,8 +6,8 @@ import { useImmer } from 'use-immer';
 
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
-import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
+import InvitationCard from './InvitationCard';
 import KnockCard from './KnockCard';
 
 export default function Dashboard() {
@@ -104,7 +104,7 @@ export default function Dashboard() {
                     { Array.from(invitations.values()).map((invitation, index) => {
                         return (
                             <div key={invitation.roomId}>
-                                { index > 0 && <><br /><hr /><br /></> }
+                                { index > 0 && <br /> }
                                 <InvitationCard
                                     path={invitation.path}
                                     roomId={invitation.roomId}
@@ -123,7 +123,7 @@ export default function Dashboard() {
 
             { /* Add some space and a divider between pending invitations and knocks */ }
             { invitations.size > 0 && pendingKnocks.size > 0 && (
-                <><br /><br /><hr /><br /><br /></>
+                <><br /><br /><br /></>
             ) }
 
             { pendingKnocks.size > 0 &&

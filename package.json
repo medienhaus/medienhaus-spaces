@@ -38,9 +38,12 @@
     "autoprefixer": "^10.4.17",
     "eslint": "^8.55.0",
     "eslint-config-next": "^14.0.3",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-matrix-org": "^0.8.0",
+    "prettier": "^3.2.4",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "stylelint": "^14.8.2",
     "stylelint-config-recess-order": "^3.0.0",
     "stylelint-config-standard": "^25.0.0",
@@ -57,7 +60,8 @@
       "plugin:matrix-org/javascript",
       "plugin:matrix-org/a11y",
       "plugin:matrix-org/react",
-      "plugin:import/recommended"
+      "plugin:import/recommended",
+      "prettier"
     ],
     "env": {
       "es6": true
@@ -86,11 +90,7 @@
           "next": "*"
         }
       ],
-      "max-len": "off",
-      "jsx-quotes": [
-        "error",
-        "prefer-double"
-      ]
+      "max-len": "off"
     },
     "settings": {
       "import/resolver": {

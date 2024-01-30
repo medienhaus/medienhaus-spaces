@@ -3,7 +3,14 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/UI/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/UI/card';
 
 /**
  * A React component that represents a card for a knock request in a Matrix room.
@@ -15,10 +22,19 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/comp
  * @param {string} reason
  * @returns {JSX.Element} A form that allows the user to accept or decline the knock request.
  */
-export default function KnockCard({ roomId, roomName, user, userId, reason }) {
+export default function KnockCard({
+    roomId,
+    roomName,
+    avatar,
+    user,
+    userId,
+    reason,
+}) {
     const auth = useAuth();
     const { t } = useTranslation('dashboard');
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrixClient = auth
+        .getAuthenticationProvider('matrix')
+        .getMatrixClient();
 
     const [isAcceptingKnock, setIsAcceptingKnock] = useState(false);
     const [isDecliningKnock, setIsDecliningKnock] = useState(false);
@@ -38,24 +54,32 @@ export default function KnockCard({ roomId, roomName, user, userId, reason }) {
     };
 
     return (
-        <form
-            onSubmit={handleAccept}
-            onReset={handleDecline}
-        >
+        <form onSubmit={handleAccept} onReset={handleDecline}>
             <Card>
                 <CardHeader>
-                    <CardTitle>
-                        <Trans
-                            t={t}
-                            i18nKey="knockCard"
-                            defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
-                            values={{ username: user, roomName: roomName }}
-                            components={{ bold: <strong /> }}
-                        />
+                    <CardTitle className="flex items-center gap-4">
+                        <Avatar>
+                            <AvatarImage src={avatar} />
+                            <AvatarFallback />
+                        </Avatar>
+                        { /* wrap in span to not apply flex gap */ }
+                        <span>
+                            <Trans
+                                t={t}
+                                i18nKey="knockCard"
+                                defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
+                                values={{ username: user, roomName: roomName }}
+                                components={{ bold: <strong /> }}
+                            />
+                        </span>
                     </CardTitle>
-                    { /* Show the message/reasoning that a user might have provided */ }
-                    { reason && <CardDescription><pre>{ reason }</pre></CardDescription> }
                 </CardHeader>
+                { /* Show the message/reasoning that a user might have provided */ }
+                { reason && (
+                    <CardContent>
+                        <q>{ reason }</q>
+                    </CardContent>
+                ) }
                 <CardFooter>
                     <ConfirmCancelButtons
                         small

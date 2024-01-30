@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
 import PasswordInputButton from '../components/UI/PasswordInputButton';
+import { Input } from '@/components/UI/input';
 
 const LoginSection = styled.div`
   & > form > * + * {
@@ -18,17 +19,20 @@ const LoginSection = styled.div`
   }
 `;
 
+/* TODO: refine this for shadcn/ui + tailwind */
 const UsernameHomeserverContainer = styled.div`
   position: relative;
 `;
 
+/* TODO: refine this for shadcn/ui + tailwind */
 const Homeserver = styled.span`
   position: absolute;
+  top: -4px;
   right: var(--margin);
   max-width: 40%;
   overflow: hidden;
   line-height: calc(var(--margin) * 3);
-  color: var(--color-me);
+  color: hsl(var(--muted-foreground));
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
@@ -80,7 +84,7 @@ export default function Login() {
                     onSubmitLoginForm();
                 }}>
                     <UsernameHomeserverContainer>
-                        <input type="text"
+                        <Input type="text"
                             placeholder={t('Username')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}

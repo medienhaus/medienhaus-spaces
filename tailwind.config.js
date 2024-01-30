@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    // darkMode: ['class'],
     darkMode: ['media'],
     content: [
         './pages/**/*.{js,jsx}',
@@ -7,10 +8,10 @@ module.exports = {
         './app/**/*.{js,jsx}',
         './src/**/*.{js,jsx}',
     ],
-    corePlugins: {
-        preflight: false,
-    },
-    prefix: 'tw-',
+    // corePlugins: {
+    //     preflight: true,
+    // },
+    prefix: '',
     theme: {
         container: {
             center: true,
@@ -24,8 +25,8 @@ module.exports = {
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
-                background: 'var(--color-background)',
-                foreground: 'var(--color-foreground)',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
                 primary: {
                     DEFAULT: 'hsl(var(--primary))',
                     foreground: 'hsl(var(--primary-foreground))',
