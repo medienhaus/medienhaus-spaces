@@ -249,8 +249,8 @@ export default function Explore() {
                             manageContextActionToggle ?
                                 <ExploreMatrixActions
                                     myPowerLevel={myPowerLevel}
-                                    currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                    parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
+                                    currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].roomId}
+                                    parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id || selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].roomId}
                                     spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
                                     getSpaceChildren={getSpaceChildren}
                                 />
@@ -272,16 +272,15 @@ export default function Explore() {
                                                 </ErrorMessage>;
                                             }
 
-                                            // @TODO check why we don't exclude the parent from the array, maybe used to parse to components (there's probably a better solution)
                                             if (index === 0) return null;
+                                            const roomId = leaf.id || leaf.room_id || leaf.roomId;
 
                                             // Sort the array to display objects of type 'item' before others
                                             return <TreeLeaves
                                                 depth={selectedSpaceChildren.length}
                                                 leaf={leaf}
                                                 isChat={(!leaf.meta && !leaf.room_type) || (!leaf.meta && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
-                                                parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
-                                                key={leaf.room_id + '_' + index}
+                                                key={roomId + '_' + index}
                                                 iframeRoomId={iframeRoomId}
                                                 isFetchingContent={isFetchingContent}
                                             />;
