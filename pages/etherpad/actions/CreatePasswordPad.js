@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
+import { Input } from '@/components/UI/input';
+import { Button } from '@/components/UI/button';
 
 export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');
@@ -24,9 +26,9 @@ export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
     };
 
     return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-        <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-        <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-        <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
+        <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+        <Input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
+        <Button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</Button>
     </Form>);
 }

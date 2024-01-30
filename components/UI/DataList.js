@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
+import { Input } from '@/components/UI/input';
+import { Button } from '@/components/UI/button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -137,7 +139,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     return (
         <InviteUserForm onSubmit={handleSubmit}>
             <>
-                <input
+                <Input
                     type="text"
                     value={value}
                     onChange={handleChange}
@@ -176,7 +178,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                         </ServiceTable.Body>
                     </ServiceTable>
                 </TableWrapper>
-                <button disabled={selected.length === 0 && checked.length === 0}>{ t('invite') }</button>
+                <Button disabled={selected.length === 0 && checked.length === 0}>{ t('invite') }</Button>
             </>
         </InviteUserForm>
     );
@@ -214,7 +216,7 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
             onKeyDown={handleKeyDown} // Add onKeyDown event
         >
             <ServiceTable.Cell>
-                <input
+                <Input
                     id={index}
                     ref={ref}
                     tabIndex={0}

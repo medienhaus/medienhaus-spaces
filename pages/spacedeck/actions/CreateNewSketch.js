@@ -8,6 +8,8 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path } from '../../../lib/Spacedeck';
+import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/input';
 
 const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const [sketchName, setSketchName] = useState('');
@@ -38,8 +40,8 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
 
     return (
         <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
-            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
+            <Input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <Button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</Button>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>);
 };

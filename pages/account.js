@@ -8,6 +8,8 @@ import { styled } from 'styled-components';
 import { useAuth } from '../lib/Auth';
 import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
 import DefaultLayout from '../components/layouts/default';
+import { Input } from '@/components/UI/input';
+import { Button } from '@/components/UI/button';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
   /* TODO: these kind of layout spacings probably need to
@@ -203,7 +205,7 @@ export default function Account() {
                     <h2>/account</h2>
                     <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
                     <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
-                        <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                        <Input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
                         <ConfirmCancelButtons disabled={isSavingChanges} />
                     </form>
                     { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
@@ -236,10 +238,10 @@ export default function Account() {
                         <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
                     ) }
                     <AvatarButtonContainer>
-                        <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                        <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</button>
+                        <Input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
+                        <Button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</Button>
                         { profileInfo.avatar_url && (
-                            <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
+                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</Button>
                         ) }
                     </AvatarButtonContainer>
                 </AvatarSection>
@@ -247,7 +249,7 @@ export default function Account() {
             <div>
                 <h3>{ t('Display Name & Email Addresses') }</h3>
                 <ProfileSection onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
-                    <input
+                    <Input
                         type="text"
                         value={inputDisplayname}
                         disabled={isSavingChanges}
@@ -260,10 +262,10 @@ export default function Account() {
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     ) }
                     { emails.map((email, index) => (
-                        <input key={email} type="email" value={email} disabled />
+                        <Input key={email} type="email" value={email} disabled />
                     )) }
                     { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
-                        <input
+                        <Input
                             type="email"
                             value={inputNewEmail}
                             disabled={isSavingChanges}
