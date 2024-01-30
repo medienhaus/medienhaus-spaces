@@ -46,7 +46,7 @@ const RadioWrapper = styled.div`
   justify-content: start;
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, callApiAndAddToObject }) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren, callApiAndAddToObject }) => {
     const { t } = useTranslation('explore');
     const matrix = useMatrix();
     const roomName = matrix.spaces.get(currentId)?.name || matrix.rooms.get(currentId)?.name;
@@ -61,7 +61,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, cal
                     currentId={currentId}
                     parentId={parentId}
                     roomName={roomName}
-                    children={children}
+                    spaceChildren={spaceChildren}
                     callApiAndAddToObject={callApiAndAddToObject}
                     myPowerLevel={myPowerLevel}
                 />
@@ -73,7 +73,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, children, cal
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddToObject, myPowerLevel }) => {
+const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, callApiAndAddToObject, myPowerLevel }) => {
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
@@ -108,7 +108,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, children, callApiAndAddTo
         case 'removeSpace':
             return <RemoveSpaceFromParent parentId={currentId}
                 parentName={roomName}
-                children={children}
+                spaceChildren={spaceChildren}
                 callApiAndAddToObject={callApiAndAddToObject}
                 onCancel={() => {
                     setSelectedRadioButton('');

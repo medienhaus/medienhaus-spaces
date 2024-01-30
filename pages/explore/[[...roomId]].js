@@ -224,7 +224,7 @@ export default function Explore() {
                                     myPowerLevel={myPowerLevel}
                                     currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                     parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
-                                    children={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
+                                    spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
                                     callApiAndAddToObject={callApiAndAddToObject}
                                 />
                                 : <ServiceTable>
