@@ -57,7 +57,11 @@ export default function Explore() {
      */
     const myPowerLevel = _.get(matrixClient.getRoom(roomId)?.getLiveTimeline().getState(EventTimeline.FORWARDS)?.getStateEvents('m.room.power_levels', '')?.getContent(), ['users', matrixClient.getUserId()]);
     /** @type {string|undefined} */
-    const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => space.room_id === iframeRoomId).template;
+    const currentTemplate = iframeRoomId && selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find(space => {
+        const roomId = space.id || space.room_id || space.roomId;
+
+        return roomId === iframeRoomId;
+    }).meta?.template;
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -85,54 +89,73 @@ export default function Explore() {
         e && e.preventDefault();
         logger.debug('Fetch the room hierarchy for ' + roomId);
 
-        //@TODO check local storage for cached data
-        const getSpaceHierarchy = async () => await matrix.roomHierarchy(roomId, null, 1);
+        const getHierarchyFromServer = async (roomId) => {
+            spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+                .catch(async error => {
+                    if (error.data?.error.includes('not in room')) {
+                        // If the error indicates the user is not in the room and previews are disabled
+                        // We prompt the user to join the room.
+                        if (confirm(t('You are currently not in room {{roomId}}, and previews are disabled. Do you want to join the room?', { roomId: roomId }))) {
+                            const joinRoom = await matrixClient.joinRoom(roomId)
+                                .catch(error => setErrorMessage(error.data?.error));
 
-        const spaceHierarchy = await getSpaceHierarchy()
-            .catch(async error => {
-                if (error.data?.error.includes('not in room')) {
-                    // If the error indicates the user is not in the room and previews are disabled
-                    // We prompt the user to join the room.
-                    if (confirm(t('You are currently not in room {{roomId}}, and previews are disabled. Do you want to join the room?', { roomId: roomId }))) {
-                        const joinRoom = await matrixClient.joinRoom(roomId)
-                            .catch(error => setErrorMessage(error.data?.error));
-
-                        // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                        if (joinRoom) return await getSpaceHierarchy();
+                            // If successfully joined, recursively call 'getSpaceHierarchy' again.
+                            if (joinRoom) return await spaceHierarchy();
+                        }
+                    } else {
+                        return matrix.handleRateLimit(error, () => spaceHierarchy())
+                            .catch(error => {
+                                setErrorMessage(error.message);
+                            });  // Handle other errors by setting an error message.
                     }
-                } else {
-                    return matrix.handleRateLimit(error, () => getSpaceHierarchy())
-                        .catch(error => {
-                            setErrorMessage(error.message);
-                        });  // Handle other errors by setting an error message.
+                });
+            if (!spaceHierarchy) return;
+            const parent = spaceHierarchy[0];
+
+            const getMetaEvent = async (obj) => {
+                logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
+                const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
+
+                if (metaEvent) obj.meta = metaEvent;
+            };
+
+            for (const space of spaceHierarchy) {
+                if (space.room_id !== spaceHierarchy[0].room_id) {
+                    space.parent = parent;
                 }
-            });
-        if (!spaceHierarchy) return;
-        const parent = spaceHierarchy[0];
 
-        const getMetaEvent = async (obj) => {
-            logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
-            const metaEvent = await auth.getAuthenticationProvider('matrix').getMatrixClient().getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
+                await getMetaEvent(space)
+                    .catch((error) => {
+                        logger.debug(error);
 
-            if (metaEvent) {
-                obj.type = metaEvent.type;
-                obj.template = metaEvent.template;
-                obj.application = metaEvent.application;
+                        return matrix.handleRateLimit(error, () => getMetaEvent(space))
+                            .catch(error => {
+                                setErrorMessage(error.message);
+                            });
+                    });
             }
+
+            return spaceHierarchy;
         };
 
-        for (const space of spaceHierarchy) {
-            space.parent = parent;
-            await getMetaEvent(space)
-                .catch((error) => {
-                    logger.debug(error);
+        let spaceHierarchy;
+        // check our local state for cached data
+        const cachedSpace = matrix.spaces.get(roomId);
 
-                    return matrix.handleRateLimit(error, () => getMetaEvent(space))
-                        .catch(error => {
-                            space.missingMetaEvent = true;
-                            setErrorMessage(error.message);
-                        });
+        if (cachedSpace) {
+            if (cachedSpace.children) {
+                spaceHierarchy = cachedSpace.children.map((roomId) => {
+                    const child = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
+                    child.parent = cachedSpace;
+
+                    //@TODO what if the user is not part of the hierarchy element? needs to call getHierarchyFromServer for this element
+                    return child;
                 });
+                // insert the cached space at the beginning of the array to mimic the behaviour of matrix.getRoomHierarchy
+                spaceHierarchy.splice(0, 0, cachedSpace);
+            }
+        } else {
+            await getHierarchyFromServer(roomId);
         }
 
         setSelectedSpaceChildren((prevState) => {
@@ -140,7 +163,9 @@ export default function Explore() {
             let indexOfParent = null;
 
             for (const [index, children] of prevState.entries()) {
-                if (children[0].room_id === roomId) {
+                const childRoomId = children[0].room_id || children[0].roomId || children[0].id;
+
+                if (childRoomId === roomId) {
                     // If there is a match, return the position and exit the loop
                     indexOfParent = index;
                     break;
@@ -247,13 +272,14 @@ export default function Explore() {
                                                 </ErrorMessage>;
                                             }
 
+                                            // @TODO check why we don't exclude the parent from the array, maybe used to parse to components (there's probably a better solution)
                                             if (index === 0) return null;
 
                                             // Sort the array to display objects of type 'item' before others
                                             return <TreeLeaves
                                                 depth={selectedSpaceChildren.length}
                                                 leaf={leaf}
-                                                isChat={(leaf.missingMetaEvent && !leaf.room_type) || (leaf.missingMetaEvent && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
+                                                isChat={(!leaf.meta && !leaf.room_type) || (!leaf.meta && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
                                                 parent={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                                 key={leaf.room_id + '_' + index}
                                                 iframeRoomId={iframeRoomId}
