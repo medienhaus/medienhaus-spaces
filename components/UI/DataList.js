@@ -19,7 +19,7 @@ import Form from './Form';
  */
 
 const Row = styled(ServiceTable.Row)`
-  text-decoration: ${(props) => props.$focused && 'underline'};
+  text-decoration: ${props => props.$focused && 'underline' };
   cursor: pointer;
 
   &:hover,
