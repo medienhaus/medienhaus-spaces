@@ -16,7 +16,7 @@ import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useMatrix } from '../../../lib/Matrix';
 import ChangeTopic from './ChangeTopic';
-import Index from './AddOrCreateChat';
+import CreateChatOptions from './AddOrCreateChat';
 import RadioButton from '../../../components/UI/RadioButton';
 
 /**
@@ -100,10 +100,10 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
                     setSelectedAction('');
                 }} />;
         case 'addOrCreateChat':
-            return <Index
+            return <CreateChatOptions
                 currentId={currentId}
                 parentName={roomName}
-                callApiAndAddToObject={callApiAndAddToObject}
+                getSpaceChildren={getSpaceChildren}
                 onCancel={() => {
                     setSelectedRadioButton('');
                     setSelectedAction('');

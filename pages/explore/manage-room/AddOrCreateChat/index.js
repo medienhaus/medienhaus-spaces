@@ -8,7 +8,15 @@ import RadioButton from '../../../../components/UI/RadioButton';
 import AddExistingChat from './AddExistingChat';
 import AddNewChat from './AddNewChat';
 
-const Index = ({ currentId, parentName, callApiAndAddToObject, onCancel }) => {
+/**
+ * This component provides options for adding an existing or creating a new chat room.
+ * @param {String} currentId - The ID of the current room.
+ * @param {String} parentName - The name of the parent of the currently observed room.
+ * @param {Function} getSpaceChildren - A callback function to update the room list.
+ * @param {Function} onCancel - A callback function to cancel the action.
+ * @returns {JSX.Element}
+ */
+const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onCancel }) => {
     const matrix = useMatrix();
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const [selectedOption, setSelectedOption] = useState(''); // 'existing' or 'new'
@@ -35,7 +43,7 @@ const Index = ({ currentId, parentName, callApiAndAddToObject, onCancel }) => {
             onSuccess={handleCancel}
             currentId={currentId}
             parentName={parentName}
-            updateRoomList={callApiAndAddToObject}
+            updateRoomList={getSpaceChildren}
         />;
     }
 
@@ -45,7 +53,7 @@ const Index = ({ currentId, parentName, callApiAndAddToObject, onCancel }) => {
             onSuccess={handleCancel}
             currentId={currentId}
             parentName={parentName}
-            updateRoomList={callApiAndAddToObject}
+            updateRoomList={getSpaceChildren}
         />;
     }
 
@@ -72,5 +80,5 @@ const Index = ({ currentId, parentName, callApiAndAddToObject, onCancel }) => {
     );
 };
 
-export default Index;
+export default CreateChatOptions;
 
