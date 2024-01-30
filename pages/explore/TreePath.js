@@ -28,13 +28,14 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
     return (
         <ServiceTable>
             { selectedSpaceChildren.map((path, index) => {
-                if (!path[0]?.parent) return null;
+                if (!path[0]) return null;
+                const roomId = path[0].id || path[0].room_id || path[0].roomId;
 
                 return <ServiceTable.Row key={index}>
                     <Leaf selected
                         disabled={isFetchingContent}
                     >
-                        <Link disabled href={`/explore/${path[0].parent.room_id}`}>{ index > 0 && '↳ ' }{ path[0].parent.name }{ isFetchingContent === path[0].parent.room_id && <LoadingSpinnerInline /> }</Link>
+                        <Link disabled href={`/explore/${roomId}`}>{ index > 0 && '↳ ' }{ path[0].name }{ isFetchingContent === roomId && <LoadingSpinnerInline /> }</Link>
                     </Leaf>
 
                 </ServiceTable.Row>;
@@ -65,7 +66,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                         key={leaf.room_id + '_' + index}
                         iframeRoomId={iframeRoomId}
                         isFetchingContent={isFetchingContent}
-                        isChat={(leaf.missingMetaEvent && !leaf.room_type) || (leaf.missingMetaEvent && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
+                        isChat={(!leaf.meta && !leaf.room_type) || (!leaf.meta && leaf.room_type === 'm.room')} // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
                     />;
                 }) }
         </ServiceTable>

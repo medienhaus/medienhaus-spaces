@@ -19,6 +19,7 @@ const ToggleButton = styled.button`
   border: unset;
 `;
 
+// @TODO check if user actually has the needed power level to invite users to the matrix room
 const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, myPowerLevel, setManageContextActionToggle, manageContextActionToggle, isInviteUsersOpen, setIsInviteUsersOpen, joinRule }) => {
     const { t } = useTranslation('write');
 
@@ -31,14 +32,14 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                 { deleteContent && <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
                     { isDeletingPad ? <LoadingSpinnerInline /> : <DeleteBinIcon width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" /> }
                 </TextButton> }
-                <InviteUserToMatrixRoom.Button
+                { myPowerLevel && <InviteUserToMatrixRoom.Button
                     name={title}
                     onClick={() => {
                         if (manageContextActionToggle) setManageContextActionToggle(false);
 
                         setIsInviteUsersOpen(prevState => !prevState);
                     }}
-                    inviteUsersOpen={isInviteUsersOpen} />
+                    inviteUsersOpen={isInviteUsersOpen} /> }
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => {

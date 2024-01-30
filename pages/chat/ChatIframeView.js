@@ -17,10 +17,16 @@ const ChatIframeView = ({ src }) => {
                     --cpd-avatar-bg: #000000 !important;
                     --cpd-avatar-color: #ffffff !important;
                     --cpd-color-text-action-accent: #000 !important;
+                    --cpd-color-bg-subtle-secondary: hsl(0deg 0% 94%) !important;
                     --color-foreground-alpha: rgb(0 0 0 / 5%);
 
                     border-radius: 4px !important;
                 }
+                
+                /* Unset the border-radius override from above for certain elements again */
+                .mx_RoomHeader { border-radius: 0 !important; }
+                .mx_RoomHeader .mx_FacePile .mx_BaseAvatar { border-radius: 50% !important; }
+                .mx_RoomKnocksBar { border-radius: 0 !important; }
                 
                 @media (prefers-color-scheme: dark) {
                     * {
@@ -28,6 +34,7 @@ const ChatIframeView = ({ src }) => {
                         --cpd-avatar-bg: #ffffff !important;
                         --cpd-avatar-color: #000000 !important;
                         --cpd-color-text-action-accent: #fff !important;
+                        --cpd-color-bg-subtle-secondary: hsl(0deg 0% 0%) !important;
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
                     
@@ -53,11 +60,12 @@ const ChatIframeView = ({ src }) => {
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
                 /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); border-radius: unset !important; }
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
                 .mx_RoomHeader:hover { background-color: unset; }
                 .mx_RoomHeader_heading { font-weight: 900; }
                 /* Hide avatar of the user we're chatting with */
-                .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
+                .mx_RoomHeader_infoWrapper .mx_BaseAvatar { display: none !important; }
+                /* Give that bar to manage pending knocks our background-color */
                 /* Override all of the colorful usernames with the default text color */
                 .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
 

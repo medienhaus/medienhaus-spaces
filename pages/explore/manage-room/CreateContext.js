@@ -11,7 +11,7 @@ import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
-const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
+const CreateContext = ({ currentId, onCancel, getSpaceChildren }) => {
     const auth = useAuth();
     const matrix = useMatrix();
 
@@ -78,7 +78,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
             );
         }
 
-        await callApiAndAddToObject(null, currentId);
+        await getSpaceChildren(null, currentId);
         setName('');
         setTopic('');
         setTemplate('');
