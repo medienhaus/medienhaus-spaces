@@ -165,7 +165,7 @@ export default function Explore() {
         const onRouterChange = async () => {
             setIsFetchingContent(roomId);
             setManageContextActionToggle(false);
-            await callApiAndAddToObject(null, roomId);
+            await getSpaceChildren(null, roomId);
             setIsFetchingContent(false);
         };
 
