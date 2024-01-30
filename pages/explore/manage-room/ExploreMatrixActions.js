@@ -23,7 +23,7 @@ import ChangeTopic from './ChangeTopic';
  * @param {String} currentId - The ID of the current room.
  * @param {String} parentId - The ID of the parent of the currently observed room.
  * @param {Number} myPowerLevel - Number between 0 and 100.
- * @callback callApiAndAddToObject - A callback function.
+ * @callback getSpaceChildren - A callback function.
  * @returns {JSX.Element} - The rendered component.
  */
 
@@ -46,7 +46,7 @@ const RadioWrapper = styled.div`
   justify-content: start;
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren, callApiAndAddToObject }) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren, getSpaceChildren }) => {
     const { t } = useTranslation('explore');
     const matrix = useMatrix();
     const roomName = matrix.spaces.get(currentId)?.name || matrix.rooms.get(currentId)?.name;
@@ -62,7 +62,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren
                     parentId={parentId}
                     roomName={roomName}
                     spaceChildren={spaceChildren}
-                    callApiAndAddToObject={callApiAndAddToObject}
+                    getSpaceChildren={getSpaceChildren}
                     myPowerLevel={myPowerLevel}
                 />
             )
@@ -73,7 +73,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, callApiAndAddToObject, myPowerLevel }) => {
+const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceChildren, myPowerLevel }) => {
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
@@ -85,7 +85,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, callApiAnd
         case 'substructure':
             return <CreateContext currentId={currentId}
                 parentId={parentId}
-                callApiAndAddToObject={callApiAndAddToObject}
+                getSpaceChildren={getSpaceChildren}
                 onCancel={() => {
                     setSelectedRadioButton('');
                     setSelectedAction('');
@@ -109,7 +109,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, callApiAnd
             return <RemoveSpaceFromParent parentId={currentId}
                 parentName={roomName}
                 spaceChildren={spaceChildren}
-                callApiAndAddToObject={callApiAndAddToObject}
+                getSpaceChildren={getSpaceChildren}
                 onCancel={() => {
                     setSelectedRadioButton('');
                     setSelectedAction('');

@@ -80,10 +80,12 @@ export default function Explore() {
     }, [iframeRoomId, matrix]);
 
     // Call API to fetch and add room hierarchy to selectedSpaceChildren
-    const callApiAndAddToObject = useCallback(async (e, roomId) => {
+    const getSpaceChildren = useCallback(async (e, roomId) => {
         if (!selectedSpaceChildren) return;
         e && e.preventDefault();
         logger.debug('Fetch the room hierarchy for ' + roomId);
+
+        //@TODO check local storage for cached data
         const getSpaceHierarchy = async () => await matrix.roomHierarchy(roomId, null, 1);
 
         const spaceHierarchy = await getSpaceHierarchy()
@@ -225,7 +227,7 @@ export default function Explore() {
                                     currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id}
                                     parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id}
                                     spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
-                                    callApiAndAddToObject={callApiAndAddToObject}
+                                    getSpaceChildren={getSpaceChildren}
                                 />
                                 : <ServiceTable>
                                     { selectedSpaceChildren[selectedSpaceChildren.length - 1]

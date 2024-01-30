@@ -32,7 +32,7 @@ const RemoveSection = styled.div`
  * @param {Object} spaceChildren - An object representing the children of the current space.
  * @param {String} parentId - The ID of the current observed Room.
  * @param {String} parentName - The name of the parent space.
- * @param {Function} callApiAndAddToObject - Callback function to update the list of children.
+ * @param {Function} getSpaceChildren - Callback function to update the list of children.
  * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} JSX element representing the "Remove Space From Parent" component.
  */
@@ -40,7 +40,7 @@ const RemoveSpaceFromParent = ({
     spaceChildren,
     parentId,
     parentName,
-    callApiAndAddToObject,
+    getSpaceChildren,
     onCancel,
 }) => {
     const auth = useAuth();
@@ -62,7 +62,7 @@ const RemoveSpaceFromParent = ({
                 });
         }
 
-        await callApiAndAddToObject(e, parentId);
+        await getSpaceChildren(e, parentId);
         setItemsToRemove([]);
         setIsRemovingChild(false);
     };
