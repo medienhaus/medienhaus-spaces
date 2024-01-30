@@ -145,9 +145,6 @@ export default function DataList({
         await onSubmit(checked.concat(selected));
     };
 
-    console.log(selected);
-    console.log(checked);
-
     return (
         <InviteUserForm onSubmit={handleSubmit}>
             <>
