@@ -39,18 +39,18 @@ const Submenu = styled.aside`
 export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState('');
 
     const handleMenuToggle = () => {
         setIsOpen(!isOpen);
-        setValue("");
+        setValue('');
     };
 
     // We clone the passed in React element to add the callback function prop to it:
     const ActionComponent =
         value &&
         cloneElement(
-            _.get(_.find(items, { value: value }), "actionComponentToRender"),
+            _.get(_.find(items, { value: value }), 'actionComponentToRender'),
             {
                 callbackDone: handleMenuToggle,
             },
@@ -76,7 +76,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                     <Select defaultValue={value} onValueChange={setValue}>
                         <SelectTrigger>
                             <SelectValue
-                                placeholder={`-- ${t("Select action")} --`}
+                                placeholder={`-- ${t('Select action')} --`}
                             />
                         </SelectTrigger>
                         <SelectContent>
