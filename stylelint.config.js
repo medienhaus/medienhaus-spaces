@@ -1,5 +1,6 @@
+/** @type {import('stylelint').Config} */
 module.exports = {
-    'files': ['assets/*.css', 'components/**/*.js', 'pages/**/*.js'],
+    'files': ['assets/*.css', 'components/**/*.{js,jsx}', 'pages/**/*.js'],
     'rules': {
         'max-empty-lines': 1,
         'max-line-length': null,
