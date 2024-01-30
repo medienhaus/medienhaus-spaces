@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../../lib/Auth';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
@@ -25,13 +26,17 @@ const ChangeTopic = ({ roomId, onCancel }) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [currentTopic, setCurrentTopic] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const { t } = useTranslation('explore');
 
     const getCurrentTopic = useCallback(async () => {
         // Use the Matrix client to get the current room topic
         const stateEvent = await matrixClient.getStateEvent(roomId, 'm.room.topic')
             .catch(error => {
+                // don't show an error if the topic is not set
+                if (error.errcode === 'M_NOT_FOUND') return;
                 setErrorMessage(error.data?.error);
             });
+
         if (stateEvent?.topic) {
             setCurrentTopic(stateEvent.topic);
             setNewTopic(stateEvent.topic);
@@ -76,6 +81,7 @@ const ChangeTopic = ({ roomId, onCancel }) => {
                 value={newTopic}
                 onChange={handleTopicChange}
                 disabled={isUpdating}
+                placeholder={t('Enter a new topic')}
             />
 
             <PreviousNextButtons onCancel={onCancel} disableNext={isUpdating || currentTopic === newTopic} />
