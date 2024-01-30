@@ -29,18 +29,18 @@ const RemoveSection = styled.div`
 /**
  * Component for removing a space from its parent.
  *
- * @param {Function} children - children to display.
+ * @param {Object} spaceChildren - An object representing the children of the current space.
  * @param {String} parentId - The ID of the current observed Room.
  * @param {String} parentName - The name of the parent space.
- * @param {Function} callApiAndAddToObject - Callback function to update the list of children.
+ * @param {Function} getSpaceChildren - Callback function to update the list of children.
  * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} JSX element representing the "Remove Space From Parent" component.
  */
 const RemoveSpaceFromParent = ({
-    children,
+    spaceChildren,
     parentId,
     parentName,
-    callApiAndAddToObject,
+    getSpaceChildren,
     onCancel,
 }) => {
     const auth = useAuth();
@@ -54,13 +54,15 @@ const RemoveSpaceFromParent = ({
     const removeChildFromParent = async (e) => {
         e.preventDefault();
         setIsRemovingChild(true);
+
         for (const roomId of itemsToRemove) {
             await matrix.removeSpaceChild(parentId, roomId)
                 .catch(error => {
                     setErrorMessages(prevState => [...prevState, error.data?.error]);
                 });
         }
-        await callApiAndAddToObject(e, parentId);
+
+        await getSpaceChildren(e, parentId);
         setItemsToRemove([]);
         setIsRemovingChild(false);
     };
@@ -72,14 +74,15 @@ const RemoveSpaceFromParent = ({
             } else return [...prevState, roomId];
         });
     };
-    if (!children || !matrix) return;
+
+    if (!spaceChildren || !matrix) return;
 
     return (
         <Form
             onSubmit={removeChildFromParent}>
             <RemoveSection>
                 <ServiceTable>
-                    { children.map(child => {
+                    { spaceChildren.map(child => {
                         // don't display the root space, so it not accidentally deleted
                         if (child.room_id === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
 
