@@ -7,7 +7,7 @@ import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
 import { useMatrix } from '../../lib/Matrix';
 
-const FlexContainer = styled.div`
+const InvitationCardHeader = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: var(--margin);
@@ -22,10 +22,6 @@ const Avatar = styled.img`
   overflow: hidden;
   background: var(--color-foreground);
   border-radius: 50%;
-`;
-
-const TextParagraph = styled.p`
-  margin: var(--margin) 0;
 `;
 
 /**
@@ -82,7 +78,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
             onSubmit={handleAccept}
             onReset={handleDecline}
         >
-            <FlexContainer>
+            <InvitationCardHeader>
                 <Avatar src={avatar} alt={roomName} />
                 <h4>
                     {
@@ -93,17 +89,20 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                                 // All other invitations
                                 <>
                                     { roomName }
-                                    &nbsp;
-                                    <em>({ (joinRule === 'public' ? t('public') : t('private')) })</em>
+                                    { (joinRule === 'private' && (
+                                        <>
+                                            &nbsp;<em>({ t('private') })</em>
+                                        </>
+                                    )) }
                                 </>
                             )
                         )
                     }
                 </h4>
-            </FlexContainer>
-            { wasHandled ? (
-                <TextParagraph>
-                    { link ? (
+            </InvitationCardHeader>
+            <p>
+                { wasHandled ? (
+                    link ? (
                         // Invitation accepted
                         <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
                             You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
@@ -111,29 +110,28 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                     ) : (
                         // Invitation rejected
                         t('You’ve declined the invitation.')
-                    ) }
-                </TextParagraph>
-            ) : (
-                // Invitation pending
-                <>
-                    <TextParagraph>
-                        <Trans
-                            t={t}
-                            i18nKey="invitationCard"
-                            defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
-                            values={{ username: inviterUsername, service: path }}
-                            components={{ bold: <strong /> }}
-                        />
-                    </TextParagraph>
-                </>
-            ) }
+                    )
+                ) : (
+                    // Invitation pending
+                    <Trans
+                        t={t}
+                        i18nKey="invitationCard"
+                        defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
+                        values={{ username: inviterUsername, service: path }}
+                        components={{ bold: <strong /> }}
+                    />
+                ) }
+            </p>
             { !wasHandled && (
-                <ConfirmCancelButtons
-                    small
-                    disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                    cancelLabel={t('Decline')}
-                    confirmLabel={t('Accept')}
-                />
+                <>
+                    <br />
+                    <ConfirmCancelButtons
+                        small
+                        disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
+                        cancelLabel={t('Decline')}
+                        confirmLabel={t('Accept')}
+                    />
+                </>
             ) }
         </form>
     );

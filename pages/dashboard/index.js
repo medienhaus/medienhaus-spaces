@@ -140,7 +140,6 @@ export default function Dashboard() {
                                 roomId={knock.roomId}
                                 roomName={knock.name}
                                 userId={knock.userId}
-                                user={matrixClient.getUser(knock.userId).displayName}
                                 reason={knock.reason}
                             />
                         </div>
