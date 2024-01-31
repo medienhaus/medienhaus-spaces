@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    // darkMode: ['class'],
     darkMode: ['media'],
     content: [
         './pages/**/*.{js,jsx}',
@@ -8,18 +7,8 @@ module.exports = {
         './app/**/*.{js,jsx}',
         './src/**/*.{js,jsx}',
     ],
-    // corePlugins: {
-    //     preflight: true,
-    // },
     prefix: '',
     theme: {
-        // container: {
-        //     center: true,
-        //     padding: '2rem',
-        //     screens: {
-        //         '2xl': '1400px',
-        //     },
-        // },
         fontSize: {
             sm: '1rem',
             base: '1rem',
