@@ -2,7 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { useAuth } from '../lib/Auth';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/shadcn/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/UI/shadcn/select';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
@@ -15,7 +21,7 @@ const ContextMultiLevelSelectSingleLevel = ({
     showTopics,
 }) => {
     const auth = useAuth();
-    const matrix = auth.getAuthenticationProvider("matrix");
+    const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = matrix.getMatrixClient();
     const [isLoading, setIsLoading] = useState(true);
     const [parentSpaceMetaEvent, setParentSpaceMetaEvent] = useState();
@@ -27,7 +33,7 @@ const ContextMultiLevelSelectSingleLevel = ({
         // Fetch meta event of the parent space
         const fetchMetaEvent = async () => {
             const metaEvent = await matrixClient
-                .getStateEvent(parentSpaceRoomId, "dev.medienhaus.meta")
+                .getStateEvent(parentSpaceRoomId, 'dev.medienhaus.meta')
                 .catch(() => {});
             isSubscribed && setParentSpaceMetaEvent(metaEvent);
         };
@@ -41,7 +47,7 @@ const ContextMultiLevelSelectSingleLevel = ({
                     /** @param {MatrixError} error */ (error) => {
                         // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
                         // In every other case this is really an unexpected error and we want to throw.
-                        if (error.errcode !== "M_FORBIDDEN") throw error;
+                        if (error.errcode !== 'M_FORBIDDEN') throw error;
                     },
                 );
             if (!roomHierarchy) roomHierarchy = { rooms: [] };
@@ -52,12 +58,12 @@ const ContextMultiLevelSelectSingleLevel = ({
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
                 const metaEvent = await matrixClient
-                    .getStateEvent(room.room_id, "dev.medienhaus.meta")
+                    .getStateEvent(room.room_id, 'dev.medienhaus.meta')
                     .catch(() => {});
                 // If this space/room does not have a meta event we do not care about it
                 if (!metaEvent) continue;
                 // If this is not a context, ignore this space child
-                if (metaEvent && metaEvent.type !== "context") continue;
+                if (metaEvent && metaEvent.type !== 'context') continue;
                 // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
                 if (
                     templatePrefixFilter &&
@@ -70,7 +76,7 @@ const ContextMultiLevelSelectSingleLevel = ({
             }
 
             if (sortAlphabetically) {
-                newChildContexts = _.sortBy(newChildContexts, "name");
+                newChildContexts = _.sortBy(newChildContexts, 'name');
             }
 
             if (!isSubscribed) return;
@@ -206,7 +212,7 @@ const ContextMultiLevelSelect = ({
                         onSelect={onSelect}
                         onFetchedChildren={onFinishedFetchingChildren}
                         parentSpaceRoomId={contextRoomId}
-                        selectedContextRoomId={activeContexts[i + 1] ?? ""}
+                        selectedContextRoomId={activeContexts[i + 1] ?? ''}
                         showTopics={showTopics}
                         sortAlphabetically={sortAlphabetically}
                         templatePlaceholderMapping={templatePlaceholderMapping}
