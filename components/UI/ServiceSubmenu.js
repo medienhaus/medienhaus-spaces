@@ -25,15 +25,6 @@ const Submenu = styled.aside`
     line-height: calc(var(--margin) * 3);
     border-bottom: 1px solid transparent;
   }
-
-  button {
-    padding: calc(var(--margin) / 1.5);
-    text-align: center;
-
-    & + button {
-      margin-top: calc(var(--margin) / 1.5);
-    }
-  }
 `;
 
 export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
