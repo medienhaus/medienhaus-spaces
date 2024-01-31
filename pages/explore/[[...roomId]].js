@@ -90,7 +90,7 @@ export default function Explore() {
         logger.debug('Fetch the room hierarchy for ' + roomId);
 
         const getHierarchyFromServer = async (roomId) => {
-            spaceHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+            const roomHierarchy = await matrix.roomHierarchy(roomId, null, 1)
                 .catch(async error => {
                     if (error.data?.error.includes('not in room')) {
                         // If the error indicates the user is not in the room and previews are disabled
@@ -100,17 +100,17 @@ export default function Explore() {
                                 .catch(error => setErrorMessage(error.data?.error));
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                            if (joinRoom) return await spaceHierarchy();
+                            if (joinRoom) return await roomHierarchy();
                         }
                     } else {
-                        return matrix.handleRateLimit(error, () => spaceHierarchy())
+                        return matrix.handleRateLimit(error, () => roomHierarchy())
                             .catch(error => {
                                 setErrorMessage(error.message);
                             });  // Handle other errors by setting an error message.
                     }
                 });
-            if (!spaceHierarchy) return;
-            const parent = spaceHierarchy[0];
+            if (!roomHierarchy) return;
+            const parent = roomHierarchy[0];
 
             const getMetaEvent = async (obj) => {
                 logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
@@ -119,8 +119,8 @@ export default function Explore() {
                 if (metaEvent) obj.meta = metaEvent;
             };
 
-            for (const space of spaceHierarchy) {
-                if (space.room_id !== spaceHierarchy[0].room_id) {
+            for (const space of roomHierarchy) {
+                if (space.room_id !== roomHierarchy[0].room_id) {
                     space.parent = parent;
                 }
 
@@ -135,22 +135,29 @@ export default function Explore() {
                     });
             }
 
-            return spaceHierarchy;
+            return roomHierarchy;
         };
 
-        let spaceHierarchy;
+        const spaceHierarchy = [];
         // check our local state for cached data
         const cachedSpace = matrix.spaces.get(roomId);
 
         if (cachedSpace) {
             if (cachedSpace.children) {
-                spaceHierarchy = cachedSpace.children.map((roomId) => {
-                    const child = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
-                    child.parent = cachedSpace;
+                for await (const roomId of cachedSpace.children) {
+                    const cachedChild = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
 
-                    //@TODO what if the user is not part of the hierarchy element? needs to call getHierarchyFromServer for this element
-                    return child;
-                });
+                    if (!_.isEmpty(cachedChild)) {
+                        const copy = { ...cachedChild };
+                        copy.parent = cachedSpace;
+                        spaceHierarchy.push(copy);
+                    } else {
+                        const getChildFromServer = await getHierarchyFromServer(roomId);
+                        getChildFromServer[0].parent = cachedSpace;
+                        spaceHierarchy.push(getChildFromServer[0]);
+                    }
+                }
+
                 // insert the cached space at the beginning of the array to mimic the behaviour of matrix.getRoomHierarchy
                 spaceHierarchy.splice(0, 0, cachedSpace);
             }
@@ -183,7 +190,6 @@ export default function Explore() {
     }, [auth, matrix, matrixClient, selectedSpaceChildren, t]);
 
     // Handle route changes and fetch room content
-
     useEffect(() => {
         let cancelled = false;
 

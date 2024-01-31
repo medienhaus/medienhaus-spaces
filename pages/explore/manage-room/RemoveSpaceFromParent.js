@@ -77,9 +77,8 @@ const RemoveSpaceFromParent = ({
         });
     };
 
+    console.log(itemsToRemove);
     if (!spaceChildren || !matrix) return;
-    console.log(spaceChildren);
-    console.log(currentId);
 
     return (
         <Form
@@ -96,6 +95,7 @@ const RemoveSpaceFromParent = ({
                         return <RemoveListEntry
                             key={child.name}
                             child={child}
+                            roomId={roomId}
                             handleSelect={handleSelect}
                             checked={itemsToRemove.includes(roomId)}
                             parentName={parentName}
@@ -129,7 +129,7 @@ export default RemoveSpaceFromParent;
  * @returns {JSX.Element} JSX element representing a list entry for removing a child space.
  */
 
-function RemoveListEntry({ child, parentName, handleSelect, checked }) {
+function RemoveListEntry({ child, parentName, roomId, handleSelect, checked }) {
     const { t } = useTranslation();
 
     return <ServiceTable.Row>
@@ -138,7 +138,7 @@ function RemoveListEntry({ child, parentName, handleSelect, checked }) {
             <input type="checkbox"
                 checked={checked}
                 title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}
-                onChange={() => handleSelect(child.room_id)} />
+                onChange={() => handleSelect(roomId)} />
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 }
