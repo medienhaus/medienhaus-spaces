@@ -23,8 +23,8 @@ const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) =>
 
     return (
         <Wrapper>
-            <Button variant="secondary" type="reset" disabled={disabled}>{ cancelLabel || t('Cancel') }</Button>
-            <Button type="submit" disabled={disabled}>{ confirmLabel || t('Confirm') }</Button>
+            <Button variant="outline" type="reset" disabled={disabled}>{ cancelLabel || t('Cancel') }</Button>
+            <Button variant="default" type="submit" disabled={disabled}>{ confirmLabel || t('Confirm') }</Button>
         </Wrapper>
     );
 };

@@ -47,8 +47,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
     --popover: 0 0% 0%;
@@ -68,8 +68,8 @@
     --ring: 0 0% 0%;
 
     /* color definitions (legacy support) */
-    --color-background: hsl(var(--foreground));
-    --color-foreground: hsl(var(--background));
+    --color-background: hsl(var(--background));
+    --color-foreground: hsl(var(--foreground));
     --color-disabled: hsl(var(--muted));
     --color-notification: hsl(var(--accent));
     --color-background-alpha: hsl(0deg 0% 5%);
