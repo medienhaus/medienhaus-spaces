@@ -31,6 +31,7 @@ const RemoveSection = styled.div`
  *
  * @param {Object} spaceChildren - An object representing the children of the current space.
  * @param {String} parentId - The ID of the current observed Room.
+ * @param {String} currentId - The ID of the current room.
  * @param {String} parentName - The name of the parent space.
  * @param {Function} getSpaceChildren - Callback function to update the list of children.
  * @param {Function} onCancel - Callback function to cancel the operation.
@@ -39,6 +40,7 @@ const RemoveSection = styled.div`
 const RemoveSpaceFromParent = ({
     spaceChildren,
     parentId,
+    currentId,
     parentName,
     getSpaceChildren,
     onCancel,
@@ -76,6 +78,8 @@ const RemoveSpaceFromParent = ({
     };
 
     if (!spaceChildren || !matrix) return;
+    console.log(spaceChildren);
+    console.log(currentId);
 
     return (
         <Form
@@ -83,14 +87,17 @@ const RemoveSpaceFromParent = ({
             <RemoveSection>
                 <ServiceTable>
                     { spaceChildren.map(child => {
+                        const roomId = child.room_id || child.id || child.roomId;
                         // don't display the root space, so it not accidentally deleted
-                        if (child.room_id === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
+                        if (roomId=== getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
+                        // don't display the currently selected space, so it not accidentally deleted
+                        if (roomId === currentId) return;
 
                         return <RemoveListEntry
                             key={child.name}
                             child={child}
                             handleSelect={handleSelect}
-                            checked={itemsToRemove.includes(child.room_id)}
+                            checked={itemsToRemove.includes(roomId)}
                             parentName={parentName}
                         />;
                     }) }
