@@ -6,7 +6,7 @@ import { MenuAddIcon } from '@remixicons/react/line';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/shadcn/select';
 
 const Header = styled.header`
   display: grid;

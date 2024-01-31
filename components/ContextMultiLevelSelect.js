@@ -1,14 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import _ from "lodash";
+import React, { useCallback, useEffect, useState } from 'react';
+import _ from 'lodash';
 
-import { useAuth } from "../lib/Auth";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/UI/select";
+import { useAuth } from '../lib/Auth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/shadcn/select';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,

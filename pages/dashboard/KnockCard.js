@@ -4,14 +4,8 @@ import _ from 'lodash';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/avatar';
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/UI/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/avatar';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, } from '@/components/UI/shadcn/card';
 
 /**
  * A React component that represents a card for a knock request in a Matrix room.

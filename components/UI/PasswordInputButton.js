@@ -1,8 +1,7 @@
-import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/components/UI/button';
-import { Input } from '@/components/UI/input';
+import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/input';
 
 export default function PasswordInputButton({ placeholder, value, onChange, disabled, label }) {
     const { t } = useTranslation();

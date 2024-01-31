@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../lib/Auth';
 import DefaultLayout from '../components/layouts/default';
 import PasswordInputButton from '../components/UI/PasswordInputButton';
-import { Input } from '@/components/UI/input';
+import { Input } from '@/components/UI/shadcn/input';
 
 const LoginSection = styled.div`
   & > form > * + * {

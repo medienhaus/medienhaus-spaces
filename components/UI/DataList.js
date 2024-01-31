@@ -5,8 +5,8 @@ import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
-import { Input } from '@/components/UI/input';
-import { Button } from '@/components/UI/button';
+import { Input } from '@/components/UI/shadcn/input';
+import { Button } from '@/components/UI/shadcn/button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.

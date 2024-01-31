@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/components/UI/button';
+import { Button } from '@/components/UI/shadcn/button';
 
 const ConfirmCancelButtonsWrapper = styled.div`
   display: grid;
