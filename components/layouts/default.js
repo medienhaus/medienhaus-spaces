@@ -5,102 +5,100 @@ import BaseLayout from './_base';
 import { breakpoints } from '../_breakpoints';
 
 export const Main = styled.main`
-  display: flex;
-  flex: 1 0;
-  flex-direction: column;
+    display: flex;
+    flex: 1 0;
+    flex-direction: column;
 
-  @media ${breakpoints.tabletAndAbove} {
-    flex-direction: row;
-    grid-row: 1/4;
-    grid-column: 2;
-    overflow-y: auto;
-  }
+    @media ${breakpoints.tabletAndAbove} {
+        flex-direction: row;
+        grid-row: 1/4;
+        grid-column: 2;
+        overflow-y: auto;
+    }
 `;
 
 const LameColumn = styled.div`
-  padding: var(--margin);
+    padding: var(--margin);
 
-  @media ${breakpoints.tabletAndAbove} {
-    width: 100%;
-    max-width: 55ch;
-    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-  }
+    @media ${breakpoints.tabletAndAbove} {
+        width: 100%;
+        max-width: 55ch;
+        padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+    }
 
-  /* force-add some whitespace at the bottom of our LameColumn's contents */
-  > :last-child {
-    margin-bottom: calc(var(--margin) * 3);
-  }
+    /* force-add some whitespace at the bottom of our LameColumn's contents */
+    > :last-child {
+        margin-bottom: calc(var(--margin) * 3);
+    }
 `;
 
 const Sidebar = styled.div`
-  height: 100%;
-  padding: var(--margin);
-  background: var(--color-background-alpha);
+    height: 100%;
+    padding: var(--margin);
+    background: var(--color-background-alpha);
 
-  // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
-  @media ${breakpoints.phoneOnly} {
-    &:not(:only-child) {
-      display: none;
+    // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
+    @media ${breakpoints.phoneOnly} {
+        &:not(:only-child) {
+            display: none;
+        }
     }
-  }
 
-  // On bigger viewports ...
-  @media ${breakpoints.tabletAndAbove} {
-    width: 36ch;
-    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-    overflow: auto;
-  }
+    // On bigger viewports ...
+    @media ${breakpoints.tabletAndAbove} {
+        width: 36ch;
+        padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+        overflow: auto;
+    }
 `;
 
 const IframeWrapper = styled.div`
-  display: flex;
-  flex: 1 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-
-  iframe {
-    width: 100%;
+    display: flex;
+    flex: 1 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100%;
-    margin: 0;
-    border: none;
 
-    @media ${breakpoints.phoneOnly} {
-      border-top: 1px solid var(--color-foreground-alpha);
+    iframe {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: none;
+
+        @media ${breakpoints.phoneOnly} {
+            border-top: 1px solid var(--color-foreground-alpha);
+        }
     }
-  }
 `;
 
 const IframeHeader = styled.header`
-  display: grid;
-  grid-template-columns: 1fr auto;
-  width: 100%;
-  padding: var(--margin);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    width: 100%;
+    padding: var(--margin);
 
-  @media ${breakpoints.tabletAndAbove} {
-    padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-  }
+    @media ${breakpoints.tabletAndAbove} {
+        padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+    }
 
-  /* @TODO: re-factor quick-fix */
-  h2 {
-    margin: 0 !important;
-  }
+    /* @TODO: re-factor quick-fix */
+    h2 {
+        margin: 0 !important;
+    }
 `;
 
 const IframeHeaderButtonWrapper = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  grid-gap: calc(var(--margin));
-  height: 100%;
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: calc(var(--margin));
+    height: 100%;
 `;
 
 const Layout = ({ children }) => {
     return (
         <BaseLayout>
-            <Main>
-                { children }
-            </Main>
+            <Main>{children}</Main>
         </BaseLayout>
     );
 };
