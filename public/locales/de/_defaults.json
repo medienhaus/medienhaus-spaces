@@ -15,15 +15,16 @@
   "password protected": "Passwortgeschützt",
   "Please enter your account password to continue using {{service}}:": "Bitte gib dein Passwort ein, um {{service}} wieder nutzen zu können:",
   "Previous": "Zurück",
+  "Request access to {{name}}": "Zugang zu {{name}} anfordern",
   "Save": "Speichern",
   "select {{option}}": "{{option}} wählen",
   "Select action": "Aktion wählen",
   "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
   "Syncing more entries": "Weitere Einträge werden geladen",
+  "The following error occurred: {{error}}": "Folgender Fehler ist aufgetreten: {{error}}",
   "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
   "Upload": "Hochladen",
   "Username": "Benutzername",
   "What would you like to do?": "Was möchtest Du tun?",
   "{{error}}, please wait {{time}} seconds.": "{{error}}, bitte warte {{time}} Sekunden."
 }
-

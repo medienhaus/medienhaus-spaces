@@ -36,8 +36,6 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
         setChangingJoinRule(false);
     };
 
-    console.log(joinRule);
-
     return (
         <Form onSubmit={handleChangeJoinRule}>
             <h1>{ t('Change Join Rule for') } { roomName }</h1>
