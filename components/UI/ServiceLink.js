@@ -33,11 +33,14 @@ const Thumbnail = styled.img`
 `;
 
 const NotificationBadge = styled.span`
-  justify-self: end;
-  padding: 0 calc(var(--margin) / 4);
-  line-height: var(--line-height);
+  width: 4ch;
+  font-size: 70%;
+  line-height: 170%;
   color: rgb(255 255 255);
+  text-align: center;
   background-color: var(--color-notification);
+  border-radius: var(--border-radius);
+  transform: translateY(-1px);
 
   > small {
     font-weight: 600;
@@ -68,9 +71,7 @@ const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordPr
             { notificationCount > 0 && (
                 <ServiceTable.Cell>
                     <NotificationBadge>
-                        <small>
-                            { notificationCount < 100 ? notificationCount : '99+' }
-                        </small>
+                        { notificationCount < 100 ? notificationCount : '99+' }
                     </NotificationBadge>
                 </ServiceTable.Cell>
             ) }

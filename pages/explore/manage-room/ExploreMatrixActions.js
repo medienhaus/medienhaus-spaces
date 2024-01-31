@@ -110,7 +110,9 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
                 }}
             />;
         case 'removeSpace':
-            return <RemoveSpaceFromParent parentId={currentId}
+            return <RemoveSpaceFromParent
+                currentId={currentId}
+                parentId={currentId}
                 parentName={roomName}
                 spaceChildren={spaceChildren}
                 getSpaceChildren={getSpaceChildren}

@@ -237,6 +237,7 @@ export default function Explore() {
                         myPowerLevel={myPowerLevel}
                         setManageContextActionToggle={setManageContextActionToggle}
                         isInviteUsersOpen={isInviteUsersOpen}
+                        joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                         setIsInviteUsersOpen={() => setIsInviteUsersOpen(prevState => !prevState)}
                     />
                     <ServiceTableWrapper>
