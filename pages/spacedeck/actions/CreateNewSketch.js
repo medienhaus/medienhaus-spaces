@@ -23,13 +23,14 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
 
         const create = await spacedeck.createSpace(sketchName);
         const link = getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl + '/spaces/' + create._id;
-        const roomId = await createSketchRoom(link, sketchName)
-            .catch(error => setErrorMessage((err) => {
+        const roomId = await createSketchRoom(link, sketchName).catch((error) =>
+            setErrorMessage((err) => {
                 setErrorMessage(error.data?.error);
                 setLoading(false);
 
                 return;
-            }));
+            }),
+        );
         router.push(`${path}/${roomId}`);
 
         callbackDone && callbackDone();
@@ -37,11 +38,19 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     };
 
     return (
-        <Form onSubmit={(e) => { e.preventDefault(); createNewSketchRoom(); }}>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                createNewSketchRoom();
+            }}
+        >
             <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <button type="submit" disabled={!sketchName || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        </Form>);
+            <button type="submit" disabled={!sketchName || loading}>
+                {loading ? <LoadingSpinnerInline inverted /> : t('Create sketch')}
+            </button>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        </Form>
+    );
 };
 
 export default CreateNewSketch;

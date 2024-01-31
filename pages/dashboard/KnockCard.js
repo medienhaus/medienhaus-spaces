@@ -37,10 +37,7 @@ export default function KnockCard({ roomId, roomName, userId, reason }) {
     };
 
     return (
-        <form
-            onSubmit={handleAccept}
-            onReset={handleDecline}
-        >
+        <form onSubmit={handleAccept} onReset={handleDecline}>
             <div>
                 <p>
                     <Trans
@@ -56,8 +53,13 @@ export default function KnockCard({ roomId, roomName, userId, reason }) {
                     />
                 </p>
                 <br />
-                { /* Show the message/reasoning that a user might have provided */ }
-                { reason && <><pre>{ reason }</pre><br /></> }
+                {/* Show the message/reasoning that a user might have provided */}
+                {reason && (
+                    <>
+                        <pre>{reason}</pre>
+                        <br />
+                    </>
+                )}
                 <ConfirmCancelButtons
                     small
                     disabled={isDecliningKnock || isAcceptingKnock}

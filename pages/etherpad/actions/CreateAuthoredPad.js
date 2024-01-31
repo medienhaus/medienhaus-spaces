@@ -12,8 +12,7 @@ export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
 
     const createAuthoredPad = async () => {
         setIsLoading(true);
-        const createPad = await createPadAndOpen(padName, 'public')
-            .catch(error => logger.debug(error));
+        const createPad = await createPadAndOpen(padName, 'public').catch((error) => logger.debug(error));
         setIsLoading(false);
         if (!createPad) return;
         callbackDone && callbackDone();
@@ -21,9 +20,16 @@ export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
     };
 
     return (
-        <Form onSubmit={(e) => { e.preventDefault(); createAuthoredPad(); }}>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                createAuthoredPad();
+            }}
+        >
             <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+            <button type="submit" disabled={!padName}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
+            </button>
         </Form>
     );
 }

@@ -15,14 +15,16 @@ module.exports = {
         ];
 
         if (SpacesConfig.authProviders.etherpad) {
-            rewriteConfig.push({
-                source: SpacesConfig.authProviders.etherpad.path,
-                destination: '/etherpad',
-            },
-            {
-                source: SpacesConfig.authProviders.etherpad.path + '/:roomId',
-                destination: '/etherpad/:roomId',
-            });
+            rewriteConfig.push(
+                {
+                    source: SpacesConfig.authProviders.etherpad.path,
+                    destination: '/etherpad',
+                },
+                {
+                    source: SpacesConfig.authProviders.etherpad.path + '/:roomId',
+                    destination: '/etherpad/:roomId',
+                },
+            );
         }
 
         if (SpacesConfig.authProviders.spacedeck) {
@@ -34,7 +36,8 @@ module.exports = {
                 {
                     source: SpacesConfig.authProviders.spacedeck.path + '/:roomId',
                     destination: '/spacedeck/:roomId',
-                });
+                },
+            );
         }
 
         return rewriteConfig;

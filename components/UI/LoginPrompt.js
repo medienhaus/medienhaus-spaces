@@ -24,20 +24,18 @@ const LoginPrompt = ({ service }) => {
 
     return (
         <>
-            <h2>{ service }</h2>
-            <ErrorMessage>
-                { t('The session for {{service}} has expired.', { service }) }
-            </ErrorMessage>
+            <h2>{service}</h2>
+            <ErrorMessage>{t('The session for {{service}} has expired.', { service })}</ErrorMessage>
             <br />
-            <p>
-                { t('Please enter your account password to continue using {{service}}:', { service }) }
-            </p>
+            <p>{t('Please enter your account password to continue using {{service}}:', { service })}</p>
             <br />
             <Form onSubmit={loginAgain}>
                 <PasswordInputButton
                     value={password}
                     placeholder={t('Password')}
-                    onChange={(e) => { setPassword(e.target.value); }}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                    }}
                     disabled={!password || isSigningIn}
                 />
             </Form>
