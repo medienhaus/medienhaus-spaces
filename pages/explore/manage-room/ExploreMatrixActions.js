@@ -16,6 +16,7 @@ import LeaveRoom from './LeaveRoom';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useMatrix } from '../../../lib/Matrix';
 import ChangeTopic from './ChangeTopic';
+import ChangeAvatar from './ChangeAvatar';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -146,6 +147,15 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
                     setSelectedRadioButton('');
                     setSelectedAction('');
                 }} />;
+
+        case 'changeAvatar':
+            return <ChangeAvatar
+                roomId={currentId}
+                onCancel={() => {
+                    setSelectedRadioButton('');
+                    setSelectedAction('');
+                }} />;
+
         default:
             return <Form
                 onSubmit={(e) => {
@@ -200,6 +210,12 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
                     <RadioWrapper>
                         <input type="radio" id="changeTopic" name="action" value="changeTopic" />
                         <label htmlFor="changeTopic">{ t('Change topic') }</label>
+                    </RadioWrapper> }
+
+                { room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) &&
+                    <RadioWrapper>
+                        <input type="radio" id="changeAvatar" name="action" value="changeAvatar" />
+                        <label htmlFor="changeAvatar">{ t('Change avatar') }</label>
                     </RadioWrapper> }
 
                 <PreviousNextButtons
