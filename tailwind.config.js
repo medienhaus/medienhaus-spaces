@@ -20,6 +20,15 @@ module.exports = {
         //         '2xl': '1400px',
         //     },
         // },
+        fontSize: {
+            sm: '1rem',
+            base: '1rem',
+            xl: '1rem',
+            '2xl': '1rem',
+            '3xl': '1rem',
+            '4xl': '1rem',
+            '5xl': '1rem',
+        },
         extend: {
             colors: {
                 border: 'hsl(var(--border))',
