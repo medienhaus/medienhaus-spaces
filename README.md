@@ -46,4 +46,4 @@ Builds a production-ready version of the application and exports it to the `out`
 
 ### Linting
 
-We use [`ESLint`](https://github.com/eslint/eslint). The respective configuration files should be detected automatically.
+We use [`ESLint`](https://github.com/eslint/eslint) and [`Prettier`](https://github.com/prettier/prettier). The respective configuration files should be detected automatically.
