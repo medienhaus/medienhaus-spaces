@@ -46,4 +46,4 @@ Builds a production-ready version of the application and exports it to the `out`
 
 ### Linting
 
-We use [`ESLint`](https://github.com/eslint/eslint) and [`Stylelint`](https://github.com/stylelint/stylelint). The respective configuration files should be detected automatically. For `stylelint` it might be important to tell your editor or IDE to not only check `.css` files, but also `.js` files because we're using styled components.
+We use [`ESLint`](https://github.com/eslint/eslint). The respective configuration files should be detected automatically.
