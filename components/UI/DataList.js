@@ -21,26 +21,26 @@ import { Button } from '@/components/UI/shadcn/button';
  */
 
 const Row = styled(ServiceTable.Row)`
-    text-decoration: ${(props) => props.$focused && 'underline'};
-    cursor: pointer;
+  text-decoration: ${props => props.$focused && 'underline'};
+  cursor: pointer;
 
-    &:hover,
-    &:focus {
-        text-decoration: underline;
-    }
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
 `;
 
 const InviteUserForm = styled(Form)`
-    display: grid;
-    height: 100%;
+  display: grid;
+  height: 100%;
 
-    > :last-child {
-        align-self: end;
-    }
+  > :last-child {
+    align-self: end;
+  }
 `;
 
 const TableWrapper = styled.section`
-    overflow-x: auto;
+  overflow-x: auto;
 `;
 
 export default function DataList({
