@@ -4,8 +4,13 @@ import _ from 'lodash';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/avatar';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, } from '@/components/UI/shadcn/card';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/UI/shadcn/card';
 
 /**
  * A React component that represents a card for a knock request in a Matrix room.
@@ -19,7 +24,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle, } from '@/compone
 export default function KnockCard({ roomId, roomName, userId, reason }) {
     const auth = useAuth();
     const { t } = useTranslation('dashboard');
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrixClient = auth
+        .getAuthenticationProvider('matrix')
+        .getMatrixClient();
 
     const [isAcceptingKnock, setIsAcceptingKnock] = useState(false);
     const [isDecliningKnock, setIsDecliningKnock] = useState(false);
@@ -42,33 +49,33 @@ export default function KnockCard({ roomId, roomName, userId, reason }) {
         <form onSubmit={handleAccept} onReset={handleDecline}>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-4">
-                        <Avatar>
-                            <AvatarImage src={avatar} />
-                            <AvatarFallback />
-                        </Avatar>
-                        { /* wrap in span to not apply flex gap */ }
+                    <CardTitle className='flex items-center gap-4'>
+                        {/* wrap in span to not apply flex gap */}
                         <span>
                             <Trans
                                 t={t}
-                                i18nKey="knockCard"
-                                defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
+                                i18nKey='knockCard'
+                                defaults='<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>.'
                                 values={{
-                            // Show the display name if possible; otherwise fall back to the "@user:matrix.org"-style ID
-                            username: _.get(matrixClient.getUser(userId), 'displayName', userId),
-                            roomName: roomName,
-                        }}
+                                    // Show the display name if possible; otherwise fall back to the "@user:matrix.org"-style ID
+                                    username: _.get(
+                                        matrixClient.getUser(userId),
+                                        'displayName',
+                                        userId,
+                                    ),
+                                    roomName: roomName,
+                                }}
                                 components={{ bold: <strong /> }}
                             />
                         </span>
                     </CardTitle>
                 </CardHeader>
-                { /* Show the message/reasoning that a user might have provided */ }
-                { reason && (
+                {/* Show the message/reasoning that a user might have provided */}
+                {reason && (
                     <CardContent>
-                        <q>{ reason }</q>
+                        <q>{reason}</q>
                     </CardContent>
-                ) }
+                )}
                 <CardFooter>
                     <ConfirmCancelButtons
                         small
