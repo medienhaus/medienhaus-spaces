@@ -12,6 +12,7 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import Icon from '../../components/UI/Icon';
 import { useMatrix } from '../../lib/Matrix';
 import { useAuth } from '../../lib/Auth';
+import logger from '../../lib/Logging';
 
 /**
  * Favourite component for rendering a single favourite entry.
