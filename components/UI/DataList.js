@@ -86,7 +86,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
         if (!isOpen && !selected) return;
 
         if (e.key === 'ArrowDown') {
-            const max = (filteredOptions.length + selected.length) - 1;
+            const max = filteredOptions.length + selected.length - 1;
             setSelectedIndex(Math.min(selectedIndex + 1, max));
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -117,10 +117,12 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                 return prevState.filter(option => selectedOption !== option);
             } else {
                 // otherwise add option to the array
-                return [...prevState, selectedOption];
+                // @TODO when clicking the checkbox directly the option will be added twice to the array,
+                // needs a proper solution but for now using lodash uniq does the trick.
+                return _.uniq([...prevState, selectedOption]);
             }
         });
-        // inputRef.current.focus();
+    // inputRef.current.focus();
     };
 
     const handleRemove = (option) => {
@@ -199,7 +201,16 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
  * @returns {React.ReactNode}
  */
 
-const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, handleKeyDown, focus, setSelectedIndex }) => {
+const DataListRow = ({
+    option,
+    keysToDisplay,
+    handleSelect,
+    index,
+    isChecked,
+    handleKeyDown,
+    focus,
+    setSelectedIndex,
+}) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -212,7 +223,9 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
         <Row
             key={index}
             $focused={focus}
-            onClick={() => { handleSelect(option); }}
+            onClick={() => {
+                handleSelect(option);
+            }}
             onKeyDown={handleKeyDown} // Add onKeyDown event
         >
             <ServiceTable.Cell>
@@ -223,7 +236,9 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     type="checkbox"
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
-                    onChange={() => { handleSelect(option); }}
+                    onChange={() => {
+                        handleSelect(option);
+                    }}
                     onMouseUp={() => {
                         // make sure element gets deselected on mouse press
                         if (focus) setSelectedIndex(-1);

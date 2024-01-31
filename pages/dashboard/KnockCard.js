@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
 import { useAuth } from '../../lib/Auth';
@@ -17,24 +18,14 @@ import {
  *
  * @param {string} roomId - The ID of the room where the knock request was made.
  * @param {string} roomName - The name of the room where the knock request was made.
- * @param {string} user - The name of the user who made the knock request.
  * @param {string} userId - The ID of the user who made the knock request.
  * @param {string} reason
  * @returns {JSX.Element} A form that allows the user to accept or decline the knock request.
  */
-export default function KnockCard({
-    roomId,
-    roomName,
-    avatar,
-    user,
-    userId,
-    reason,
-}) {
+export default function KnockCard({ roomId, roomName, userId, reason }) {
     const auth = useAuth();
     const { t } = useTranslation('dashboard');
-    const matrixClient = auth
-        .getAuthenticationProvider('matrix')
-        .getMatrixClient();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     const [isAcceptingKnock, setIsAcceptingKnock] = useState(false);
     const [isDecliningKnock, setIsDecliningKnock] = useState(false);
@@ -68,7 +59,11 @@ export default function KnockCard({
                                 t={t}
                                 i18nKey="knockCard"
                                 defaults="<bold>{{username}}</bold> wants to join <bold>{{roomName}}</bold>."
-                                values={{ username: user, roomName: roomName }}
+                                values={{
+                            // Show the display name if possible; otherwise fall back to the "@user:matrix.org"-style ID
+                            username: _.get(matrixClient.getUser(userId), 'displayName', userId),
+                            roomName: roomName,
+                        }}
                                 components={{ bold: <strong /> }}
                             />
                         </span>
