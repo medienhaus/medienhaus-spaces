@@ -9,7 +9,7 @@ import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
 import KnockCard from './KnockCard';
-import Bookmark from './Bookmark';
+import Favourite from './Favourite';
 import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Dashboard() {
@@ -19,7 +19,7 @@ export default function Dashboard() {
     const matrix = useMatrix();
     const pendingKnocks = matrix.knockingMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const bookmarks = matrix.bookmarks;
+    const favourite = matrix.favourites;
     // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
     // But we will never remove any entries. This is in order to keep a list of all invitations handled while looking
     // at this page. Only when leaving the page and returning back to it, we start with an empty map from scratch.
@@ -146,10 +146,10 @@ export default function Dashboard() {
                     )) }
                 </>
             }
-            { !_.isEmpty(bookmarks) &&
+            { !_.isEmpty(favourite) &&
                     <ServiceTable>
                         <ServiceTable.Caption>
-                            { t('Bookmarks') }
+                            { t('Favourites') }
                         </ServiceTable.Caption>
                         <ServiceTable.Head>
                             <ServiceTable.Row>
@@ -168,16 +168,16 @@ export default function Dashboard() {
                             </ServiceTable.Row>
                         </ServiceTable.Head>
                         <ServiceTable.Body>
-                            { bookmarks.map(bookmarkSpace => {
-                                const bookmarkObject = matrix.rooms.get(bookmarkSpace) || matrix.spaces.get(bookmarkSpace);
+                            { favourite.map(favouriteSpace => {
+                                const favouriteObject = matrix.rooms.get(favouriteSpace) || matrix.spaces.get(favouriteSpace);
 
-                                if (!bookmarkObject) return;
+                                if (!favouriteObject) return;
 
-                                return <Bookmark
-                                    key={bookmarkSpace}
-                                    metaEvent={bookmarkObject.meta}
-                                    roomId={bookmarkSpace}
-                                    name={bookmarkObject.name}
+                                return <Favourite
+                                    key={favouriteSpace}
+                                    metaEvent={favouriteObject.meta}
+                                    roomId={favouriteSpace}
+                                    name={favouriteObject.name}
                                 />;
                             }) }
                         </ServiceTable.Body>

@@ -14,29 +14,29 @@ import { useMatrix } from '../../lib/Matrix';
 import { useAuth } from '../../lib/Auth';
 
 /**
- * Bookmark component for rendering a single bookmark entry.
+ * Favourite component for rendering a single favourite entry.
  *
- * @param {string} roomId - The ID of the bookmarked room.
- * @param {Object} metaEvent - The meta event associated with the bookmark.
- * @param {string} name - The name of the bookmarked room.
- * @param {number} index - The index of the bookmarked room in the bookmarks array.
- * @returns {JSX.Element} - A JSX element representing a single bookmark entry.
+ * @param {string} roomId - The ID of the favourite room.
+ * @param {Object} metaEvent - The meta event associated with the favourite.
+ * @param {string} name - The name of the favourite room.
+ * @param {number} index - The index of the favourite room in the favourites array.
+ * @returns {JSX.Element} - A JSX element representing a single favourite entry.
  *
  */
-const Bookmark =({ roomId, metaEvent, name }) => {
-    const [removingBookmark, setRemovingBookmark] = useState(false);
+const Favourite =({ roomId, metaEvent, name }) => {
+    const [removingFavourite, setRemovingFavourite] = useState(false);
     const { t } = useTranslation();
     const matrix = useMatrix();
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
     /**
-     * Get the origin of the bookmarked room.
-     * If the bookmark is of the type 'context', return '/explore'.
+     * Get the origin of the favourite room.
+     * If the favourite is of the type 'context', return '/explore'.
      * Otherwise, return the path of the auth provider. If the path is not found, return the template name.
-     * If the bookmark is not of the type 'context' and the template is not found, we can assume it's a chat room and return '/chat'.
+     * If the favourite is not of the type 'context' and the template is not found, we can assume it's a chat room and return '/chat'.
      * @function
-     * @param {Object} metaEvent - The meta event associated with the bookmark.
-     * @returns {*|string} - The origin of the bookmarked room.
+     * @param {Object} metaEvent - The meta event associated with the favourite.
+     * @returns {*|string} - The origin of the favourite room.
      */
     const getOrigin = (metaEvent) => {
         if (metaEvent) {
@@ -51,15 +51,15 @@ const Bookmark =({ roomId, metaEvent, name }) => {
 
     const handleRemove = async (e) => {
         e.preventDefault();
-        setRemovingBookmark(true);
-        // Remove the bookmark from the account data
-        await matrixClient.setAccountData('dev.medienhaus.spaces.bookmarks', { bookmarks: _.without([...matrix.bookmarks], roomId) })
+        setRemovingFavourite(true);
+        // Remove the favourite from the account data
+        await matrixClient.setAccountData('dev.medienhaus.spaces.favourites', { favourites: _.without([...matrix.favourites], roomId) })
             .catch((error) => {
                 //@TODO error handling
-                console.log(error);
+                logger.log(error);
             });
 
-        setRemovingBookmark(false);
+        setRemovingFavourite(false);
     };
 
     return (
@@ -74,8 +74,8 @@ const Bookmark =({ roomId, metaEvent, name }) => {
                 <CopyToClipboard content={`${location.hostname}${link}`} />
             </ServiceTable.Cell>
             <ServiceTable.Cell>
-                <TextButton title={t('Remove bookmark')} onClick={handleRemove}>
-                    { removingBookmark ? <LoadingSpinnerInline /> : <Icon>
+                <TextButton title={t('Remove favourite')} onClick={handleRemove}>
+                    { removingFavourite ? <LoadingSpinnerInline /> : <Icon>
                         <DeleteBinIcon />
                     </Icon> }
                 </TextButton></ServiceTable.Cell>
@@ -83,4 +83,4 @@ const Bookmark =({ roomId, metaEvent, name }) => {
     );
 };
 
-export default Bookmark;
+export default Favourite;

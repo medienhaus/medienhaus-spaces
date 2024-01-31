@@ -25,7 +25,7 @@ import CreatePasswordPad from './actions/CreatePasswordPad';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
 import LoginPrompt from '../../components/UI/LoginPrompt';
-import AddBookmark from '../../components/UI/bookmarks/AddBookmark';
+import AddFavourite from '../../components/UI/favourites/AddFavourite';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -311,7 +311,7 @@ export default function Etherpad() {
                                 name={matrix.rooms.get(roomId).name}
                                 onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen} />
-                            <AddBookmark roomId={roomId} />
+                            <AddFavourite roomId={roomId} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')}
                                 content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')}

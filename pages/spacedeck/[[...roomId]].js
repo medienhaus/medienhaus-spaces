@@ -23,7 +23,7 @@ import AddExistingSketch from './actions/AddExistingSketch';
 import { path as spacedeckPath } from '../../lib/Spacedeck';
 import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import LoginPrompt from '../../components/UI/LoginPrompt';
-import AddBookmark from '../../components/UI/bookmarks/AddBookmark';
+import AddBookmark from '../../components/UI/favourites/AddFavourite';
 
 export default function Spacedeck() {
     const auth = useAuth();
