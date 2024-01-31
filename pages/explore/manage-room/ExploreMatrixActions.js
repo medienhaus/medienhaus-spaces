@@ -40,7 +40,7 @@ const ExploreMatrixActionWrapper = styled.div`
   }
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren, getSpaceChildren }) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setManageContextActionToggle, spaceChildren, getSpaceChildren }) => {
     const { t } = useTranslation('explore');
     const matrix = useMatrix();
     const roomName = matrix.spaces.get(currentId)?.name || matrix.rooms.get(currentId)?.name;
@@ -55,6 +55,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren
                     currentId={currentId}
                     parentId={parentId}
                     roomName={roomName}
+                    setManageContextActionToggle={setManageContextActionToggle}
                     spaceChildren={spaceChildren}
                     getSpaceChildren={getSpaceChildren}
                     myPowerLevel={myPowerLevel}
@@ -67,7 +68,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, spaceChildren
 
 export default ExploreMatrixActions;
 
-const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceChildren, myPowerLevel }) => {
+const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionToggle, spaceChildren, getSpaceChildren, myPowerLevel }) => {
     const [selectedAction, setSelectedAction] = useState('');
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
@@ -75,39 +76,33 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
 
     const { t } = useTranslation();
 
+    const onCancel = () => {
+        setSelectedRadioButton('');
+        setSelectedAction('');
+        setManageContextActionToggle(prevState => !prevState);
+    };
+
     switch (selectedAction) {
         case 'substructure':
             return <CreateContext currentId={currentId}
                 parentId={parentId}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         case 'existingItem':
             return <AddExistingItem currentId={currentId}
                 currentName={roomName}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         case 'existingContext':
             return <AddExistingContext parentId={currentId}
                 parentName={roomName}
                 contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         case 'addOrCreateChat':
             return <CreateChatOptions
                 currentId={currentId}
                 parentName={roomName}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }}
+                onCancel={onCancel}
             />;
         case 'removeSpace':
             return <RemoveSpaceFromParent
@@ -116,42 +111,27 @@ const RenderSwitch = ({ currentId, parentId, roomName, spaceChildren, getSpaceCh
                 parentName={roomName}
                 spaceChildren={spaceChildren}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         case 'manageUsers':
             return <UserManagement roomId={currentId}
                 roomName={roomName}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         case 'leaveRoom':
             return <LeaveRoom roomId={currentId}
                 roomName={roomName}
                 parentId={parentId}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
 
         case 'changeJoinRule':
             return <ChangeJoinRule
                 roomId={currentId}
                 roomName={roomName}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
 
         case 'changeTopic':
             return <ChangeTopic
                 roomId={currentId}
-                onCancel={() => {
-                    setSelectedRadioButton('');
-                    setSelectedAction('');
-                }} />;
+                onCancel={onCancel} />;
         default:
             return <Form
                 onSubmit={(e) => {

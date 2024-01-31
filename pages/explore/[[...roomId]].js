@@ -250,6 +250,7 @@ export default function Explore() {
                             manageContextActionToggle ?
                                 <ExploreMatrixActions
                                     myPowerLevel={myPowerLevel}
+                                    setManageContextActionToggle={setManageContextActionToggle}
                                     currentId={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].room_id || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].roomId}
                                     parentId={selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].room_id || selectedSpaceChildren[selectedSpaceChildren.length - 2]?.[0].roomId}
                                     spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
