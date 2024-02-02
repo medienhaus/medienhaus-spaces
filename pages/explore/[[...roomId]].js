@@ -198,7 +198,7 @@ export default function Explore() {
 
         const onRouterChange = async () => {
             setIsFetchingContent(roomId);
-            setManageContextActionToggle(false);
+            !myPowerLevel && setManageContextActionToggle(false);
             await getSpaceChildren(null, roomId);
             setIsFetchingContent(false);
         };
