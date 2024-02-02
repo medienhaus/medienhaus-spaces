@@ -5,12 +5,12 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { ChatNewIcon } from '@remixicons/react/line';
 
-import { useMatrix } from '../../lib/Matrix';
-import DefaultLayout from '../../components/layouts/default';
-import TextButton from '../../components/UI/TextButton';
-import Icon from '../../components/UI/Icon';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import ServiceLink from '../../components/UI/ServiceLink';
+import DefaultLayout from '@/components/layouts/default';
+import TextButton from '@/components/UI/TextButton';
+import Icon from '@/components/UI/Icon';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { useMatrix } from '@/lib/Matrix';
 
 const sortRooms = function (room) {
     return [room.notificationCount === 0, room.name];

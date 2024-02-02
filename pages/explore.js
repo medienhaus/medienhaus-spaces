@@ -4,9 +4,9 @@ import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import ContextMultiLevelSelect from '../components/ContextMultiLevelSelect';
-import { useAuth } from '../lib/Auth';
-import DefaultLayout from '../components/layouts/default';
+import ContextMultiLevelSelect from '@/components/ContextMultiLevelSelect';
+import DefaultLayout from '@/components/layouts/default';
+import { useAuth } from '@/lib/Auth';
 
 const ExploreSection = styled.div`
     & > * + * {

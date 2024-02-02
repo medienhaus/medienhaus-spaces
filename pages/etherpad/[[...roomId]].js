@@ -5,26 +5,26 @@ import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Icon from '../../components/UI/Icon';
-import DefaultLayout from '../../components/layouts/default';
-import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import TextButton from '../../components/UI/TextButton';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import logger from '../../lib/Logging';
-import ServiceLink from '../../components/UI/ServiceLink';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
-import { isMyPadsApiEnabled, path as etherpadPath } from '../../lib/Etherpad';
-import LoginPrompt from '../../components/UI/LoginPrompt';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import Icon from '@/components/UI/Icon';
+import DefaultLayout from '@/components/layouts/default';
+import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
+import TextButton from '@/components/UI/TextButton';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+import ServiceLink from '@/components/UI/ServiceLink';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import LoginPrompt from '@/components/UI/LoginPrompt';
+import logger from '@/lib/Logging';
+import { isMyPadsApiEnabled, path as etherpadPath } from '@/lib/Etherpad';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -184,6 +184,7 @@ export default function Etherpad() {
                     if (!matrix.rooms.get(roomId) || !matrix.roomContents.get(roomId)?.body) {
                         continue;
                     }
+
                     // in order to get the actual id of the pad we need to check the room content
                     const id = matrix.roomContents.get(roomId).body.substring(matrix.roomContents.get(roomId).body.lastIndexOf('/') + 1);
                     matrixPads = Object.assign({}, matrixPads, {

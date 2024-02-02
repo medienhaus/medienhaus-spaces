@@ -3,10 +3,10 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
-import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { path } from '../../../lib/Spacedeck';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import Form from '@/components/UI/Form';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import { path } from '@/lib/Spacedeck';
 
 const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parsedError }) => {
     const [sketchName, setSketchName] = useState('');

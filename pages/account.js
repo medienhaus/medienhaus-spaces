@@ -5,9 +5,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
 import { styled } from 'styled-components';
 
-import { useAuth } from '../lib/Auth';
-import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
-import DefaultLayout from '../components/layouts/default';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import DefaultLayout from '@/components/layouts/default';
+import { useAuth } from '@/lib/Auth';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to

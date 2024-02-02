@@ -4,11 +4,11 @@ import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
-import DefaultLayout from '../../components/layouts/default';
 import KnockCard from './KnockCard';
+import DefaultLayout from '@/components/layouts/default';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');

@@ -4,9 +4,9 @@ import getConfig from 'next/config';
 import { styled } from 'styled-components';
 import { useRouter } from 'next/router';
 
-import { useAuth } from '../lib/Auth';
-import DefaultLayout from '../components/layouts/default';
-import PasswordInputButton from '../components/UI/PasswordInputButton';
+import DefaultLayout from '@/components/layouts/default';
+import PasswordInputButton from '@/components/UI/PasswordInputButton';
+import { useAuth } from '@/lib/Auth';
 
 const LoginSection = styled.div`
     & > form > * + * {

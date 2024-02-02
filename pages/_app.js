@@ -4,12 +4,12 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { enableMapSet } from 'immer';
 
-import DefaultLayout from '../components/layouts/default';
-import { AuthContext, useAuthProvider } from '../lib/Auth';
-import { MatrixContext, useMatrixProvider } from '../lib/Matrix';
+import DefaultLayout from '@/components/layouts/default';
+import LostConnection from '@/components/UI/LostConnection';
+import { AuthContext, useAuthProvider } from '@/lib/Auth';
+import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
-import LostConnection from '../components/UI/LostConnection';
 
 // Enable immer support for Map() and Set()
 enableMapSet();

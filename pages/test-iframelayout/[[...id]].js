@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 
-import DefaultLayout from '../../components/layouts/default';
+import DefaultLayout from '@/components/layouts/default';
 
 /**
  * This is an example page on how to make use of the two-columns layout with an iframe on the right.

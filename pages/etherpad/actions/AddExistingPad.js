@@ -3,10 +3,10 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../../components/UI/Form';
-import ErrorMessage from '../../../components/UI/ErrorMessage';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { path as etherpadPath } from '../../../lib/Etherpad';
+import Form from '@/components/UI/Form';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '@/lib/Etherpad';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();

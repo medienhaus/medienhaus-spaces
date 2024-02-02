@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import logger from '../../../lib/Logging';
+import Form from '@/components/UI/Form';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import logger from '@/lib/Logging';
 
 export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');

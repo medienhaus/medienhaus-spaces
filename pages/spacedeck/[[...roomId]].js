@@ -6,23 +6,24 @@ import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { DeleteBinIcon } from '@remixicons/react/line';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Icon from '../../components/UI/Icon';
-import TextButton from '../../components/UI/TextButton';
-import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import DefaultLayout from '../../components/layouts/default';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
-import ServiceLink from '../../components/UI/ServiceLink';
-import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
-import { path as spacedeckPath } from '../../lib/Spacedeck';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
-import LoginPrompt from '../../components/UI/LoginPrompt';
+import CreateNewSketch from './actions/CreateNewSketch';
+
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import Icon from '@/components/UI/Icon';
+import TextButton from '@/components/UI/TextButton';
+import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
+import DefaultLayout from '@/components/layouts/default';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import LoginPrompt from '@/components/UI/LoginPrompt';
+import { path as spacedeckPath } from '@/lib/Spacedeck';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 
 export default function Spacedeck() {
     const auth = useAuth();
