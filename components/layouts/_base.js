@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
-import { CloseIcon, MenuIcon } from '@remixicons/react/line';
+import { RiCloseLine, RiMenuLine } from '@remixicon/react';
 
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
@@ -128,7 +128,7 @@ export default function BaseLayout({ children }) {
                             }}
                         >
                             <Icon>
-                                <CloseIcon />
+                                <RiCloseLine />
                             </Icon>
                         </ToggleButton>
                     ) : (
@@ -138,7 +138,7 @@ export default function BaseLayout({ children }) {
                             }}
                         >
                             <Icon>
-                                <MenuIcon />
+                                <RiMenuLine />
                             </Icon>
                         </ToggleButton>
                     )}

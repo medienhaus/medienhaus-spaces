@@ -2,7 +2,7 @@ import React, { cloneElement, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
-import { MenuAddIcon } from '@remixicons/react/line';
+import { RiMenuAddLine } from '@remixicon/react';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
@@ -53,7 +53,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                         icon
                     ) : (
                         <Icon>
-                            <MenuAddIcon />
+                            <RiMenuAddLine />
                         </Icon>
                     )}
                 </ToggleButton>

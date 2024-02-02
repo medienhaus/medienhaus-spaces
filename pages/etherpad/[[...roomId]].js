@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
@@ -357,7 +357,7 @@ export default function Etherpad() {
                                     <LoadingSpinnerInline />
                                 ) : (
                                     <Icon>
-                                        <DeleteBinIcon />
+                                        <RiDeleteBinLine />
                                     </Icon>
                                 )}
                             </TextButton>

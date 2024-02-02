@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 import AddExistingSketch from './actions/AddExistingSketch';
 import CreateNewSketch from './actions/CreateNewSketch';
@@ -269,7 +269,7 @@ export default function Spacedeck() {
                                     <LoadingSpinnerInline />
                                 ) : (
                                     <Icon>
-                                        <DeleteBinIcon />
+                                        <RiDeleteBinLine />
                                     </Icon>
                                 )}
                             </TextButton>
