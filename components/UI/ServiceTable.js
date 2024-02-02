@@ -78,11 +78,6 @@ const TableCell = styled.td`
 
   white-space: nowrap;
 
-    > * {
-        display: inline-block;
-        line-height: calc(var(--margin) * 3);
-    }
-
     > a {
         color: ${(props) => props.selected && 'var(--color-disabled)'};
         text-decoration: ${(props) => props.selected && 'none'};
