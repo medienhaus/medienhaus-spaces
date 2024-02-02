@@ -1,4 +1,4 @@
 {
-  "invitedUser_one": "{{ count }} user was invited and needs to accept your invitation",
-  "invitedUser_other": "{{ count }} users were invited and need to accept your invitation"
+    "invitedUser_one": "{{ count }} user was invited and needs to accept your invitation",
+    "invitedUser_other": "{{ count }} users were invited and need to accept your invitation"
 }

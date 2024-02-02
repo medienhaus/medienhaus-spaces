@@ -3,20 +3,17 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { ChatNewIcon } from '@remixicons/react/line';
+import { RiChatNewLine } from '@remixicon/react';
 
-import { useMatrix } from '../../lib/Matrix';
-import DefaultLayout from '../../components/layouts/default';
-import TextButton from '../../components/UI/TextButton';
-import Icon from '../../components/UI/Icon';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import ServiceLink from '../../components/UI/ServiceLink';
+import DefaultLayout from '@/components/layouts/default';
+import TextButton from '@/components/UI/TextButton';
+import Icon from '@/components/UI/Icon';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { useMatrix } from '@/lib/Matrix';
 
-const sortRooms = function(room) {
-    return [
-        room.notificationCount === 0,
-        room.name,
-    ];
+const sortRooms = function (room) {
+    return [room.notificationCount === 0, room.name];
 };
 
 export default function Chat() {
@@ -41,10 +38,16 @@ export default function Chat() {
                     --cpd-avatar-bg: #000000 !important;
                     --cpd-avatar-color: #ffffff !important;
                     --cpd-color-text-action-accent: #000 !important;
+                    --cpd-color-bg-subtle-secondary: hsl(0deg 0% 94%) !important;
                     --color-foreground-alpha: rgb(0 0 0 / 5%);
 
                     border-radius: 4px !important;
                 }
+                
+                /* Unset the border-radius override from above for certain elements again */
+                .mx_RoomHeader { border-radius: 0 !important; }
+                .mx_RoomHeader .mx_FacePile .mx_BaseAvatar { border-radius: 50% !important; }
+                .mx_RoomKnocksBar { border-radius: 0 !important; }
                 
                 @media (prefers-color-scheme: dark) {
                     * {
@@ -52,6 +55,7 @@ export default function Chat() {
                         --cpd-avatar-bg: #ffffff !important;
                         --cpd-avatar-color: #000000 !important;
                         --cpd-color-text-action-accent: #fff !important;
+                        --cpd-color-bg-subtle-secondary: hsl(0deg 0% 0%) !important;
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
                     
@@ -77,11 +81,12 @@ export default function Chat() {
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
                 /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); border-radius: unset !important; }
+                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
                 .mx_RoomHeader:hover { background-color: unset; }
                 .mx_RoomHeader_heading { font-weight: 900; }
                 /* Hide avatar of the user we're chatting with */
-                .mx_RoomHeader .mx_BaseAvatar { display: none !important; }
+                .mx_RoomHeader_infoWrapper .mx_BaseAvatar { display: none !important; }
+                /* Give that bar to manage pending knocks our background-color */
                 /* Override all of the colorful usernames with the default text color */
                 .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
 
@@ -127,9 +132,9 @@ export default function Chat() {
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
-        .reject(room => matrix.directMessages.has(room.roomId))
+        .reject((room) => matrix.directMessages.has(room.roomId))
         // @TODO ... contain a dev.medienhaus.meta state event)
-        .reject(room => !!room.meta)
+        .reject((room) => !!room.meta)
         .sortBy(sortRooms)
         .value();
 
@@ -137,47 +142,66 @@ export default function Chat() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>
-                    <TextButton onClick={() => { router.push('/chat/new'); }} style={{ float: 'right' }}><Icon><ChatNewIcon /></Icon></TextButton>
+                    <TextButton
+                        onClick={() => {
+                            router.push('/chat/new');
+                        }}
+                        style={{ float: 'right' }}
+                    >
+                        <Icon>
+                            <RiChatNewLine />
+                        </Icon>
+                    </TextButton>
                     /chat
                 </h2>
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
+                    <summary>
+                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('People')}</h3>
+                    </summary>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { directMessages && directMessages.map((room) => (
-                                <ServiceLink
-                                    key={room.roomId}
-                                    href={`/chat/${room.roomId}`}
-                                    name={room.name}
-                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
-                                    notificationCount={room.notificationCount}
-                                    selected={roomId === room.roomId}
-                                />
-                            )) }
+                            {directMessages &&
+                                directMessages.map((room) => (
+                                    <ServiceLink
+                                        key={room.roomId}
+                                        href={`/chat/${room.roomId}`}
+                                        name={room.name}
+                                        thumbnail={
+                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                                        }
+                                        notificationCount={room.notificationCount}
+                                        selected={roomId === room.roomId}
+                                    />
+                                ))}
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
                 <br />
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
+                    <summary>
+                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('Rooms')}</h3>
+                    </summary>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { otherRooms && otherRooms.map((room) => (
-                                <ServiceLink
-                                    key={room.roomId}
-                                    href={`/chat/${room.roomId}`}
-                                    name={room.name}
-                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
-                                    notificationCount={room.notificationCount}
-                                    selected={roomId === room.roomId}
-                                />
-                            )) }
+                            {otherRooms &&
+                                otherRooms.map((room) => (
+                                    <ServiceLink
+                                        key={room.roomId}
+                                        href={`/chat/${room.roomId}`}
+                                        name={room.name}
+                                        thumbnail={
+                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                                        }
+                                        notificationCount={room.notificationCount}
+                                        selected={roomId === room.roomId}
+                                    />
+                                ))}
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
                 <br />
             </DefaultLayout.Sidebar>
-            { roomId && (
+            {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <iframe
                         ref={iframe}
@@ -185,7 +209,7 @@ export default function Chat() {
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
-            ) }
+            )}
         </>
     );
 }

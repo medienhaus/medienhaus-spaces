@@ -3,10 +3,10 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../../components/UI/Form';
-import ErrorMessage from '../../../components/UI/ErrorMessage';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { path as etherpadPath } from '../../../lib/Etherpad';
+import Form from '@/components/UI/Form';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '@/lib/Etherpad';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -35,14 +35,22 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     };
 
     return (
-        <Form onSubmit={(e) => { e.preventDefault(); handleExistingPadSubmit(); }}>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleExistingPadSubmit();
+            }}
+        >
             <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
             <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
-            { !validLink && padLink && (
+            {!validLink && padLink && (
                 <ErrorMessage>
-                    { t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl }) }
+                    {t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl })}
                 </ErrorMessage>
-            ) }
-            <button type="submit" disabled={!padName || !padLink || !validLink}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad') }</button>
-        </Form>);
+            )}
+            <button type="submit" disabled={!padName || !padLink || !validLink}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad')}
+            </button>
+        </Form>
+    );
 }

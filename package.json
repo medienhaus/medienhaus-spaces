@@ -8,6 +8,7 @@
     "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
+    "@remixicon/react": "^4.1.1",
     "@tldraw/tldraw": "^2.0.0-canary.7f48194c8fca",
     "i18next": "^23.7.7",
     "i18next-browser-languagedetector": "^7.2.0",
@@ -25,17 +26,12 @@
     "use-immer": "^0.9.0"
   },
   "devDependencies": {
-    "@remixicons/react": "^1.0.0",
-    "@stylelint/postcss-css-in-js": "^0.38.0",
     "eslint": "^8.55.0",
     "eslint-config-next": "^14.0.3",
+    "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-matrix-org": "^0.8.0",
-    "stylelint": "^14.8.2",
-    "stylelint-config-recess-order": "^3.0.0",
-    "stylelint-config-standard": "^25.0.0",
-    "stylelint-config-styled-components": "^0.1.1",
-    "stylelint-webpack-plugin": "^3.2.0"
+    "eslint-plugin-matrix-org": "^1.2.1",
+    "prettier": "^3.2.4"
   },
   "eslintConfig": {
     "plugins": [
@@ -75,11 +71,29 @@
           "next": "*"
         }
       ],
-      "max-len": "off",
-      "jsx-quotes": [
+      "quotes": [
         "error",
-        "prefer-double"
+        "single",
+        {
+          "avoidEscape": true
+        }
       ]
+    },
+    "settings": {
+      "import/resolver": {
+        "alias": {
+          "map": [
+            [
+              "@/components",
+              "./components"
+            ],
+            [
+              "@/lib",
+              "./lib"
+            ]
+          ]
+        }
+      }
     }
   }
 }

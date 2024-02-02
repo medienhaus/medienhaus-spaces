@@ -4,34 +4,34 @@ import getConfig from 'next/config';
 import { styled } from 'styled-components';
 import { useRouter } from 'next/router';
 
-import { useAuth } from '../lib/Auth';
-import DefaultLayout from '../components/layouts/default';
-import PasswordInputButton from '../components/UI/PasswordInputButton';
+import DefaultLayout from '@/components/layouts/default';
+import PasswordInputButton from '@/components/UI/PasswordInputButton';
+import { useAuth } from '@/lib/Auth';
 
 const LoginSection = styled.div`
-  & > form > * + * {
-    margin-top: var(--margin);
-  }
+    & > form > * + * {
+        margin-top: var(--margin);
+    }
 
-  & > pre {
-    overflow-x: scroll;
-  }
+    & > pre {
+        overflow-x: scroll;
+    }
 `;
 
 const UsernameHomeserverContainer = styled.div`
-  position: relative;
+    position: relative;
 `;
 
 const Homeserver = styled.span`
-  position: absolute;
-  right: var(--margin);
-  max-width: 40%;
-  overflow: hidden;
-  line-height: calc(var(--margin) * 3);
-  color: var(--color-me);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
+    position: absolute;
+    right: var(--margin);
+    max-width: 40%;
+    overflow: hidden;
+    line-height: calc(var(--margin) * 3);
+    color: var(--color-me);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
 `;
 
 export default function Login() {
@@ -54,10 +54,18 @@ export default function Login() {
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
         setErrorMessage(null);
-        await auth.signin(name, password, homeserver).catch(/** @param {MatrixError} error */(error) => {
-            if (error.errcode === 'M_LIMIT_EXCEEDED') setErrorMessage(t('{{error}}, please wait {{time}} seconds.', { error: error.data.error, time: Math.round(error.data.retry_after_ms / 1000) }));
-            else setErrorMessage(error.data?.error);
-        });
+        await auth.signin(name, password, homeserver).catch(
+            /** @param {MatrixError} error */ (error) => {
+                if (error.errcode === 'M_LIMIT_EXCEEDED')
+                    setErrorMessage(
+                        t('{{error}}, please wait {{time}} seconds.', {
+                            error: error.data.error,
+                            time: Math.round(error.data.retry_after_ms / 1000),
+                        }),
+                    );
+                else setErrorMessage(error.data?.error);
+            },
+        );
 
         setIsTryingToSignIn(false);
     };
@@ -75,32 +83,34 @@ export default function Login() {
         <DefaultLayout.LameColumn>
             <h2>/login</h2>
             <LoginSection>
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    onSubmitLoginForm();
-                }}>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        onSubmitLoginForm();
+                    }}
+                >
                     <UsernameHomeserverContainer>
-                        <input type="text"
+                        <input
+                            type="text"
                             placeholder={t('Username')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            ref={usernameInput} />
-                        {
-                            (!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl || getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
-                                <Homeserver
-                                    onClick={changeHomeserver}>:{ homeserver.replace('http://', '').replace('https://', '') }
-                                </Homeserver>
-                            )
-                        }
+                            ref={usernameInput}
+                        />
+                        {(!getConfig().publicRuntimeConfig.authProviders?.matrix?.baseUrl ||
+                            getConfig().publicRuntimeConfig.authProviders?.matrix?.allowCustomHomeserver) && (
+                            <Homeserver onClick={changeHomeserver}>:{homeserver.replace('http://', '').replace('https://', '')}</Homeserver>
+                        )}
                     </UsernameHomeserverContainer>
-                    <PasswordInputButton placeholder={t('Password')}
+                    <PasswordInputButton
+                        placeholder={t('Password')}
                         value={password}
                         onChange={(e) => {
                             setPassword(e.target.value);
                         }}
                         disabled={isTryingToSignIn}
                     />
-                    { errorMessage && (<p>❗️ { errorMessage }</p>) }
+                    {errorMessage && <p>❗️ {errorMessage}</p>}
                 </form>
             </LoginSection>
         </DefaultLayout.LameColumn>

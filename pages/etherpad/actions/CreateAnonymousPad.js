@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { path as etherpadPath } from '../../../lib/Etherpad';
+import Form from '@/components/UI/Form';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import { path as etherpadPath } from '@/lib/Etherpad';
 
 export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -36,9 +36,16 @@ export default function CreateAnonymousPad({ callbackDone, createWriteRoom }) {
     };
 
     return (
-        <Form onSubmit={(e) => { e.preventDefault(); createAnonymousPad(padName); }}>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                createAnonymousPad(padName);
+            }}
+        >
             <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <button type="submit" disabled={!padName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad') }</button>
+            <button type="submit" disabled={!padName}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
+            </button>
         </Form>
     );
 }

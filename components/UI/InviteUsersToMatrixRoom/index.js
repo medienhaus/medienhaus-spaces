@@ -17,34 +17,34 @@ import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { styled } from 'styled-components';
-import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
 
-import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
 import Icon from '../Icon';
+import { useAuth } from '@/lib/Auth';
 
 const ActionWrapper = styled.section`
-  display: grid;
-  align-content: start;
-  justify-self: start;
-  width: 100%;
-  height: 100%;
-  padding: 0 var(--margin);
+    display: grid;
+    align-content: start;
+    justify-self: start;
+    width: 100%;
+    height: 100%;
+    padding: 0 var(--margin);
 
-  @media ${breakpoints.tabletAndAbove} {
-    padding: 0 calc(var(--margin) * 1.5);
-  }
+    @media ${breakpoints.tabletAndAbove} {
+        padding: 0 calc(var(--margin) * 1.5);
+    }
 
-  h3 {
-    line-height: calc(var(--margin) *3);
-  }
+    h3 {
+        line-height: calc(var(--margin) * 3);
+    }
 `;
 
 const FeedbackWrapper = styled.div`
-  margin-top: var(--margin);
+    margin-top: var(--margin);
 `;
 
 export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
@@ -60,20 +60,26 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchUsersForContributorSearch = useCallback(debounce((val) => fetchUsersForContributorSearch(val), 300), []);
+    const debouncedFetchUsersForContributorSearch = useCallback(
+        debounce((val) => fetchUsersForContributorSearch(val), 300),
+        [],
+    );
 
-    const fetchUsersForContributorSearch = useCallback(async (a) => {
-        try {
-            const users = await matrixClient.searchUserDirectory({ term: a });
-            // always filter ourselves; we most likely do not want to invite ourselves to something, i guess?!
-            const usersWithoutMyself = _.filter(users.results, (user) => user.user_id !== matrixClient.getUserId());
-            // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
-            // const filterResults = users.results.filter(item => _.isEqual(item, option));
-            setSearchResults(usersWithoutMyself);
-        } catch (err) {
-            logger.error(t('Error while trying to fetch users: ') + err);
-        }
-    }, [matrixClient, t]);
+    const fetchUsersForContributorSearch = useCallback(
+        async (a) => {
+            try {
+                const users = await matrixClient.searchUserDirectory({ term: a });
+                // always filter ourselves; we most likely do not want to invite ourselves to something, i guess?!
+                const usersWithoutMyself = _.filter(users.results, (user) => user.user_id !== matrixClient.getUserId());
+                // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
+                // const filterResults = users.results.filter(item => _.isEqual(item, option));
+                setSearchResults(usersWithoutMyself);
+            } catch (err) {
+                logger.error(t('Error while trying to fetch users: ') + err);
+            }
+        },
+        [matrixClient, t],
+    );
 
     function clearInputs() {
         setUserFeedback('');
@@ -85,12 +91,11 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const errors = [];
 
         for (const user of selectedUsers) {
-            await matrixClient.invite(roomId, user.user_id)
-                .catch(async error => {
-                    // avoid adding duplicates
-                    if (errors.includes(error.data.error)) return;
-                    errors.push(error.data.error);
-                });
+            await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
+                // avoid adding duplicates
+                if (errors.includes(error.data.error)) return;
+                errors.push(error.data.error);
+            });
         }
 
         if (errors.length !== 0) {
@@ -101,31 +106,42 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
-        await new Promise(() => setTimeout(() => {
-            clearInputs();
-            if (onSuccess && successAmount === selectedUsers.length) onSuccess();
-        }, 3000));
+        successAmount > 0 &&
+            setUserFeedback(
+                <Trans t={t} i18nKey="invitedUser" count={successAmount}>
+                    {{ successAmount }} user was invited and needs to accept your invitation
+                </Trans>,
+            );
+        await new Promise(() =>
+            setTimeout(() => {
+                clearInputs();
+                if (onSuccess && successAmount === selectedUsers.length) onSuccess();
+            }, 3000),
+        );
     };
 
-    return <ActionWrapper>
-        <h3>{ t('Invite users') }</h3>
-        { userFeedback && _.isEmpty(errorFeedback) ? <div>{ userFeedback }</div> :
-            <>
-                <Datalist
-                    options={searchResults}
-                    onInputChange={handleChange}
-                    keysToDisplay={['display_name', 'user_id']}
-                    onSubmit={handleInvite}
-                />
+    return (
+        <ActionWrapper>
+            <h3>{t('Invite users')}</h3>
+            {userFeedback && _.isEmpty(errorFeedback) ? (
+                <div>{userFeedback}</div>
+            ) : (
+                <>
+                    <Datalist
+                        options={searchResults}
+                        onInputChange={handleChange}
+                        keysToDisplay={['display_name', 'user_id']}
+                        onSubmit={handleInvite}
+                    />
 
-                <FeedbackWrapper>
-                    { userFeedback && errorFeedback && userFeedback }
-                    { !_.isEmpty(errorFeedback) && errorFeedback.map(error => <ErrorMessage key={error}>{ error }</ErrorMessage>) }
-                </FeedbackWrapper>
-            </>
-        }
-    </ActionWrapper>;
+                    <FeedbackWrapper>
+                        {userFeedback && errorFeedback && userFeedback}
+                        {!_.isEmpty(errorFeedback) && errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
+                    </FeedbackWrapper>
+                </>
+            )}
+        </ActionWrapper>
+    );
 };
 
 /**
@@ -141,18 +157,16 @@ const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
     const { t } = useTranslation('invitationModal');
 
     return (
-        <TextButton
-            onClick={onClick}
-            title={t('Invite users to {{name}}', { name: name })}>
-            { inviteUsersOpen ?
+        <TextButton onClick={onClick} title={t('Invite users to {{name}}', { name: name })}>
+            {inviteUsersOpen ? (
                 <Icon>
-                    <UserUnfollowIcon />
+                    <RiUserUnfollowLine />
                 </Icon>
-                :
+            ) : (
                 <Icon>
-                    <UserAddIcon />
+                    <RiUserAddLine />
                 </Icon>
-            }
+            )}
         </TextButton>
     );
 };

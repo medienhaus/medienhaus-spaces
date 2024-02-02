@@ -1,5 +1,3 @@
-const StylelintPlugin = require('stylelint-webpack-plugin');
-
 const SpacesConfig = require('./config.js');
 
 module.exports = {
@@ -17,14 +15,16 @@ module.exports = {
         ];
 
         if (SpacesConfig.authProviders.etherpad) {
-            rewriteConfig.push({
-                source: SpacesConfig.authProviders.etherpad.path,
-                destination: '/etherpad',
-            },
-            {
-                source: SpacesConfig.authProviders.etherpad.path + '/:roomId',
-                destination: '/etherpad/:roomId',
-            });
+            rewriteConfig.push(
+                {
+                    source: SpacesConfig.authProviders.etherpad.path,
+                    destination: '/etherpad',
+                },
+                {
+                    source: SpacesConfig.authProviders.etherpad.path + '/:roomId',
+                    destination: '/etherpad/:roomId',
+                },
+            );
         }
 
         if (SpacesConfig.authProviders.spacedeck) {
@@ -36,7 +36,8 @@ module.exports = {
                 {
                     source: SpacesConfig.authProviders.spacedeck.path + '/:roomId',
                     destination: '/spacedeck/:roomId',
-                });
+                },
+            );
         }
 
         if (SpacesConfig.authProviders.tldraw) {
@@ -52,15 +53,5 @@ module.exports = {
         }
 
         return rewriteConfig;
-    },
-    webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-        if (!dev || isServer) return config;
-
-        config.plugins.push(new StylelintPlugin({
-            files: ['assets/*.css', 'components/**/*.js', 'pages/**/*.js'],
-            failOnError: false,
-        }));
-
-        return config;
     },
 };
