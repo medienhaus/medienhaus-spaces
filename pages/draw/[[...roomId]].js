@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import _, { set } from 'lodash';
 import { useImmer } from 'use-immer';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -27,13 +27,7 @@ import Icon from '../../components/UI/Icon';
 const Editor = dynamic(() => import('./editor'), { ssr: false });
 
 const TlDrawListEntry = memo(({ name, href, roomId, ref, selected }) => {
-    return <ServiceLink
-        key={roomId}
-        name={name}
-        href={href}
-        selected={selected}
-        ref={ref}
-    />;
+    return <ServiceLink key={roomId} name={name} href={href} selected={selected} ref={ref} />;
 });
 
 TlDrawListEntry.displayName = 'TlDrawListEntry';
@@ -49,7 +43,7 @@ export default function Draw() {
 
     const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.tldraw;
-    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter(child => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
+    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter((child) => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
 
     const tldrawMatrix = TldrawMatrixProvider(roomId);
@@ -68,37 +62,76 @@ export default function Draw() {
     }, [roomId]);
 
     const listEntries = useMemo(() => {
-        return matrix.spaces.get(matrix.serviceSpaces.tldraw)?.children?.map(tldrawRoomId => {
+        return matrix.spaces.get(matrix.serviceSpaces.tldraw)?.children?.map((tldrawRoomId) => {
             const name = _.get(matrix.rooms.get(tldrawRoomId), 'name');
 
             // if the room name is undefined we don't want to display it
             if (!name) return;
 
-            return <TlDrawListEntry
-                key={tldrawRoomId}
-                name={name}
-
-                roomId={tldrawRoomId}
-                selected={tldrawRoomId === roomId}
-
-            />;
+            return <TlDrawListEntry key={tldrawRoomId} name={name} roomId={tldrawRoomId} selected={tldrawRoomId === roomId} />;
         });
     }, [matrix.rooms, matrix.serviceSpaces.tldraw, matrix.spaces, roomId]);
 
     // based on the createWriteRoom in etherpad. there was a @TODO mentioned with 'function creates infinite loop in useEffect below' dont know if this applies here as well.
-    const createSketchRoom = useCallback(async (name) => {
-        if (!name) return;
+    const createSketchRoom = useCallback(
+        async (name) => {
+            if (!name) return;
 
-        const newRoom = await matrix.createRoom(name, false, '', 'invite', 'content', 'tldraw', serviceSpaceId);
+            const newRoom = await matrix.createRoom(name, false, '', 'invite', 'content', 'tldraw', serviceSpaceId);
 
-        // we add the defualt store schama data and the store data as an custom stateevent to the newly created room
-        await matrixClient.sendStateEvent(newRoom, 'dev.medienhaus.tldraw.store.schema', JSON.stringify({ 'schemaVersion': 1, 'storeVersion': 4, 'recordVersions': { 'asset': { 'version': 1, 'subTypeKey': 'type', 'subTypeVersions': { 'image': 2, 'video': 2, 'bookmark': 0 } }, 'camera': { 'version': 1 }, 'document': { 'version': 2 }, 'instance': { 'version': 22 }, 'instance_page_state': { 'version': 5 }, 'page': { 'version': 1 }, 'shape': { 'version': 3, 'subTypeKey': 'type', 'subTypeVersions': { 'group': 0, 'text': 1, 'bookmark': 1, 'draw': 1, 'geo': 7, 'note': 4, 'line': 1, 'frame': 0, 'arrow': 2, 'highlight': 0, 'embed': 4, 'image': 2, 'video': 1 } }, 'instance_presence': { 'version': 5 }, 'pointer': { 'version': 1 } } }));
-        await matrixClient.sendStateEvent(newRoom, 'dev.medienhaus.tldraw.store.store', JSON.stringify({ 'document:document': { 'gridSize': 10, 'name': '', 'meta': {}, 'id': 'document:document', 'typeName': 'document' }, 'page:page': { 'meta': {}, 'id': 'page:page', 'name': 'Page 1', 'index': 'a1', 'typeName': 'page' } }));
+            // we add the defualt store schama data and the store data as an custom stateevent to the newly created room
+            await matrixClient.sendStateEvent(
+                newRoom,
+                'dev.medienhaus.tldraw.store.schema',
+                JSON.stringify({
+                    schemaVersion: 1,
+                    storeVersion: 4,
+                    recordVersions: {
+                        asset: { version: 1, subTypeKey: 'type', subTypeVersions: { image: 2, video: 2, bookmark: 0 } },
+                        camera: { version: 1 },
+                        document: { version: 2 },
+                        instance: { version: 22 },
+                        instance_page_state: { version: 5 },
+                        page: { version: 1 },
+                        shape: {
+                            version: 3,
+                            subTypeKey: 'type',
+                            subTypeVersions: {
+                                group: 0,
+                                text: 1,
+                                bookmark: 1,
+                                draw: 1,
+                                geo: 7,
+                                note: 4,
+                                line: 1,
+                                frame: 0,
+                                arrow: 2,
+                                highlight: 0,
+                                embed: 4,
+                                image: 2,
+                                video: 1,
+                            },
+                        },
+                        instance_presence: { version: 5 },
+                        pointer: { version: 1 },
+                    },
+                }),
+            );
+            await matrixClient.sendStateEvent(
+                newRoom,
+                'dev.medienhaus.tldraw.store.store',
+                JSON.stringify({
+                    'document:document': { gridSize: 10, name: '', meta: {}, id: 'document:document', typeName: 'document' },
+                    'page:page': { meta: {}, id: 'page:page', name: 'Page 1', index: 'a1', typeName: 'page' },
+                }),
+            );
 
-        await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.tldraw, newRoom);
+            await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.tldraw, newRoom);
 
-        return newRoom;
-    }, [matrix, auth, serviceSpaceId, matrixClient]);
+            return newRoom;
+        },
+        [matrix, auth, serviceSpaceId, matrixClient],
+    );
 
     /**
      * copied from etherpad and modified to fit our needs
@@ -123,72 +156,84 @@ export default function Draw() {
         <>
             <DefaultLayout.Sidebar>
                 <ServiceSubmenu
-                    title={<h2>{ tldrawPath }</h2>}
+                    title={<h2>{tldrawPath}</h2>}
                     subheadline={t('What would you like to do?')}
                     disabled={!serviceSpaceId}
                     items={[
-                        { value: 'createtldrawsketch', actionComponentToRender: <CreateNewTlDrawSketch createTlDrawRoom={createSketchRoom} />, label: t('Create new sketch') },
+                        {
+                            value: 'createtldrawsketch',
+                            actionComponentToRender: <CreateNewTlDrawSketch createTlDrawRoom={createSketchRoom} />,
+                            label: t('Create new sketch'),
+                        },
                     ]}
                 />
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                { !serviceSpaceId || syncingServerSketches ?
-                    <LoadingSpinner /> :
+                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                {!serviceSpaceId || syncingServerSketches ? (
+                    <LoadingSpinner />
+                ) : (
                     <>
                         <ServiceTable>
                             <ServiceTable.Body>
-                                { spacedeckChildren?.map(tldrawSketchRoomId => {
+                                {spacedeckChildren?.map((tldrawSketchRoomId) => {
                                     const room = matrix.rooms.get(tldrawSketchRoomId);
                                     if (!room) return null;
 
-                                    return <ServiceLink
-                                        key={tldrawSketchRoomId}
-                                        name={room.name}
-                                        href={`${tldrawPath}/${tldrawSketchRoomId}`}
-                                        selected={roomId === tldrawSketchRoomId}
-                                        ref={tldrawSketchRoomId === roomId ? selectedSketchRef : null}
-                                    />;
-                                }) }
+                                    return (
+                                        <ServiceLink
+                                            key={tldrawSketchRoomId}
+                                            name={room.name}
+                                            href={`${tldrawPath}/${tldrawSketchRoomId}`}
+                                            selected={roomId === tldrawSketchRoomId}
+                                            ref={tldrawSketchRoomId === roomId ? selectedSketchRef : null}
+                                        />
+                                    );
+                                })}
                             </ServiceTable.Body>
                         </ServiceTable>
-
                     </>
-
-                }
+                )}
             </DefaultLayout.Sidebar>
-            { roomId && (
+            {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <DefaultLayout.IframeHeader>
-                        <h2>{ matrix.rooms.get(roomId).name }</h2>
+                        <h2>{matrix.rooms.get(roomId).name}</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             <InviteUserToMatrixRoom.Button
                                 name={matrix.rooms.get(roomId).name}
-                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
-                                inviteUsersOpen={isInviteUsersOpen} />
-                            <CopyToClipboard title={t('Copy sketch link to clipboard')}
-                                content={tldrawPath+'/'+roomId} />
-                            <TextButton title={t('Remove sketch from my library')}
-                                onClick={deleteSketch}>
-                                { isDeletingSketch ?
+                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen}
+                            />
+                            <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
+                            <TextButton title={t('Remove sketch from my library')} onClick={deleteSketch}>
+                                {isDeletingSketch ? (
                                     <LoadingSpinnerInline />
-                                    :
+                                ) : (
                                     <Icon>
-                                        <DeleteBinIcon />
+                                        <RiDeleteBinLine />
                                     </Icon>
-                                }
+                                )}
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    { isInviteUsersOpen ?
+                    {isInviteUsersOpen ? (
                         <InviteUserToMatrixRoom
                             roomId={roomId}
                             roomName={matrix.rooms.get(roomId).name}
                             onSuccess={() => setIsInviteUsersOpen(false)}
-                        /> :
-                        tldrawMatrix && tldrawMatrix.store && <Editor store={tldrawMatrix.store} updateStoreElement={tldrawMatrix.updateStoreElementInMatrix} addStoreElement={tldrawMatrix.addStoreElementToMatrix} deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix} />
-                    }
+                        />
+                    ) : (
+                        tldrawMatrix &&
+                        tldrawMatrix.store && (
+                            <Editor
+                                store={tldrawMatrix.store}
+                                updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
+                                addStoreElement={tldrawMatrix.addStoreElementToMatrix}
+                                deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
+                            />
+                        )
+                    )}
                 </DefaultLayout.IframeWrapper>
-            ) }
+            )}
         </>
-
     );
 }
