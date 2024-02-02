@@ -46,7 +46,9 @@ export default function AddExistingChat({ allChatRooms, handleCancel, currentId,
         <select onChange={(e) => setSelectedRoom(e.target.value)}>
             <option disabled selected value="">-- { t('Choose Chat Room') } --</option>
             { allChatRooms.map(room => {
-                return <option key={room.roomId} value={room.roomId}>{ room.name }</option>;
+                const disabled = matrix.spaces.get(currentId).children?.includes(room.roomId);
+
+                return <option key={room.roomId} disabled={disabled} value={room.roomId}>{ room.name }</option>;
             }) }
         </select>
         { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
