@@ -144,53 +144,50 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
 
     return (
         <InviteUserForm onSubmit={handleSubmit}>
-            <>
-                <Input
-                    type="text"
-                    value={value}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setSelectedIndex(-1)}
-                    ref={inputRef}
-                />
-
-                <TableWrapper>
-                    <ServiceTable>
-                        <ServiceTable.Body>
-                            {isOpen &&
-                                filteredOptions.map((option, index) => (
-                                    <DataListRow
-                                        key={index}
-                                        option={option}
-                                        focus={selectedIndex === index}
-                                        index={index}
-                                        keysToDisplay={keysToDisplay}
-                                        handleSelect={handleSelect}
-                                        isChecked={checked.includes(option)}
-                                        handleKeyDown={handleKeyDown}
-                                        setSelectedIndex={setSelectedIndex}
-                                    />
-                                ))}
-                            {selected.map((option, index) => (
+            <Input
+                type="text"
+                value={value}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setSelectedIndex(-1)}
+                ref={inputRef}
+            />
+            <TableWrapper>
+                <ServiceTable>
+                    <ServiceTable.Body>
+                        {isOpen &&
+                            filteredOptions.map((option, index) => (
                                 <DataListRow
                                     key={index}
                                     option={option}
-                                    // we need to add the number of options to the index to highlight the correct item in the list
-                                    // and not have multiple items show up as selected
-                                    focus={selectedIndex === index + filteredOptions.length}
-                                    index={index + filteredOptions.length}
+                                    focus={selectedIndex === index}
+                                    index={index}
                                     keysToDisplay={keysToDisplay}
-                                    handleSelect={handleRemove}
-                                    isChecked={selected.includes(option)}
+                                    handleSelect={handleSelect}
+                                    isChecked={checked.includes(option)}
                                     handleKeyDown={handleKeyDown}
                                     setSelectedIndex={setSelectedIndex}
                                 />
                             ))}
-                        </ServiceTable.Body>
-                    </ServiceTable>
-                </TableWrapper>
-                <Button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</Button>
-            </>
+                        {selected.map((option, index) => (
+                            <DataListRow
+                                key={index}
+                                option={option}
+                                // we need to add the number of options to the index to highlight the correct item in the list
+                                // and not have multiple items show up as selected
+                                focus={selectedIndex === index + filteredOptions.length}
+                                index={index + filteredOptions.length}
+                                keysToDisplay={keysToDisplay}
+                                handleSelect={handleRemove}
+                                isChecked={selected.includes(option)}
+                                handleKeyDown={handleKeyDown}
+                                setSelectedIndex={setSelectedIndex}
+                            />
+                        ))}
+                    </ServiceTable.Body>
+                </ServiceTable>
+            </TableWrapper>
+            <Button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</Button>
         </InviteUserForm>
     );
 }
