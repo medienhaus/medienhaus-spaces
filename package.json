@@ -13,6 +13,7 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@remixicon/react": "^4.1.1",
+    "@tldraw/tldraw": "^2.0.0-canary.7f48194c8fca",
     "i18next": "^23.7.7",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
