@@ -9,6 +9,8 @@ import { useMatrix } from '../../lib/Matrix';
 import InvitationCard from './InvitationCard';
 import DefaultLayout from '../../components/layouts/default';
 import KnockCard from './KnockCard';
+import Favourite from './Favourite';
+import { ServiceTable } from '../../components/UI/ServiceTable';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
@@ -17,7 +19,7 @@ export default function Dashboard() {
     const matrix = useMatrix();
     const pendingKnocks = matrix.knockingMembers;
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-
+    const favourite = matrix.favourites;
     // We are going to intentionally store a copy of every invitation in this array, which we're going only append to.
     // But we will never remove any entries. This is in order to keep a list of all invitations handled while looking
     // at this page. Only when leaving the page and returning back to it, we start with an empty map from scratch.
@@ -143,7 +145,44 @@ export default function Dashboard() {
                     )) }
                 </>
             }
+            { !_.isEmpty(favourite) &&
+                    <ServiceTable>
+                        <ServiceTable.Caption>
+                            { t('Favourites') }
+                        </ServiceTable.Caption>
+                        <ServiceTable.Head>
+                            <ServiceTable.Row>
+                                <ServiceTable.Header align="left" width="20%">
+                                    { t('App') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="left" width="60%">
+                                    { t('Item') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    { t('Copy Link') }
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    { t('Remove') }
+                                </ServiceTable.Header>
+                            </ServiceTable.Row>
+                        </ServiceTable.Head>
+                        <ServiceTable.Body>
+                            { favourite.map(favouriteSpace => {
+                                const favouriteObject = matrix.rooms.get(favouriteSpace) || matrix.spaces.get(favouriteSpace);
 
+                                if (!favouriteObject) return;
+
+                                return <Favourite
+                                    key={favouriteSpace}
+                                    metaEvent={favouriteObject.meta}
+                                    roomId={favouriteSpace}
+                                    name={favouriteObject.name}
+                                />;
+                            }) }
+                        </ServiceTable.Body>
+                    </ServiceTable>
+
+            }
         </DefaultLayout.LameColumn>
     );
 }
