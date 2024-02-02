@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
-import { LockIcon } from '@remixicons/react/line';
+import { RiLockLine } from '@remixicon/react';
 
 import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
@@ -63,7 +63,7 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, thumb
                     {/* Show a lock icon if this Link is password protected */}
                     {passwordProtected && (
                         <LockIconWrapper title={t('password protected')}>
-                            <LockIcon />
+                            <RiLockLine />
                         </LockIconWrapper>
                     )}
                 </Link>

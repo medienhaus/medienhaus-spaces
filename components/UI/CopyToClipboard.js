@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon, ClipboardIcon } from '@remixicons/react/line';
+import { RiCheckLine, RiClipboardLine } from '@remixicon/react';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
@@ -20,11 +20,11 @@ const CopyToClipboard = ({ content, title }) => {
         <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
             {wasContentCopied ? (
                 <Icon>
-                    <CheckIcon />
+                    <RiCheckLine />
                 </Icon>
             ) : (
                 <Icon>
-                    <ClipboardIcon />
+                    <RiClipboardLine />
                 </Icon>
             )}
         </TextButton>

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { ChatNewIcon } from '@remixicons/react/line';
+import { RiChatNewLine } from '@remixicon/react';
 
 import DefaultLayout from '@/components/layouts/default';
 import TextButton from '@/components/UI/TextButton';
@@ -149,7 +149,7 @@ export default function Chat() {
                         style={{ float: 'right' }}
                     >
                         <Icon>
-                            <ChatNewIcon />
+                            <RiChatNewLine />
                         </Icon>
                     </TextButton>
                     /chat

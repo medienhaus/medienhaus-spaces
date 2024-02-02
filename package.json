@@ -8,6 +8,7 @@
     "export": "NEXT_TELEMETRY_DISABLED=1 next build && NEXT_TELEMETRY_DISABLED=1 next export"
   },
   "dependencies": {
+    "@remixicon/react": "^4.1.1",
     "i18next": "^23.7.7",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
@@ -24,7 +25,6 @@
     "use-immer": "^0.9.0"
   },
   "devDependencies": {
-    "@remixicons/react": "^1.0.0",
     "eslint": "^8.55.0",
     "eslint-config-next": "^14.0.3",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -82,8 +82,14 @@
       "import/resolver": {
         "alias": {
           "map": [
-            ["@/components", "./components"],
-            ["@/lib", "./lib"]
+            [
+              "@/components",
+              "./components"
+            ],
+            [
+              "@/lib",
+              "./lib"
+            ]
           ]
         }
       }
