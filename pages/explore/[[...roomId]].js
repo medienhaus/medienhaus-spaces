@@ -32,6 +32,7 @@ const ServiceTableWrapper = styled.div`
  * @component
  * @returns {JSX.Element} The rendered Explore component.
  */
+//@TODO cached spaces do not update after editing
 export default function Explore() {
     const router = useRouter();
     const { t } = useTranslation('explore');
@@ -90,7 +91,7 @@ export default function Explore() {
         logger.debug('Fetch the room hierarchy for ' + roomId);
 
         const getHierarchyFromServer = async (roomId) => {
-            const roomHierarchy = await matrix.roomHierarchy(roomId, null, 1)
+            const roomHierarchyFromServer = await matrix.roomHierarchy(roomId, null, 1)
                 .catch(async error => {
                     if (error.data?.error.includes('not in room')) {
                         // If the error indicates the user is not in the room and previews are disabled
@@ -100,17 +101,17 @@ export default function Explore() {
                                 .catch(error => setErrorMessage(error.data?.error));
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                            if (joinRoom) return await roomHierarchy();
+                            if (joinRoom) return await roomHierarchyFromServer();
                         }
                     } else {
-                        return matrix.handleRateLimit(error, () => roomHierarchy())
+                        return matrix.handleRateLimit(error, () => roomHierarchyFromServer())
                             .catch(error => {
                                 setErrorMessage(error.message);
                             });  // Handle other errors by setting an error message.
                     }
                 });
-            if (!roomHierarchy) return;
-            const parent = roomHierarchy[0];
+            if (!roomHierarchyFromServer) return;
+            const parent = roomHierarchyFromServer[0];
 
             const getMetaEvent = async (obj) => {
                 logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
@@ -119,8 +120,8 @@ export default function Explore() {
                 if (metaEvent) obj.meta = metaEvent;
             };
 
-            for (const space of roomHierarchy) {
-                if (space.room_id !== roomHierarchy[0].room_id) {
+            for (const space of roomHierarchyFromServer) {
+                if (space.room_id !== roomHierarchyFromServer[0].room_id) {
                     space.parent = parent;
                 }
 
@@ -135,10 +136,11 @@ export default function Explore() {
                     });
             }
 
-            return roomHierarchy;
+            return roomHierarchyFromServer;
         };
 
-        const spaceHierarchy = [];
+        // initialise the spaceHierarchy array which is either filled by our cache or the server
+        let spaceHierarchy = [];
         // check our local state for cached data
         const cachedSpace = matrix.spaces.get(roomId);
 
@@ -162,7 +164,7 @@ export default function Explore() {
                 spaceHierarchy.splice(0, 0, cachedSpace);
             }
         } else {
-            await getHierarchyFromServer(roomId);
+            spaceHierarchy = await getHierarchyFromServer(roomId);
         }
 
         setSelectedSpaceChildren((prevState) => {
