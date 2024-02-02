@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { useAuth } from '../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 
 export default function Logout() {
     const router = useRouter();
