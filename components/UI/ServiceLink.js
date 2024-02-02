@@ -1,11 +1,12 @@
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
-import { RiLockLine } from '@remixicon/react';
+import { RiArrowRightLine, RiLockLine } from '@remixicon/react';
+import Link from 'next/link';
 
 import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
 
 const LockIconWrapper = styled(Icon)`
     position: relative;
@@ -19,19 +20,6 @@ const LockIconWrapper = styled(Icon)`
     }
 `;
 
-const Link = styled(NextLink)`
-    display: block;
-`;
-
-const Thumbnail = styled.img`
-    position: relative;
-    float: left;
-    width: 2rem;
-    height: 2rem;
-    background-color: var(--color-foreground);
-    border-radius: var(--border-radius);
-`;
-
 const NotificationBadge = styled.span`
     width: 4ch;
     font-size: 70%;
@@ -40,7 +28,6 @@ const NotificationBadge = styled.span`
     text-align: center;
     background-color: var(--color-notification);
     border-radius: var(--border-radius);
-    transform: translateY(-1px);
 
     > small {
         font-weight: 600;
@@ -52,30 +39,27 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, thumb
 
     return (
         <ServiceTable.Row>
-            {thumbnail && (
-                <ServiceTable.Cell>
-                    <Thumbnail src={thumbnail} alt={name} />
-                </ServiceTable.Cell>
-            )}
-            <ServiceTable.Cell width="100%">
-                <Link ref={ref} href={href}>
-                    {name}
+            <ServiceTable.Cell>
+                <Link ref={ref} href={href} className="flex items-center justify-between">
+                    {thumbnail && (
+                        <Avatar className="mr-3">
+                            <AvatarImage src={thumbnail} />
+                            <AvatarFallback />
+                        </Avatar>
+                    )}
+                    <span className="flex-grow">{name}</span>
                     {/* Show a lock icon if this Link is password protected */}
                     {passwordProtected && (
                         <LockIconWrapper title={t('password protected')}>
                             <RiLockLine />
                         </LockIconWrapper>
                     )}
+                    {/* Show notification badge if there are notifications */}
+                    {notificationCount > 0 && <NotificationBadge>{notificationCount < 100 ? notificationCount : '99+'}</NotificationBadge>}
+                    {/* Tell if this is our active item by displaying an arrow */}
+                    {selected && <RiArrowRightLine className="h-4 w-4 ml-2" />}
                 </Link>
             </ServiceTable.Cell>
-            {/* Show notification badge if there are notifications */}
-            {notificationCount > 0 && (
-                <ServiceTable.Cell>
-                    <NotificationBadge>{notificationCount < 100 ? notificationCount : '99+'}</NotificationBadge>
-                </ServiceTable.Cell>
-            )}
-            {/* Tell if this is our active item by displaying an arrow */}
-            {selected && <ServiceTable.Cell align="right">→</ServiceTable.Cell>}
         </ServiceTable.Row>
     );
 });

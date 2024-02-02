@@ -166,9 +166,7 @@ export default function Chat() {
                                         key={room.roomId}
                                         href={`/chat/${room.roomId}`}
                                         name={room.name}
-                                        thumbnail={
-                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-                                        }
+                                        thumbnail={room.avatar || ' '}
                                         notificationCount={room.notificationCount}
                                         selected={roomId === room.roomId}
                                     />
@@ -189,9 +187,7 @@ export default function Chat() {
                                         key={room.roomId}
                                         href={`/chat/${room.roomId}`}
                                         name={room.name}
-                                        thumbnail={
-                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
-                                        }
+                                        thumbnail={room.avatar || ' '}
                                         notificationCount={room.notificationCount}
                                         selected={roomId === room.roomId}
                                     />
