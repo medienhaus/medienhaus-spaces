@@ -3,21 +3,21 @@ import { styled } from 'styled-components';
 import DefaultLayout from '@/components/layouts/default';
 
 const Wrapper = styled.div`
-  display: grid;
-  grid-auto-flow: row;
-  grid-gap: 1rem;
-  align-content: center;
-
-  > div {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-auto-flow: row;
     grid-gap: 1rem;
-    align-items: center;
+    align-content: center;
 
-    > span {
-      height: 100%;
+    > div {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-gap: 1rem;
+        align-items: center;
+
+        > span {
+            height: 100%;
+        }
     }
-  }
 `;
 
 export default function Colors() {

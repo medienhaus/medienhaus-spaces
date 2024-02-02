@@ -107,7 +107,7 @@ export default function Dashboard() {
                     {Array.from(invitations.values()).map((invitation, index) => {
                         return (
                             <div key={invitation.roomId}>
-                                { index > 0 && <br /> }
+                                {index > 0 && <br />}
                                 <InvitationCard
                                     path={invitation.path}
                                     roomId={invitation.roomId}

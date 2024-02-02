@@ -4,33 +4,33 @@
 @import '../public/assets/fonts/inter/inter.css';
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 20%;
-    --secondary-foreground: 0 0% 80%;
-    --muted: 0 0% 40%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 264 100% 50%;
-    --accent-foreground: 244 100% 70%;
-    --destructive: 348 78% 50%;
-    --destructive-foreground: 348 98% 70%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 0%;
-    --radius: 0.25rem;
-  }
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 0%;
+        --card: 0 0% 0%;
+        --card-foreground: 0 0% 100%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 0%;
+        --primary: 0 0% 0%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 20%;
+        --secondary-foreground: 0 0% 80%;
+        --muted: 0 0% 40%;
+        --muted-foreground: 0 0% 60%;
+        --accent: 264 100% 50%;
+        --accent-foreground: 244 100% 70%;
+        --destructive: 348 78% 50%;
+        --destructive-foreground: 348 98% 70%;
+        --border: 0 0% 90%;
+        --input: 0 0% 90%;
+        --ring: 0 0% 0%;
+        --radius: 0.25rem;
+    }
 }
 
 :root {
     /* color definitions (legacy support) */
-  --color-background: hsl(var(--background));
+    --color-background: hsl(var(--background));
     --color-foreground: hsl(var(--foreground));
     --color-disabled: hsl(var(--muted));
     --color-notification: hsl(var(--accent));
@@ -48,27 +48,27 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 80%;
-    --secondary-foreground: 0 0% 20%;
-    --muted: 0 0% 60%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 264 100% 50%;
-    --accent-foreground: 244 100% 70%;
-    --destructive: 348 78% 50%;
-    --destructive-foreground: 348 98% 70%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 0%;
+        --foreground: 0 0% 100%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 0%;
+        --popover: 0 0% 0%;
+        --popover-foreground: 0 0% 100%;
+        --primary: 0 0% 100%;
+        --primary-foreground: 0 0% 0%;
+        --secondary: 0 0% 80%;
+        --secondary-foreground: 0 0% 20%;
+        --muted: 0 0% 60%;
+        --muted-foreground: 0 0% 40%;
+        --accent: 264 100% 50%;
+        --accent-foreground: 244 100% 70%;
+        --destructive: 348 78% 50%;
+        --destructive-foreground: 348 98% 70%;
+        --border: 0 0% 90%;
+        --input: 0 0% 90%;
+        --ring: 0 0% 0%;
 
-    /* color definitions (legacy support) */
-    --color-background: hsl(var(--background));
+        /* color definitions (legacy support) */
+        --color-background: hsl(var(--background));
         --color-foreground: hsl(var(--foreground));
         --color-disabled: hsl(var(--muted));
         --color-notification: hsl(var(--accent));
@@ -124,14 +124,14 @@ body {
 }
 
 @layer base {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-bold;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold;
+    }
 }
 
 a:link {
