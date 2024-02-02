@@ -238,7 +238,7 @@ export default function Explore() {
                 <DefaultLayout.Wrapper>
                     <ServiceIframeHeader
                         content={window.location.href}
-                        title={matrix.spaces.get(router.query.roomId[0])?.name || matrix.rooms.get(router.query.roomId[0])?.name || selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                        title={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                         removingLink={false}
                         roomId={roomId}
                         manageContextActionToggle={manageContextActionToggle}
