@@ -63,7 +63,7 @@ export default function AddNewChat({ handleCancel, currentId, onSuccess, parentN
         </select>
         { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         { userFeedback && <p>{ userFeedback }</p> }
-        <PreviousNextButtons disableNext={!roomName || !roomTopic || userFeedback} onCancel={handleCancel}>
+        <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={handleCancel}>
             { isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
         </PreviousNextButtons>
     </Form>;

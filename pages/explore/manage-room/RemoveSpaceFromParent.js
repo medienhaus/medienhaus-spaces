@@ -29,18 +29,21 @@ const RemoveSection = styled.div`
 /**
  * Component for removing a space from its parent.
  *
- * @param {Function} children - children to display.
+ * @param {Object} spaceChildren - An object representing the children of the current space.
  * @param {String} parentId - The ID of the current observed Room.
+ * @param {String} currentId - The ID of the current room.
  * @param {String} parentName - The name of the parent space.
- * @param {Function} callApiAndAddToObject - Callback function to update the list of children.
+ * @param {Function} getSpaceChildren - Callback function to update the list of children.
  * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} JSX element representing the "Remove Space From Parent" component.
  */
 const RemoveSpaceFromParent = ({
-    children,
+    spaceChildren,
     parentId,
+    currentId,
     parentName,
-    callApiAndAddToObject,
+    getSpaceChildren,
+    onPreviousAction,
     onCancel,
 }) => {
     const auth = useAuth();
@@ -54,13 +57,15 @@ const RemoveSpaceFromParent = ({
     const removeChildFromParent = async (e) => {
         e.preventDefault();
         setIsRemovingChild(true);
+
         for (const roomId of itemsToRemove) {
             await matrix.removeSpaceChild(parentId, roomId)
                 .catch(error => {
                     setErrorMessages(prevState => [...prevState, error.data?.error]);
                 });
         }
-        await callApiAndAddToObject(e, parentId);
+
+        await getSpaceChildren(e, parentId);
         setItemsToRemove([]);
         setIsRemovingChild(false);
     };
@@ -72,22 +77,28 @@ const RemoveSpaceFromParent = ({
             } else return [...prevState, roomId];
         });
     };
-    if (!children || !matrix) return;
+
+    console.log(itemsToRemove);
+    if (!spaceChildren || !matrix) return;
 
     return (
         <Form
             onSubmit={removeChildFromParent}>
             <RemoveSection>
                 <ServiceTable>
-                    { children.map(child => {
+                    { spaceChildren.map(child => {
+                        const roomId = child.room_id || child.id || child.roomId;
                         // don't display the root space, so it not accidentally deleted
-                        if (child.room_id === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
+                        if (roomId=== getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return;
+                        // don't display the currently selected space, so it not accidentally deleted
+                        if (roomId === currentId) return;
 
                         return <RemoveListEntry
                             key={child.name}
                             child={child}
+                            roomId={roomId}
                             handleSelect={handleSelect}
-                            checked={itemsToRemove.includes(child.room_id)}
+                            checked={itemsToRemove.includes(roomId)}
                             parentName={parentName}
                         />;
                     }) }
@@ -99,7 +110,8 @@ const RemoveSpaceFromParent = ({
 
             <PreviousNextButtons
                 disableNext={itemsToRemove.length === 0}
-                onCancel={onCancel}>{ isRemovingChild ? <LoadingSpinnerInline inverted /> : `${t('remove') } ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` }
+                onCancel={onPreviousAction}>
+                { isRemovingChild ? <LoadingSpinnerInline inverted /> : `${t('remove') } ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` }
             </PreviousNextButtons>
 
         </Form>
@@ -119,7 +131,7 @@ export default RemoveSpaceFromParent;
  * @returns {JSX.Element} JSX element representing a list entry for removing a child space.
  */
 
-function RemoveListEntry({ child, parentName, handleSelect, checked }) {
+function RemoveListEntry({ child, parentName, roomId, handleSelect, checked }) {
     const { t } = useTranslation();
 
     return <ServiceTable.Row>
@@ -128,7 +140,7 @@ function RemoveListEntry({ child, parentName, handleSelect, checked }) {
             <input type="checkbox"
                 checked={checked}
                 title={t('Remove {{child}} from {{parent}}', { child: child.name, parent: parentName })}
-                onChange={() => handleSelect(child.room_id)} />
+                onChange={() => handleSelect(roomId)} />
         </ServiceTable.Cell>
     </ServiceTable.Row>;
 }

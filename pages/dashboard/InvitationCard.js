@@ -1,32 +1,12 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import { styled } from 'styled-components';
 
-import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-
-const FlexContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--margin);
-`;
-
-const Avatar = styled.img`
-  display: block;
-  flex-shrink: 0;
-  width: 2.5ch;
-  height: 2.5ch;
-  margin-right: var(--margin);
-  overflow: hidden;
-  background: var(--color-foreground);
-  border-radius: 50%;
-`;
-
-const TextParagraph = styled.p`
-  margin: var(--margin) 0;
-`;
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/shadcn/Card';
 
 /**
  * Displays one invitation for a matrix room/space and gives users the option to accept or decline them.
@@ -70,7 +50,10 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         // If this invitation was for a service, e.g. Spacedeck, add the item to the user's "personal" Applications
         // sub-space for the given service.
         if (service) {
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces[service], roomId).catch(() => {});
+            await auth
+                .getAuthenticationProvider('matrix')
+                .addSpaceChild(matrix.serviceSpaces[service], roomId)
+                .catch(() => {});
         }
 
         setLink(`${path}/${roomId}`);
@@ -78,48 +61,53 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
     };
 
     return (
-        <form
-            onSubmit={handleAccept}
-            onReset={handleDecline}
-        >
-            <FlexContainer>
-                <Avatar src={avatar} alt={roomName} />
-                <h4>
-                    {
-                        // Invites for direct messages
-                        isDm ? (t('Direct Message')) : (
-                            // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
-                            service ? roomName : (
+        <form onSubmit={handleAccept} onReset={handleDecline}>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-4">
+                        <Avatar>
+                            <AvatarImage src={avatar} />
+                            <AvatarFallback />
+                        </Avatar>
+                        {
+                            // Invites for direct messages
+                            isDm ? (
+                                t('Direct Message')
+                            ) : // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
+                            service ? (
+                                roomName
+                            ) : (
                                 // All other invitations
                                 <>
-                                    { roomName }
-                                    { (joinRule === 'private' && (
+                                    {roomName}
+                                    {joinRule === 'private' && (
                                         <>
-                                            &nbsp;<em>({ t('private') })</em>
+                                            &nbsp;<em>({t('private')})</em>
                                         </>
-                                    )) }
+                                    )}
                                 </>
                             )
+                        }
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {' '}
+                    {wasHandled ? (
+                        link ? (
+                            // Invitation accepted
+                            <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
+                                You can now view{' '}
+                                <Link href={link}>
+                                    <strong>{roomName}</strong>
+                                </Link>
+                                .
+                            </Trans>
+                        ) : (
+                            // Invitation rejected
+                            t('You’ve declined the invitation.')
                         )
-                    }
-                </h4>
-            </FlexContainer>
-            { wasHandled ? (
-                <TextParagraph>
-                    { link ? (
-                        // Invitation accepted
-                        <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
-                            You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
-                        </Trans>
                     ) : (
-                        // Invitation rejected
-                        t('You’ve declined the invitation.')
-                    ) }
-                </TextParagraph>
-            ) : (
-                // Invitation pending
-                <>
-                    <TextParagraph>
+                        // Invitation pending
                         <Trans
                             t={t}
                             i18nKey="invitationCard"
@@ -127,17 +115,22 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                             values={{ username: inviterUsername, service: path }}
                             components={{ bold: <strong /> }}
                         />
-                    </TextParagraph>
-                </>
-            ) }
-            { !wasHandled && (
-                <ConfirmCancelButtons
-                    small
-                    disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                    cancelLabel={t('Decline')}
-                    confirmLabel={t('Accept')}
-                />
-            ) }
+                    )}
+                </CardContent>
+                <CardFooter>
+                    {!wasHandled && (
+                        <>
+                            <br />
+                            <ConfirmCancelButtons
+                                small
+                                disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
+                                cancelLabel={t('Decline')}
+                                confirmLabel={t('Accept')}
+                            />
+                        </>
+                    )}
+                </CardFooter>
+            </Card>
         </form>
     );
 }

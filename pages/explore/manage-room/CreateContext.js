@@ -11,7 +11,7 @@ import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
-const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
+const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction }) => {
     const auth = useAuth();
     const matrix = useMatrix();
 
@@ -78,7 +78,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
             );
         }
 
-        await callApiAndAddToObject(null, currentId);
+        await getSpaceChildren(null, currentId);
         setName('');
         setTopic('');
         setTemplate('');
@@ -100,7 +100,7 @@ const CreateContext = ({ currentId, onCancel, callApiAndAddToObject }) => {
             }
             <PreviousNextButtons
                 disableNext={isLoading || !name || !template}
-                onCancel={onCancel}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
+                onCancel={onPreviousAction}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
             </PreviousNextButtons>
         </Form>
 

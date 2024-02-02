@@ -43,4 +43,5 @@ const TemplateSelect = ({ currentTemplate, setTemplate }) => {
         </>
     );
 };
+
 export default TemplateSelect;

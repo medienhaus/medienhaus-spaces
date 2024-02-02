@@ -1,10 +1,10 @@
 {
-  "introduction": "Hier können Anzeigename und Profilbild geändert werden; beides ist beim Interagieren mit anderen Accounts, zum Beispiel via <bold>/chat</bold>, <bold>/write</bold>, oder <bold>/sketch</bold> für andere Accounts sichtbar.",
-  "We have sent a confirmation email to the provided address.": "Wir haben eine Bestätigungs-E-Mail an eingegebene Adresse gesendet.",
-  "Please enter your account password to confirm adding the given email address:": "Bitte bestätige das Hinzufügen der eingegebenen E-Mail-Adresse mit deinem Passwort:",
-  "Avatar — Profile Image": "Avatar — Profilbild",
-  "Display Name & Email Addresses": "Anzeigename & E-Mail-Adressen",
-  "Browse": "Durchsuchen",
-  "add another email address": "weitere E-Mail-Adressen hinzufügen",
-  "add your email address": "E-Mail-Adresse hinzufügen"
+    "introduction": "Hier können Anzeigename und Profilbild geändert werden; beides ist beim Interagieren mit anderen Accounts, zum Beispiel via <bold>/chat</bold>, <bold>/write</bold>, oder <bold>/sketch</bold> für andere Accounts sichtbar.",
+    "We have sent a confirmation email to the provided address.": "Wir haben eine Bestätigungs-E-Mail an eingegebene Adresse gesendet.",
+    "Please enter your account password to confirm adding the given email address:": "Bitte bestätige das Hinzufügen der eingegebenen E-Mail-Adresse mit deinem Passwort:",
+    "Avatar — Profile Image": "Avatar — Profilbild",
+    "Display Name & Email Addresses": "Anzeigename & E-Mail-Adressen",
+    "Browse": "Durchsuchen",
+    "add another email address": "weitere E-Mail-Adressen hinzufügen",
+    "add your email address": "E-Mail-Adresse hinzufügen"
 }

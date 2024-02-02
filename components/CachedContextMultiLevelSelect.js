@@ -1,12 +1,22 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
 import LoadingSpinnerInline from './UI/LoadingSpinnerInline';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
-const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics }) => {
+const CachedContextMultiLevelSelectSingleLevel = ({
+    parentSpaceRoomId,
+    selectedContextRoomId,
+    onSelect,
+    onFetchedChildren,
+    templatePlaceholderMapping,
+    templatePrefixFilter,
+    sortAlphabetically,
+    showTopics,
+    rootId,
+}) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -20,9 +30,10 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
         // Fetch all child contexts from our storage
         const fetchChildContexts = async () => {
             let newChildContexts = [];
-            const spaceCache = await matrix.spaces.get(parentSpaceRoomId) || await matrix.rooms.get(parentSpaceRoomId);
+            const spaceCache = (await matrix.spaces.get(parentSpaceRoomId)) || (await matrix.rooms.get(parentSpaceRoomId));
             if (!spaceCache) return;
             setParentSpaceMetaEvent(spaceCache.meta);
+
             for (const room of spaceCache.children) {
                 const roomObject = matrix.spaces.get(room) || matrix.rooms.get(room);
                 // // If this is not a context, ignore this space child
@@ -32,9 +43,11 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
                 // // ... otherwise show this space child:
                 newChildContexts.push(roomObject);
             }
+
             if (sortAlphabetically) {
                 newChildContexts = _.sortBy(newChildContexts, 'name');
             }
+
             if (!isSubscribed) return;
             onFetchedChildren(newChildContexts.length > 0);
             setChildContexts(newChildContexts);
@@ -51,11 +64,17 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
         return () => {
             isSubscribed = false;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
     if (isLoading) {
-        return <select key="loading" disabled><option><LoadingSpinnerInline /></option></select>;
+        return (
+            <Select key="loading" disabled>
+                <SelectTrigger>
+                    <SelectValue placeholder={<LoadingSpinnerInline />} />
+                </SelectTrigger>
+            </Select>
+        );
     }
 
     if (!childContexts || childContexts.length < 1) {
@@ -63,31 +82,37 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
     }
 
     return (
-        <select
-            value={selectedContextRoomId}
-            onChange={(e) => {
-                onSelect(parentSpaceRoomId, e.target.value);
+        <Select
+            defaultValue={selectedContextRoomId}
+            onValueChange={(value) => {
+                onSelect(parentSpaceRoomId, value);
             }}
         >
-            {
-                (templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template]
-                // If we have a template-specific placeholder, show that...
-                    ? <option disabled value="">{ templatePlaceholderMapping[parentSpaceMetaEvent.template] }</option>
-                // ... otherwise just show an empty placeholder
-                    : <option disabled value="">-- select --</option>
-                )
-            }
-            { Object.entries(childContexts).map(([key, room]) => {
-                // if room is undefined we jumop to the next one
-                // this can happen when for example a room was not removed as a space child from its parent but is already deleted
-                if (!room) return;
+            <SelectTrigger>
+                {templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
+                    // If we have a template-specific placeholder, show that...
+                    <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
+                ) : (
+                    // ... otherwise just show an empty placeholder
+                    <SelectValue />
+                )}
+            </SelectTrigger>
+            <SelectContent>
+                {Object.entries(childContexts).map(([key, room]) => {
+                    // if room is undefined we jump to the next one
+                    // this can happen when for example a room was not removed as a space child from its parent but is already deleted
+                    if (!room) return;
+                    const disabled = matrix.spaces.get(rootId).children?.includes(room.roomId);
 
-                return <option key={key} value={room.roomId}>
-                    { room.name }
-                    { showTopics && room.topic && (` (${room.topic})`) }
-                </option>;
-            }) }
-        </select>
+                    return (
+                        <SelectItem key={key} disabled={disabled} value={room.roomId}>
+                            {room.name}
+                            {showTopics && room.topic && ` (${room.topic})`}
+                        </SelectItem>
+                    );
+                })}
+            </SelectContent>
+        </Select>
     );
 };
 
@@ -101,37 +126,56 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
  * @param {boolean} sortAlphabetically - If entries should be ordered alphabetically
  * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
+ * @param {string} rootId - The root context from where to start fetching room hierarchies
  *
  * @return {React.ReactElement}
  */
-const CachedContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
-    const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
-        const newActiveContexts = [...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1)];
-        if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
-        onChange(newActiveContexts, undefined);
-    }, [activeContexts, onChange]);
+const CachedContextMultiLevelSelect = ({
+    activeContexts,
+    onChange,
+    showTopics,
+    sortAlphabetically,
+    templatePlaceholderMapping,
+    templatePrefixFilter,
+    rootId,
+}) => {
+    const onSelect = useCallback(
+        (parentContextRoomId, selectedChildContextRoomId) => {
+            const newActiveContexts = [
+                ...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1),
+            ];
+            if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
+            onChange(newActiveContexts, undefined);
+        },
+        [activeContexts, onChange],
+    );
 
-    const onFinishedFetchingChildren = useCallback((hasChildren) => {
-        if (onChange.length > 1) {
-            onChange(activeContexts, !hasChildren);
-        }
-    }, [activeContexts, onChange]);
+    const onFinishedFetchingChildren = useCallback(
+        (hasChildren) => {
+            if (onChange.length > 1) {
+                onChange(activeContexts, !hasChildren);
+            }
+        },
+        [activeContexts, onChange],
+    );
 
     return (
         <>
-            { activeContexts && activeContexts.map((contextRoomId, i) => (
-                <CachedContextMultiLevelSelectSingleLevel
-                    key={contextRoomId}
-                    onSelect={onSelect}
-                    onFetchedChildren={onFinishedFetchingChildren}
-                    parentSpaceRoomId={contextRoomId}
-                    selectedContextRoomId={activeContexts[i + 1] ?? ''}
-                    showTopics={showTopics}
-                    sortAlphabetically={sortAlphabetically}
-                    templatePlaceholderMapping={templatePlaceholderMapping}
-                    templatePrefixFilter={templatePrefixFilter}
-                />
-            )) }
+            {activeContexts &&
+                activeContexts.map((contextRoomId, i) => (
+                    <CachedContextMultiLevelSelectSingleLevel
+                        key={contextRoomId}
+                        onSelect={onSelect}
+                        onFetchedChildren={onFinishedFetchingChildren}
+                        parentSpaceRoomId={contextRoomId}
+                        selectedContextRoomId={activeContexts[i + 1] ?? ''}
+                        showTopics={showTopics}
+                        sortAlphabetically={sortAlphabetically}
+                        templatePlaceholderMapping={templatePlaceholderMapping}
+                        templatePrefixFilter={templatePrefixFilter}
+                        rootId={rootId}
+                    />
+                ))}
         </>
     );
 };

@@ -4,26 +4,26 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { DeleteBinIcon } from '@remixicons/react/line';
+import { RiDeleteBinLine } from '@remixicon/react';
 
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import Icon from '../../components/UI/Icon';
-import TextButton from '../../components/UI/TextButton';
-import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import DefaultLayout from '../../components/layouts/default';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
-import ServiceLink from '../../components/UI/ServiceLink';
-import CreateNewSketch from './actions/CreateNewSketch';
 import AddExistingSketch from './actions/AddExistingSketch';
-import { path as spacedeckPath } from '../../lib/Spacedeck';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
-import LoginPrompt from '../../components/UI/LoginPrompt';
-import AddBookmark from '../../components/UI/bookmarks/AddBookmark';
+import CreateNewSketch from './actions/CreateNewSketch';
+import AddBookmark from '@/components/UI/favourites/AddFavourite';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import Icon from '@/components/UI/Icon';
+import TextButton from '@/components/UI/TextButton';
+import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
+import DefaultLayout from '@/components/layouts/default';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import LoginPrompt from '@/components/UI/LoginPrompt';
+import { path as spacedeckPath } from '@/lib/Spacedeck';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 
 export default function Spacedeck() {
     const auth = useAuth();
@@ -34,7 +34,7 @@ export default function Spacedeck() {
     const roomId = _.get(router, 'query.roomId.0');
     const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.spacedeck;
-    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter(child => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
+    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter((child) => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
     const [serverSketches, setServerSketches] = useState({});
     const content = matrix.roomContents.get(roomId);
@@ -119,7 +119,7 @@ export default function Spacedeck() {
                 setIsSpacedeckServerDown(true);
             });
             // Update the Matrix structure based on spacedeck sketches
-            syncSketches && await updateStructure(spacedeck.getStructure());
+            syncSketches && (await updateStructure(spacedeck.getStructure()));
             setSyncingServerSketches(false);
         };
 
@@ -175,11 +175,17 @@ export default function Spacedeck() {
 
     const removeSketch = async () => {
         setIsDeletingSketch(true);
-        const remove = await spacedeck.deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1)).catch((e) => logger.debug(e));
+        const remove = await spacedeck
+            .deleteSpaceById(content.body.substring(content.body.lastIndexOf('/') + 1))
+            .catch((e) => logger.debug(e));
 
         if (!remove || !remove.ok) {
             setIsDeletingSketch(false);
-            alert(t('Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.'));
+            alert(
+                t(
+                    'Something went wrong when trying to delete the sketch, please try again or if the error persists, try logging out and logging in again.',
+                ),
+            );
 
             return;
         }
@@ -190,84 +196,98 @@ export default function Spacedeck() {
         setIsDeletingSketch(false);
     };
 
-    if (!auth.connectionStatus.spacedeck) return <DefaultLayout.LameColumn><LoginPrompt service={spacedeckPath} /></DefaultLayout.LameColumn>;
+    if (!auth.connectionStatus.spacedeck)
+        return (
+            <DefaultLayout.LameColumn>
+                <LoginPrompt service={spacedeckPath} />
+            </DefaultLayout.LameColumn>
+        );
 
     return (
         <>
             <DefaultLayout.Sidebar>
                 <ServiceSubmenu
-                    title={<h2>{ spacedeckPath }</h2>}
+                    title={<h2>{spacedeckPath}</h2>}
                     subheadline={t('What would you like to do?')}
                     disabled={!serviceSpaceId}
                     items={[
-                        { value: 'existingSketch', actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Add existing sketch') },
-                        { value: 'newSketch', actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />, label: t('Create new sketch') },
+                        {
+                            value: 'existingSketch',
+                            actionComponentToRender: <AddExistingSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />,
+                            label: t('Add existing sketch'),
+                        },
+                        {
+                            value: 'newSketch',
+                            actionComponentToRender: <CreateNewSketch createSketchRoom={createSketchRoom} errorMessage={errorMessage} />,
+                            label: t('Create new sketch'),
+                        },
                     ]}
                 />
-                { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-                { !serviceSpaceId || syncingServerSketches ?
-                    <LoadingSpinner /> :
+                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                {!serviceSpaceId || syncingServerSketches ? (
+                    <LoadingSpinner />
+                ) : (
                     <>
                         <ServiceTable>
                             <ServiceTable.Body>
-                                { spacedeckChildren?.map(spacedeckRoomId => {
+                                {spacedeckChildren?.map((spacedeckRoomId) => {
                                     const room = matrix.rooms.get(spacedeckRoomId);
                                     if (!room) return null;
 
-                                    return <ServiceLink
-                                        key={spacedeckRoomId}
-                                        name={room.name}
-                                        roomId={spacedeckRoomId}
+                                    return (
+                                        <ServiceLink
+                                            key={spacedeckRoomId}
+                                            name={room.name}
+                                            roomId={spacedeckRoomId}
                                         path={spacedeckPath}
                                         href={`${spacedeckPath}/${spacedeckRoomId}`}
                                         selected={roomId === spacedeckRoomId}
                                         ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
-                                    />;
-                                }) }
+                                    />
+                                    );
+                                })}
                             </ServiceTable.Body>
                         </ServiceTable>
-                        { isSpacedeckServerDown && <ErrorMessage>{ t('Can\'t connect with the provided /sketch server. Please try again later.') }</ErrorMessage> }
+                        {isSpacedeckServerDown && (
+                            <ErrorMessage>{t("Can't connect with the provided /sketch server. Please try again later.")}</ErrorMessage>
+                        )}
                     </>
-
-                }
+                )}
             </DefaultLayout.Sidebar>
-            { roomId && content && (
+            {roomId && content && (
                 <DefaultLayout.IframeWrapper>
                     <DefaultLayout.IframeHeader>
-                        <h2>{ matrix.rooms.get(roomId).name }</h2>
+                        <h2>{matrix.rooms.get(roomId).name}</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             <InviteUserToMatrixRoom.Button
                                 name={matrix.rooms.get(roomId).name}
-                                onClick={() => setIsInviteUsersOpen(prevState => !prevState)}
+                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
-                            <AddBookmark name={matrix.rooms.get(roomId).name} roomId={roomId} service="spacedeck" />
+                            <AddBookmark roomId={roomId} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
-                                { isDeletingSketch ?
+                                {isDeletingSketch ? (
                                     <LoadingSpinnerInline />
-                                    :
+                                ) : (
                                     <Icon>
-                                        <DeleteBinIcon />
+                                        <RiDeleteBinLine />
                                     </Icon>
-                                }
+                                )}
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    { isInviteUsersOpen ?
+                    {isInviteUsersOpen ? (
                         <InviteUserToMatrixRoom
                             roomId={roomId}
                             roomName={matrix.rooms.get(roomId).name}
                             onSuccess={() => setIsInviteUsersOpen(false)}
-                        /> :
-                        <iframe
-                            title={spacedeckPath}
-                            src={content.body}
                         />
-                    }
-
+                    ) : (
+                        <iframe title={spacedeckPath} src={content.body} />
+                    )}
                 </DefaultLayout.IframeWrapper>
-            ) }
+            )}
         </>
     );
 }
