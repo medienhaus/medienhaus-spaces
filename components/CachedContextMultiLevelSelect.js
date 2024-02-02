@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
@@ -6,7 +5,7 @@ import { useAuth } from '../lib/Auth';
 import { useMatrix } from '../lib/Matrix';
 import LoadingSpinnerInline from './UI/LoadingSpinnerInline';
 
-const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics }) => {
+const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics, rootId }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
@@ -23,6 +22,7 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
             const spaceCache = await matrix.spaces.get(parentSpaceRoomId) || await matrix.rooms.get(parentSpaceRoomId);
             if (!spaceCache) return;
             setParentSpaceMetaEvent(spaceCache.meta);
+
             for (const room of spaceCache.children) {
                 const roomObject = matrix.spaces.get(room) || matrix.rooms.get(room);
                 // // If this is not a context, ignore this space child
@@ -32,9 +32,11 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
                 // // ... otherwise show this space child:
                 newChildContexts.push(roomObject);
             }
+
             if (sortAlphabetically) {
                 newChildContexts = _.sortBy(newChildContexts, 'name');
             }
+
             if (!isSubscribed) return;
             onFetchedChildren(newChildContexts.length > 0);
             setChildContexts(newChildContexts);
@@ -81,8 +83,9 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
                 // if room is undefined we jumop to the next one
                 // this can happen when for example a room was not removed as a space child from its parent but is already deleted
                 if (!room) return;
+                const disabled = matrix.spaces.get(rootId).children?.includes(room.roomId);
 
-                return <option key={key} value={room.roomId}>
+                return <option key={key} disabled={disabled} value={room.roomId}>
                     { room.name }
                     { showTopics && room.topic && (` (${room.topic})`) }
                 </option>;
@@ -101,10 +104,11 @@ const CachedContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedC
  * @param {boolean} sortAlphabetically - If entries should be ordered alphabetically
  * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
+ * @param {string} rootId - The root context from where to start fetching room hierarchies
  *
  * @return {React.ReactElement}
  */
-const CachedContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter }) => {
+const CachedContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter, rootId }) => {
     const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
         const newActiveContexts = [...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1)];
         if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
@@ -130,6 +134,7 @@ const CachedContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, s
                     sortAlphabetically={sortAlphabetically}
                     templatePlaceholderMapping={templatePlaceholderMapping}
                     templatePrefixFilter={templatePrefixFilter}
+                    rootId={rootId}
                 />
             )) }
         </>
