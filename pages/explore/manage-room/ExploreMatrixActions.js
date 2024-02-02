@@ -79,7 +79,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
     const onCancel = () => {
         setSelectedRadioButton('');
         setSelectedAction('');
-        setManageContextActionToggle(prevState => !prevState);
+        setManageContextActionToggle(false); // close the manage context action menu
     };
 
     switch (selectedAction) {

@@ -63,6 +63,8 @@ export default function Explore() {
 
         return roomId === iframeRoomId;
     }).meta?.template;
+    const cachedSpace = matrix.spaces.get(roomId);
+
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -141,9 +143,8 @@ export default function Explore() {
 
         // initialise the spaceHierarchy array which is either filled by our cache or the server
         let spaceHierarchy = [];
-        // check our local state for cached data
-        const cachedSpace = matrix.spaces.get(roomId);
 
+        // if a cached space exists, we can use it to get the children
         if (cachedSpace) {
             if (cachedSpace.children) {
                 for await (const roomId of cachedSpace.children) {
@@ -189,7 +190,7 @@ export default function Explore() {
             // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
             return [...prevState, spaceHierarchy];
         });
-    }, [auth, matrix, matrixClient, selectedSpaceChildren, t]);
+    }, [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace]);
 
     // Handle route changes and fetch room content
     useEffect(() => {
@@ -209,7 +210,7 @@ export default function Explore() {
         return () => {
             cancelled = true;
         };
-    }, [router.query?.roomId, matrix.initialSyncDone]);
+    }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
