@@ -4,5 +4,5 @@
     "invitedUser_other": "{{ count }} Benutzer*innen wurden eingeladen und müssen die Einladung annehmen",
     "Error while trying to fetch users. ": "Error beim Abruf der User.",
     "Invite users": "Benutzer*innen einladen",
-    "invite": "einladen"
+    "Invite": "Einladen"
 }
