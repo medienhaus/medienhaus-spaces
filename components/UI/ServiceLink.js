@@ -6,6 +6,7 @@ import { LockIcon } from '@remixicons/react/line';
 
 import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
+import LoadingSpinnerInline from './LoadingSpinnerInline';
 
 const LockIconWrapper = styled(Icon)`
   position: relative;
@@ -47,7 +48,7 @@ const NotificationBadge = styled.span`
   }
 `;
 
-const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordProtected, thumbnail, notificationCount }, ref) => {
+const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordProtected, thumbnail, notificationCount, small, isFetchingContent }, ref) => {
     const { t } = useTranslation();
 
     return (
@@ -57,12 +58,16 @@ const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordPr
                     <Thumbnail src={thumbnail} alt={name} />
                 </ServiceTable.Cell>
             ) }
-            <ServiceTable.Cell width="100%">
+            <ServiceTable.Cell
+                width="100%"
+                small={small}
+            >
                 <Link
                     ref={ref}
                     href={href}
                 >
                     { name }
+                    { isFetchingContent === roomId && <LoadingSpinnerInline /> }
                     { /* Show a lock icon if this Link is password protected */ }
                     { passwordProtected && <LockIconWrapper title={t('password protected')}><LockIcon /></LockIconWrapper> }
                 </Link>
@@ -76,7 +81,7 @@ const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordPr
                 </ServiceTable.Cell>
             ) }
             { /* Tell if this is our active item by displaying an arrow */ }
-            { selected && <ServiceTable.Cell align="right">→</ServiceTable.Cell> }
+            { selected && !isFetchingContent && <ServiceTable.Cell align="right">→</ServiceTable.Cell> }
         </ServiceTable.Row>
     );
 });
