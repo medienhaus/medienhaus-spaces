@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
-import { useAuth } from '../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 import {
     Select,
     SelectContent,
@@ -108,9 +108,9 @@ const ContextMultiLevelSelectSingleLevel = ({
 
     if (isLoading) {
         return (
-            <Select key='loading' disabled>
-                <SelectContent>loading...</SelectContent>
-            </Select>
+            <select key="loading" disabled>
+                <option>loading...</option>
+            </select>
         );
     }
 
@@ -125,33 +125,22 @@ const ContextMultiLevelSelectSingleLevel = ({
                 onSelect(parentSpaceRoomId, value);
             }}
         >
-            <SelectTrigger>
-                <SelectValue placeholder='-- choose option --' />
-            </SelectTrigger>
-            <SelectContent>
-                {templatePlaceholderMapping &&
-                parentSpaceMetaEvent &&
-                templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
-                    // If we have a template-specific placeholder, show that...
-                    <SelectItem disabled value={parentSpaceMetaEvent.template}>
-                        {
-                            templatePlaceholderMapping[
-                                parentSpaceMetaEvent.template
-                            ]
-                        }
-                    </SelectItem>
-                ) : (
-                    // ... otherwise just show an empty placeholder
-                    <SelectItem disabled value='-' />
-                )}
-                {Object.entries(childContexts).map(([key, room]) => (
-                    <SelectItem key={key} value={room.room_id}>
-                        {room.name}
-                        {showTopics && room.topic && ` (${room.topic})`}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+            {templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
+                // If we have a template-specific placeholder, show that...
+                <option disabled value="">
+                    {templatePlaceholderMapping[parentSpaceMetaEvent.template]}
+                </option>
+            ) : (
+                // ... otherwise just show an empty placeholder
+                <option disabled value="" />
+            )}
+            {Object.entries(childContexts).map(([key, room]) => (
+                <option key={key} value={room.room_id}>
+                    {room.name}
+                    {showTopics && room.topic && ` (${room.topic})`}
+                </option>
+            ))}
+        </select>
     );
 };
 
@@ -179,16 +168,9 @@ const ContextMultiLevelSelect = ({
     const onSelect = useCallback(
         (parentContextRoomId, selectedChildContextRoomId) => {
             const newActiveContexts = [
-                ...activeContexts.splice(
-                    0,
-                    activeContexts.findIndex(
-                        (contextRoomId) =>
-                            contextRoomId === parentContextRoomId,
-                    ) + 1,
-                ),
+                ...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1),
             ];
-            if (selectedChildContextRoomId)
-                newActiveContexts.push(selectedChildContextRoomId);
+            if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
             onChange(newActiveContexts, undefined);
         },
         [activeContexts, onChange],

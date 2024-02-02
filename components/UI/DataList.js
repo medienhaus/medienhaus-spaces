@@ -21,34 +21,29 @@ import { Button } from '@/components/UI/shadcn/button';
  */
 
 const Row = styled(ServiceTable.Row)`
-  text-decoration: ${props => props.$focused && 'underline'};
-  cursor: pointer;
+    text-decoration: ${(props) => props.$focused && 'underline'};
+    cursor: pointer;
 
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
 `;
 
 const InviteUserForm = styled(Form)`
-  display: grid;
-  height: 100%;
+    display: grid;
+    height: 100%;
 
-  > :last-child {
-    align-self: end;
-  }
+    > :last-child {
+        align-self: end;
+    }
 `;
 
 const TableWrapper = styled.section`
-  overflow-x: auto;
+    overflow-x: auto;
 `;
 
-export default function DataList({
-    options,
-    onInputChange,
-    keysToDisplay,
-    onSubmit,
-}) {
+export default function DataList({ options, onInputChange, keysToDisplay, onSubmit }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -226,16 +221,7 @@ export default function DataList({
  * @returns {React.ReactNode}
  */
 
-const DataListRow = ({
-    option,
-    keysToDisplay,
-    handleSelect,
-    index,
-    isChecked,
-    handleKeyDown,
-    focus,
-    setSelectedIndex,
-}) => {
+const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, handleKeyDown, focus, setSelectedIndex }) => {
     const ref = useRef(null);
 
     useEffect(() => {

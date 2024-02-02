@@ -5,18 +5,15 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { ChatNewIcon } from '@remixicons/react/line';
 
-import { useMatrix } from '../../lib/Matrix';
-import DefaultLayout from '../../components/layouts/default';
-import TextButton from '../../components/UI/TextButton';
-import Icon from '../../components/UI/Icon';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import ServiceLink from '../../components/UI/ServiceLink';
+import DefaultLayout from '@/components/layouts/default';
+import TextButton from '@/components/UI/TextButton';
+import Icon from '@/components/UI/Icon';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { useMatrix } from '@/lib/Matrix';
 
-const sortRooms = function(room) {
-    return [
-        room.notificationCount === 0,
-        room.name,
-    ];
+const sortRooms = function (room) {
+    return [room.notificationCount === 0, room.name];
 };
 
 export default function Chat() {
@@ -135,9 +132,9 @@ export default function Chat() {
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
         // ... are direct messages,
-        .reject(room => matrix.directMessages.has(room.roomId))
+        .reject((room) => matrix.directMessages.has(room.roomId))
         // @TODO ... contain a dev.medienhaus.meta state event)
-        .reject(room => !!room.meta)
+        .reject((room) => !!room.meta)
         .sortBy(sortRooms)
         .value();
 
@@ -145,47 +142,66 @@ export default function Chat() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>
-                    <TextButton onClick={() => { router.push('/chat/new'); }} style={{ float: 'right' }}><Icon><ChatNewIcon /></Icon></TextButton>
+                    <TextButton
+                        onClick={() => {
+                            router.push('/chat/new');
+                        }}
+                        style={{ float: 'right' }}
+                    >
+                        <Icon>
+                            <ChatNewIcon />
+                        </Icon>
+                    </TextButton>
                     /chat
                 </h2>
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('People') }</h3></summary>
+                    <summary>
+                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('People')}</h3>
+                    </summary>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { directMessages && directMessages.map((room) => (
-                                <ServiceLink
-                                    key={room.roomId}
-                                    href={`/chat/${room.roomId}`}
-                                    name={room.name}
-                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
-                                    notificationCount={room.notificationCount}
-                                    selected={roomId === room.roomId}
-                                />
-                            )) }
+                            {directMessages &&
+                                directMessages.map((room) => (
+                                    <ServiceLink
+                                        key={room.roomId}
+                                        href={`/chat/${room.roomId}`}
+                                        name={room.name}
+                                        thumbnail={
+                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                                        }
+                                        notificationCount={room.notificationCount}
+                                        selected={roomId === room.roomId}
+                                    />
+                                ))}
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
                 <br />
                 <details open>
-                    <summary><h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{ t('Rooms') }</h3></summary>
+                    <summary>
+                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('Rooms')}</h3>
+                    </summary>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { otherRooms && otherRooms.map((room) => (
-                                <ServiceLink
-                                    key={room.roomId}
-                                    href={`/chat/${room.roomId}`}
-                                    name={room.name}
-                                    thumbnail={room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}
-                                    notificationCount={room.notificationCount}
-                                    selected={roomId === room.roomId}
-                                />
-                            )) }
+                            {otherRooms &&
+                                otherRooms.map((room) => (
+                                    <ServiceLink
+                                        key={room.roomId}
+                                        href={`/chat/${room.roomId}`}
+                                        name={room.name}
+                                        thumbnail={
+                                            room.avatar || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+                                        }
+                                        notificationCount={room.notificationCount}
+                                        selected={roomId === room.roomId}
+                                    />
+                                ))}
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
                 <br />
             </DefaultLayout.Sidebar>
-            { roomId && (
+            {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <iframe
                         ref={iframe}
@@ -193,7 +209,7 @@ export default function Chat() {
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
-            ) }
+            )}
         </>
     );
 }

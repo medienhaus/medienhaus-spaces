@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
-import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
-import { useAuth } from '../../lib/Auth';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import { useAuth } from '@/lib/Auth';
 import {
     Card,
     CardContent,

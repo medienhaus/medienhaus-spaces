@@ -1,27 +1,13 @@
-/** @type {import('prettier').Config} */
+const MatrixPrettierConfig = require('eslint-plugin-matrix-org/.prettierrc.js');
+
+/**
+ * We build upon the matrix-org Prettier configuration, with only a few customizations.
+ *
+ * @type {import('prettier').Config}
+ */
 module.exports = {
-    // printWidth: 80,
-    tabWidth: 4,
-    // useTabs: false,
-    // semi: true,
-    singleQuote: true,
-    // quoteProps: 'as-needed',
-    jsxSingleQuote: true,
-    // trailingComma: 'all',
-    // bracketSpacing: true,
-    // bracketSameLine: false,
-    // arrowParens: 'always',
-    // rangeStart: 0,
-    // rangeEnd: Infinity,
-    // parser: '',
-    // filepath: '',
-    // requirePragma: false,
-    // insertPragma: false,
-    // proseWrap: 'preserve',
-    // htmlWhitespaceSensitivity: 'css',
-    // vueIndentScriptAndStyle: false,
-    // endOfLine: 'lf',
-    // embeddedLanguageFormatting: 'auto',
-    // singleAttributePerLine: false,
+    ...MatrixPrettierConfig,
+    printWidth: 140, // Slightly more lax setting than what Matrix is doing; should be re-adjusted later
+    singleQuote: true, // In non-JSX JavaScript code prefer single quotes over double quotes
     plugins: ['prettier-plugin-tailwindcss'],
 };

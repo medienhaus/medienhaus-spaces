@@ -9,17 +9,17 @@ import TextButton from './TextButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/shadcn/select';
 
 const Header = styled.header`
-  display: grid;
-  grid-template-columns: 1fr auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
 `;
 
 const ToggleButton = styled(TextButton)`
-  height: calc(var(--margin) * var(--line-height));
+    height: calc(var(--margin) * var(--line-height));
 `;
 
 const Submenu = styled.aside`
-  padding-bottom: calc(var(--margin) * 3);
-  border-top: 1px solid transparent;
+    padding-bottom: calc(var(--margin) * 3);
+    border-top: 1px solid transparent;
 
   h3 {
     line-height: calc(var(--margin) * 3);
@@ -67,7 +67,8 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                     <Select defaultValue={value} onValueChange={setValue}>
                         <SelectTrigger>
                             <SelectValue
-                                placeholder={`-- ${t('Select action')} --`}
+                                placeholder={`
+                            -- ${t('Select action')} --`}
                             />
                         </SelectTrigger>
                         <SelectContent>

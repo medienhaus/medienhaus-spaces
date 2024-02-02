@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
-import ConfirmCancelButtons from '../../components/UI/ConfirmCancelButtons';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/avatar';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/shadcn/card';
 
@@ -50,7 +50,10 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         // If this invitation was for a service, e.g. Spacedeck, add the item to the user's "personal" Applications
         // sub-space for the given service.
         if (service) {
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces[service], roomId).catch(() => {});
+            await auth
+                .getAuthenticationProvider('matrix')
+                .addSpaceChild(matrix.serviceSpaces[service], roomId)
+                .catch(() => {});
         }
 
         setLink(`${path}/${roomId}`);
@@ -58,10 +61,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
     };
 
     return (<>
-        <form
-            onSubmit={handleAccept}
-            onReset={handleDecline}
-        >
+        <form onSubmit={handleAccept} onReset={handleDecline}>
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-4">
@@ -71,19 +71,20 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                         </Avatar>
                         {
                             // Invites for direct messages
-                            isDm ? (t('Direct Message')) : (
-                            // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
-                                service ? roomName : (
-                                // All other invitations
+                            isDm ? (t('Direct Message')
+                        ) : // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
+                                service ? (
+                            roomName
+                        ) : (        // All other invitations
                                     <>
                                         { roomName }
-                                        { (joinRule === 'private' && (
+                                        { joinRule === 'private' && (
                                             <>
                                                     &nbsp;<em>({ t('private') })</em>
-                                            </>
-                                        )) }
-                                    </>
-                                )
+
+                                        </>
+                                    )}
+                                </>
                             )
                         }
                     </CardTitle>
@@ -92,7 +93,11 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                     link ? (
                     // Invitation accepted
                         <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
-                                You can now view <Link href={link}><strong>{ roomName }</strong></Link>.
+                                You can now view{' '}
+                            <Link href={link}>
+                                <strong>{roomName}</strong>
+                            </Link>
+                            .
                         </Trans>
                     ) : (
                     // Invitation rejected
@@ -107,9 +112,9 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                         values={{ username: inviterUsername, service: path }}
                         components={{ bold: <strong /> }}
                     />
-                ) }</CardContent>
+                )}</CardContent>
                 <CardFooter>
-                    { !wasHandled && (
+                    {!wasHandled && (
                         <>
                             <br />
                             <ConfirmCancelButtons
@@ -119,7 +124,7 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                                 confirmLabel={t('Accept')}
                             />
                         </>
-                    ) }
+                    )}
                 </CardFooter>
             </Card>
         </form>
