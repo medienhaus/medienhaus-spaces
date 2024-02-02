@@ -187,7 +187,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     </ServiceTable.Body>
                 </ServiceTable>
             </TableWrapper>
-            <Button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</Button>
+            <Button disabled={selected.length === 0 && checked.length === 0}>{t('Invite')}</Button>
         </InviteUserForm>
     );
 }
