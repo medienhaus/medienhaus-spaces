@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/lib/Auth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
@@ -13,6 +15,8 @@ const ContextMultiLevelSelectSingleLevel = ({
     sortAlphabetically,
     showTopics,
 }) => {
+    const { t } = useTranslation();
+
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = matrix.getMatrixClient();
@@ -84,9 +88,11 @@ const ContextMultiLevelSelectSingleLevel = ({
 
     if (isLoading) {
         return (
-            <select key="loading" disabled>
-                <option>loading...</option>
-            </select>
+            <Select key="loading" disabled>
+                <SelectTrigger>
+                    <SelectValue placeholder={t('loading...')} />
+                </SelectTrigger>
+            </Select>
         );
     }
 
@@ -95,28 +101,30 @@ const ContextMultiLevelSelectSingleLevel = ({
     }
 
     return (
-        <select
+        <Select
             defaultValue={selectedContextRoomId}
-            onChange={(value) => {
+            onValueChange={(value) => {
                 onSelect(parentSpaceRoomId, value);
             }}
         >
-            {templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
-                // If we have a template-specific placeholder, show that...
-                <option disabled value="">
-                    {templatePlaceholderMapping[parentSpaceMetaEvent.template]}
-                </option>
-            ) : (
-                // ... otherwise just show an empty placeholder
-                <option disabled value="" />
-            )}
-            {Object.entries(childContexts).map(([key, room]) => (
-                <option key={key} value={room.room_id}>
-                    {room.name}
-                    {showTopics && room.topic && ` (${room.topic})`}
-                </option>
-            ))}
-        </select>
+            <SelectTrigger>
+                {templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
+                    // If we have a template-specific placeholder, show that...
+                    <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
+                ) : (
+                    // ... otherwise just show an empty placeholder
+                    <SelectValue />
+                )}
+            </SelectTrigger>
+            <SelectContent>
+                {Object.entries(childContexts).map(([key, room]) => (
+                    <SelectItem key={key} value={room.room_id}>
+                        {room.name}
+                        {showTopics && room.topic && ` (${room.topic})`}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
     );
 };
 

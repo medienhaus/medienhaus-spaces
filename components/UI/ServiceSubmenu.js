@@ -63,10 +63,7 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
                     {subheadline && <h3>{subheadline}</h3>}
                     <Select defaultValue={value} onValueChange={setValue}>
                         <SelectTrigger>
-                            <SelectValue
-                                placeholder={`
-                            -- ${t('Select action')} --`}
-                            />
+                            <SelectValue placeholder={`-- ${t('Select action')} --`} />
                         </SelectTrigger>
                         <SelectContent>
                             {items.map(({ value, label }) => (
