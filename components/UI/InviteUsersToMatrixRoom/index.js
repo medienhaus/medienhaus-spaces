@@ -19,12 +19,12 @@ import { logger } from 'matrix-js-sdk/lib/logger';
 import { styled } from 'styled-components';
 import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
 
-import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
 import Icon from '../Icon';
+import { useAuth } from '@/lib/Auth';
 
 const ActionWrapper = styled.section`
     display: grid;

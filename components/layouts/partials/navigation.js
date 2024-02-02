@@ -4,9 +4,9 @@ import getConfig from 'next/config';
 import _ from 'lodash';
 
 import { breakpoints } from '../../_breakpoints';
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
 import NotificationBubble from '../../UI/NotificationBubble';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 
 const List = styled.ul`
     padding: 0;

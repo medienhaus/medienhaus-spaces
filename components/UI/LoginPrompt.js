@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
-import { useAuth } from '../../lib/Auth';
 import Form from './Form';
 import ErrorMessage from './ErrorMessage';
 import PasswordInputButton from './PasswordInputButton';
+import { useAuth } from '@/lib/Auth';
 
 const LoginPrompt = ({ service }) => {
     const [isSigningIn, setIsSigningIn] = useState(false);

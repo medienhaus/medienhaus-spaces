@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
-import { useAuth } from '../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
