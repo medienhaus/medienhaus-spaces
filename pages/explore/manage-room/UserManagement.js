@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { MatrixEvent } from 'matrix-js-sdk';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 import { ServiceTable } from '../../../components/UI/ServiceTable';
 import { useAuth } from '../../../lib/Auth';
@@ -11,7 +12,6 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
-import { RiDeleteBinLine } from '@remixicon/react';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`

@@ -60,9 +60,11 @@ const ProjectView = ({ removingLink, removeLink, content }) => {
     const fetchProjectHtml =async (roomId) => {
         const object = await fetch(getConfig().publicRuntimeConfig.authProviders.matrix.api + '/api/v2/' + roomId + '/render/json').catch((err) => console.error(err));
         const json = await object.json().catch(() => { });
+
         if (!json) {
             return setProject('error fetching project from API');
         }
+
         setProject(json);
     };
 
@@ -78,4 +80,5 @@ const ProjectView = ({ removingLink, removeLink, content }) => {
         </View>
     );
 };
+
 export default ProjectView;

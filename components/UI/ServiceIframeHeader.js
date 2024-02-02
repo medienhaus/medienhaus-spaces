@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
+import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine } from '@remixicon/react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -9,7 +10,6 @@ import DefaultLayout from '../layouts/default';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
-import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine } from '@remixicon/react';
 import Icon from '@/components/UI/Icon';
 
 const ToggleButton = styled.button`

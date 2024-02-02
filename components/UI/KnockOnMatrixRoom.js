@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { RiCheckLine, RiDoorClosedLine } from '@remixicon/react';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { useAuth } from '@/lib/Auth';
 import logger from '../../lib/Logging';
-import { RiCheckLine, RiDoorClosedLine } from '@remixicon/react';
 
 const KnockOnMatrixRoom = ({ roomName, roomId }) => {
     const [isKnocking, setIsKnocking] = useState(false);

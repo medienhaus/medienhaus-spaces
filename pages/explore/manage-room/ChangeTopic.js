@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { RiCheckLine } from '@remixicon/react';
 
 import { useAuth } from '../../../lib/Auth';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import { RiCheckLine } from '@remixicon/react';
 
 const TopicInput = styled.textarea`
     width: 100%;

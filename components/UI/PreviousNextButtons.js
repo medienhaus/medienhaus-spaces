@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/UI/shadcn/Button';
 
 const PreviousNextButtonsWrapper = styled.div`
