@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { RiStarFill, RiStarLine } from '@remixicon/react';
 
 import TextButton from '../TextButton';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import Icon from '../Icon';
-import logger from '../../../lib/Logging';
-import { RiStarFill, RiStarLine } from '@remixicon/react';
+import logger from '@/lib/Logging';
 
 /**
  * AddFavourite component for adding a favourite to the matrix account data.

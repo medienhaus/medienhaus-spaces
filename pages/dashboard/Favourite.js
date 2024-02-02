@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
@@ -12,7 +13,6 @@ import Icon from '../../components/UI/Icon';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
 import logger from '../../lib/Logging';
-import { RiDeleteBinLine } from '@remixicon/react';
 
 /**
  * Favourite component for rendering a single favourite entry.
