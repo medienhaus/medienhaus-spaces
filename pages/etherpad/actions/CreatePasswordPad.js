@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import logger from '../../../lib/Logging';
+import Form from '@/components/UI/Form';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import logger from '@/lib/Logging';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');
@@ -15,18 +17,31 @@ export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
 
     const createPasswordPad = async () => {
         setIsLoading(true);
-        const createPad = await createPadAndOpen(padName, 'private', password)
-            .catch(error => logger.debug(error));
+        const createPad = await createPadAndOpen(padName, 'private', password).catch((error) => logger.debug(error));
         setIsLoading(false);
         if (!createPad) return;
         callbackDone && callbackDone();
         setPadName('');
     };
 
-    return (<Form onSubmit={(e) => { e.preventDefault(); createPasswordPad(); }}>
-        <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-        <input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input type="password" placeholder={t('Confirm password')} value={validatePassword} onChange={(e) => setValidatePassword(e.target.value)} />
-        <button type="submit" disabled={!padName || !password || password !== validatePassword}>{ isLoading ? <LoadingSpinnerInline inverted /> :t('Create pad') }</button>
-    </Form>);
+    return (
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                createPasswordPad();
+            }}
+        >
+            <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <Input type="password" placeholder={t('Password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input
+                type="password"
+                placeholder={t('Confirm password')}
+                value={validatePassword}
+                onChange={(e) => setValidatePassword(e.target.value)}
+            />
+            <Button type="submit" disabled={!padName || !password || password !== validatePassword}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
+            </Button>
+        </Form>
+    );
 }

@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -19,26 +21,26 @@ import Form from './Form';
  */
 
 const Row = styled(ServiceTable.Row)`
-  text-decoration: ${props => props.$focused && 'underline' };
-  cursor: pointer;
+    text-decoration: ${(props) => props.$focused && 'underline'};
+    cursor: pointer;
 
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
 `;
 
 const InviteUserForm = styled(Form)`
-  display: grid;
-  height: 100%;
+    display: grid;
+    height: 100%;
 
-  > :last-child {
-    align-self: end;
-  }
+    > :last-child {
+        align-self: end;
+    }
 `;
 
 const TableWrapper = styled.section`
-  overflow-x: auto;
+    overflow-x: auto;
 `;
 
 export default function DataList({ options, onInputChange, keysToDisplay, onSubmit }) {
@@ -53,9 +55,11 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     const { t } = useTranslation('invitationModal');
 
     useEffect(() => {
-        setFilteredOptions(options.filter(option => {
-            return !selected.some(select => _.isEqual(select, option));
-        }));
+        setFilteredOptions(
+            options.filter((option) => {
+                return !selected.some((select) => _.isEqual(select, option));
+            }),
+        );
     }, [options, selected]);
 
     const handleChange = async (e) => {
@@ -71,7 +75,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
             // if an option was checked we update the 'selected' array here.
             // For the user this has the benefit that options don't immediately jump to the bottom when they are being selected,
             // only when the input changes will a checked option jump to the bottom
-            setSelected(prevState => [...prevState, ...checked]);
+            setSelected((prevState) => [...prevState, ...checked]);
             setChecked([]);
         }
 
@@ -84,7 +88,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
         if (!isOpen && !selected) return;
 
         if (e.key === 'ArrowDown') {
-            const max = (filteredOptions.length + selected.length) - 1;
+            const max = filteredOptions.length + selected.length - 1;
             setSelectedIndex(Math.min(selectedIndex + 1, max));
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
@@ -101,29 +105,33 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     const handleSelect = (selectedOption) => {
         // if a user wants to uncheck an option which is inside the 'selected' array, selectedIndex will be bigger than the amount of entries within filteredOptions,
         // since 'selected' options are rendered below filteredOptions.
-        if (selectedIndex > filteredOptions.length -1) {
-            setSelected(prevState => prevState.filter((option, index) => {
-                return selectedIndex - filteredOptions.length !== index;
-            }));
+        if (selectedIndex > filteredOptions.length - 1) {
+            setSelected((prevState) =>
+                prevState.filter((option, index) => {
+                    return selectedIndex - filteredOptions.length !== index;
+                }),
+            );
 
             return;
         }
 
-        setChecked(prevState => {
+        setChecked((prevState) => {
             if (checked.includes(selectedOption)) {
                 // remove option if it is changing from checked to unchecked (therefore already inside the `checked` array
-                return prevState.filter(option => selectedOption !== option);
+                return prevState.filter((option) => selectedOption !== option);
             } else {
                 // otherwise add option to the array
-                return [...prevState, selectedOption];
+                // @TODO when clicking the checkbox directly the option will be added twice to the array,
+                // needs a proper solution but for now using lodash uniq does the trick.
+                return _.uniq([...prevState, selectedOption]);
             }
         });
         // inputRef.current.focus();
     };
 
     const handleRemove = (option) => {
-        setChecked(prevState => prevState.filter(state => state !== option));
-        setSelected(prevState => prevState.filter(state => state !== option));
+        setChecked((prevState) => prevState.filter((state) => state !== option));
+        setSelected((prevState) => prevState.filter((state) => state !== option));
     };
 
     const handleSubmit = async (e) => {
@@ -137,7 +145,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     return (
         <InviteUserForm onSubmit={handleSubmit}>
             <>
-                <input
+                <Input
                     type="text"
                     value={value}
                     onChange={handleChange}
@@ -149,34 +157,39 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                 <TableWrapper>
                     <ServiceTable>
                         <ServiceTable.Body>
-                            { isOpen && filteredOptions.map((option, index) => <DataListRow
-                                key={index}
-                                option={option}
-                                focus={selectedIndex === index}
-                                index={index}
-                                keysToDisplay={keysToDisplay}
-                                handleSelect={handleSelect}
-                                isChecked={checked.includes(option)}
-                                handleKeyDown={handleKeyDown}
-                                setSelectedIndex={setSelectedIndex}
-                            />) }
-                            { selected.map((option, index) => <DataListRow
-                                key={index}
-                                option={option}
-                                // we need to add the number of options to the index to highlight the correct item in the list
-                                // and not have multiple items show up as selected
-                                focus={selectedIndex === index + filteredOptions.length}
-                                index={index + filteredOptions.length}
-                                keysToDisplay={keysToDisplay}
-                                handleSelect={handleRemove}
-                                isChecked={selected.includes(option)}
-                                handleKeyDown={handleKeyDown}
-                                setSelectedIndex={setSelectedIndex}
-                            />) }
+                            {isOpen &&
+                                filteredOptions.map((option, index) => (
+                                    <DataListRow
+                                        key={index}
+                                        option={option}
+                                        focus={selectedIndex === index}
+                                        index={index}
+                                        keysToDisplay={keysToDisplay}
+                                        handleSelect={handleSelect}
+                                        isChecked={checked.includes(option)}
+                                        handleKeyDown={handleKeyDown}
+                                        setSelectedIndex={setSelectedIndex}
+                                    />
+                                ))}
+                            {selected.map((option, index) => (
+                                <DataListRow
+                                    key={index}
+                                    option={option}
+                                    // we need to add the number of options to the index to highlight the correct item in the list
+                                    // and not have multiple items show up as selected
+                                    focus={selectedIndex === index + filteredOptions.length}
+                                    index={index + filteredOptions.length}
+                                    keysToDisplay={keysToDisplay}
+                                    handleSelect={handleRemove}
+                                    isChecked={selected.includes(option)}
+                                    handleKeyDown={handleKeyDown}
+                                    setSelectedIndex={setSelectedIndex}
+                                />
+                            ))}
                         </ServiceTable.Body>
                     </ServiceTable>
                 </TableWrapper>
-                <button disabled={selected.length === 0 && checked.length === 0}>{ t('invite') }</button>
+                <Button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</Button>
             </>
         </InviteUserForm>
     );
@@ -210,7 +223,9 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
         <Row
             key={index}
             $focused={focus}
-            onClick={() => { handleSelect(option); }}
+            onClick={() => {
+                handleSelect(option);
+            }}
             onKeyDown={handleKeyDown} // Add onKeyDown event
         >
             <ServiceTable.Cell>
@@ -221,23 +236,22 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     type="checkbox"
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
-                    onChange={() => { handleSelect(option); }}
+                    onChange={() => {
+                        handleSelect(option);
+                    }}
                     onMouseUp={() => {
                         // make sure element gets deselected on mouse press
                         if (focus) setSelectedIndex(-1);
                     }}
                 />
             </ServiceTable.Cell>
-            { keysToDisplay.map((key) => {
+            {keysToDisplay.map((key) => {
                 return (
-                    <ServiceTable.Cell
-                        htmlFor={index}
-                        key={key}
-                    >
-                        { option[key] }
+                    <ServiceTable.Cell htmlFor={index} key={key}>
+                        {option[key]}
                     </ServiceTable.Cell>
                 );
-            }) }
+            })}
         </Row>
     );
 };

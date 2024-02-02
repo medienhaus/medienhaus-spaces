@@ -1,5 +1,4 @@
 {
-
   "Asking To Join": "Beitrittsanfragen",
   "Direct Message": "Direktnachricht",
   "Favourites": "Favoriten",
@@ -8,5 +7,5 @@
   "knockCard": "<bold>{{username}}</bold> möchte <bold>{{roomName}}</bold> betreten.",
   "public": "öffentlich",
   "private": "privat",
-  "You’ve declined the invitation.": "Du hast die Einladung abgelehnt."
+    "You’ve declined the invitation.": "Du hast die Einladung abgelehnt."
 }

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StarIcon } from '@remixicons/react/line';
-import { StarIcon as StarIconFill } from '@remixicons/react/fill';
 import _ from 'lodash';
 
 import TextButton from '../TextButton';
-import { useMatrix } from '../../../lib/Matrix';
-import { useAuth } from '../../../lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import Icon from '../Icon';
 import logger from '../../../lib/Logging';
+import { RiStarFill, RiStarLine } from '@remixicon/react';
 
 /**
  * AddFavourite component for adding a favourite to the matrix account data.
@@ -22,9 +21,7 @@ import logger from '../../../lib/Logging';
 const AddFavourite = ({ roomId }) => {
     const auth = useAuth();
     const matrix = useMatrix();
-    const matrixClient = auth
-        .getAuthenticationProvider('matrix')
-        .getMatrixClient();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation();
     const [isHandlingFavourite, setIsHandlingFavourite] = useState(false);
     const favourites = matrix.favourites;
@@ -36,11 +33,9 @@ const AddFavourite = ({ roomId }) => {
         const accountData = { favourites: favourites || [] };
         accountData.favourites.push(roomId);
 
-        await matrixClient
-            .setAccountData('dev.medienhaus.spaces.favourites', accountData)
-            .catch((error) => {
-                alert(error.data?.error);
-            });
+        await matrixClient.setAccountData('dev.medienhaus.spaces.favourites', accountData).catch((error) => {
+            alert(error.data?.error);
+        });
         setIsHandlingFavourite(false);
     };
 
@@ -48,7 +43,8 @@ const AddFavourite = ({ roomId }) => {
         e.preventDefault();
         setIsHandlingFavourite(true);
         // Remove the favourite from the account data
-        await matrixClient.setAccountData('dev.medienhaus.spaces.favourites', { favourites: _.without([...matrix.favourites], roomId) })
+        await matrixClient
+            .setAccountData('dev.medienhaus.spaces.favourites', { favourites: _.without([...matrix.favourites], roomId) })
             .catch((error) => {
                 //@TODO error handling
                 logger.log(error);
@@ -62,17 +58,17 @@ const AddFavourite = ({ roomId }) => {
             title={isFavourite ? t('Remove from favourites') : t('Add to favourites')}
             onClick={isFavourite ? removeFavouriteFromMatrix : addFavouriteToMatrix}
         >
-            { isHandlingFavourite ? (
+            {isHandlingFavourite ? (
                 <LoadingSpinnerInline />
             ) : isFavourite ? (
                 <Icon>
-                    <StarIconFill />
+                    <RiStarFill />
                 </Icon>
             ) : (
                 <Icon>
-                    <StarIcon />
+                    <RiStarLine />
                 </Icon>
-            ) }
+            )}
         </TextButton>
     );
 };

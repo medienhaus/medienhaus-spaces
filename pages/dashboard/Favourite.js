@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { DeleteBinIcon } from '@remixicons/react/line';
 import getConfig from 'next/config';
 import _ from 'lodash';
 
-import { ServiceTable } from '../../components/UI/ServiceTable';
+import { ServiceTable } from '@/components/UI/ServiceTable';
 import TextButton from '../../components/UI/TextButton';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import Icon from '../../components/UI/Icon';
-import { useMatrix } from '../../lib/Matrix';
-import { useAuth } from '../../lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 import logger from '../../lib/Logging';
+import { RiDeleteBinLine } from '@remixicon/react';
 
 /**
  * Favourite component for rendering a single favourite entry.
@@ -24,7 +24,7 @@ import logger from '../../lib/Logging';
  * @returns {JSX.Element} - A JSX element representing a single favourite entry.
  *
  */
-const Favourite =({ roomId, metaEvent, name }) => {
+const Favourite = ({ roomId, metaEvent, name }) => {
     const [removingFavourite, setRemovingFavourite] = useState(false);
     const { t } = useTranslation();
     const matrix = useMatrix();
@@ -48,13 +48,14 @@ const Favourite =({ roomId, metaEvent, name }) => {
     };
 
     const origin = getOrigin(metaEvent);
-    const link=`${origin}/${roomId}`;
+    const link = `${origin}/${roomId}`;
 
     const handleRemove = async (e) => {
         e.preventDefault();
         setRemovingFavourite(true);
         // Remove the favourite from the account data
-        await matrixClient.setAccountData('dev.medienhaus.spaces.favourites', { favourites: _.without([...matrix.favourites], roomId) })
+        await matrixClient
+            .setAccountData('dev.medienhaus.spaces.favourites', { favourites: _.without([...matrix.favourites], roomId) })
             .catch((error) => {
                 //@TODO error handling
                 logger.log(error);
@@ -65,21 +66,24 @@ const Favourite =({ roomId, metaEvent, name }) => {
 
     return (
         <ServiceTable.Row key={roomId}>
+            <ServiceTable.Cell>{origin}</ServiceTable.Cell>
             <ServiceTable.Cell>
-                { origin }
-            </ServiceTable.Cell>
-            <ServiceTable.Cell>
-                <Link href={link}>{ name }</Link>
+                <Link href={link}>{name}</Link>
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <CopyToClipboard content={`${location.hostname}${link}`} />
             </ServiceTable.Cell>
             <ServiceTable.Cell>
                 <TextButton title={t('Remove favourite')} onClick={handleRemove}>
-                    { removingFavourite ? <LoadingSpinnerInline /> : <Icon>
-                        <DeleteBinIcon />
-                    </Icon> }
-                </TextButton></ServiceTable.Cell>
+                    {removingFavourite ? (
+                        <LoadingSpinnerInline />
+                    ) : (
+                        <Icon>
+                            <RiDeleteBinLine />
+                        </Icon>
+                    )}
+                </TextButton>
+            </ServiceTable.Cell>
         </ServiceTable.Row>
     );
 };
