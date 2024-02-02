@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/lib/Auth';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
@@ -14,7 +15,7 @@ const ContextMultiLevelSelectSingleLevel = ({
     templatePrefixFilter,
     sortAlphabetically,
     showTopics,
-    setSelectedContextName
+    setSelectedContextName,
 }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
@@ -53,7 +54,7 @@ const ContextMultiLevelSelectSingleLevel = ({
 
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
-                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
+                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
                 // If this space/room does not have a meta event we do not care about it
                 if (!metaEvent) continue;
                 // If this is not a context, ignore this space child
@@ -93,7 +94,7 @@ const ContextMultiLevelSelectSingleLevel = ({
         return (
             <Select key="loading" disabled>
                 <SelectTrigger>
-                    <SelectValue placeholder={t('loading...')} />
+                    <SelectValue placeholder={<LoadingSpinnerInline />} />
                 </SelectTrigger>
             </Select>
         );
@@ -116,7 +117,7 @@ const ContextMultiLevelSelectSingleLevel = ({
                     <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
                 ) : (
                     // ... otherwise just show an empty placeholder
-                    <SelectValue />
+                    <SelectValue placeholder={`-- ${t('select option')} --`} />
                 )}
             </SelectTrigger>
             <SelectContent>
@@ -145,13 +146,26 @@ const ContextMultiLevelSelectSingleLevel = ({
  *
  * @return {React.ReactNode}
  */
-const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter, setSelectedContextName }) => {
-    const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
-        const newActiveContexts = [...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1)];
+const ContextMultiLevelSelect = ({
+    activeContexts,
+    onChange,
+    showTopics,
+    sortAlphabetically,
+    templatePlaceholderMapping,
+    templatePrefixFilter,
+    setSelectedContextName,
+}) => {
+    const onSelect = useCallback(
+        (parentContextRoomId, selectedChildContextRoomId) => {
+            const newActiveContexts = [
+                ...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1),
+            ];
 
-        if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
-        onChange(newActiveContexts, undefined);
-    }, [activeContexts, onChange]);
+            if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
+            onChange(newActiveContexts, undefined);
+        },
+        [activeContexts, onChange],
+    );
 
     const onFinishedFetchingChildren = useCallback(
         (hasChildren) => {
@@ -164,20 +178,21 @@ const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlp
 
     return (
         <>
-            { activeContexts && activeContexts.map((contextRoomId, i) => (
-                <ContextMultiLevelSelectSingleLevel
-                    key={contextRoomId}
-                    onSelect={onSelect}
-                    onFetchedChildren={onFinishedFetchingChildren}
-                    parentSpaceRoomId={contextRoomId}
-                    selectedContextRoomId={activeContexts[i + 1] ?? ''}
-                    showTopics={showTopics}
-                    sortAlphabetically={sortAlphabetically}
-                    templatePlaceholderMapping={templatePlaceholderMapping}
-                    templatePrefixFilter={templatePrefixFilter}
-                    setSelectedContextName={setSelectedContextName}
-                />
-            )) }
+            {activeContexts &&
+                activeContexts.map((contextRoomId, i) => (
+                    <ContextMultiLevelSelectSingleLevel
+                        key={contextRoomId}
+                        onSelect={onSelect}
+                        onFetchedChildren={onFinishedFetchingChildren}
+                        parentSpaceRoomId={contextRoomId}
+                        selectedContextRoomId={activeContexts[i + 1] ?? ''}
+                        showTopics={showTopics}
+                        sortAlphabetically={sortAlphabetically}
+                        templatePlaceholderMapping={templatePlaceholderMapping}
+                        templatePrefixFilter={templatePrefixFilter}
+                        setSelectedContextName={setSelectedContextName}
+                    />
+                ))}
         </>
     );
 };

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../lib/Auth';
-import { useMatrix } from '../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import LoadingSpinnerInline from './UI/LoadingSpinnerInline';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
@@ -23,6 +24,7 @@ const CachedContextMultiLevelSelectSingleLevel = ({
     const [isLoading, setIsLoading] = useState(true);
     const [parentSpaceMetaEvent, setParentSpaceMetaEvent] = useState();
     const [childContexts, setChildContexts] = useState();
+    const { t } = useTranslation();
 
     useEffect(() => {
         let isSubscribed = true;
@@ -94,7 +96,7 @@ const CachedContextMultiLevelSelectSingleLevel = ({
                     <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
                 ) : (
                     // ... otherwise just show an empty placeholder
-                    <SelectValue />
+                    <SelectValue placeholder={`-- ${t('select option')} --`} />
                 )}
             </SelectTrigger>
             <SelectContent>
