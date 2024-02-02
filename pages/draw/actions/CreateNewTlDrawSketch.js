@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import getConfig from 'next/config';
 
 import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { path as tldrawPath } from '../../../lib/Tldraw';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function CreateNewTlDrawSketch({ callbackDone, createTlDrawRoom }) {
     const router = useRouter();
@@ -27,9 +28,16 @@ export default function CreateNewTlDrawSketch({ callbackDone, createTlDrawRoom }
     };
 
     return (
-        <Form onSubmit={(e) => { e.preventDefault(); createTlDrawSketch(sketchName); }}>
-            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <button type="submit" disabled={!sketchName}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('Create sketch') }</button>
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                createTlDrawSketch(sketchName);
+            }}
+        >
+            <Input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <Button type="submit" disabled={!sketchName}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create sketch')}
+            </Button>
         </Form>
     );
 }
