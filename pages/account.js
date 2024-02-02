@@ -8,8 +8,8 @@ import { styled } from 'styled-components';
 import { useAuth } from '@/lib/Auth';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
-import { Input } from '@/components/UI/shadcn/input';
-import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to

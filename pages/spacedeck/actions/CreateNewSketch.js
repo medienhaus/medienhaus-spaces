@@ -8,8 +8,8 @@ import Form from '@/components/UI/Form';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import { useAuth } from '@/lib/Auth';
 import { path } from '@/lib/Spacedeck';
-import { Button } from '@/components/UI/shadcn/button';
-import { Input } from '@/components/UI/shadcn/input';
+import { Button } from '@/components/UI/shadcn/Button';
+import { Input } from '@/components/UI/shadcn/Input';
 
 const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const [sketchName, setSketchName] = useState('');

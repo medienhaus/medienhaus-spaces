@@ -7,8 +7,8 @@ import ErrorMessage from '@/components/UI/ErrorMessage';
 import Form from '@/components/UI/Form';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import { path } from '@/lib/Spacedeck';
-import { Input } from '@/components/UI/shadcn/input';
-import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parsedError }) => {
     const [sketchName, setSketchName] = useState('');

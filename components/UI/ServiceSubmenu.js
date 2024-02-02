@@ -6,7 +6,7 @@ import { MenuAddIcon } from '@remixicons/react/line';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@/components/UI/shadcn/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 const Header = styled.header`
     display: grid;
@@ -21,10 +21,10 @@ const Submenu = styled.aside`
     padding-bottom: calc(var(--margin) * 3);
     border-top: 1px solid transparent;
 
-  h3 {
-    line-height: calc(var(--margin) * 3);
-    border-bottom: 1px solid transparent;
-  }
+    h3 {
+        line-height: calc(var(--margin) * 3);
+        border-bottom: 1px solid transparent;
+    }
 `;
 
 export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
@@ -40,12 +40,9 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
     // We clone the passed in React element to add the callback function prop to it:
     const ActionComponent =
         value &&
-        cloneElement(
-            _.get(_.find(items, { value: value }), 'actionComponentToRender'),
-            {
-                callbackDone: handleMenuToggle,
-            },
-        );
+        cloneElement(_.get(_.find(items, { value: value }), 'actionComponentToRender'), {
+            callbackDone: handleMenuToggle,
+        });
 
     return (
         <>

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/avatar';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/shadcn/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/UI/shadcn/Card';
 
 /**
  * Displays one invitation for a matrix room/space and gives users the option to accept or decline them.
@@ -60,74 +60,79 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
         setWasHandled(true);
     };
 
-    return (<>
-        <form onSubmit={handleAccept} onReset={handleDecline}>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-4">
-                        <Avatar>
-                            <AvatarImage src={avatar} />
-                            <AvatarFallback />
-                        </Avatar>
-                        {
-                            // Invites for direct messages
-                            isDm ? (t('Direct Message')
-                        ) : // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
+    return (
+        <>
+            <form onSubmit={handleAccept} onReset={handleDecline}>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-4">
+                            <Avatar>
+                                <AvatarImage src={avatar} />
+                                <AvatarFallback />
+                            </Avatar>
+                            {
+                                // Invites for direct messages
+                                isDm ? (
+                                    t('Direct Message')
+                                ) : // Application service specific invites (e.g. for Spacedeck, Etherpad, ...)
                                 service ? (
-                            roomName
-                        ) : (        // All other invitations
+                                    roomName
+                                ) : (
+                                    // All other invitations
                                     <>
-                                        { roomName }
-                                        { joinRule === 'private' && (
+                                        {roomName}
+                                        {joinRule === 'private' && (
                                             <>
-                                                    &nbsp;<em>({ t('private') })</em>
-
-                                        </>
-                                    )}
-                                </>
+                                                &nbsp;<em>({t('private')})</em>
+                                            </>
+                                        )}
+                                    </>
+                                )
+                            }
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {' '}
+                        {wasHandled ? (
+                            link ? (
+                                // Invitation accepted
+                                <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
+                                    You can now view{' '}
+                                    <Link href={link}>
+                                        <strong>{roomName}</strong>
+                                    </Link>
+                                    .
+                                </Trans>
+                            ) : (
+                                // Invitation rejected
+                                t('You’ve declined the invitation.')
                             )
-                        }
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>  { wasHandled ? (
-                    link ? (
-                    // Invitation accepted
-                        <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
-                                You can now view{' '}
-                            <Link href={link}>
-                                <strong>{roomName}</strong>
-                            </Link>
-                            .
-                        </Trans>
-                    ) : (
-                    // Invitation rejected
-                        t('You’ve declined the invitation.')
-                    )
-                ) : (
-                // Invitation pending
-                    <Trans
-                        t={t}
-                        i18nKey="invitationCard"
-                        defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
-                        values={{ username: inviterUsername, service: path }}
-                        components={{ bold: <strong /> }}
-                    />
-                )}</CardContent>
-                <CardFooter>
-                    {!wasHandled && (
-                        <>
-                            <br />
-                            <ConfirmCancelButtons
-                                small
-                                disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
-                                cancelLabel={t('Decline')}
-                                confirmLabel={t('Accept')}
+                        ) : (
+                            // Invitation pending
+                            <Trans
+                                t={t}
+                                i18nKey="invitationCard"
+                                defaults="<bold>{{ username }}</bold> wants to <bold>{{ service }}</bold> with you."
+                                values={{ username: inviterUsername, service: path }}
+                                components={{ bold: <strong /> }}
                             />
-                        </>
-                    )}
-                </CardFooter>
-            </Card>
-        </form>
-    </>
+                        )}
+                    </CardContent>
+                    <CardFooter>
+                        {!wasHandled && (
+                            <>
+                                <br />
+                                <ConfirmCancelButtons
+                                    small
+                                    disabled={isDecliningInvite || isAcceptingInvite || wasHandled}
+                                    cancelLabel={t('Decline')}
+                                    confirmLabel={t('Accept')}
+                                />
+                            </>
+                        )}
+                    </CardFooter>
+                </Card>
+            </form>
+        </>
     );
 }

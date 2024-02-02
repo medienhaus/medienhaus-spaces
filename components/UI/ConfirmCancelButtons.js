@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '@/components/UI/shadcn/button';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const ConfirmCancelButtonsWrapper = styled.div`
     display: grid;
@@ -10,7 +10,7 @@ const ConfirmCancelButtonsWrapper = styled.div`
 `;
 
 const SmallConfirmCancelButtonsWrapper = styled(ConfirmCancelButtonsWrapper)`
-  width: fit-content;
+    width: fit-content;
 `;
 
 const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) => {

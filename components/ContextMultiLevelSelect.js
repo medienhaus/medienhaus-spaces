@@ -2,13 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import { useAuth } from '@/lib/Auth';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/UI/shadcn/select';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
@@ -32,24 +25,20 @@ const ContextMultiLevelSelectSingleLevel = ({
 
         // Fetch meta event of the parent space
         const fetchMetaEvent = async () => {
-            const metaEvent = await matrixClient
-                .getStateEvent(parentSpaceRoomId, 'dev.medienhaus.meta')
-                .catch(() => {});
+            const metaEvent = await matrixClient.getStateEvent(parentSpaceRoomId, 'dev.medienhaus.meta').catch(() => {});
             isSubscribed && setParentSpaceMetaEvent(metaEvent);
         };
 
         // Fetch all child contexts
         const fetchChildContexts = async () => {
             let newChildContexts = [];
-            let roomHierarchy = await matrixClient
-                .getRoomHierarchy(parentSpaceRoomId, undefined, 1)
-                .catch(
-                    /** @param {MatrixError} error */ (error) => {
-                        // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
-                        // In every other case this is really an unexpected error and we want to throw.
-                        if (error.errcode !== 'M_FORBIDDEN') throw error;
-                    },
-                );
+            let roomHierarchy = await matrixClient.getRoomHierarchy(parentSpaceRoomId, undefined, 1).catch(
+                /** @param {MatrixError} error */ (error) => {
+                    // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
+                    // In every other case this is really an unexpected error and we want to throw.
+                    if (error.errcode !== 'M_FORBIDDEN') throw error;
+                },
+            );
             if (!roomHierarchy) roomHierarchy = { rooms: [] };
 
             // Remove the first entry, which is the context we retrieved the children for
@@ -57,20 +46,13 @@ const ContextMultiLevelSelectSingleLevel = ({
 
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
-                const metaEvent = await matrixClient
-                    .getStateEvent(room.room_id, 'dev.medienhaus.meta')
-                    .catch(() => {});
+                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
                 // If this space/room does not have a meta event we do not care about it
                 if (!metaEvent) continue;
                 // If this is not a context, ignore this space child
                 if (metaEvent && metaEvent.type !== 'context') continue;
                 // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
-                if (
-                    templatePrefixFilter &&
-                    metaEvent &&
-                    !_.startsWith(metaEvent.template, templatePrefixFilter)
-                )
-                    continue;
+                if (templatePrefixFilter && metaEvent && !_.startsWith(metaEvent.template, templatePrefixFilter)) continue;
                 // ... otherwise show this space child:
                 newChildContexts.push(room);
             }
@@ -98,13 +80,7 @@ const ContextMultiLevelSelectSingleLevel = ({
         };
         // Do not list `onFetchedChildren` as a dependency because for some reason that will keep re-rendering this component.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        matrixClient,
-        parentSpaceRoomId,
-        sortAlphabetically,
-        templatePlaceholderMapping,
-        templatePrefixFilter,
-    ]);
+    }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
     if (isLoading) {
         return (
@@ -119,9 +95,9 @@ const ContextMultiLevelSelectSingleLevel = ({
     }
 
     return (
-        <Select
+        <select
             defaultValue={selectedContextRoomId}
-            onValueChange={(value) => {
+            onChange={(value) => {
                 onSelect(parentSpaceRoomId, value);
             }}
         >

@@ -5,8 +5,8 @@ import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
-import { Input } from '@/components/UI/shadcn/input';
-import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -130,12 +130,8 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     };
 
     const handleRemove = (option) => {
-        setChecked((prevState) =>
-            prevState.filter((state) => state !== option),
-        );
-        setSelected((prevState) =>
-            prevState.filter((state) => state !== option),
-        );
+        setChecked((prevState) => prevState.filter((state) => state !== option));
+        setSelected((prevState) => prevState.filter((state) => state !== option));
     };
 
     const handleSubmit = async (e) => {
@@ -150,7 +146,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
         <InviteUserForm onSubmit={handleSubmit}>
             <>
                 <Input
-                    type='text'
+                    type="text"
                     value={value}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
@@ -181,10 +177,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                                     option={option}
                                     // we need to add the number of options to the index to highlight the correct item in the list
                                     // and not have multiple items show up as selected
-                                    focus={
-                                        selectedIndex ===
-                                        index + filteredOptions.length
-                                    }
+                                    focus={selectedIndex === index + filteredOptions.length}
                                     index={index + filteredOptions.length}
                                     keysToDisplay={keysToDisplay}
                                     handleSelect={handleRemove}
@@ -196,11 +189,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                         </ServiceTable.Body>
                     </ServiceTable>
                 </TableWrapper>
-                <Button
-                    disabled={selected.length === 0 && checked.length === 0}
-                >
-                    {t('invite')}
-                </Button>
+                <Button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</Button>
             </>
         </InviteUserForm>
     );
@@ -244,7 +233,7 @@ const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, ha
                     id={index}
                     ref={ref}
                     tabIndex={0}
-                    type='checkbox'
+                    type="checkbox"
                     checked={isChecked}
                     onFocus={() => setSelectedIndex(index)}
                     onChange={() => {

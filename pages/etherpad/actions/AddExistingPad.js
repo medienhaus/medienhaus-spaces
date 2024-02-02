@@ -7,8 +7,8 @@ import Form from '@/components/UI/Form';
 import ErrorMessage from '@/components/UI/ErrorMessage';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import { path as etherpadPath } from '@/lib/Etherpad';
-import { Input } from '@/components/UI/shadcn/input';
-import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();

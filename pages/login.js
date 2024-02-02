@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import DefaultLayout from '@/components/layouts/default';
 import PasswordInputButton from '@/components/UI/PasswordInputButton';
 import { useAuth } from '@/lib/Auth';
-import { Input } from '@/components/UI/shadcn/input';
+import { Input } from '@/components/UI/shadcn/Input';
 
 const LoginSection = styled.div`
     & > form > * + * {
@@ -28,11 +28,11 @@ const UsernameHomeserverContainer = styled.div`
 const Homeserver = styled.span`
     position: absolute;
     top: -4px;
-  right: var(--margin);
-  max-width: 40%;
-  overflow: hidden;
-  line-height: calc(var(--margin) * 3);
-  color: hsl(var(--muted-foreground));
+    right: var(--margin);
+    max-width: 40%;
+    overflow: hidden;
+    line-height: calc(var(--margin) * 3);
+    color: hsl(var(--muted-foreground));
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: pointer;

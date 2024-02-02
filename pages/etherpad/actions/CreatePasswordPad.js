@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Form from '@/components/UI/Form';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import logger from '@/lib/Logging';
-import { Input } from '@/components/UI/shadcn/input';
-import { Button } from '@/components/UI/shadcn/button';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function CreatePasswordPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');
