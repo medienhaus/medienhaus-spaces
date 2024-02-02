@@ -25,7 +25,7 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
  *
 */
 
-const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) => {
+const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAction, onCancel }) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const [activeContexts, setActiveContexts] = useState([contextRootId]);
@@ -44,6 +44,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
                 setErrorMessage(t('At least one of the contexts is not selected properly'));
                 setIsAddingAllowed(false);
             }
+
             if (parentId && activeContexts[activeContexts.length - 1] && parentId !== activeContexts[activeContexts.length - 1]) {
                 setErrorMessage('');
                 setIsAddingAllowed(true);
@@ -51,15 +52,18 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
                 setErrorMessage(t('You cannot add a context to itself.'));
                 setIsAddingAllowed(false);
             }
+
             if (contextRootId === activeContexts[activeContexts.length - 1]) {
                 setErrorMessage(t(''));
                 setIsAddingAllowed(false);
             }
+
             if (parentId === activeContexts[activeContexts.length - 2]) {
                 setErrorMessage(t('{{child}} is already part of {{parent}}', { child: selectedContextName, parent: parentName }));
                 setIsAddingAllowed(false);
             }
         };
+
         validateContextRelationship();
     }, [activeContexts, contextRootId, parentId, parentName, selectedContextName, t]);
 
@@ -72,11 +76,13 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
 
                 return;
             });
+
         if (call?.event_id) {
             // call worked as expected
             alert(t('{{selectedContextName}} was successfully added to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }));
             cleanUp();
         }
+
         setIsLoading(false);
     };
 
@@ -97,7 +103,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onCancel }) =
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
             <PreviousNextButtons
                 disableNext={!isAddingAllowed}
-                onCancel={cleanUp}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
+                onCancel={onPreviousAction}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
             </PreviousNextButtons>
         </Form>
     );

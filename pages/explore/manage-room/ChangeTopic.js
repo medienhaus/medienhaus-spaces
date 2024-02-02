@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { CheckIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
@@ -20,11 +21,12 @@ const TopicInput = styled.textarea`
   appearance: none;
 `;
 
-const ChangeTopic = ({ roomId, onCancel }) => {
+const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const [newTopic, setNewTopic] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [currentTopic, setCurrentTopic] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation('explore');
 
@@ -58,7 +60,7 @@ const ChangeTopic = ({ roomId, onCancel }) => {
         if (!newTopic || isUpdating) return;
 
         setIsUpdating(true);
-
+        setErrorMessage('');
         // Use the Matrix client to set the new topic for the room
         const sendTopic = await matrixClient.sendStateEvent(roomId, 'm.room.topic', { topic: newTopic })
             .catch(error => {
@@ -67,9 +69,15 @@ const ChangeTopic = ({ roomId, onCancel }) => {
 
         // fetch topic again and set states
         await getCurrentTopic();
+
         // Reset the input field and update status
         setIsUpdating(false);
-        if (sendTopic) setErrorMessage('');
+        console.log(sendTopic);
+
+        if (sendTopic.event_id) {
+            setSuccessMessage('Topic was successfully updated');
+            // _.delay(() => onCancel(), 2000);
+        }
     };
 
     return (
@@ -84,7 +92,8 @@ const ChangeTopic = ({ roomId, onCancel }) => {
                 placeholder={t('Enter a new topic')}
             />
 
-            <PreviousNextButtons onCancel={onCancel} disableNext={isUpdating || currentTopic === newTopic} />
+            <PreviousNextButtons onCancel={onPreviousAction} disableNext={isUpdating || currentTopic === newTopic} />
+            { successMessage && <p>{ t(successMessage) } + <CheckIcon /></p> }
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>
     );

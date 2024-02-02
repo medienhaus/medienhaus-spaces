@@ -18,9 +18,9 @@ import Form from '../../../components/UI/Form';
  * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
  */
 
-const AddExistingItem = ({ currentId, onCancel }) => {
+const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     const auth = useAuth();
-    const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
+    const matrix = useMatrix();
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
     const applicationsFolder = matrix.applicationsFolder;
     // const templatesToDisplay = getConfig().publicRuntimeConfig.templates.item.concat(getConfig().publicRuntimeConfig.templates.context);
@@ -48,6 +48,7 @@ const AddExistingItem = ({ currentId, onCancel }) => {
                 setErrorMessage((error.data?.error || t('something went wrong, please try again'))),
             ]);
         setIsAddingContext(false);
+
         if (addChildToParent?.event_id) {
             setSelectedLevels([applicationsFolder]);
             setErrorMessage('');
@@ -61,7 +62,7 @@ const AddExistingItem = ({ currentId, onCancel }) => {
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} />
             <PreviousNextButtons
                 disableNext={isAddingContext || !isItem}
-                onCancel={onCancel}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
+                onCancel={onPreviousAction}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
             </PreviousNextButtons>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>

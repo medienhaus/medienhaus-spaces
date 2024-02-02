@@ -17,7 +17,7 @@ import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
  * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} - The rendered component.
  */
-const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
+const LeaveRoom = ({ roomId, parentId, roomName, onPreviousAction, onCancel }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isLeaving, setIsLeaving] = useState(false);
@@ -49,7 +49,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
 
             <PreviousNextButtons
                 disableNext={isLeaving}
-                onCancel={onCancel}
+                onCancel={onPreviousAction}
                 warning
             >
                 { isLeaving ? <LoadingSpinnerInline inverted /> : t('Leave') }

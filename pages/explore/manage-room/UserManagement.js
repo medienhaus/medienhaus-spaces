@@ -21,7 +21,7 @@ const RoleSelect = styled.select`
   border: unset;
 `;
 
-const UserManagement = ({ roomId, roomName, onCancel }) => {
+const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
     console.log(roomId);
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
@@ -98,10 +98,11 @@ const UserManagement = ({ roomId, roomName, onCancel }) => {
 
         <PreviousNextButtons
             disableNext={true}
-            onCancel={onCancel} />
+            onCancel={onPreviousAction} />
     </>
     );
 };
+
 export default UserManagement;
 
 function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLevel, handleKick, changePowerLevel }) {

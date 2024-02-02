@@ -43,6 +43,7 @@ const RemoveSpaceFromParent = ({
     currentId,
     parentName,
     getSpaceChildren,
+    onPreviousAction,
     onCancel,
 }) => {
     const auth = useAuth();
@@ -109,7 +110,8 @@ const RemoveSpaceFromParent = ({
 
             <PreviousNextButtons
                 disableNext={itemsToRemove.length === 0}
-                onCancel={onCancel}>{ isRemovingChild ? <LoadingSpinnerInline inverted /> : `${t('remove') } ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` }
+                onCancel={onPreviousAction}>
+                { isRemovingChild ? <LoadingSpinnerInline inverted /> : `${t('remove') } ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` }
             </PreviousNextButtons>
 
         </Form>
