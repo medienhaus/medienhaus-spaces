@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ImageUpload from '../../../components/UI/ImageUpload';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
+import PreviousNextButtons from '@/components/UI/PreviousNextButtons';
 
-const ChangeAvatar = ({ roomId }) => {
+const ChangeAvatar = ({ roomId, onPreviousAction }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation('explore');
 
@@ -16,18 +17,20 @@ const ChangeAvatar = ({ roomId }) => {
                 url: imageUrl,
             }),
         };
-        await fetch(localStorage.getItem('medienhaus_hs_url') + `_matrix/client/r0/rooms/${roomId}/state/m.room.avatar/`, request)
-            .catch((error) => {
+        await fetch(localStorage.getItem('medienhaus_hs_url') + `_matrix/client/r0/rooms/${roomId}/state/m.room.avatar/`, request).catch(
+            (error) => {
                 setErrorMessage(error.data?.error || 'Something went wrong, please try again.');
             },
-            );
+        );
         setErrorMessage('');
     };
 
-    return (<>
-        <ImageUpload roomId={roomId} callback={uploadRoomAvatar} />
-        { errorMessage && <ErrorMessage>{ t(errorMessage) }</ErrorMessage> }
-    </>
+    return (
+        <>
+            <ImageUpload roomId={roomId} callback={uploadRoomAvatar} />
+            {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
+            <PreviousNextButtons disableNext onCancel={onPreviousAction} />
+        </>
     );
 };
 
