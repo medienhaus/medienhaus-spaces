@@ -4,11 +4,11 @@ import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import InvitationCard from './InvitationCard';
-import KnockCard from './KnockCard';
-import DefaultLayout from '@/components/layouts/default';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import DefaultLayout from '@/components/layouts/default';
+import InvitationCard from './InvitationCard';
+import KnockCard from './KnockCard';
 
 export default function Dashboard() {
     const { t } = useTranslation('dashboard');
@@ -107,13 +107,7 @@ export default function Dashboard() {
                     {Array.from(invitations.values()).map((invitation, index) => {
                         return (
                             <div key={invitation.roomId}>
-                                {index > 0 && (
-                                    <>
-                                        <br />
-                                        <hr />
-                                        <br />
-                                    </>
-                                )}
+                                {index > 0 && <br />}
                                 <InvitationCard
                                     path={invitation.path}
                                     roomId={invitation.roomId}
@@ -134,8 +128,6 @@ export default function Dashboard() {
             {invitations.size > 0 && pendingKnocks.size > 0 && (
                 <>
                     <br />
-                    <br />
-                    <hr />
                     <br />
                     <br />
                 </>

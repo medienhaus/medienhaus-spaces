@@ -5,9 +5,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
 import { styled } from 'styled-components';
 
+import { useAuth } from '@/lib/Auth';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
-import { useAuth } from '@/lib/Auth';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to
@@ -215,7 +217,7 @@ export default function Account() {
                         }}
                         onReset={() => setInputPassword('')}
                     >
-                        <input
+                        <Input
                             type="password"
                             placeholder={t('Password')}
                             onChange={(event) => {
@@ -257,14 +259,14 @@ export default function Account() {
                         />
                     )}
                     <AvatarButtonContainer>
-                        <input
+                        <Input
                             type="file"
                             onChange={uploadAvatar}
                             ref={avatarFileUploadInput}
                             style={{ display: 'none' }}
                             accept="image/*"
                         />
-                        <button
+                        <Button
                             type="button"
                             disabled={isChangingAvatar}
                             onClick={() => {
@@ -272,11 +274,11 @@ export default function Account() {
                             }}
                         >
                             {t('Browse')} …
-                        </button>
+                        </Button>
                         {profileInfo.avatar_url && (
-                            <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
+                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
                                 {t('Delete')}
-                            </button>
+                            </Button>
                         )}
                     </AvatarButtonContainer>
                 </AvatarSection>
@@ -290,7 +292,7 @@ export default function Account() {
                     }}
                     onReset={handleCancel}
                 >
-                    <input
+                    <Input
                         type="text"
                         value={inputDisplayname}
                         disabled={isSavingChanges}
@@ -303,10 +305,10 @@ export default function Account() {
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     )}
                     {emails.map((email, index) => (
-                        <input key={email} type="email" value={email} disabled />
+                        <Input key={email} type="email" value={email} disabled />
                     ))}
                     {!!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
-                        <input
+                        <Input
                             type="email"
                             value={inputNewEmail}
                             disabled={isSavingChanges}

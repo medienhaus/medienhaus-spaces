@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Form from '@/components/UI/Form';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import logger from '@/lib/Logging';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
     const { t } = useTranslation('etherpad');
@@ -26,10 +28,10 @@ export default function CreateAuthoredPad({ createPadAndOpen, callbackDone }) {
                 createAuthoredPad();
             }}
         >
-            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <button type="submit" disabled={!padName}>
+            <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <Button type="submit" disabled={!padName}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
-            </button>
+            </Button>
         </Form>
     );
 }
