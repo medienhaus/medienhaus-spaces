@@ -18,7 +18,7 @@ import Form from '../../../components/UI/Form';
  * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
  */
 
-const AddExistingItem = ({ currentId, onCancel }) => {
+const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixAuthed = auth.getAuthenticationProvider('matrix');
@@ -62,7 +62,7 @@ const AddExistingItem = ({ currentId, onCancel }) => {
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} />
             <PreviousNextButtons
                 disableNext={isAddingContext || !isItem}
-                onCancel={onCancel}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
+                onCancel={onPreviousAction}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
             </PreviousNextButtons>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>

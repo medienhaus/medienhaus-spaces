@@ -16,7 +16,7 @@ import AddNewChat from './AddNewChat';
  * @param {Function} onCancel - A callback function to cancel the action.
  * @returns {JSX.Element}
  */
-const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onCancel }) => {
+const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPreviousAction, onCancel }) => {
     const matrix = useMatrix();
     const [selectedRadioButton, setSelectedRadioButton] = useState('');
     const [selectedOption, setSelectedOption] = useState(''); // 'existing' or 'new'
@@ -75,7 +75,7 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onCancel }
             >
                 { t('Create New Room') }
             </RadioButton>
-            <PreviousNextButtons disableNext={!selectedRadioButton} onCancel={handleCancel} />
+            <PreviousNextButtons disableNext={!selectedRadioButton} onCancel={onPreviousAction} />
         </Form>
     );
 };

@@ -76,10 +76,9 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
 
     const { t } = useTranslation();
 
-    const onCancel = () => {
+    const onPreviousAction = () => {
         setSelectedRadioButton('');
         setSelectedAction('');
-        setManageContextActionToggle(false); // close the manage context action menu
     };
 
     switch (selectedAction) {
@@ -87,22 +86,26 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
             return <CreateContext currentId={currentId}
                 parentId={parentId}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         case 'existingItem':
             return <AddExistingItem currentId={currentId}
                 currentName={roomName}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         case 'existingContext':
             return <AddExistingContext parentId={currentId}
                 parentName={roomName}
                 contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         case 'addOrCreateChat':
             return <CreateChatOptions
                 currentId={currentId}
                 parentName={roomName}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={onCancel}
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)}
             />;
         case 'removeSpace':
             return <RemoveSpaceFromParent
@@ -111,27 +114,32 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
                 parentName={roomName}
                 spaceChildren={spaceChildren}
                 getSpaceChildren={getSpaceChildren}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         case 'manageUsers':
             return <UserManagement roomId={currentId}
                 roomName={roomName}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         case 'leaveRoom':
             return <LeaveRoom roomId={currentId}
                 roomName={roomName}
                 parentId={parentId}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
 
         case 'changeJoinRule':
             return <ChangeJoinRule
                 roomId={currentId}
                 roomName={roomName}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
 
         case 'changeTopic':
             return <ChangeTopic
                 roomId={currentId}
-                onCancel={onCancel} />;
+                onPreviousAction={onPreviousAction}
+                onCancel={() => setManageContextActionToggle(false)} />;
         default:
             return <Form
                 onSubmit={(e) => {
@@ -188,10 +196,7 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
                     disabled={!selectedRadioButton}
                     disableNext={selectedAction}
                     disablePrev={!selectedAction}
-                    onCancel={() => {
-                        setSelectedRadioButton('');
-                        setSelectedAction('');
-                    }}
+                    onCancel={onPreviousAction}
                 />
             </Form>;
     }
