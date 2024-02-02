@@ -67,7 +67,7 @@ const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordPr
                     href={href}
                 >
                     { name }
-                    { isFetchingContent === roomId && <LoadingSpinnerInline /> }
+                    { roomId && isFetchingContent === roomId && <LoadingSpinnerInline /> }
                     { /* Show a lock icon if this Link is password protected */ }
                     { passwordProtected && <LockIconWrapper title={t('password protected')}><LockIcon /></LockIconWrapper> }
                 </Link>
