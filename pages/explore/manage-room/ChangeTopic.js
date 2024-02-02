@@ -1,24 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon } from '@remixicons/react/line';
 
 import { useAuth } from '../../../lib/Auth';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
+import { RiCheckLine } from '@remixicon/react';
 
 const TopicInput = styled.textarea`
-  width: 100%;
-  padding: 0 calc(var(--margin) * 0.2);
-  font-weight: 500;
-  color: var(--color-foreground);
-  background-color: var(--color-background);
-  border-color: var(--color-foreground);
-  border-style: solid;
-  border-width: calc(var(--margin) * 0.2);
-  border-radius: unset;
-  appearance: none;
+    width: 100%;
+    padding: 0 calc(var(--margin) * 0.2);
+    font-weight: 500;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+    border-color: var(--color-foreground);
+    border-style: solid;
+    border-width: calc(var(--margin) * 0.2);
+    border-radius: unset;
+    appearance: none;
 `;
 
 const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
@@ -32,12 +32,11 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
 
     const getCurrentTopic = useCallback(async () => {
         // Use the Matrix client to get the current room topic
-        const stateEvent = await matrixClient.getStateEvent(roomId, 'm.room.topic')
-            .catch(error => {
-                // don't show an error if the topic is not set
-                if (error.errcode === 'M_NOT_FOUND') return;
-                setErrorMessage(error.data?.error);
-            });
+        const stateEvent = await matrixClient.getStateEvent(roomId, 'm.room.topic').catch((error) => {
+            // don't show an error if the topic is not set
+            if (error.errcode === 'M_NOT_FOUND') return;
+            setErrorMessage(error.data?.error);
+        });
 
         if (stateEvent?.topic) {
             setCurrentTopic(stateEvent.topic);
@@ -62,10 +61,9 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
         setIsUpdating(true);
         setErrorMessage('');
         // Use the Matrix client to set the new topic for the room
-        const sendTopic = await matrixClient.sendStateEvent(roomId, 'm.room.topic', { topic: newTopic })
-            .catch(error => {
-                setErrorMessage(error.data?.error);
-            });
+        const sendTopic = await matrixClient.sendStateEvent(roomId, 'm.room.topic', { topic: newTopic }).catch((error) => {
+            setErrorMessage(error.data?.error);
+        });
 
         // fetch topic again and set states
         await getCurrentTopic();
@@ -81,7 +79,7 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
     };
 
     return (
-        <Form onSubmit={e => updateTopic(e)}>
+        <Form onSubmit={(e) => updateTopic(e)}>
             <TopicInput
                 type="text"
                 rows="5"
@@ -93,8 +91,12 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
             />
 
             <PreviousNextButtons onCancel={onPreviousAction} disableNext={isUpdating || currentTopic === newTopic} />
-            { successMessage && <p>{ t(successMessage) } + <CheckIcon /></p> }
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            {successMessage && (
+                <p>
+                    {t(successMessage)} + <RiCheckLine />
+                </p>
+            )}
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>
     );
 };

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon, DoorClosedIcon } from '@remixicons/react/line';
 import _ from 'lodash';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
-import { useAuth } from '../../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 import logger from '../../lib/Logging';
+import { RiCheckLine, RiDoorClosedLine } from '@remixicon/react';
 
 const KnockOnMatrixRoom = ({ roomName, roomId }) => {
     const [isKnocking, setIsKnocking] = useState(false);
@@ -23,32 +23,33 @@ const KnockOnMatrixRoom = ({ roomName, roomId }) => {
         if (membership === 'invite') {
             // if the user is already invited, want to join the room directly
             logger.debug('User is already invited to room, accepting invite instead');
-            matrixClient.joinRoom(roomId)
-                .catch((error) => {
-                    alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
-                });
+            matrixClient.joinRoom(roomId).catch((error) => {
+                alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
+            });
             setIsKnocking(false);
 
             return;
         }
 
-        const knock = await auth.getAuthenticationProvider('matrix').knockOnRoom(roomId)
+        const knock = await auth
+            .getAuthenticationProvider('matrix')
+            .knockOnRoom(roomId)
             .catch((error) => {
                 if (error.data.error === 'You are already invited to this room') {
                     // if the user is already invited, we don't want to show an error message and instead join the room
                     // this should not happen anymore with the condition above, but it's better to be safe than sorry
                     logger.debug('User is already invited to room, accepting invite instead');
-                    matrixClient.joinRoom(roomId)
-                        .catch((error) => {
-                            alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
-                        });
+                    matrixClient.joinRoom(roomId).catch((error) => {
+                        alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
+                    });
 
                     return;
                 }
 
                 logger.error('Failed to knock on room:', error);
                 alert(t('The following error occurred: {{error}}', { error: error.data?.error }));
-            }).finally(() => {
+            })
+            .finally(() => {
                 setIsKnocking(false);
             });
         if (!knock) return;
@@ -65,14 +66,13 @@ const KnockOnMatrixRoom = ({ roomName, roomId }) => {
 
     return (
         <TextButton
-            title={t(membership === 'knock' ? 'You have already requested access to {{name}}' : 'Request access to {{name}}', { name: roomName })}
+            title={t(membership === 'knock' ? 'You have already requested access to {{name}}' : 'Request access to {{name}}', {
+                name: roomName,
+            })}
             onClick={requestAccess}
-            disabled={membership === 'knock'}>
-            { isKnocking ? <LoadingSpinnerInline />
-                : <Icon>
-                    { wasSuccessful ? <CheckIcon /> : <DoorClosedIcon /> }
-                </Icon>
-            }
+            disabled={membership === 'knock'}
+        >
+            {isKnocking ? <LoadingSpinnerInline /> : <Icon>{wasSuccessful ? <RiCheckLine /> : <RiDoorClosedLine />}</Icon>}
         </TextButton>
     );
 };
