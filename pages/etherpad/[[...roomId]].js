@@ -9,6 +9,7 @@ import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
 import CreateAuthoredPad from './actions/CreateAuthoredPad';
 import CreatePasswordPad from './actions/CreatePasswordPad';
+import AddFavourite from '@/components/UI/favourites/AddFavourite';
 import ErrorMessage from '@/components/UI/ErrorMessage';
 import Icon from '@/components/UI/Icon';
 import DefaultLayout from '@/components/layouts/default';
@@ -308,12 +309,13 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
-    if (!auth.connectionStatus.etherpad)
+    if (!auth.connectionStatus.etherpad) {
         return (
             <DefaultLayout.LameColumn>
                 <LoginPrompt service={etherpadPath} />
             </DefaultLayout.LameColumn>
         );
+    }
 
     return (
         <>
@@ -351,6 +353,7 @@ export default function Etherpad() {
                                 onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
+                            <AddFavourite roomId={roomId} />
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
                                 {isDeletingPad ? (

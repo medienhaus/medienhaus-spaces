@@ -8,6 +8,7 @@ import { RiDeleteBinLine } from '@remixicon/react';
 
 import AddExistingSketch from './actions/AddExistingSketch';
 import CreateNewSketch from './actions/CreateNewSketch';
+import AddBookmark from '@/components/UI/favourites/AddFavourite';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import ErrorMessage from '@/components/UI/ErrorMessage';
@@ -263,6 +264,7 @@ export default function Spacedeck() {
                                 onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
+                            <AddBookmark roomId={roomId} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 {isDeletingSketch ? (

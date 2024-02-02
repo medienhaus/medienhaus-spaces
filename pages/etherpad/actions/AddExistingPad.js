@@ -7,6 +7,8 @@ import Form from '@/components/UI/Form';
 import ErrorMessage from '@/components/UI/ErrorMessage';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import { path as etherpadPath } from '@/lib/Etherpad';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 export default function AddExistingPad({ callbackDone, createWriteRoom }) {
     const router = useRouter();
@@ -41,16 +43,16 @@ export default function AddExistingPad({ callbackDone, createWriteRoom }) {
                 handleExistingPadSubmit();
             }}
         >
-            <input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
-            <input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
+            <Input type="text" placeholder={t('Name')} value={padName} onChange={(e) => setPadName(e.target.value)} />
+            <Input type="text" placeholder={t('Link to pad')} value={padLink} onChange={validatePadUrl} />
             {!validLink && padLink && (
                 <ErrorMessage>
                     {t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl })}
                 </ErrorMessage>
             )}
-            <button type="submit" disabled={!padName || !padLink || !validLink}>
+            <Button type="submit" disabled={!padName || !padLink || !validLink}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('Add pad')}
-            </button>
+            </Button>
         </Form>
     );
 }

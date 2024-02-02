@@ -6,6 +6,7 @@ import { RiMenuAddLine } from '@remixicon/react';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 const Header = styled.header`
     display: grid;
@@ -23,15 +24,6 @@ const Submenu = styled.aside`
     h3 {
         line-height: calc(var(--margin) * 3);
         border-bottom: 1px solid transparent;
-    }
-
-    button {
-        padding: calc(var(--margin) / 1.5);
-        text-align: center;
-
-        & + button {
-            margin-top: calc(var(--margin) / 1.5);
-        }
     }
 `;
 
@@ -69,16 +61,18 @@ export function ServiceSubmenu({ title, icon, subheadline, items, disabled }) {
             {isOpen && (
                 <Submenu>
                     {subheadline && <h3>{subheadline}</h3>}
-                    <select value={value} onChange={(e) => setValue(e.target.value)}>
-                        <option disabled value="">
-                            -- {t('Select action')} --
-                        </option>
-                        {items.map(({ value, label }) => (
-                            <option key={value} value={value}>
-                                {label}
-                            </option>
-                        ))}
-                    </select>
+                    <Select defaultValue={value} onValueChange={setValue}>
+                        <SelectTrigger>
+                            <SelectValue placeholder={`-- ${t('Select action')} --`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {items.map(({ value, label }) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     {value && ActionComponent}
                 </Submenu>
             )}

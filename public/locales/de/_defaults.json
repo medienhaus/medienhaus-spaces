@@ -1,5 +1,6 @@
 {
-    "Cancel": "Abbrechen",
+    "Add to favourites": "Zu Favoriten hinzufügen",
+  "Cancel": "Abbrechen",
     "Confirm": "Bestätigen",
     "Copy link to clipboard": "Link kopieren",
     "Connection lost": "Verbindung unterbrochen",
@@ -10,6 +11,7 @@
     "Password": "Passwort",
     "password protected": "Passwortgeschützt",
     "Upload": "Hochladen",
+  "Remove from favourites": "Aus Favoriten entfernen",
     "Save": "Speichern",
     "Select action": "Aktion wählen",
     "What would you like to do?": "Was möchtest du tun?",
@@ -20,5 +22,6 @@
     "Decline": "Ablehnen",
     "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
     "Please enter your account password to continue using {{service}}:": "Bitte gib dein Passwort ein, um {{service}} wieder nutzen zu können:",
-    "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut."
+    "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
+    "loading...": "lädt..."
 }

@@ -8,6 +8,8 @@ import Form from '@/components/UI/Form';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import { useAuth } from '@/lib/Auth';
 import { path } from '@/lib/Spacedeck';
+import { Button } from '@/components/UI/shadcn/Button';
+import { Input } from '@/components/UI/shadcn/Input';
 
 const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
     const [sketchName, setSketchName] = useState('');
@@ -44,10 +46,10 @@ const CreateNewSketch = ({ callbackDone, createSketchRoom }) => {
                 createNewSketchRoom();
             }}
         >
-            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <button type="submit" disabled={!sketchName || loading}>
+            <Input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <Button type="submit" disabled={!sketchName || loading}>
                 {loading ? <LoadingSpinnerInline inverted /> : t('Create sketch')}
-            </button>
+            </Button>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>
     );
