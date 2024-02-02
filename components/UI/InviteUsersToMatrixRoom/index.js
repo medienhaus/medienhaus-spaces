@@ -17,41 +17,39 @@ import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { styled } from 'styled-components';
-import { UserAddIcon, UserUnfollowIcon } from '@remixicons/react/line';
+import { RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
 
-import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
 import Icon from '../Icon';
+import { useAuth } from '@/lib/Auth';
 
 const ActionWrapper = styled.section`
-  display: grid;
-  align-content: start;
-  justify-self: start;
-  width: 100%;
-  height: 100%;
-  padding: 0 var(--margin);
+    display: grid;
+    align-content: start;
+    justify-self: start;
+    width: 100%;
+    height: 100%;
+    padding: 0 var(--margin);
 
-  @media ${breakpoints.tabletAndAbove} {
-    padding: 0 calc(var(--margin) * 1.5);
-  }
+    @media ${breakpoints.tabletAndAbove} {
+        padding: 0 calc(var(--margin) * 1.5);
+    }
 
-  h3 {
-    line-height: calc(var(--margin) * 3);
-  }
+    h3 {
+        line-height: calc(var(--margin) * 3);
+    }
 `;
 
 const FeedbackWrapper = styled.div`
-  margin-top: var(--margin);
+    margin-top: var(--margin);
 `;
 
 export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
     const auth = useAuth();
-    const matrixClient = auth
-        .getAuthenticationProvider('matrix')
-        .getMatrixClient();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
     const { t } = useTranslation('invitationModal');
     const [userFeedback, setUserFeedback] = useState('');
@@ -72,10 +70,7 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
             try {
                 const users = await matrixClient.searchUserDirectory({ term: a });
                 // always filter ourselves; we most likely do not want to invite ourselves to something, i guess?!
-                const usersWithoutMyself = _.filter(
-                    users.results,
-                    (user) => user.user_id !== matrixClient.getUserId(),
-                );
+                const usersWithoutMyself = _.filter(users.results, (user) => user.user_id !== matrixClient.getUserId());
                 // we only update the state if the returned array has entries, to be able to check if users a matrix users or not further down in the code (otherwise the array gets set to [] as soon as you selected an option from the datalist)
                 // const filterResults = users.results.filter(item => _.isEqual(item, option));
                 setSearchResults(usersWithoutMyself);
@@ -111,26 +106,18 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 &&
-      setUserFeedback(
-          <Trans t={t} i18nKey="invitedUser" count={successAmount}>
-              { { successAmount } } user was invited and needs to accept your
-          invitation
-          </Trans>,
-      );
-        await new Promise(() =>
-            setTimeout(() => {
-                clearInputs();
-                if (onSuccess && successAmount === selectedUsers.length) onSuccess();
-            }, 3000),
-        );
+        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
+        _.delay(() => {
+            clearInputs();
+            if (onSuccess && successAmount === selectedUsers.length) onSuccess();
+        }, 2500);
     };
 
     return (
         <ActionWrapper>
-            <h3>{ t('Invite users') }</h3>
-            { userFeedback && _.isEmpty(errorFeedback) ? (
-                <div>{ userFeedback }</div>
+            <h3>{t('Invite users')}</h3>
+            {userFeedback && _.isEmpty(errorFeedback) ? (
+                <div>{userFeedback}</div>
             ) : (
                 <>
                     <Datalist
@@ -141,14 +128,11 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
                     />
 
                     <FeedbackWrapper>
-                        { userFeedback && errorFeedback && userFeedback }
-                        { !_.isEmpty(errorFeedback) &&
-              errorFeedback.map((error) => (
-                  <ErrorMessage key={error}>{ error }</ErrorMessage>
-              )) }
+                        {userFeedback && errorFeedback && userFeedback}
+                        {!_.isEmpty(errorFeedback) && errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
                     </FeedbackWrapper>
                 </>
-            ) }
+            )}
         </ActionWrapper>
     );
 };
@@ -166,19 +150,16 @@ const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
     const { t } = useTranslation('invitationModal');
 
     return (
-        <TextButton
-            onClick={onClick}
-            title={t('Invite users to {{name}}', { name: name })}
-        >
-            { inviteUsersOpen ? (
+        <TextButton onClick={onClick} title={t('Invite users to {{name}}', { name: name })}>
+            {inviteUsersOpen ? (
                 <Icon>
-                    <UserUnfollowIcon />
+                    <RiUserUnfollowLine />
                 </Icon>
             ) : (
                 <Icon>
-                    <UserAddIcon />
+                    <RiUserAddLine />
                 </Icon>
-            ) }
+            )}
         </TextButton>
     );
 };

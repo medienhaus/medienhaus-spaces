@@ -2,10 +2,21 @@ import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../lib/Auth';
-import LoadingSpinner from './UI/LoadingSpinner';
+import { useAuth } from '@/lib/Auth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 
-const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContextRoomId, onSelect, onFetchedChildren, templatePlaceholderMapping, templatePrefixFilter, sortAlphabetically, showTopics, setSelectedContextName }) => {
+const ContextMultiLevelSelectSingleLevel = ({
+    parentSpaceRoomId,
+    selectedContextRoomId,
+    onSelect,
+    onFetchedChildren,
+    templatePlaceholderMapping,
+    templatePrefixFilter,
+    sortAlphabetically,
+    showTopics,
+    setSelectedContextName,
+}) => {
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = matrix.getMatrixClient();
@@ -26,12 +37,13 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
         // Fetch all child contexts
         const fetchChildContexts = async () => {
             let newChildContexts = [];
-            let roomHierarchy = await matrixClient.getRoomHierarchy(parentSpaceRoomId, undefined, 1)
-                .catch(/** @param {MatrixError} error */(error) => {
+            let roomHierarchy = await matrixClient.getRoomHierarchy(parentSpaceRoomId, undefined, 1).catch(
+                /** @param {MatrixError} error */ (error) => {
                     // We only want to ignore the "M_FORBIDDEN" error, which means that our user does not have access to a certain space.
                     // In every other case this is really an unexpected error and we want to throw.
                     if (error.errcode !== 'M_FORBIDDEN') throw error;
-                });
+                },
+            );
             if (!roomHierarchy) roomHierarchy = { rooms: [] };
 
             // return name of selected context
@@ -42,7 +54,7 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
 
             // Ensure we're looking at contexts, and not spaces/rooms of other types
             for (const room of roomHierarchy.rooms) {
-                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => { });
+                const metaEvent = await matrixClient.getStateEvent(room.room_id, 'dev.medienhaus.meta').catch(() => {});
                 // If this space/room does not have a meta event we do not care about it
                 if (!metaEvent) continue;
                 // If this is not a context, ignore this space child
@@ -79,7 +91,13 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
     }, [matrixClient, parentSpaceRoomId, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter]);
 
     if (isLoading) {
-        return <LoadingSpinner />;
+        return (
+            <Select key="loading" disabled>
+                <SelectTrigger>
+                    <SelectValue placeholder={<LoadingSpinnerInline />} />
+                </SelectTrigger>
+            </Select>
+        );
     }
 
     if (childContexts.length < 1) {
@@ -87,27 +105,30 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
     }
 
     return (
-        <select
-            value={selectedContextRoomId}
-            onChange={(e) => {
-                onSelect(parentSpaceRoomId, e.target.value);
+        <Select
+            defaultValue={selectedContextRoomId}
+            onValueChange={(value) => {
+                onSelect(parentSpaceRoomId, value);
             }}
         >
-            {
-                (templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template]
-                // If we have a template-specific placeholder, show that...
-                    ? <option disabled value="">{ templatePlaceholderMapping[parentSpaceMetaEvent.template] }</option>
-                // ... otherwise just show an empty placeholder
-                    : <option disabled value="">-- { t('select {{option}}', { option: parentSpaceMetaEvent?.type }) } --</option>
-                )
-            }
-            { Object.entries(childContexts).map(([key, room]) => (
-                <option key={key} value={room.room_id}>
-                    { room.name }
-                    { showTopics && room.topic && (` (${room.topic})`) }
-                </option>
-            )) }
-        </select>
+            <SelectTrigger>
+                {templatePlaceholderMapping && parentSpaceMetaEvent && templatePlaceholderMapping[parentSpaceMetaEvent.template] ? (
+                    // If we have a template-specific placeholder, show that...
+                    <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
+                ) : (
+                    // ... otherwise just show an empty placeholder
+                    <SelectValue placeholder={`-- ${t('select option')} --`} />
+                )}
+            </SelectTrigger>
+            <SelectContent>
+                {Object.entries(childContexts).map(([key, room]) => (
+                    <SelectItem key={key} value={room.room_id}>
+                        {room.name}
+                        {showTopics && room.topic && ` (${room.topic})`}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
     );
 };
 
@@ -125,36 +146,53 @@ const ContextMultiLevelSelectSingleLevel = ({ parentSpaceRoomId, selectedContext
  *
  * @return {React.ReactNode}
  */
-const ContextMultiLevelSelect = ({ activeContexts, onChange, showTopics, sortAlphabetically, templatePlaceholderMapping, templatePrefixFilter, setSelectedContextName }) => {
-    const onSelect = useCallback((parentContextRoomId, selectedChildContextRoomId) => {
-        const newActiveContexts = [...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1)];
+const ContextMultiLevelSelect = ({
+    activeContexts,
+    onChange,
+    showTopics,
+    sortAlphabetically,
+    templatePlaceholderMapping,
+    templatePrefixFilter,
+    setSelectedContextName,
+}) => {
+    const onSelect = useCallback(
+        (parentContextRoomId, selectedChildContextRoomId) => {
+            const newActiveContexts = [
+                ...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1),
+            ];
 
-        if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
-        onChange(newActiveContexts, undefined);
-    }, [activeContexts, onChange]);
+            if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
+            onChange(newActiveContexts, undefined);
+        },
+        [activeContexts, onChange],
+    );
 
-    const onFinishedFetchingChildren = useCallback((hasChildren) => {
-        if (onChange.length > 1) {
-            onChange(activeContexts, !hasChildren);
-        }
-    }, [activeContexts, onChange]);
+    const onFinishedFetchingChildren = useCallback(
+        (hasChildren) => {
+            if (onChange.length > 1) {
+                onChange(activeContexts, !hasChildren);
+            }
+        },
+        [activeContexts, onChange],
+    );
 
     return (
         <>
-            { activeContexts && activeContexts.map((contextRoomId, i) => (
-                <ContextMultiLevelSelectSingleLevel
-                    key={contextRoomId}
-                    onSelect={onSelect}
-                    onFetchedChildren={onFinishedFetchingChildren}
-                    parentSpaceRoomId={contextRoomId}
-                    selectedContextRoomId={activeContexts[i + 1] ?? ''}
-                    showTopics={showTopics}
-                    sortAlphabetically={sortAlphabetically}
-                    templatePlaceholderMapping={templatePlaceholderMapping}
-                    templatePrefixFilter={templatePrefixFilter}
-                    setSelectedContextName={setSelectedContextName}
-                />
-            )) }
+            {activeContexts &&
+                activeContexts.map((contextRoomId, i) => (
+                    <ContextMultiLevelSelectSingleLevel
+                        key={contextRoomId}
+                        onSelect={onSelect}
+                        onFetchedChildren={onFinishedFetchingChildren}
+                        parentSpaceRoomId={contextRoomId}
+                        selectedContextRoomId={activeContexts[i + 1] ?? ''}
+                        showTopics={showTopics}
+                        sortAlphabetically={sortAlphabetically}
+                        templatePlaceholderMapping={templatePlaceholderMapping}
+                        templatePrefixFilter={templatePrefixFilter}
+                        setSelectedContextName={setSelectedContextName}
+                    />
+                ))}
         </>
     );
 };

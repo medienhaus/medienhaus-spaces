@@ -17,7 +17,7 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
  * @returns {JSX.Element} - The rendered component.
  */
 
-const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
+const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const currentJoinRule = matrixClient.getRoom(roomId).getJoinRule();
     const [joinRule, setJoinRule] = useState(currentJoinRule);
@@ -35,8 +35,6 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
             });
         setChangingJoinRule(false);
     };
-
-    console.log(joinRule);
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
@@ -57,7 +55,7 @@ const JoinRuleChanger = ({ roomId, roomName, onCancel }) => {
             </select>
             <PreviousNextButtons
                 disableNext={joinRule === currentJoinRule || changingJoinRule}
-                onCancel={onCancel}>{ changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule') }
+                onCancel={onPreviousAction}>{ changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule') }
             </PreviousNextButtons>
             { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </Form>

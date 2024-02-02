@@ -27,4 +27,5 @@ const SingleLevel = ({ level, setObservedIdPath, setAddable }) => {
         </>
     );
 };
+
 export default SingleLevel;

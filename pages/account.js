@@ -5,63 +5,65 @@ import { Trans, useTranslation } from 'react-i18next';
 import { filter, map } from 'lodash';
 import { styled } from 'styled-components';
 
-import { useAuth } from '../lib/Auth';
-import ConfirmCancelButtons from '../components/UI/ConfirmCancelButtons';
-import DefaultLayout from '../components/layouts/default';
+import { useAuth } from '@/lib/Auth';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import DefaultLayout from '@/components/layouts/default';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
-  /* TODO: these kind of layout spacings probably need to
+    /* TODO: these kind of layout spacings probably need to
    * be refined across all pages once merged into main */
 
-  > * + * {
-    margin-top: calc(var(--margin) * var(--line-height) * 2);
-  }
-
-  > * > * + * {
-    margin-top: calc(var(--margin) * var(--line-height));
-  }
-
-  /* NOTE: selector for the email confirmation page form */
-  form {
     > * + * {
-      margin-top: var(--margin);
+        margin-top: calc(var(--margin) * var(--line-height) * 2);
     }
-  }
+
+    > * > * + * {
+        margin-top: calc(var(--margin) * var(--line-height));
+    }
+
+    /* NOTE: selector for the email confirmation page form */
+    form {
+        > * + * {
+            margin-top: var(--margin);
+        }
+    }
 `;
 
 const AvatarSection = styled.div`
-  display: grid;
-  grid-auto-flow: row;
-  grid-gap: var(--margin);
+    display: grid;
+    grid-auto-flow: row;
+    grid-gap: var(--margin);
 
-  @media (min-width: 40em) {
-    grid-template-columns: 1fr 1fr;
-  }
+    @media (min-width: 40em) {
+        grid-template-columns: 1fr 1fr;
+    }
 `;
 
 const Avatar = styled.img`
-  width: 50%;
+    width: 50%;
 
-  &.placeholder {
-    backdrop-filter: invert(100%);
-  }
+    &.placeholder {
+        backdrop-filter: invert(100%);
+    }
 
-  @media (min-width: 40em) {
-    width: 70%;
-  }
+    @media (min-width: 40em) {
+        width: 70%;
+    }
 `;
 
 const AvatarButtonContainer = styled.div`
-  display: grid;
-  grid-auto-flow: row;
-  grid-gap: var(--margin);
-  align-content: start;
+    display: grid;
+    grid-auto-flow: row;
+    grid-gap: var(--margin);
+    align-content: start;
 `;
 
 const ProfileSection = styled.form`
-  > * + * {
-    margin-top: var(--margin);
-  }
+    > * + * {
+        margin-top: var(--margin);
+    }
 `;
 
 export default function Account() {
@@ -129,10 +131,13 @@ export default function Account() {
         // Add new email if provided
         if (inputNewEmail) {
             const secretResponse = await matrixClient.generateClientSecret();
-            const emailToken = await matrixClient.requestAdd3pidEmailToken(inputNewEmail, secretResponse, 1, `${window.location}?secret=${secretResponse}`)
-                .catch(/** @param {MatrixError} error */(error) => {
-                    setFeedbackMessage(error.data.error);
-                });
+            const emailToken = await matrixClient
+                .requestAdd3pidEmailToken(inputNewEmail, secretResponse, 1, `${window.location}?secret=${secretResponse}`)
+                .catch(
+                    /** @param {MatrixError} error */ (error) => {
+                        setFeedbackMessage(error.data.error);
+                    },
+                );
 
             // Request is done, so we can set the state to false.
             setIsSavingChanges(false);
@@ -171,13 +176,16 @@ export default function Account() {
             },
         };
 
-        await matrixClient.addThreePidOnly(threePidConfirmObject)
+        await matrixClient
+            .addThreePidOnly(threePidConfirmObject)
             .then(() => {
                 router.push('/account');
             })
-            .catch(/** @param {MatrixError} error */(error) => {
-                setFeedbackMessage(error.data.error);
-            })
+            .catch(
+                /** @param {MatrixError} error */ (error) => {
+                    setFeedbackMessage(error.data.error);
+                },
+            )
             .finally(() => {
                 setIsSavingChanges(false);
             });
@@ -201,12 +209,24 @@ export default function Account() {
             <AccountSection>
                 <div>
                     <h2>/account</h2>
-                    <p>{ t('Please enter your account password to confirm adding the given email address:') }</p>
-                    <form onSubmit={(event) => { event.preventDefault(); confirmNewEmail(); }} onReset={() => setInputPassword('')}>
-                        <input type="password" placeholder={t('Password')} onChange={(event) => { setInputPassword(event.target.value);}} />
+                    <p>{t('Please enter your account password to confirm adding the given email address:')}</p>
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            confirmNewEmail();
+                        }}
+                        onReset={() => setInputPassword('')}
+                    >
+                        <Input
+                            type="password"
+                            placeholder={t('Password')}
+                            onChange={(event) => {
+                                setInputPassword(event.target.value);
+                            }}
+                        />
                         <ConfirmCancelButtons disabled={isSavingChanges} />
                     </form>
-                    { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+                    {feedbackMessage && <p>❗️ {feedbackMessage}</p>}
                 </div>
             </AccountSection>
         );
@@ -226,57 +246,80 @@ export default function Account() {
                 </p>
             </div>
             <div>
-                <h3>{ t('Avatar — Profile Image') }</h3>
+                <h3>{t('Avatar — Profile Image')}</h3>
                 <AvatarSection>
-                    { profileInfo.avatar_url ? (
-                    // Render the avatar if we have one
+                    {profileInfo.avatar_url ? (
+                        // Render the avatar if we have one
                         <Avatar src={matrixClient.mxcUrlToHttp(profileInfo.avatar_url, 500, 500, 'crop')} />
                     ) : (
-                    // Render an empty GIF if we don't have an avatar
-                        <Avatar className="placeholder" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-                    ) }
+                        // Render an empty GIF if we don't have an avatar
+                        <Avatar
+                            className="placeholder"
+                            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        />
+                    )}
                     <AvatarButtonContainer>
-                        <input type="file" onChange={uploadAvatar} ref={avatarFileUploadInput} style={{ display: 'none' }} accept="image/*" />
-                        <button type="button" disabled={isChangingAvatar} onClick={() => { avatarFileUploadInput.current.click(); }}>{ t('Browse') } …</button>
-                        { profileInfo.avatar_url && (
-                            <button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>{ t('Delete') }</button>
-                        ) }
+                        <Input
+                            type="file"
+                            onChange={uploadAvatar}
+                            ref={avatarFileUploadInput}
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                        />
+                        <Button
+                            type="button"
+                            disabled={isChangingAvatar}
+                            onClick={() => {
+                                avatarFileUploadInput.current.click();
+                            }}
+                        >
+                            {t('Browse')} …
+                        </Button>
+                        {profileInfo.avatar_url && (
+                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
+                                {t('Delete')}
+                            </Button>
+                        )}
                     </AvatarButtonContainer>
                 </AvatarSection>
             </div>
             <div>
-                <h3>{ t('Display Name & Email Addresses') }</h3>
-                <ProfileSection onSubmit={(e) => { e.preventDefault(); saveChanges(); }} onReset={handleCancel}>
-                    <input
+                <h3>{t('Display Name & Email Addresses')}</h3>
+                <ProfileSection
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        saveChanges();
+                    }}
+                    onReset={handleCancel}
+                >
+                    <Input
                         type="text"
                         value={inputDisplayname}
                         disabled={isSavingChanges}
                         placeholder={matrixClient.getUserId()}
-                        onChange={(event) => { setInputDisplayname(event.target.value); }}
+                        onChange={(event) => {
+                            setInputDisplayname(event.target.value);
+                        }}
                     />
-                    { (
-                        profileInfo.displayname !== inputDisplayname
-                    ) && (
+                    {profileInfo.displayname !== inputDisplayname && (
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
-                    ) }
-                    { emails.map((email, index) => (
-                        <input key={email} type="email" value={email} disabled />
-                    )) }
-                    { !!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
-                        <input
+                    )}
+                    {emails.map((email) => (
+                        <Input key={email} type="email" value={email} disabled />
+                    ))}
+                    {!!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
+                        <Input
                             type="email"
                             value={inputNewEmail}
                             disabled={isSavingChanges}
                             placeholder={`${t('add ' + (emails.length ? 'another' : 'your') + ' email address')}...`}
-                            onChange={(event) => { setInputNewEmail(event.target.value); }}
+                            onChange={(event) => {
+                                setInputNewEmail(event.target.value);
+                            }}
                         />
-                    ) }
-                    { (
-                        inputNewEmail
-                    ) && (
-                        <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
-                    ) }
-                    { feedbackMessage && (<p>❗️ { feedbackMessage }</p>) }
+                    )}
+                    {inputNewEmail && <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />}
+                    {feedbackMessage && <p>❗️ {feedbackMessage}</p>}
                 </ProfileSection>
             </div>
         </AccountSection>

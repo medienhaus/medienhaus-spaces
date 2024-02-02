@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import { useAuth } from '../../../lib/Auth';
 import TemplateSelect from './TemplateSelect';
@@ -10,7 +11,7 @@ import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
-const CreateContext = ({ currentId, onCancel, getSpaceChildren }) => {
+const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction }) => {
     const auth = useAuth();
     const matrix = useMatrix();
 
@@ -63,8 +64,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren }) => {
             'world_readable',
             'public_chat').catch(async (err) => {
             setCreateNewContextErrorMessage(err.message);
-            await new Promise(r => setTimeout(r, 3000));
-            setCreateNewContextErrorMessage('');
+            _.delay(() => setCreateNewContextErrorMessage(''), 2500);
 
             return;
         });
@@ -73,10 +73,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren }) => {
         if (createNewSubContext) {
             await auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
-                await new Promise(r => setTimeout(r, 3000));
-                setCreateNewContextErrorMessage('');
-
-                return;
+                _.delay(() => setCreateNewContextErrorMessage(''), 2500);
             },
             );
         }
@@ -103,7 +100,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren }) => {
             }
             <PreviousNextButtons
                 disableNext={isLoading || !name || !template}
-                onCancel={onCancel}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
+                onCancel={onPreviousAction}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
             </PreviousNextButtons>
         </Form>
 

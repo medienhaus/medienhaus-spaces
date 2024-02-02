@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon, ClipboardIcon } from '@remixicons/react/line';
+import { RiCheckLine, RiClipboardLine } from '@remixicon/react';
+import _ from 'lodash';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
@@ -12,21 +13,20 @@ const CopyToClipboard = ({ content, title }) => {
     const copyToClipboard = async () => {
         navigator.clipboard.writeText(content);
         setWasContentCopied(true);
-        await new Promise(r => setTimeout(r, 2000));
-        setWasContentCopied(false);
+        _.delay(() => setWasContentCopied(false), 2500);
     };
 
     return (
         <TextButton title={title || t('Copy link to clipboard')} onClick={copyToClipboard}>
-            { wasContentCopied ?
+            {wasContentCopied ? (
                 <Icon>
-                    <CheckIcon />
+                    <RiCheckLine />
                 </Icon>
-                :
+            ) : (
                 <Icon>
-                    <ClipboardIcon />
+                    <RiClipboardLine />
                 </Icon>
-            }
+            )}
         </TextButton>
     );
 };
