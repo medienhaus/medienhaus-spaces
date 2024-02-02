@@ -10,7 +10,6 @@ import ErrorMessage from '../../components/UI/ErrorMessage';
 import DefaultLayout from '../../components/layouts/default';
 import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
 import { ServiceTable } from '../../components/UI/ServiceTable';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import logger from '../../lib/Logging';
