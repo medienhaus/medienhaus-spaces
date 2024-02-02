@@ -9,6 +9,7 @@ import TextButton from './TextButton';
 import DefaultLayout from '../layouts/default';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
+import AddFavourite from './favourites/AddFavourite';
 
 const ToggleButton = styled.button`
   /* unset globally defined button styles; set height to line-height */
@@ -40,6 +41,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
                         setIsInviteUsersOpen(prevState => !prevState);
                     }}
                     inviteUsersOpen={isInviteUsersOpen} /> }
+                <AddFavourite roomId={roomId} />
                 { myPowerLevel && (
                     manageContextActionToggle ? (
                         <ToggleButton onClick={() => {
