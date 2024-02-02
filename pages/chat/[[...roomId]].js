@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine } from '@remixicon/react';
+import { RiChatNewLine, RiSidebarFoldLine, RiDeleteBinLine, RiPhoneLine, RiVideoChatLine } from '@remixicon/react';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
 
 import DefaultLayout from '@/components/layouts/default';
 import TextButton from '@/components/UI/TextButton';
@@ -22,6 +24,9 @@ export default function Chat() {
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix();
+
+    const [isLeavingRoom, setIsLeavingRoom] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -116,6 +121,10 @@ export default function Chat() {
                 .mx_HomePage_default_buttons { display: initial !important }
                 /* Don't display Element welcome message */
                 .mx_HomePage_default_wrapper > div:first-child { display: none }
+
+
+                /* Hide the header of the chat   */
+                header.mx_RoomHeader { display: none; }
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
@@ -123,10 +132,22 @@ export default function Chat() {
 
         iframeReference.addEventListener('load', injectCss);
 
+
         return () => {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
+
+
+    /**
+    * Leave the matrix room
+    */
+    const leaveMatrixRoom = async () => {
+        setIsLeavingRoom(true);
+        await matrix.leaveRoom(roomId);
+        router.push('/chat/');
+        setIsLeavingRoom(false);
+    };
 
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
@@ -200,14 +221,83 @@ export default function Chat() {
                     </ServiceTable>
                 </details>
                 <br />
+                <TextButton onClick={() => {
+                        document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(3) ").click()
+                        }}>
+                            <Icon>
+                                <RiSidebarFoldLine />
+                            </Icon>
+                        </TextButton>
             </DefaultLayout.Sidebar>
             {roomId && (
                 <DefaultLayout.IframeWrapper>
+                    <DefaultLayout.IframeHeader>
+                        <h2>{matrix.rooms.get(roomId).name}</h2>
+                        <DefaultLayout.IframeHeaderButtonWrapper>
+                            <InviteUserToMatrixRoom.Button
+                                name={matrix.rooms.get(roomId).name}
+                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                                inviteUsersOpen={isInviteUsersOpen}
+                            />
+                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={'chat/'+roomId} />
+                            <TextButton title={t('leave')} onClick={leaveMatrixRoom}>
+                                {isLeavingRoom ? (
+                                    <LoadingSpinnerInline />
+                                ) : (
+                                    <Icon>
+                                        <RiDeleteBinLine />
+                                    </Icon>
+                                )}
+                            </TextButton>
+                            <TextButton title={t('call')} onClick={() =>
+                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(1) ").click()
+                                    }>
+                                {isLeavingRoom ? (
+                                    <LoadingSpinnerInline />
+                                ) : (
+                                    <Icon>
+                                        <RiPhoneLine />
+                                    </Icon>
+                                )}
+                            </TextButton>
+                            <TextButton title={t('video')} onClick={ () =>
+                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(2) ").click()
+                                }>
+                                {isLeavingRoom ? (
+                                    <LoadingSpinnerInline />
+                                ) : (
+                                    <Icon>
+                                        <RiVideoChatLine />
+                                    </Icon>
+                                )}
+                            </TextButton>
+                            <TextButton title={t('threads')} onClick={ () => 
+                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(3) ").click()
+                                }>
+                                {isLeavingRoom ? (
+                                    <LoadingSpinnerInline />
+                                ) : (
+                                    <Icon>
+                                        <RiSidebarFoldLine />
+                                    </Icon>
+                                )}
+                            </TextButton>
+                        </DefaultLayout.IframeHeaderButtonWrapper>
+                    </DefaultLayout.IframeHeader>
+
+                    {isInviteUsersOpen ? (
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        />
+                    ) : (
                     <iframe
                         ref={iframe}
                         title="/chat"
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
+                    )}
                 </DefaultLayout.IframeWrapper>
             )}
         </>
