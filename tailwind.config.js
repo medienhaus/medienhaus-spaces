@@ -1,18 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     darkMode: ['media'],
-    content: [
-        './pages/**/*.{js,jsx}',
-        './components/**/*.{js,jsx}',
-        './app/**/*.{js,jsx}',
-        './src/**/*.{js,jsx}',
-    ],
+    content: ['./pages/**/*.{js,jsx}', './components/**/*.{js,jsx}', './app/**/*.{js,jsx}', './src/**/*.{js,jsx}'],
     prefix: '',
     theme: {
         fontSize: {
-            sm: '1rem',
-            base: '1rem',
-            xl: '1rem',
+            'sm': '1rem',
+            'base': '1rem',
+            'xl': '1rem',
             '2xl': '1rem',
             '3xl': '1rem',
             '4xl': '1rem',
@@ -38,8 +33,8 @@ module.exports = {
                     foreground: 'var(--color-foreground)',
                 },
                 muted: {
-                    DEFAULT: 'var(--muted)',
-                    foreground: 'var(--muted-foreground)',
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
                 },
                 accent: {
                     DEFAULT: 'hsl(var(--accent))',
