@@ -138,80 +138,83 @@ const ChatIframeView = ({ src, roomId }) => {
         setIsLeavingRoom(false);
     };
 
+    console.log(roomId);
+
     return (
         <>
-            <DefaultLayout.IframeHeader>
-                <h2>{matrix.rooms.get(roomId).name}</h2>
-                <DefaultLayout.IframeHeaderButtonWrapper>
-                    <InviteUserToMatrixRoom.Button
-                        name={matrix.rooms.get(roomId).name}
-                        onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                        inviteUsersOpen={isInviteUsersOpen}
-                    />
-                    <CopyToClipboard title={t('Copy pad link to clipboard')} content={'chat/' + roomId} />
-                    <TextButton title={t('leave')} onClick={leaveMatrixRoom}>
-                        {isLeavingRoom ? (
-                            <LoadingSpinnerInline />
-                        ) : (
-                            <Icon>
-                                <RiDeleteBinLine />
-                            </Icon>
-                        )}
-                    </TextButton>
-                    <TextButton
-                        title={t('Call')}
-                        onClick={() =>
-                            document
-                                .querySelector('iframe')
-                                .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(1) ')
-                                .click()
-                        }
-                    >
-                        {isLeavingRoom ? (
-                            <LoadingSpinnerInline />
-                        ) : (
-                            <Icon>
-                                <RiPhoneLine />
-                            </Icon>
-                        )}
-                    </TextButton>
-                    <TextButton
-                        title={t('Video Call')}
-                        onClick={() =>
-                            document
-                                .querySelector('iframe')
-                                .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(2) ')
-                                .click()
-                        }
-                    >
-                        {isLeavingRoom ? (
-                            <LoadingSpinnerInline />
-                        ) : (
-                            <Icon>
-                                <RiVideoChatLine />
-                            </Icon>
-                        )}
-                    </TextButton>
-                    <TextButton
-                        title={t('Threads')}
-                        onClick={() =>
-                            document
-                                .querySelector('iframe')
-                                .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
-                                .click()
-                        }
-                    >
-                        {isLeavingRoom ? (
-                            <LoadingSpinnerInline />
-                        ) : (
-                            <Icon>
-                                <RiSidebarFoldLine />
-                            </Icon>
-                        )}
-                    </TextButton>
-                </DefaultLayout.IframeHeaderButtonWrapper>
-            </DefaultLayout.IframeHeader>
-
+            {roomId !== 'new' && roomId !== 'home' && (
+                <DefaultLayout.IframeHeader>
+                    <h2>{matrix.rooms.get(roomId).name}</h2>
+                    <DefaultLayout.IframeHeaderButtonWrapper>
+                        <InviteUserToMatrixRoom.Button
+                            name={matrix.rooms.get(roomId).name}
+                            onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                            inviteUsersOpen={isInviteUsersOpen}
+                        />
+                        <CopyToClipboard title={t('Copy pad link to clipboard')} content={'chat/' + roomId} />
+                        <TextButton title={t('leave')} onClick={leaveMatrixRoom}>
+                            {isLeavingRoom ? (
+                                <LoadingSpinnerInline />
+                            ) : (
+                                <Icon>
+                                    <RiDeleteBinLine />
+                                </Icon>
+                            )}
+                        </TextButton>
+                        <TextButton
+                            title={t('Call')}
+                            onClick={() =>
+                                document
+                                    .querySelector('iframe')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(1) ')
+                                    .click()
+                            }
+                        >
+                            {isLeavingRoom ? (
+                                <LoadingSpinnerInline />
+                            ) : (
+                                <Icon>
+                                    <RiPhoneLine />
+                                </Icon>
+                            )}
+                        </TextButton>
+                        <TextButton
+                            title={t('Video Call')}
+                            onClick={() =>
+                                document
+                                    .querySelector('iframe')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(2) ')
+                                    .click()
+                            }
+                        >
+                            {isLeavingRoom ? (
+                                <LoadingSpinnerInline />
+                            ) : (
+                                <Icon>
+                                    <RiVideoChatLine />
+                                </Icon>
+                            )}
+                        </TextButton>
+                        <TextButton
+                            title={t('Threads')}
+                            onClick={() =>
+                                document
+                                    .querySelector('iframe')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
+                                    .click()
+                            }
+                        >
+                            {isLeavingRoom ? (
+                                <LoadingSpinnerInline />
+                            ) : (
+                                <Icon>
+                                    <RiSidebarFoldLine />
+                                </Icon>
+                            )}
+                        </TextButton>
+                    </DefaultLayout.IframeHeaderButtonWrapper>
+                </DefaultLayout.IframeHeader>
+            )}
             {isInviteUsersOpen ? (
                 <InviteUserToMatrixRoom
                     roomId={roomId}
