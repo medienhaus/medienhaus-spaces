@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { RiCloseLine, RiMenuAddLine } from '@remixicon/react';
 import { styled } from 'styled-components';
+import Error from 'next/error';
 
 import Icon from '@/components/UI/Icon';
 import DefaultLayout from '@/components/layouts/default';
@@ -20,6 +21,7 @@ import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
 import ServiceIframeHeader from '@/components/UI/ServiceIframeHeader';
 import CreateNewPad from './actions/CreateNewPad';
+import ErrorMessage from '@/components/UI/ErrorMessage';
 
 const Header = styled.header`
     display: grid;
