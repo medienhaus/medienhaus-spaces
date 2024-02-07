@@ -1,5 +1,5 @@
 'use client';
-import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
@@ -219,6 +219,7 @@ export default function Draw() {
                             roomId={roomId}
                             roomName={matrix.rooms.get(roomId).name}
                             onSuccess={() => setIsInviteUsersOpen(false)}
+                            powerLevel={50}
                         />
                     ) : (
                         tldrawMatrix &&

@@ -18,6 +18,7 @@ import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { styled } from 'styled-components';
 import { RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
+import { MatrixEvent } from 'matrix-js-sdk';
 
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
@@ -25,6 +26,7 @@ import { breakpoints } from '../../_breakpoints';
 import TextButton from '../TextButton';
 import Icon from '../Icon';
 import { useAuth } from '@/lib/Auth';
+import logging from '@/lib/Logging';
 
 const ActionWrapper = styled.section`
     display: grid;
@@ -47,7 +49,7 @@ const FeedbackWrapper = styled.div`
     margin-top: var(--margin);
 `;
 
-export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
+export const InviteUserToMatrixRoom = ({ roomId, onSuccess, powerLevel }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
@@ -98,6 +100,29 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
             });
         }
 
+        // if a power level was parsed we promote the user to the given power level
+        const setPower = async (userId, roomId, level) => {
+            logging.log('changing power level for ' + userId);
+            const currentStateEvent = await matrixClient
+                .getStateEvent(roomId, 'm.room.power_levels', '')
+                .catch((err) => logging.error(err));
+            const newStateEvent = new MatrixEvent({
+                type: 'm.room.power_levels',
+                content: currentStateEvent,
+            });
+            await matrixClient.setPowerLevel(roomId, userId, level, newStateEvent).catch((err) => logging.error(err));
+        };
+
+        if (powerLevel) {
+            for (const user of selectedUsers) {
+                try {
+                    await setPower(user.user_id, roomId, powerLevel);
+                } catch (error) {
+                    errors.push(error.data.error);
+                }
+            }
+        }
+
         if (errors.length !== 0) {
             // if something went wrong we display the errors and clear all inputs
             setErrorFeedback(errors);
@@ -106,7 +131,12 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
+        successAmount > 0 &&
+            setUserFeedback(
+                <Trans t={t} i18nKey="invitedUser" count={successAmount}>
+                    {{ successAmount }} user was invited and needs to accept your invitation
+                </Trans>,
+            );
         _.delay(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
