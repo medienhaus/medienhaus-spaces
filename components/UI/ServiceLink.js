@@ -43,7 +43,7 @@ const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordPr
             <ServiceTable.Cell>
                 <Link ref={ref} href={href} className="flex items-center justify-between">
                     {thumbnail && (
-                        <Avatar className="mr-3">
+                        <Avatar className="mr-3 h-8 w-8">
                             <AvatarImage src={thumbnail} />
                             <AvatarFallback />
                         </Avatar>
