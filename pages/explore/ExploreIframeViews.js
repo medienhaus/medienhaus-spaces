@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ChatIframeView from '../chat/ChatIframeView';
 import ProjectView from './ProjectView';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
 
 const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle }) => {
@@ -18,16 +18,13 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
         let cancelled = false;
 
         const fetchRoomName = async () => {
-            const nameEvent = await matrixClient.getStateEvent(
-                iframeRoomId,
-                'm.room.name',
-            ).catch(() => {});
+            const nameEvent = await matrixClient.getStateEvent(iframeRoomId, 'm.room.name').catch(() => {});
             setTitle(nameEvent?.name);
         };
 
         if (!cancelled) fetchRoomName();
 
-        return () => cancelled = true;
+        return () => (cancelled = true);
     }, [iframeRoomId, matrixClient, parsedTitle]);
 
     const CurrentView = () => {
@@ -41,8 +38,9 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                             content={matrix.roomContents.get(iframeRoomId)?.body}
                             title={title}
                             removeLink={() => console.log('removing pad from parent')}
-                            removingLink={false} />
-                        <iframe title="studentproject" src={matrix.roomContents.get(iframeRoomId)?.body} />
+                            removingLink={false}
+                        />
+                        <iframe title="etherpad" src={matrix.roomContents.get(iframeRoomId)?.body} />
                     </>
                 );
             case 'spacedeck':
@@ -52,17 +50,13 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                             content={matrix.roomContents.get(iframeRoomId)?.body}
                             title={title}
                             removeLink={() => console.log('removing sketch from parent')}
-                            removingLink={false} />
+                            removingLink={false}
+                        />
                         <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
                     </>
                 );
             default:
-                return (
-
-                    <ChatIframeView title="chat"
-                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />
-
-                );
+                return <ChatIframeView title="chat" src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />;
         }
     };
 
