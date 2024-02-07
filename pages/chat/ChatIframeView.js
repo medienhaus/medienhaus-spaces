@@ -168,7 +168,7 @@ const ChatIframeView = ({ src, roomId }) => {
                             onClick={() =>
                                 document
                                     .querySelector('iframe')
-                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(1) ')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(1) ')
                                     .click()
                             }
                         >
@@ -185,7 +185,7 @@ const ChatIframeView = ({ src, roomId }) => {
                             onClick={() =>
                                 document
                                     .querySelector('iframe')
-                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(2) ')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(2) ')
                                     .click()
                             }
                         >
