@@ -95,6 +95,7 @@ export default function Chat() {
             {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <ChatIframeView
+                        roomId={roomId}
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
