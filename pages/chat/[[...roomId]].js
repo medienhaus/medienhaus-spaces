@@ -3,16 +3,17 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine, RiSidebarFoldLine, RiDeleteBinLine, RiPhoneLine, RiVideoChatLine } from '@remixicon/react';
+import { RiChatNewLine, RiDeleteBinLine, RiPhoneLine, RiSidebarFoldLine, RiVideoChatLine } from '@remixicon/react';
+
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
-
 import DefaultLayout from '@/components/layouts/default';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import ServiceLink from '@/components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 
 const sortRooms = function (room) {
     return [room.notificationCount === 0, room.name];
@@ -132,16 +133,14 @@ export default function Chat() {
 
         iframeReference.addEventListener('load', injectCss);
 
-
         return () => {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
 
-
     /**
-    * Leave the matrix room
-    */
+     * Leave the matrix room
+     */
     const leaveMatrixRoom = async () => {
         setIsLeavingRoom(true);
         await matrix.leaveRoom(roomId);
@@ -221,13 +220,18 @@ export default function Chat() {
                     </ServiceTable>
                 </details>
                 <br />
-                <TextButton onClick={() => {
-                        document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(3) ").click()
-                        }}>
-                            <Icon>
-                                <RiSidebarFoldLine />
-                            </Icon>
-                        </TextButton>
+                <TextButton
+                    onClick={() => {
+                        document
+                            .querySelector('iframe')
+                            .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
+                            .click();
+                    }}
+                >
+                    <Icon>
+                        <RiSidebarFoldLine />
+                    </Icon>
+                </TextButton>
             </DefaultLayout.Sidebar>
             {roomId && (
                 <DefaultLayout.IframeWrapper>
@@ -239,7 +243,7 @@ export default function Chat() {
                                 onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 inviteUsersOpen={isInviteUsersOpen}
                             />
-                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={'chat/'+roomId} />
+                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={'chat/' + roomId} />
                             <TextButton title={t('leave')} onClick={leaveMatrixRoom}>
                                 {isLeavingRoom ? (
                                     <LoadingSpinnerInline />
@@ -249,9 +253,15 @@ export default function Chat() {
                                     </Icon>
                                 )}
                             </TextButton>
-                            <TextButton title={t('call')} onClick={() =>
-                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(1) ").click()
-                                    }>
+                            <TextButton
+                                title={t('call')}
+                                onClick={() =>
+                                    document
+                                        .querySelector('iframe')
+                                        .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(1) ')
+                                        .click()
+                                }
+                            >
                                 {isLeavingRoom ? (
                                     <LoadingSpinnerInline />
                                 ) : (
@@ -260,9 +270,15 @@ export default function Chat() {
                                     </Icon>
                                 )}
                             </TextButton>
-                            <TextButton title={t('video')} onClick={ () =>
-                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(2) ").click()
-                                }>
+                            <TextButton
+                                title={t('video')}
+                                onClick={() =>
+                                    document
+                                        .querySelector('iframe')
+                                        .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(2) ')
+                                        .click()
+                                }
+                            >
                                 {isLeavingRoom ? (
                                     <LoadingSpinnerInline />
                                 ) : (
@@ -271,9 +287,15 @@ export default function Chat() {
                                     </Icon>
                                 )}
                             </TextButton>
-                            <TextButton title={t('threads')} onClick={ () => 
-                                    document.querySelector('iframe').contentWindow.document.querySelector("header.mx_RoomHeader > nav button:nth-child(3) ").click()
-                                }>
+                            <TextButton
+                                title={t('threads')}
+                                onClick={() =>
+                                    document
+                                        .querySelector('iframe')
+                                        .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
+                                        .click()
+                                }
+                            >
                                 {isLeavingRoom ? (
                                     <LoadingSpinnerInline />
                                 ) : (
@@ -292,11 +314,11 @@ export default function Chat() {
                             onSuccess={() => setIsInviteUsersOpen(false)}
                         />
                     ) : (
-                    <iframe
-                        ref={iframe}
-                        title="/chat"
-                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
-                    />
+                        <iframe
+                            ref={iframe}
+                            title="/chat"
+                            src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
+                        />
                     )}
                 </DefaultLayout.IframeWrapper>
             )}
