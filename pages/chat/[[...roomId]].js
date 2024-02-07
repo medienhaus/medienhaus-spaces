@@ -219,19 +219,6 @@ export default function Chat() {
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
-                <br />
-                <TextButton
-                    onClick={() => {
-                        document
-                            .querySelector('iframe')
-                            .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
-                            .click();
-                    }}
-                >
-                    <Icon>
-                        <RiSidebarFoldLine />
-                    </Icon>
-                </TextButton>
             </DefaultLayout.Sidebar>
             {roomId && (
                 <DefaultLayout.IframeWrapper>
