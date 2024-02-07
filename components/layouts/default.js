@@ -52,19 +52,32 @@ const Sidebar = styled.div`
     }
 `;
 
-const IframeWrapper = styled.div`
+const Wrapper = styled.div`
     display: flex;
     flex: 1 0;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100%;
+  height: 100%;
 
-    iframe {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        border: none;
+    > div {
+    padding: 0 var(--margin);
+
+    // On bigger viewports ...
+    @media ${breakpoints.tabletAndAbove} {
+      padding: 0 calc(var(--margin) * 1.5);
+    }
+  }
+
+`;
+
+const IframeWrapper = styled(Wrapper)`
+  padding: 0;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: none;
 
         @media ${breakpoints.phoneOnly} {
             border-top: 1px solid var(--color-foreground-alpha);
@@ -115,6 +128,7 @@ const DefaultLayout = {
     Layout: memo(Layout),
     LameColumn: memo(LameColumn), // in search of a better name
     Sidebar: memo(Sidebar),
+    Wrapper: memo(Wrapper),
     IframeWrapper: memo(IframeWrapper),
     IframeHeader: memo(IframeHeader),
     IframeHeaderButtonWrapper: memo(IframeHeaderButtonWrapper),
