@@ -7,30 +7,10 @@ const PreviousNextButtonsWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: var(--margin);
+    width: 55ch;
 
     &:not(:first-child) {
         margin-top: var(--margin);
-    }
-`;
-
-const NextButton = styled.button`
-    color: var(--color-background);
-    background-color: ${(props) => (props.warning ? 'var(--color-notification)' : 'var(--color-foreground)')};
-    border-color: ${(props) => props.warning && 'var(--color-notification)'};
-
-    &:disabled {
-        color: var(--color-background);
-        background-color: var(--color-disabled);
-    }
-`;
-
-const PreviousButton = styled.button`
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-
-    &:disabled {
-        color: var(--color-disabled);
-        background-color: var(--color-background);
     }
 `;
 
