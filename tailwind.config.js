@@ -7,25 +7,24 @@ module.exports = {
         './app/**/*.{js,jsx}',
         './src/**/*.{js,jsx}',
     ],
-    corePlugins: {
-        preflight: false,
-    },
-    prefix: 'tw-',
+    prefix: '',
     theme: {
-        container: {
-            center: true,
-            padding: '2rem',
-            screens: {
-                '2xl': '1400px',
-            },
+        fontSize: {
+            sm: '1rem',
+            base: '1rem',
+            xl: '1rem',
+            '2xl': '1rem',
+            '3xl': '1rem',
+            '4xl': '1rem',
+            '5xl': '1rem',
         },
         extend: {
             colors: {
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
-                background: 'var(--color-background)',
-                foreground: 'var(--color-foreground)',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
                 primary: {
                     DEFAULT: 'hsl(var(--primary))',
                     foreground: 'hsl(var(--primary-foreground))',
@@ -57,8 +56,8 @@ module.exports = {
             },
             borderRadius: {
                 lg: 'var(--border-radius)',
-                md: 'calc(var(--border-radius) - 2px)',
-                sm: 'calc(var(--border-radius) - 4px)',
+                md: 'var(--border-radius)',
+                sm: 'var(--border-radius)',
             },
             keyframes: {
                 'accordion-down': {

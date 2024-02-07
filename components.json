@@ -5,13 +5,14 @@
   "tsx": false,
   "tailwind": {
     "config": "tailwind.config.js",
-    "css": "assets/shadecn.css",
-    "baseColor": "slate",
+    "css": "assets/_globalCss.css",
+    "baseColor": "zinc",
     "cssVariables": true,
-    "prefix": "tw-"
+    "prefix": ""
   },
   "aliases": {
     "components": "@/components",
+    "ui": "@/components/UI/shadcn",
     "utils": "@/lib/utils"
   }
 }
