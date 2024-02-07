@@ -20,6 +20,8 @@ const ChatIframeView = ({ src, roomId }) => {
     const matrix = useMatrix();
     const router = useRouter();
 
+    const name = matrix.rooms.get(roomId)?.name || matrix.directMessages.get(roomId)?.name;
+
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
         const iframeReference = iframe.current;
@@ -144,10 +146,10 @@ const ChatIframeView = ({ src, roomId }) => {
         <>
             {roomId !== 'new' && roomId !== 'home' && (
                 <DefaultLayout.IframeHeader>
-                    <h2>{matrix.rooms.get(roomId).name}</h2>
+                    <h2>{name}</h2>
                     <DefaultLayout.IframeHeaderButtonWrapper>
                         <InviteUserToMatrixRoom.Button
-                            name={matrix.rooms.get(roomId).name}
+                            name={name}
                             onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
                             inviteUsersOpen={isInviteUsersOpen}
                         />
@@ -200,7 +202,7 @@ const ChatIframeView = ({ src, roomId }) => {
                             onClick={() =>
                                 document
                                     .querySelector('iframe')
-                                    .contentWindow.document.querySelector('header.mx_RoomHeader > nav button:nth-child(3) ')
+                                    .contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(3) ')
                                     .click()
                             }
                         >
@@ -216,11 +218,7 @@ const ChatIframeView = ({ src, roomId }) => {
                 </DefaultLayout.IframeHeader>
             )}
             {isInviteUsersOpen ? (
-                <InviteUserToMatrixRoom
-                    roomId={roomId}
-                    roomName={matrix.rooms.get(roomId).name}
-                    onSuccess={() => setIsInviteUsersOpen(false)}
-                />
+                <InviteUserToMatrixRoom roomId={roomId} roomName={name} onSuccess={() => setIsInviteUsersOpen(false)} />
             ) : (
                 <iframe ref={iframe} title="/chat" src={src} />
             )}
