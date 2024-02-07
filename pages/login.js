@@ -53,7 +53,7 @@ export default function Login() {
     const usernameInput = useRef();
 
     // If we are logged in... what do we want here? Let's forward the user to the dashboard!
-    if (auth.user) router.push('/dashboard');
+    if (auth.user) router.push('/explore');
 
     const onSubmitLoginForm = async () => {
         setIsTryingToSignIn(true);
