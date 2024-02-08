@@ -29,6 +29,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY . .
 
+EXPOSE 3000
 # To correctly forward SIGINT exit signals we're calling the full `node` path instead of `npm run dev`;
 # Arguments from https://github.com/vercel/next.js/blob/d21025cc3a50e2ff8a7137d5d5c94576218f01e7/package.json#L50
 CMD ["node", "--trace-deprecation", "--enable-source-maps", "node_modules/.bin/next"]
@@ -48,4 +49,5 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY . .
 
+EXPOSE 3000
 ENTRYPOINT ["/app/Docker.prod.entrypoint.sh"]
