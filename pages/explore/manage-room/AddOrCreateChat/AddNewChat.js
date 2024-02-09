@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 
-import { useMatrix } from '../../../../lib/Matrix';
+import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
 import Form from '../../../../components/UI/Form';
 import presets from '../../presets';
 import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 export default function AddNewChat({ handleCancel, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
@@ -26,15 +28,13 @@ export default function AddNewChat({ handleCancel, currentId, onSuccess, parentN
         setErrorMessage('');
 
         // create new room
-        const roomId = await matrix.createRoom(roomName, false, roomTopic, selectedJoinRule, null, null, currentId)
-            .catch(error => {
-                setErrorMessage((error.data?.error || t('something went wrong, please try again')));
-            });
+        const roomId = await matrix.createRoom(roomName, false, roomTopic, selectedJoinRule, null, null, currentId).catch((error) => {
+            setErrorMessage(error.data?.error || t('something went wrong, please try again'));
+        });
         // add created room to parent
-        const addChildToParent= await matrix.addSpaceChild(currentId, roomId)
-            .catch((error) => [
-                setErrorMessage((error.data?.error || t('something went wrong, please try again'))),
-            ]);
+        const addChildToParent = await matrix
+            .addSpaceChild(currentId, roomId)
+            .catch((error) => [setErrorMessage(error.data?.error || t('something went wrong, please try again'))]);
 
         if (addChildToParent.event_id) {
             logger.log('Adding new room to parentId:', currentId);
@@ -52,19 +52,29 @@ export default function AddNewChat({ handleCancel, currentId, onSuccess, parentN
         setIsLoading(false);
     };
 
-    return <Form onSubmit={handleNewChat}>
-        <input type="text" placeholder={t('name of the room')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
-        <input type="text" placeholder={t('topic of the room')} value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)} />
-        <select value={selectedJoinRule} onChange={(e) => setSelectedJoinRule(e.target.value)}>
-            { presets.allowedJoinRules.map((joinRule => {
-                return <option key={joinRule.name}
-                    value={joinRule.name}>{ joinRule.label } -- <em>{ joinRule.description }</em></option>;
-            })) }
-        </select>
-        { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        { userFeedback && <p>{ userFeedback }</p> }
-        <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={handleCancel}>
-            { isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
-        </PreviousNextButtons>
-    </Form>;
+    return (
+        <Form onSubmit={handleNewChat}>
+            <Input type="text" placeholder={t('name of the room')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
+            <Input type="text" placeholder={t('topic of the room')} value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)} />
+            <Select defaultValue={selectedJoinRule} onValueChange={setSelectedJoinRule}>
+                <SelectTrigger>
+                    <SelectValue placeholder={t('join rule')} />
+                </SelectTrigger>
+                <SelectContent>
+                    {presets.allowedJoinRules.map((joinRule) => {
+                        return (
+                            <SelectItem key={joinRule.name} value={joinRule.name}>
+                                {joinRule.label} -- <em>{joinRule.description}</em>
+                            </SelectItem>
+                        );
+                    })}
+                </SelectContent>
+            </Select>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {userFeedback && <p>{userFeedback}</p>}
+            <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={handleCancel}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('add')}
+            </PreviousNextButtons>
+        </Form>
+    );
 }

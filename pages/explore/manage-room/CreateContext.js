@@ -10,6 +10,7 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { Input } from '@/components/UI/shadcn/Input';
 
 const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction }) => {
     const auth = useAuth();
@@ -40,42 +41,41 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
 
             return;
         }
-        // topic is optional. Advanced options as well if not selected will fall back to default
-        // if (topic?.length > 400) {
-        //     setCreateNewContextErrorMessage('topic too long (max 400chars)');
-
-        //     return;
-        // }
 
         if (!powerLevels) {
             setPowerLevels('default');
         }
 
         // create the new context space
-        const createNewSubContext = await matrix.createRoom(
-            name,
-            true,
-            topic,
-            'public',
-            'context',
-            template,
-            getConfig().publicRuntimeConfig.name,
-            'public',
-            'world_readable',
-            'public_chat').catch(async (err) => {
-            setCreateNewContextErrorMessage(err.message);
-            _.delay(() => setCreateNewContextErrorMessage(''), 2500);
+        const createNewSubContext = await matrix
+            .createRoom(
+                name,
+                true,
+                topic,
+                'public',
+                'context',
+                template,
+                getConfig().publicRuntimeConfig.name,
+                'public',
+                'world_readable',
+                'public_chat',
+            )
+            .catch(async (err) => {
+                setCreateNewContextErrorMessage(err.message);
+                _.delay(() => setCreateNewContextErrorMessage(''), 2500);
 
-            return;
-        });
+                return;
+            });
 
         // then add our new context to the parent.
         if (createNewSubContext) {
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(currentId, createNewSubContext).catch(async (err) => {
-                setCreateNewContextErrorMessage(err.message);
-                _.delay(() => setCreateNewContextErrorMessage(''), 2500);
-            },
-            );
+            await auth
+                .getAuthenticationProvider('matrix')
+                .addSpaceChild(currentId, createNewSubContext)
+                .catch(async (err) => {
+                    setCreateNewContextErrorMessage(err.message);
+                    _.delay(() => setCreateNewContextErrorMessage(''), 2500);
+                });
         }
 
         await getSpaceChildren(null, currentId);
@@ -88,22 +88,31 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
 
     return (
         <Form onSubmit={createContext}>
-            <input type="text" onChange={(e) => {setName(e?.target?.value);}} value={name} required placeholder="name" />
-            <input type="text" onChange={(e) => {setTopic(e?.target?.value);}} value={topic} placeholder="topic (optional)" />
-            <TemplateSelect
-                currentId={currentId}
-                currentTemplate={template}
-                setTemplate={setTemplate}
+            <Input
+                type="text"
+                onChange={(e) => {
+                    setName(e?.target?.value);
+                }}
+                value={name}
+                required
+                placeholder="name"
             />
-            { (createNewContextErrorMessage) &&
-                <ErrorMessage>{ createNewContextErrorMessage }</ErrorMessage> //error message container
+            <Input
+                type="text"
+                onChange={(e) => {
+                    setTopic(e?.target?.value);
+                }}
+                value={topic}
+                placeholder="topic (optional)"
+            />
+            <TemplateSelect currentId={currentId} currentTemplate={template} setTemplate={setTemplate} />
+            {
+                createNewContextErrorMessage && <ErrorMessage>{createNewContextErrorMessage}</ErrorMessage> //error message container
             }
-            <PreviousNextButtons
-                disableNext={isLoading || !name || !template}
-                onCancel={onPreviousAction}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('create') }
+            <PreviousNextButtons disableNext={isLoading || !name || !template} onCancel={onPreviousAction}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('create')}
             </PreviousNextButtons>
         </Form>
-
     );
 };
 

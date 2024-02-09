@@ -7,6 +7,7 @@ import presets from '../presets';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 /**
  * JoinRuleChanger component for changing the join rule of a room.
@@ -28,36 +29,36 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
     const handleChangeJoinRule = async (e) => {
         e.preventDefault();
         setChangingJoinRule(true);
-        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', { join_rule: joinRule })
-            .catch((error) => {
-                setErrorMessage(error.data?.error);
-                setJoinRule(currentJoinRule);
-            });
+        await matrixClient.sendStateEvent(roomId, 'm.room.join_rules', { join_rule: joinRule }).catch((error) => {
+            setErrorMessage(error.data?.error);
+            setJoinRule(currentJoinRule);
+        });
         setChangingJoinRule(false);
     };
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
-            <h1>{ t('Change Join Rule for') } { roomName }</h1>
-            <select
-                id="joinRule"
-                value={joinRule}
-                onChange={(e) => setJoinRule(e.target.value)}
-            >
-                { presets.allowedJoinRules.map((joinRule => {
-                    return <option
-                        key={joinRule.name}
-                        value={joinRule.name}
-                        title={joinRule.description}>
-                        { joinRule.label }
-                    </option>;
-                })) }
-            </select>
-            <PreviousNextButtons
-                disableNext={joinRule === currentJoinRule || changingJoinRule}
-                onCancel={onPreviousAction}>{ changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule') }
+            <h1>
+                {t('Change Join Rule for')} {roomName}
+            </h1>
+            <Select id="joinRule" defaultValue={joinRule} onValueChange={(e) => setJoinRule(e.target.value)}>
+                <SelectTrigger>
+                    <SelectValue placeholder={t('Join Rule')} />
+                </SelectTrigger>
+                <SelectContent>
+                    {presets.allowedJoinRules.map((joinRule) => {
+                        return (
+                            <SelectItem key={joinRule.name} value={joinRule.name} title={joinRule.description}>
+                                {joinRule.label}
+                            </SelectItem>
+                        );
+                    })}
+                </SelectContent>
+            </Select>
+            <PreviousNextButtons disableNext={joinRule === currentJoinRule || changingJoinRule} onCancel={onPreviousAction}>
+                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule')}
             </PreviousNextButtons>
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>
     );
 };

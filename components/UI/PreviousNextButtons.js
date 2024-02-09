@@ -26,6 +26,7 @@ const PreviousNextButtonsWrapper = styled.div`
  */
 const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
     const { t } = useTranslation();
+    console.log(disabled);
 
     const handlePrevious = (e) => {
         //@TODO check type submit thing
@@ -38,7 +39,7 @@ const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disabl
             <Button variant="outline" type="reset" disabled={disabled || disablePrev} onClick={handlePrevious}>
                 {t('Previous')}
             </Button>
-            <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled}>
+            <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled || disableNext}>
                 {children || t('Next')}
             </Button>
         </PreviousNextButtonsWrapper>
