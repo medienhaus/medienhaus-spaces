@@ -16,11 +16,10 @@ import AddNewChat from './AddOrCreateChat/AddNewChat';
  *
  * This component is used to quickly add items, contexts, or chats to the current room.
  *
- * @param {Object} props - The properties passed to the component.
- * @param {string} props.currentId - The ID of the current room.
- * @param {string} props.roomName - The name of the current room.
- * @param {Function} props.getSpaceChildren - A function to retrieve the children of the current space.
- * @param {Array} props.allChatRooms - An array of all chat rooms.
+ * @param {string} currentId - The ID of the current room.
+ * @param {string} roomName - The name of the current room.
+ * @param {Function} getSpaceChildren - A function to retrieve the children of the current space.
+ * @param {Array} allChatRooms - An array of all chat rooms.
  *
  * @returns {JSX.Element} The rendered QuickAddExplore component.
  */
