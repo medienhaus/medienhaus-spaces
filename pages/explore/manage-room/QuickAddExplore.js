@@ -22,6 +22,8 @@ import AddNewChat from './AddOrCreateChat/AddNewChat';
  * @param {Array} allChatRooms - An array of all chat rooms.
  *
  * @returns {JSX.Element} The rendered QuickAddExplore component.
+ *
+ * @TODO change Card component to mobile friendly option
  */
 const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }) => {
     const [isOpen, setIsOpen] = useState(false);
