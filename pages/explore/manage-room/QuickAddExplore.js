@@ -11,6 +11,19 @@ import CreateContext from './CreateContext';
 import AddExistingChat from './AddOrCreateChat/AddExistingChat';
 import AddNewChat from './AddOrCreateChat/AddNewChat';
 
+/**
+ * QuickAddExplore component
+ *
+ * This component is used to quickly add items, contexts, or chats to the current room.
+ *
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.currentId - The ID of the current room.
+ * @param {string} props.roomName - The name of the current room.
+ * @param {Function} props.getSpaceChildren - A function to retrieve the children of the current space.
+ * @param {Array} props.allChatRooms - An array of all chat rooms.
+ *
+ * @returns {JSX.Element} The rendered QuickAddExplore component.
+ */
 const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState('');
