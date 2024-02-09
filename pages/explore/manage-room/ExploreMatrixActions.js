@@ -17,8 +17,8 @@ import ChangeJoinRule from './ChangeJoinRule';
 import { useMatrix } from '@/lib/Matrix';
 import ChangeTopic from './ChangeTopic';
 import CreateChatOptions from './AddOrCreateChat';
-import RadioButton from '../../../components/UI/RadioButton';
 import ChangeAvatar from './ChangeAvatar';
+import { RadioGroup, RadioGroupItem } from '@/components/UI/shadcn/Radio-group';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -185,56 +185,72 @@ const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionTog
                     }}
                     onChange={(e) => setSelectedRadioButton(e.target.value)}
                 >
-                    {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <>
-                            <RadioButton id="substructure" name="action" value="substructure">
-                                {t('Create new substructure')}
-                            </RadioButton>
+                    <RadioGroup name="action" value={selectedRadioButton} onValueChange={setSelectedRadioButton}>
+                        {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                            <>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem id="substructure" value="substructure" />
+                                    <label htmlFor="substructure">{t('Create new substructure')}</label>
+                                </div>
 
-                            <RadioButton id="existingItem" name="action" value="existingItem">
-                                {t('Add existing item')}
-                            </RadioButton>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem id="existingItem" value="existingItem" />
+                                    <label htmlFor="existingItem">{t('Add existing item')}</label>
+                                </div>
 
-                            <RadioButton id="existingContext" name="action" value="existingContext">
-                                {t('Add existing context')}
-                            </RadioButton>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem id="existingContext" value="existingContext" />
+                                    <label htmlFor="existingContext">{t('Add existing context')}</label>
+                                </div>
 
-                            <RadioButton id="addOrCreateChat" name="action" value="addOrCreateChat">
-                                {t('Add existing chat or create one')}
-                            </RadioButton>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem id="addOrCreateChat" value="addOrCreateChat" />
+                                    <label htmlFor="addOrCreateChat">{t('Add existing chat or create one')}</label>
+                                </div>
 
-                            <RadioButton id="removeSpace" name="action" value="removeSpace">
-                                {t('Remove items or contexts')}
-                            </RadioButton>
-                        </>
-                    )}
-                    {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <RadioButton id="manageUsers" name="action" value="manageUsers">
-                            {t('Manage users in')} {roomName}
-                        </RadioButton>
-                    )}
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem id="removeSpace" value="removeSpace" />
+                                    <label htmlFor="removeSpace">{t('Remove items or contexts')}</label>
+                                </div>
+                            </>
+                        )}
+                        {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem id="manageUsers" value="manageUsers" />
+                                <label htmlFor="manageUsers">
+                                    {t('Manage users in')} {roomName}
+                                </label>
+                            </div>
+                        )}
 
-                    <RadioButton id="leaveRoom" name="action" value="leaveRoom">
-                        {t('Leave')} {roomName}
-                    </RadioButton>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="leaveRoom" value="leaveRoom" />
+                            <label htmlFor="leaveRoom">
+                                {t('Leave')} {roomName}
+                            </label>
+                        </div>
 
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
-                        <RadioButton id="changeJoinRule" name="action" value="changeJoinRule">
-                            {t('Change join rule')}
-                        </RadioButton>
-                    )}
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem id="changeJoinRule" value="changeJoinRule" />
+                                <label htmlFor="changeJoinRule">{t('Change join rule')}</label>
+                            </div>
+                        )}
 
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                        <RadioButton id="changeTopic" name="action" value="changeTopic">
-                            {t('Change topic')}
-                        </RadioButton>
-                    )}
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem id="changeTopic" value="changeTopic" />
+                                <label htmlFor="changeTopic">{t('Change topic')}</label>
+                            </div>
+                        )}
 
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                        <RadioButton id="changeAvatar" name="action" value="changeAvatar">
-                            {t('Change avatar')}
-                        </RadioButton>
-                    )}
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem id="changeAvatar" value="changeAvatar" />
+                                <label htmlFor="changeAvatar">{t('Change avatar')}</label>
+                            </div>
+                        )}
+                    </RadioGroup>
 
                     <PreviousNextButtons
                         disabled={!selectedRadioButton}
