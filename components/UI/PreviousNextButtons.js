@@ -26,7 +26,6 @@ const PreviousNextButtonsWrapper = styled.div`
  */
 const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
     const { t } = useTranslation();
-    console.log(disabled);
 
     const handlePrevious = (e) => {
         //@TODO check type submit thing
