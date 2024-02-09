@@ -4,7 +4,6 @@ import getConfig from 'next/config';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/UI/shadcn/Button';
-import Icon from '@/components/UI/Icon';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/UI/shadcn/Card';
 import AddExistingItem from './AddExistingItem';
 import AddExistingContext from './AddExistingContext';
@@ -25,7 +24,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
     return (
         <>
             <Button variant="ghost" className="w-full" onClick={() => (isOpen ? onClose() : setIsOpen(true))}>
-                <Icon>{isOpen ? <RiCloseLine /> : <RiAddLine />}</Icon>
+                {isOpen ? <RiCloseLine /> : <RiAddLine />}
             </Button>
             {isOpen && (
                 <div className="flex w-full space-x-4">
