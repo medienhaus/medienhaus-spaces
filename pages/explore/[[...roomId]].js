@@ -347,7 +347,9 @@ export default function Explore() {
                                     </ServiceTable>
                                 )}
                                 {!manageContextActionToggle &&
-                                    matrixClient.getRoom(roomId).currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                    matrixClient
+                                        .getRoom(roomId)
+                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
                                         <QuickAddExplore
                                             currentId={roomId}
                                             roomName={matrix.spaces.get(roomId).name}

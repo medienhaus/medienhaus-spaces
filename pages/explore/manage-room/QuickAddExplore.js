@@ -26,7 +26,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
             <Button variant="ghost" className="w-full" onClick={() => (isOpen ? onClose() : setIsOpen(true))}>
                 {isOpen ? <RiCloseLine /> : <RiAddLine />}
             </Button>
-            {isOpen && (
+            {isOpen && !selectedOption && (
                 <div className="flex w-full space-x-4">
                     <Card className="w-full">
                         <CardHeader>Add Item</CardHeader>
@@ -69,17 +69,25 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
                     </Card>
                 </div>
             )}
-            {selectedOption === 'existingItem' && <AddExistingItem currentId={currentId} onCancel={onClose} />}
+            {selectedOption === 'existingItem' && (
+                <AddExistingItem currentId={currentId} onCancel={onClose} onPreviousAction={() => setSelectedOption('')} />
+            )}
             {selectedOption === 'existingContext' && (
                 <AddExistingContext
                     onCancel={onClose}
                     parentId={currentId}
                     parentName={roomName}
                     contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
+                    onPreviousAction={() => setSelectedOption('')}
                 />
             )}
             {selectedOption === 'newContext' && (
-                <CreateContext onCancel={onClose} currentId={currentId} getSpaceChildren={getSpaceChildren} />
+                <CreateContext
+                    onCancel={onClose}
+                    currentId={currentId}
+                    getSpaceChildren={getSpaceChildren}
+                    onPreviousAction={() => setSelectedOption('')}
+                />
             )}
             {selectedOption === 'existingChat' && (
                 <AddExistingChat
@@ -88,10 +96,17 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
                     allChatRooms={allChatRooms}
                     onSuccess={onClose}
                     updateRoomList={getSpaceChildren}
+                    onPreviousAction={() => setSelectedOption('')}
                 />
             )}
             {selectedOption === 'newChat' && (
-                <AddNewChat updateRoomList={getSpaceChildren} onSuccess={onClose} currentId={currentId} parentName={roomName} />
+                <AddNewChat
+                    updateRoomList={getSpaceChildren}
+                    onSuccess={onClose}
+                    currentId={currentId}
+                    parentName={roomName}
+                    onPreviousAction={() => setSelectedOption('')}
+                />
             )}
         </>
     );
