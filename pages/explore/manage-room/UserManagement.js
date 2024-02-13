@@ -11,7 +11,6 @@ import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -22,7 +21,6 @@ const RoleSelect = styled.select`
 `;
 
 const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
-    console.log(roomId);
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -71,7 +69,7 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                         // therefore we need to filter them
                         if (member.membership === 'leave') return null;
                         // we don't want to display the currently logged in user
-                        if (member.userId === selfObject.userId) return null;
+                        // if (member.userId === selfObject.userId) return null;
 
                         return (
                             <UserTableRow
@@ -89,8 +87,6 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                 </ServiceTable.Body>
             </ServiceTable>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-            <PreviousNextButtons disableNext={true} onCancel={onPreviousAction} />
         </>
     );
 };
