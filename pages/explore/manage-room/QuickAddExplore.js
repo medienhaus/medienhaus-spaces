@@ -10,6 +10,7 @@ import AddExistingContext from './AddExistingContext';
 import CreateContext from './CreateContext';
 import AddExistingChat from './AddOrCreateChat/AddExistingChat';
 import AddNewChat from './AddOrCreateChat/AddNewChat';
+import CreateLink from './CreateLink';
 
 /**
  * QuickAddExplore component
@@ -81,6 +82,18 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
                             </div>
                         </CardFooter>
                     </Card>
+                    <Card className="w-full">
+                        <CardHeader>Add Link</CardHeader>
+                        <CardContent>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+                            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et.
+                        </CardContent>
+                        <CardFooter>
+                            <div className="flex w-full justify-center space-x-4">
+                                <Button onClick={() => setSelectedOption('link')}>{t('Add Link')}</Button>
+                            </div>
+                        </CardFooter>
+                    </Card>
                 </div>
             )}
             {selectedOption === 'existingItem' && (
@@ -120,6 +133,14 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }
                     currentId={currentId}
                     parentName={roomName}
                     onPreviousAction={() => setSelectedOption('')}
+                />
+            )}
+            {selectedOption === 'link' && (
+                <CreateLink
+                    currentId={currentId}
+                    onCancel={onClose}
+                    onPreviousAction={() => setSelectedOption('')}
+                    getSpaceChildren={getSpaceChildren}
                 />
             )}
         </>
