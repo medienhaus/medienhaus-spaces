@@ -10,7 +10,7 @@ import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
-export default function AddExistingChat({ allChatRooms, handleCancel, currentId, onSuccess, parentName, updateRoomList }) {
+export default function AddExistingChat({ allChatRooms, onPreviousAction, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
     const [selectedRoom, setSelectedRoom] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -62,7 +62,7 @@ export default function AddExistingChat({ allChatRooms, handleCancel, currentId,
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
-            <PreviousNextButtons disableNext={!selectedRoom || userFeedback} onCancel={handleCancel}>
+            <PreviousNextButtons disableNext={!selectedRoom || userFeedback} onCancel={onPreviousAction}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('add')}
             </PreviousNextButtons>
         </Form>
