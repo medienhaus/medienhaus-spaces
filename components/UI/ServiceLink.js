@@ -35,36 +35,40 @@ const NotificationBadge = styled.span`
     }
 `;
 
-const ServiceLink = forwardRef(({ roomId, href, name, selected, path, passwordProtected, thumbnail, notificationCount, small, isFetchingContent }, ref) => {
-    const { t } = useTranslation();
+const ServiceLink = forwardRef(
+    ({ roomId, href, name, selected, path, target, passwordProtected, thumbnail, notificationCount, small, isFetchingContent }, ref) => {
+        const { t } = useTranslation();
 
-    return (
-        <ServiceTable.Row>
-            <ServiceTable.Cell>
-                <Link ref={ref} href={href} className="flex items-center justify-between">
-                    {thumbnail && (
-                        <Avatar className="mr-3 h-8 w-8">
-                            <AvatarImage src={thumbnail} />
-                            <AvatarFallback />
-                        </Avatar>
-                    )}
-                    <span className="flex-grow">{ name }</span>
-                    { roomId && isFetchingContent === roomId && <LoadingSpinnerInline /> }
-                    { /* Show a lock icon if this Link is password protected */ }
-                    { passwordProtected && (
-                        <LockIconWrapper title={t('password protected')}>
-                            <RiLockLine />
-                        </LockIconWrapper>
-                    ) }
-                    {/* Show notification badge if there are notifications */}
-                    {notificationCount > 0 && <NotificationBadge>{notificationCount < 100 ? notificationCount : '99+'}</NotificationBadge>}
-                    {/* Tell if this is our active item by displaying an arrow */}
-                    {selected && <RiArrowRightLine className="h-4 w-4 ml-2" />}
-                </Link>
-            </ServiceTable.Cell>
-        </ServiceTable.Row>
-    );
-});
+        return (
+            <ServiceTable.Row>
+                <ServiceTable.Cell>
+                    <Link ref={ref} target={target} href={href} rel="noopener noreferrer" className="flex items-center justify-between">
+                        {thumbnail && (
+                            <Avatar className="mr-3 h-8 w-8">
+                                <AvatarImage src={thumbnail} />
+                                <AvatarFallback />
+                            </Avatar>
+                        )}
+                        <span className="flex-grow">{name}</span>
+                        {roomId && isFetchingContent === roomId && <LoadingSpinnerInline />}
+                        {/* Show a lock icon if this Link is password protected */}
+                        {passwordProtected && (
+                            <LockIconWrapper title={t('password protected')}>
+                                <RiLockLine />
+                            </LockIconWrapper>
+                        )}
+                        {/* Show notification badge if there are notifications */}
+                        {notificationCount > 0 && (
+                            <NotificationBadge>{notificationCount < 100 ? notificationCount : '99+'}</NotificationBadge>
+                        )}
+                        {/* Tell if this is our active item by displaying an arrow */}
+                        {selected && <RiArrowRightLine className="ml-2 h-4 w-4" />}
+                    </Link>
+                </ServiceTable.Cell>
+            </ServiceTable.Row>
+        );
+    },
+);
 ServiceLink.displayName = 'ServiceLink';
 
 export default ServiceLink;
