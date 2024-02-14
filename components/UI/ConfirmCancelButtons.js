@@ -13,7 +13,7 @@ const SmallConfirmCancelButtonsWrapper = styled(ConfirmCancelButtonsWrapper)`
     width: fit-content;
 `;
 
-const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) => {
+const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small, destructive }) => {
     const { t } = useTranslation();
 
     // We might want to use a special wrapper if we want to use a small version of this component
@@ -24,7 +24,7 @@ const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) =>
             <Button variant="outline" type="reset" disabled={disabled}>
                 {cancelLabel || t('Cancel')}
             </Button>
-            <Button type="submit" disabled={disabled}>
+            <Button type="submit" variant={destructive ? 'destructive' : 'default'} disabled={disabled}>
                 {confirmLabel || t('Confirm')}
             </Button>
         </Wrapper>
