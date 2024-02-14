@@ -32,37 +32,35 @@ const ExploreMatrixActionWrapper = styled.div`
     }
 `;
 
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setManageContextActionToggle, spaceChildren, getSpaceChildren }) => {
+const ExploreMatrixActions = ({
+    currentId,
+    parentId,
+    myPowerLevel,
+    setManageContextActionToggle,
+    setSettingsTabValue,
+    settingsTabValue,
+}) => {
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
+
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
     const room = matrixClient.getRoom(currentId);
-
     if (!room) return <LoadingSpinner />;
 
     return (
         <ExploreMatrixActionWrapper>
-            <h2>
-                {t('Manage contexts and items within ')}
-                {room.name}
-            </h2>
-
-            <Tabs defaultValue="settings">
+            <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
                 <TabsList>
-                    <TabsTrigger value="actions">{t('Actions')}</TabsTrigger>
                     <TabsTrigger value="members">{t('Members')}</TabsTrigger>
                     <TabsTrigger value="settings">{t('Settings')}</TabsTrigger>
                 </TabsList>
-                <TabsContent value="actions">
-                    {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <>
-                            <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
-                        </>
-                    )}
-                </TabsContent>
-
                 <TabsContent value="members">
-                    <UserManagement roomId={currentId} roomName={room.name} onCancel={() => setManageContextActionToggle(false)} />
+                    <UserManagement
+                        myPowerLevel={myPowerLevel}
+                        roomId={currentId}
+                        roomName={room.name}
+                        onCancel={() => setManageContextActionToggle(false)}
+                    />
                 </TabsContent>
 
                 <TabsContent value="settings">
@@ -84,6 +82,8 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setManageCont
                         {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
                             <ChangeJoinRule roomId={currentId} roomName={room.name} onCancel={() => setManageContextActionToggle(false)} />
                         )}
+
+                        <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
                     </>
                 </TabsContent>
             </Tabs>
