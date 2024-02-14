@@ -5,7 +5,7 @@ import getConfig from 'next/config';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import ServiceLink from '../../components/UI/ServiceLink';
 
-const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat, onRemove }) => {
+const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small, isChat, onRemove }) => {
     const router = useRouter();
     if (!leaf) return <LoadingSpinner />;
 
@@ -38,6 +38,7 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat, on
             isFetchingContent={isFetchingContent}
             selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
             onRemove={() => onRemove(roomId)}
+            parentName={parentName}
         />
     );
 };

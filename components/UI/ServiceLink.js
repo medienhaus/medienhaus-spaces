@@ -51,7 +51,23 @@ const NotificationBadge = styled.span`
 // @TODO success message closes too quickly
 
 const ServiceLink = forwardRef(
-    ({ roomId, href, name, selected, path, passwordProtected, thumbnail, notificationCount, small, isFetchingContent, onRemove }, ref) => {
+    (
+        {
+            roomId,
+            href,
+            name,
+            parentName,
+            selected,
+            path,
+            passwordProtected,
+            thumbnail,
+            notificationCount,
+            small,
+            isFetchingContent,
+            onRemove,
+        },
+        ref,
+    ) => {
         const [dialogOpen, setDialogOpen] = useState(false);
         const [wasRemoved, setWasRemoved] = useState(false);
         const { t } = useTranslation();
@@ -103,11 +119,14 @@ const ServiceLink = forwardRef(
                                 ) : (
                                     <DialogHeader>
                                         <DialogTitle>
-                                            {t('Are you absolutely sure you want to remove ')} {name}
+                                            {t('Are you absolutely sure you want to remove {{name}}', { name: name })}
                                         </DialogTitle>
 
                                         <DialogDescription>
-                                            {t('This will only remove <<name>> from <<space>>. It will not delete <<name>>')}
+                                            {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
+                                                name: name,
+                                                space: parentName,
+                                            })}
                                         </DialogDescription>
                                         <DialogFooter>
                                             <form

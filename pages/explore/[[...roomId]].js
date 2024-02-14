@@ -351,6 +351,7 @@ export default function Explore() {
                                                         key={roomId + '_' + index}
                                                         iframeRoomId={iframeRoomId}
                                                         isFetchingContent={isFetchingContent}
+                                                        parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                                         onRemove={removeChildFromParent}
                                                     />
                                                 );
