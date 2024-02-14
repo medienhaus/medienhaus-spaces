@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { MatrixEvent } from 'matrix-js-sdk';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiAddLine, RiCloseLine, RiDeleteBinLine } from '@remixicon/react';
 
 import { ServiceTable } from '../../../components/UI/ServiceTable';
 import { useAuth } from '../../../lib/Auth';
@@ -11,6 +11,8 @@ import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -20,7 +22,7 @@ const RoleSelect = styled.select`
     border: unset;
 `;
 
-const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
+const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -29,6 +31,7 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
     const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
     const { t } = useTranslation();
+    const [isInviteOpen, setIsInviteOpen] = useState(false);
 
     const handleKick = async (userId, name) => {
         if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
@@ -84,6 +87,29 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                             />
                         );
                     })}
+                    {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                            <DialogTrigger asChild>
+                                <ServiceTable.Row
+                                    className="cursor-pointer text-muted-foreground hover:text-accent"
+                                    onClick={() => setIsInviteOpen((prevState) => !prevState)}
+                                >
+                                    <ServiceTable.Cell>{t('Invite people to {{name}} …', { name: roomName })}</ServiceTable.Cell>
+                                    <ServiceTable.Cell />
+                                    <ServiceTable.Cell />
+                                    <ServiceTable.Cell align="center">{isInviteOpen ? <RiCloseLine /> : <RiAddLine />}</ServiceTable.Cell>
+                                </ServiceTable.Row>
+                            </DialogTrigger>
+                            {/*<DialogContent className="grid-flow-col gap-4">*/}
+                            <DialogContent className="grid-flow-col gap-4">
+                                <InviteUserToMatrixRoom
+                                    roomId={roomId}
+                                    onSuccess={() => setIsInviteOpen(false)}
+                                    onCancel={() => setIsInviteOpen(false)}
+                                />
+                            </DialogContent>
+                        </Dialog>
+                    )}
                 </ServiceTable.Body>
             </ServiceTable>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
