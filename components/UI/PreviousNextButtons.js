@@ -7,7 +7,7 @@ const PreviousNextButtonsWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: var(--margin);
-    width: 55ch;
+    //min-width: 55ch;
 
     &:not(:first-child) {
         margin-top: var(--margin);
@@ -23,6 +23,7 @@ const PreviousNextButtonsWrapper = styled.div`
  * @param {Boolean} disableNext disables 'next' button if true
  * @param {Boolean} disablePrev disables 'previous' button if true
  * @returns {React.JSX} two inline buttons.  'previous' and 'next'
+ *
  */
 const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
     const { t } = useTranslation();

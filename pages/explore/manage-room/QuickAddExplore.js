@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { RiAddLine, RiCloseLine } from '@remixicon/react';
 import getConfig from 'next/config';
 import React, { useState } from 'react';
+import { RiChat4Line, RiChatNewLine, RiFileLine, RiFolderAddLine, RiFolderLine } from '@remixicon/react';
 
-import { Button } from '@/components/UI/shadcn/Button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/UI/shadcn/Card';
+import { Card, CardContent, CardHeader } from '@/components/UI/shadcn/Card';
 import AddExistingItem from './AddExistingItem';
 import AddExistingContext from './AddExistingContext';
 import CreateContext from './CreateContext';
@@ -20,68 +19,95 @@ import AddNewChat from './AddOrCreateChat/AddNewChat';
  * @param {string} roomName - The name of the current room.
  * @param {Function} getSpaceChildren - A function to retrieve the children of the current space.
  * @param {Array} allChatRooms - An array of all chat rooms.
+ * @param {Function} setIsQuickAddOpen - A function to set the state of the isQuickAddExplore component.
  *
  * @returns {JSX.Element} The rendered QuickAddExplore component.
  *
  * @TODO change Card component to mobile friendly option
  */
-const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, setIsQuickAddOpen }) => {
     const [selectedOption, setSelectedOption] = useState('');
     const { t } = useTranslation('explore');
 
     const onClose = () => {
-        setIsOpen(false);
         setSelectedOption('');
+        setIsQuickAddOpen(false);
     };
 
     return (
         <>
-            <Button variant="ghost" className="w-full" onClick={() => (isOpen ? onClose() : setIsOpen(true))}>
-                {isOpen ? <RiCloseLine /> : <RiAddLine />}
-            </Button>
-            {isOpen && !selectedOption && (
-                <div className="flex w-full space-x-4">
-                    <Card className="w-full">
-                        <CardHeader>Add Item</CardHeader>
-                        <CardContent>
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et.
-                        </CardContent>
-                        <CardFooter>
-                            <div className="flex w-full justify-center space-x-4">
-                                <Button onClick={() => setSelectedOption('existingItem')}>{t('Existing')}</Button>
-                                {/*<Button>{t('Create new')}</Button>*/}
-                            </div>
-                        </CardFooter>
+            {!selectedOption && (
+                <>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('existingItem')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiFileLine />
+                        </CardHeader>
+                        <CardContent>{t('Add item to {{name}}', { name: roomName })}</CardContent>
                     </Card>
-                    <Card className="w-full">
-                        <CardHeader>Add Context</CardHeader>
-                        <CardContent>
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et.
-                        </CardContent>
-                        <CardFooter>
-                            <div className="flex w-full justify-center space-x-4">
-                                <Button onClick={() => setSelectedOption('existingContext')}>{t('Existing')}</Button>
-                                <Button onClick={() => setSelectedOption('newContext')}>{t('Create new')}</Button>
-                            </div>
-                        </CardFooter>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('context')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiFolderLine />
+                        </CardHeader>
+                        <CardContent>{t('Add context to {{name}}', { name: roomName })}</CardContent>
                     </Card>
-                    <Card className="w-full">
-                        <CardHeader>Add Chat</CardHeader>
-                        <CardContent>
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et.
-                        </CardContent>
-                        <CardFooter>
-                            <div className="flex w-full justify-center space-x-4">
-                                <Button onClick={() => setSelectedOption('existingChat')}>{t('Existing')}</Button>
-                                <Button onClick={() => setSelectedOption('newChat')}>{t('Create new')}</Button>
-                            </div>
-                        </CardFooter>
+                    <Card className="cursor-pointer text-center hover:bg-accent hover:text-white" onClick={() => setSelectedOption('chat')}>
+                        <CardHeader className="items-center">
+                            <RiChat4Line />
+                        </CardHeader>
+                        <CardContent>{t('Add chat to {{name}}', { name: roomName })}</CardContent>
                     </Card>
-                </div>
+                </>
+            )}
+            {selectedOption === 'context' && (
+                <>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('existingContext')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiFolderLine />
+                        </CardHeader>
+                        <CardContent>{t('Add existing context')}</CardContent>
+                    </Card>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('newContext')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiFolderAddLine />
+                        </CardHeader>
+                        <CardContent>{t('Create new context')}</CardContent>
+                    </Card>
+                </>
+            )}
+
+            {selectedOption === 'chat' && (
+                <>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('existingChat')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiChat4Line />
+                        </CardHeader>
+                        <CardContent>existing chat</CardContent>
+                    </Card>
+                    <Card
+                        className="cursor-pointer text-center hover:bg-accent hover:text-white"
+                        onClick={() => setSelectedOption('newChat')}
+                    >
+                        <CardHeader className="items-center">
+                            <RiChatNewLine />
+                        </CardHeader>
+                        <CardContent>new chat</CardContent>
+                    </Card>
+                </>
             )}
             {selectedOption === 'existingItem' && (
                 <AddExistingItem currentId={currentId} onCancel={onClose} onPreviousAction={() => setSelectedOption('')} />
