@@ -51,15 +51,7 @@ const NotificationBadge = styled.span`
 // @TODO success message closes too quickly
 
 const ServiceLink = forwardRef(
-    (
-        {
-            roomId,
-            href,
-            name,
-            parentName,
-            selected,
-            path,
-            passwordProtected,
+    ({ roomId, href, name,parentName, selected, path, target, passwordProtected,
             thumbnail,
             notificationCount,
             small,
@@ -75,7 +67,7 @@ const ServiceLink = forwardRef(
         return (
             <ServiceTable.Row>
                 <ServiceTable.Cell>
-                    <Link ref={ref} href={href} className="flex items-center justify-between">
+                    <Link ref={ref} target={target} href={href} rel="noopener noreferrer" className="flex items-center justify-between">
                         {thumbnail && (
                             <Avatar className="mr-3 h-8 w-8">
                                 <AvatarImage src={thumbnail} />

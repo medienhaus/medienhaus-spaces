@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import React, { useState } from 'react';
-import { RiChat4Line, RiChatNewLine, RiFileLine, RiFolderAddLine, RiFolderLine } from '@remixicon/react';
+import { RiChat4Line, RiChatNewLine, RiFileLine, RiFolderAddLine, RiFolderLine, RiLink } from '@remixicon/react';
 
 import { Card, CardContent, CardHeader } from '@/components/UI/shadcn/Card';
 import AddExistingItem from './AddExistingItem';
@@ -9,6 +9,7 @@ import AddExistingContext from './AddExistingContext';
 import CreateContext from './CreateContext';
 import AddExistingChat from './AddOrCreateChat/AddExistingChat';
 import AddNewChat from './AddOrCreateChat/AddNewChat';
+import CreateLink from './CreateLink';
 
 /**
  * QuickAddExplore component
@@ -62,6 +63,12 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         </CardHeader>
                         <CardContent>{t('Add chat to {{name}}', { name: roomName })}</CardContent>
                     </Card>
+                    <Card className="cursor-pointer text-center hover:bg-accent hover:text-white" onClick={() => setSelectedOption('link')}>
+                        <CardHeader className="items-center">
+                            <RiLink />
+                        </CardHeader>
+                        <CardContent>{t('Add a link to {{name}}', { name: roomName })}</CardContent>
+                    </Card>
                 </>
             )}
             {selectedOption === 'context' && (
@@ -109,6 +116,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                     </Card>
                 </>
             )}
+
             {selectedOption === 'existingItem' && (
                 <AddExistingItem currentId={currentId} onCancel={onClose} onPreviousAction={() => setSelectedOption('')} />
             )}
@@ -146,6 +154,14 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                     currentId={currentId}
                     parentName={roomName}
                     onPreviousAction={() => setSelectedOption('')}
+                />
+            )}
+            {selectedOption === 'link' && (
+                <CreateLink
+                    currentId={currentId}
+                    onCancel={onClose}
+                    onPreviousAction={() => setSelectedOption('')}
+                    getSpaceChildren={getSpaceChildren}
                 />
             )}
         </>
