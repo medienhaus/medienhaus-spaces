@@ -237,6 +237,16 @@ export default function Explore() {
         };
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
+    const removeChildFromParent = async (idToRemove) => {
+        await auth
+            .getAuthenticationProvider('matrix')
+            .removeSpaceChild(roomId, idToRemove)
+            .catch((error) => {
+                logger.error(error.data?.error);
+            });
+        await getSpaceChildren(null, roomId);
+    };
+
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
     return (
@@ -341,6 +351,7 @@ export default function Explore() {
                                                         key={roomId + '_' + index}
                                                         iframeRoomId={iframeRoomId}
                                                         isFetchingContent={isFetchingContent}
+                                                        onRemove={removeChildFromParent}
                                                     />
                                                 );
                                             })}
