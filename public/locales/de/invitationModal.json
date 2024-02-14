@@ -2,7 +2,7 @@
     "Invite users to {{name}}": "Benutzer*innen zu {{name}} einladen",
     "invitedUser_one": "{{ count }} Benutzer*in wurde eingeladen und muss die Einladung annehmen",
     "invitedUser_other": "{{ count }} Benutzer*innen wurden eingeladen und müssen die Einladung annehmen",
-    "Error while trying to fetch users. ": "Error beim Abruf der User.",
+    "Error while trying to fetch users. ": "TODO",
     "Invite users": "Benutzer*innen einladen",
     "Invite": "Einladen"
 }
