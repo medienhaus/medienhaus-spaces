@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
 import { RiAddLine, RiCloseLine } from '@remixicon/react';
 
-import { ServiceTable } from '../../components/UI/ServiceTable';
+import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
@@ -20,7 +20,6 @@ import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
 
@@ -50,6 +49,7 @@ export default function Explore() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+    const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
@@ -292,19 +292,10 @@ export default function Explore() {
                                 isInviteUsersOpen={isInviteUsersOpen}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                                 setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                                setSettingsTabValue={setSettingsTabValue}
                             />
                             <ServiceTableWrapper>
-                                {isInviteUsersOpen ? (
-                                    <InviteUserToMatrixRoom
-                                        roomId={roomId}
-                                        roomName={
-                                            matrix.spaces.get(router.query.roomId[0])?.name ||
-                                            matrix.rooms.get(router.query.roomId[0])?.name ||
-                                            selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name
-                                        }
-                                        onSuccess={() => setIsInviteUsersOpen(false)}
-                                    />
-                                ) : manageContextActionToggle ? (
+                                {manageContextActionToggle ? (
                                     <ExploreMatrixActions
                                         myPowerLevel={myPowerLevel}
                                         setManageContextActionToggle={setManageContextActionToggle}
@@ -318,6 +309,8 @@ export default function Explore() {
                                         }
                                         spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
                                         getSpaceChildren={getSpaceChildren}
+                                        settingsTabValue={settingsTabValue}
+                                        setSettingsTabValue={setSettingsTabValue}
                                     />
                                 ) : (
                                     <ServiceTable>

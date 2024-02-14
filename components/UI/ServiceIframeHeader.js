@@ -11,6 +11,7 @@ import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
+import { Separator } from '@/components/UI/shadcn/Separator';
 
 const ToggleButton = styled.button`
     /* unset globally defined button styles; set height to line-height */
@@ -35,6 +36,7 @@ const ServiceIframeHeader = ({
     isInviteUsersOpen,
     setIsInviteUsersOpen,
     joinRule,
+    setSettingsTabValue,
 }) => {
     const { t } = useTranslation('write');
 
@@ -55,41 +57,29 @@ const ServiceIframeHeader = ({
                         )}
                     </TextButton>
                 )}
-                {myPowerLevel && (
-                    <InviteUserToMatrixRoom.Button
-                        name={title}
-                        onClick={() => {
-                            if (manageContextActionToggle) setManageContextActionToggle(false);
-
-                            setIsInviteUsersOpen((prevState) => !prevState);
-                        }}
-                        inviteUsersOpen={isInviteUsersOpen}
-                    />
-                )}
                 <AddFavourite roomId={roomId} />
-                {myPowerLevel &&
-                    (manageContextActionToggle ? (
+                {myPowerLevel && (
+                    <>
+                        <Separator orientation="vertical" />
+                        <InviteUserToMatrixRoom.Button
+                            name={title}
+                            onClick={() => {
+                                setManageContextActionToggle(!manageContextActionToggle);
+                                setSettingsTabValue('members');
+                                setIsInviteUsersOpen(!isInviteUsersOpen);
+                            }}
+                            inviteUsersOpen={isInviteUsersOpen}
+                        />
                         <ToggleButton
                             onClick={() => {
-                                setManageContextActionToggle(false);
+                                setIsInviteUsersOpen(false);
+                                setManageContextActionToggle(!manageContextActionToggle);
                             }}
                         >
-                            <Icon>
-                                <RiFolderLine />
-                            </Icon>
+                            <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiListSettingsLine />}</Icon>
                         </ToggleButton>
-                    ) : (
-                        <ToggleButton
-                            onClick={() => {
-                                if (isInviteUsersOpen) setIsInviteUsersOpen(false);
-                                setManageContextActionToggle(true);
-                            }}
-                        >
-                            <Icon>
-                                <RiListSettingsLine />
-                            </Icon>
-                        </ToggleButton>
-                    ))}
+                    </>
+                )}
             </DefaultLayout.IframeHeaderButtonWrapper>
         </DefaultLayout.IframeHeader>
     );

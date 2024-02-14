@@ -17,7 +17,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { styled } from 'styled-components';
-import { RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
+import { RiUserLine } from '@remixicon/react';
 
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
@@ -47,7 +47,7 @@ const FeedbackWrapper = styled.div`
     margin-top: var(--margin);
 `;
 
-export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
+export const InviteUserToMatrixRoom = ({ roomId, onSuccess, onCancel }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [searchResults, setSearchResults] = useState([]);
@@ -106,7 +106,12 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
+        successAmount > 0 &&
+            setUserFeedback(
+                <Trans t={t} i18nKey="invitedUser" count={successAmount}>
+                    {{ successAmount }} user was invited and needs to accept your invitation
+                </Trans>,
+            );
         _.delay(() => {
             clearInputs();
             if (onSuccess && successAmount === selectedUsers.length) onSuccess();
@@ -125,6 +130,7 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
                         onInputChange={handleChange}
                         keysToDisplay={['display_name', 'user_id']}
                         onSubmit={handleInvite}
+                        onCancel={onCancel}
                     />
 
                     <FeedbackWrapper>
@@ -141,25 +147,18 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
  * Button component for toggling the invitation UI for the Matrix room.
  *
  * @component
- * @param {boolean} inviteUsersOpen - Flag indicating whether the invitation UI is open.
  * @param {Function} onClick - Function to execute when the button is clicked.
  * @param {string} name - The name of the Matrix room.
  * @returns {React.ReactElement} - A React component representing the button for inviting users.
  */
-const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
+const InviteUsersButton = ({ onClick, name }) => {
     const { t } = useTranslation('invitationModal');
 
     return (
         <TextButton onClick={onClick} title={t('Invite users to {{name}}', { name: name })}>
-            {inviteUsersOpen ? (
-                <Icon>
-                    <RiUserUnfollowLine />
-                </Icon>
-            ) : (
-                <Icon>
-                    <RiUserAddLine />
-                </Icon>
-            )}
+            <Icon>
+                <RiUserLine />
+            </Icon>
         </TextButton>
     );
 };
