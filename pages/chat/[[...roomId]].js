@@ -235,7 +235,7 @@ export default function Chat() {
                             <TextButton
                                 title={t('call')}
                                 onClick={() =>
-                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()
+                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button[aria-label="Video call"]').click()
                                 }
                             >
                                 {isLeavingRoom ? (
@@ -249,7 +249,7 @@ export default function Chat() {
                             <TextButton
                                 title={t('video')}
                                 onClick={() =>
-                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
+                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button[aria-label="Voice call"]').click()
                                 }
                             >
                                 {isLeavingRoom ? (
@@ -263,7 +263,7 @@ export default function Chat() {
                             <TextButton
                                 title={t('Threads')}
                                 onClick={() =>
-                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(3)').click()
+                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button[aria-label="Threads"]').click()
                                 }
                             >
                                 {isLeavingRoom ? (
