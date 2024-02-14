@@ -6,7 +6,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import ServiceLink from '../../components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
 
-const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat }) => {
+const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small, isChat, onRemove }) => {
     const router = useRouter();
     const matrix = useMatrix();
 
@@ -28,7 +28,6 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat }) 
               : template === 'link'
                 ? '🔗 ' + leaf.name
                 : leaf.name;
-
     // if an iframe is open we only want to show items in the list
     if (selectedRoomId && leaf.type !== 'item') return null;
 
@@ -47,6 +46,8 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat }) 
             name={name}
             isFetchingContent={isFetchingContent}
             selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
+            onRemove={() => onRemove(roomId)}
+            parentName={parentName}
         />
     );
 };

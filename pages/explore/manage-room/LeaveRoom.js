@@ -4,9 +4,17 @@ import { router } from 'next/router';
 
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import { Button } from '@/components/UI/shadcn/Button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/UI/shadcn/Dialog';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 
 /**
  * LeaveRoom component for leaving a Matrix room.
@@ -16,12 +24,16 @@ import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
  * @param {string} roomName - The name of the room to be left.
  * @param {Function} onCancel - Callback function to cancel the operation.
  * @returns {JSX.Element} - The rendered component.
+ *
+ * @TODO warning message should use conditional, depending on join rule and or visibility of item
  */
-const LeaveRoom = ({ roomId, parentId, roomName, onPreviousAction, onCancel }) => {
+const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const [isLeaving, setIsLeaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [dialogOpen, setDialogOpen] = useState(false);
+
     const { t } = useTranslation();
 
     const handleLeaveRoom = async (e) => {
@@ -29,13 +41,12 @@ const LeaveRoom = ({ roomId, parentId, roomName, onPreviousAction, onCancel }) =
         setIsLeaving(true);
 
         // Leave the main room
-        await matrixClient.leave(roomId)
-            .catch(error => {
-                setErrorMessage(error.data?.error || t('Something went wrong. Please try again'));
-                setIsLeaving(false);
+        await matrixClient.leave(roomId).catch((error) => {
+            setErrorMessage(error.data?.error || t('Something went wrong. Please try again'));
+            setIsLeaving(false);
 
-                return;
-            });
+            return;
+        });
 
         setIsLeaving(false);
         setErrorMessage('');
@@ -43,20 +54,33 @@ const LeaveRoom = ({ roomId, parentId, roomName, onPreviousAction, onCancel }) =
     };
 
     return (
-        <Form
-            onSubmit={handleLeaveRoom}>
-            <p>{ t('Are you sure you want to leave {{ name }}?', { name: roomName }) }</p>
-
-            <PreviousNextButtons
-                disableNext={isLeaving}
-                onCancel={onPreviousAction}
-                warning
-            >
-                { isLeaving ? <LoadingSpinnerInline inverted /> : t('Leave') }
-            </PreviousNextButtons>
-
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        </Form>
+        <>
+            <h3>{t('Leave {{ name }}?', { name: roomName })}</h3>
+            <p>{t('Leaving {{name}} means you cannot interact with it anymore.', { name: roomName })}</p>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="destructive" disabled={isLeaving}>
+                        {t('Leave')}
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('Are you absolutely sure you want to leave {{name}}?', { name: roomName })}</DialogTitle>
+                        <DialogDescription>
+                            {t(
+                                'If this room is not public, you need to either ask to join or be invited, in order to join the room again.',
+                            )}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <form onSubmit={handleLeaveRoom} onReset={() => setDialogOpen(false)}>
+                            <ConfirmCancelButtons confirmLabel={t('Leave')} onCancel={onCancel} disabled={isLeaving} destructive />
+                        </form>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        </>
     );
 };
 

@@ -5,11 +5,12 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
+import { RiAddLine, RiCloseLine } from '@remixicon/react';
 
-import { ServiceTable } from '../../components/UI/ServiceTable';
+import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import { useAuth } from '../../lib/Auth';
-import { useMatrix } from '../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import ErrorMessage from '../../components/UI/ErrorMessage';
@@ -19,8 +20,8 @@ import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
 import QuickAddExplore from './manage-room/QuickAddExplore';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
 
 const ServiceTableWrapper = styled.div`
     width: 100%;
@@ -47,6 +48,8 @@ export default function Explore() {
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
+    const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+    const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
@@ -237,6 +240,16 @@ export default function Explore() {
         };
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
+    const removeChildFromParent = async (idToRemove) => {
+        await auth
+            .getAuthenticationProvider('matrix')
+            .removeSpaceChild(roomId, idToRemove)
+            .catch((error) => {
+                logger.error(error.data?.error);
+            });
+        await getSpaceChildren(null, roomId);
+    };
+
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
     return (
@@ -279,19 +292,10 @@ export default function Explore() {
                                 isInviteUsersOpen={isInviteUsersOpen}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                                 setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                                setSettingsTabValue={setSettingsTabValue}
                             />
                             <ServiceTableWrapper>
-                                {isInviteUsersOpen ? (
-                                    <InviteUserToMatrixRoom
-                                        roomId={roomId}
-                                        roomName={
-                                            matrix.spaces.get(router.query.roomId[0])?.name ||
-                                            matrix.rooms.get(router.query.roomId[0])?.name ||
-                                            selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name
-                                        }
-                                        onSuccess={() => setIsInviteUsersOpen(false)}
-                                    />
-                                ) : manageContextActionToggle ? (
+                                {manageContextActionToggle ? (
                                     <ExploreMatrixActions
                                         myPowerLevel={myPowerLevel}
                                         setManageContextActionToggle={setManageContextActionToggle}
@@ -305,6 +309,8 @@ export default function Explore() {
                                         }
                                         spaceChildren={selectedSpaceChildren[selectedSpaceChildren.length - 1]}
                                         getSpaceChildren={getSpaceChildren}
+                                        settingsTabValue={settingsTabValue}
+                                        setSettingsTabValue={setSettingsTabValue}
                                     />
                                 ) : (
                                     <ServiceTable>
@@ -341,22 +347,42 @@ export default function Explore() {
                                                         key={roomId + '_' + index}
                                                         iframeRoomId={iframeRoomId}
                                                         isFetchingContent={isFetchingContent}
+                                                        parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                                        onRemove={removeChildFromParent}
                                                     />
                                                 );
                                             })}
+                                        {!manageContextActionToggle &&
+                                            matrixClient
+                                                .getRoom(roomId)
+                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
+                                                    <DialogTrigger asChild>
+                                                        <ServiceTable.Row
+                                                            className="cursor-pointer text-muted-foreground hover:text-accent"
+                                                            onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                        >
+                                                            <ServiceTable.Cell>{t('Add more …')}</ServiceTable.Cell>
+                                                            <ServiceTable.Cell align="right">
+                                                                {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
+                                                            </ServiceTable.Cell>
+                                                        </ServiceTable.Row>
+                                                    </DialogTrigger>
+                                                    {/*<DialogContent className="grid-flow-col gap-4">*/}
+                                                    <DialogContent className="grid-flow-col gap-4">
+                                                        <QuickAddExplore
+                                                            currentId={roomId}
+                                                            roomName={matrix.spaces.get(roomId).name}
+                                                            getSpaceChildren={getSpaceChildren}
+                                                            allChatRooms={allChatRooms}
+                                                            isQuickAddOpen={isQuickAddOpen}
+                                                            setIsQuickAddOpen={setIsQuickAddOpen}
+                                                        />
+                                                    </DialogContent>
+                                                </Dialog>
+                                            )}
                                     </ServiceTable>
                                 )}
-                                {!manageContextActionToggle &&
-                                    matrixClient
-                                        .getRoom(roomId)
-                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                        <QuickAddExplore
-                                            currentId={roomId}
-                                            roomName={matrix.spaces.get(roomId).name}
-                                            getSpaceChildren={getSpaceChildren}
-                                            allChatRooms={allChatRooms}
-                                        />
-                                    )}
                             </ServiceTableWrapper>
                         </DefaultLayout.Wrapper>
                     </>

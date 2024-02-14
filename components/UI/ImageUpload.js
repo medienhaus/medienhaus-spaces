@@ -10,7 +10,6 @@ const AvatarSection = styled.div`
     display: grid;
     grid-auto-flow: row;
     grid-gap: var(--margin);
-    max-width: 55ch;
 
     @media (min-width: 40em) {
         grid-template-columns: 1fr 1fr;
