@@ -21,6 +21,8 @@ import { useAuth } from '@/lib/Auth';
  * @returns {JSX.Element} - The rendered component.
  */
 
+/* @TODO: can probably be removed */
+/*
 const ExploreMatrixActionWrapper = styled.div`
     width: 100%;
     max-height: 100%;
@@ -31,6 +33,7 @@ const ExploreMatrixActionWrapper = styled.div`
         margin-top: var(--margin);
     }
 `;
+*/
 
 const ExploreMatrixActions = ({
     currentId,
@@ -48,46 +51,63 @@ const ExploreMatrixActions = ({
     if (!room) return <LoadingSpinner />;
 
     return (
+        /*
         <ExploreMatrixActionWrapper>
-            <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
-                <TabsList>
-                    <TabsTrigger value="members">{t('Members')}</TabsTrigger>
-                    <TabsTrigger value="settings">{t('Settings')}</TabsTrigger>
-                </TabsList>
-                <TabsContent value="members">
-                    <UserManagement
-                        myPowerLevel={myPowerLevel}
-                        roomId={currentId}
-                        roomName={room.name}
-                        onCancel={() => setManageContextActionToggle(false)}
-                    />
-                </TabsContent>
+        */
+        <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
+            <TabsList>
+                <TabsTrigger value="members">{t('Members')}</TabsTrigger>
+                <TabsTrigger value="settings">{t('Settings')}</TabsTrigger>
+            </TabsList>
 
-                <TabsContent value="settings">
-                    <>
-                        {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                            <>
-                                <h3>{t('Topic (optional)')}</h3>
-                                <ChangeTopic roomId={currentId} roomName={room.name} />
-                            </>
-                        )}
+            <TabsContent value="members">
+                <UserManagement
+                    myPowerLevel={myPowerLevel}
+                    roomId={currentId}
+                    roomName={room.name}
+                    onCancel={() => setManageContextActionToggle(false)}
+                />
+            </TabsContent>
 
-                        {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                            <>
-                                <h3>{t('Avatar')}</h3>
-                                <ChangeAvatar roomId={currentId} onCancel={() => setManageContextActionToggle(false)} />
-                            </>
-                        )}
+            {/*
+            @TODO: first line of tab content are not on same height;
+            @TODO: remove caption? negative margin for caption/table?
+            -> hence the mt-5 tailwind class below
+            */}
+            <TabsContent className="[&>*+*]:mt-8 [&>:first-child]:mt-5" value="settings">
+                <>
+                    {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
+                        <div>
+                            <h3>{t('Topic (optional)')}</h3>
+                            <ChangeTopic roomId={currentId} roomName={room.name} />
+                        </div>
+                    )}
 
-                        {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                    {/*
+                    @TODO: ChangeAvatar needs refactor; should use shadcn avatar component
+                    */}
+                    {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
+                        <div>
+                            <h3>{t('Avatar')}</h3>
+                            <ChangeAvatar roomId={currentId} onCancel={() => setManageContextActionToggle(false)} />
+                        </div>
+                    )}
+
+                    {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                        <div>
                             <ChangeJoinRule roomId={currentId} roomName={room.name} onCancel={() => setManageContextActionToggle(false)} />
-                        )}
+                        </div>
+                    )}
 
+                    <div>
                         <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
-                    </>
-                </TabsContent>
-            </Tabs>
+                    </div>
+                </>
+            </TabsContent>
+        </Tabs>
+        /*
         </ExploreMatrixActionWrapper>
+        */
     );
 };
 
