@@ -27,6 +27,11 @@ import { Button } from '@/components/UI/shadcn/Button';
 const ServiceTableWrapper = styled.div`
     width: 100%;
     overflow: auto;
+
+    /* @NOTE: some padding between last element and viewport bottom */
+    > :last-child {
+        padding-bottom: calc(var(--margin) * 2);
+    }
 `;
 
 /**
