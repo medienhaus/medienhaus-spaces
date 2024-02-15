@@ -13,6 +13,7 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import { Button } from '@/components/UI/shadcn/Button';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -87,31 +88,29 @@ const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
                             />
                         );
                     })}
-                    {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-                            <DialogTrigger asChild>
-                                <ServiceTable.Row
-                                    className="cursor-pointer text-muted-foreground hover:text-accent"
-                                    onClick={() => setIsInviteOpen((prevState) => !prevState)}
-                                >
-                                    <ServiceTable.Cell>{t('Invite people to {{name}} …', { name: roomName })}</ServiceTable.Cell>
-                                    <ServiceTable.Cell />
-                                    <ServiceTable.Cell />
-                                    <ServiceTable.Cell align="center">{isInviteOpen ? <RiCloseLine /> : <RiAddLine />}</ServiceTable.Cell>
-                                </ServiceTable.Row>
-                            </DialogTrigger>
-                            {/*<DialogContent className="grid-flow-col gap-4">*/}
-                            <DialogContent className="grid-flow-col gap-4">
-                                <InviteUserToMatrixRoom
-                                    roomId={roomId}
-                                    onSuccess={() => setIsInviteOpen(false)}
-                                    onCancel={() => setIsInviteOpen(false)}
-                                />
-                            </DialogContent>
-                        </Dialog>
-                    )}
                 </ServiceTable.Body>
             </ServiceTable>
+            {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+                    <DialogTrigger asChild>
+                        <Button
+                            className="w-full justify-between px-0 pr-1.5 hover:text-accent"
+                            variant="ghost"
+                            onClick={() => setIsInviteOpen((prevState) => !prevState)}
+                        >
+                            {t('Invite people to {{name}} …', { name: roomName })}
+                            {isInviteOpen ? <RiCloseLine /> : <RiAddLine />}
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="grid-flow-col gap-4">
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            onSuccess={() => setIsInviteOpen(false)}
+                            onCancel={() => setIsInviteOpen(false)}
+                        />
+                    </DialogContent>
+                </Dialog>
+            )}
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </>
     );

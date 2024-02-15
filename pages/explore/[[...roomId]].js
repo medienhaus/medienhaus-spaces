@@ -22,6 +22,7 @@ import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const ServiceTableWrapper = styled.div`
     width: 100%;
@@ -352,24 +353,37 @@ export default function Explore() {
                                                     />
                                                 );
                                             })}
+                                        {/* NOTE: let’s move the dialog trigger button after the table
                                         {!manageContextActionToggle &&
                                             matrixClient
                                                 .getRoom(roomId)
                                                 ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
                                                 <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
-                                                    <DialogTrigger asChild>
-                                                        <ServiceTable.Row
-                                                            className="cursor-pointer text-muted-foreground hover:text-accent"
-                                                            onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                        >
-                                                            <ServiceTable.Cell>{t('Add more …')}</ServiceTable.Cell>
-                                                            <ServiceTable.Cell align="right">
-                                                                {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
-                                                            </ServiceTable.Cell>
-                                                        </ServiceTable.Row>
-                                                    </DialogTrigger>
-                                                    {/*<DialogContent className="grid-flow-col gap-4">*/}
-                                                    <DialogContent className="grid-flow-col gap-4">
+                                                    <ServiceTable.Row className="cursor-pointer">
+                                                        <ServiceTable.Cell>
+                                                            <DialogTrigger asChild>
+                                                                <Button
+                                                                    className="w-full justify-start px-0 hover:text-accent"
+                                                                    variant="ghost"
+                                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                                >
+                                                                    {t('Add more …')}
+                                                                </Button>
+                                                            </DialogTrigger>
+                                                        </ServiceTable.Cell>
+                                                        <ServiceTable.Cell align="right">
+                                                            <DialogTrigger asChild>
+                                                                <Button
+                                                                    className="w-full justify-end px-0 align-middle hover:text-accent"
+                                                                    variant="ghost"
+                                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                                >
+                                                                    {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
+                                                                </Button>
+                                                            </DialogTrigger>
+                                                        </ServiceTable.Cell>
+                                                    </ServiceTable.Row>
+                                                    <DialogContent className="grid-flow-col gap-4 p-4 pt-12">
                                                         <QuickAddExplore
                                                             currentId={roomId}
                                                             roomName={matrix.spaces.get(roomId).name}
@@ -381,8 +395,36 @@ export default function Explore() {
                                                     </DialogContent>
                                                 </Dialog>
                                             )}
+                                        */}
                                     </ServiceTable>
                                 )}
+                                {!manageContextActionToggle &&
+                                    matrixClient
+                                        .getRoom(roomId)
+                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                        <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button
+                                                    className="w-full justify-between px-0 hover:text-accent"
+                                                    variant="ghost"
+                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                >
+                                                    {t('Add more …')}
+                                                    {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="grid-flow-col gap-4 p-4 pt-12">
+                                                <QuickAddExplore
+                                                    currentId={roomId}
+                                                    roomName={matrix.spaces.get(roomId).name}
+                                                    getSpaceChildren={getSpaceChildren}
+                                                    allChatRooms={allChatRooms}
+                                                    isQuickAddOpen={isQuickAddOpen}
+                                                    setIsQuickAddOpen={setIsQuickAddOpen}
+                                                />
+                                            </DialogContent>
+                                        </Dialog>
+                                    )}
                             </ServiceTableWrapper>
                         </DefaultLayout.Wrapper>
                     </>
