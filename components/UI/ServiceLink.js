@@ -9,7 +9,7 @@ import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/UI/shadcn/Dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/UI/shadcn/DropdownMenu';
 import {
     Dialog,
     DialogContent,
