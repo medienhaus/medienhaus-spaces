@@ -7,7 +7,6 @@ import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import TextButton from './TextButton';
 import DefaultLayout from '../layouts/default';
-import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
@@ -41,7 +40,7 @@ const ServiceIframeHeader = ({
     settingsTabValue,
 }) => {
     const { t } = useTranslation('write');
-                            console.log(settingsTabValue);
+    console.log(settingsTabValue);
 
     return (
         <DefaultLayout.IframeHeader>
@@ -64,17 +63,19 @@ const ServiceIframeHeader = ({
                 {myPowerLevel && (
                     <>
                         <Separator orientation="vertical" />
-                        <InviteUserToMatrixRoom.Button
-                            name={title}
+                        <TextButton
                             onClick={() => {
                                 setManageContextActionToggle(!manageContextActionToggle);
                                 setSettingsTabValue('members');
                                 setIsInviteUsersOpen(!isInviteUsersOpen);
                             }}
-                            inviteUsersOpen={isInviteUsersOpen}
-                            /* @TODO: following condition can be removed once we have dialog/drawer implemented */
-                            icon={manageContextActionToggle && settingsTabValue != 'settings' ? <RiFolderLine /> : <RiUserLine />}
-                        />
+                            title={t('Show members of {{name}}', { name: title })}
+                        >
+                            <Icon>
+                                <RiUserLine />
+                            </Icon>
+                        </TextButton>
+
                         <ToggleButton
                             onClick={() => {
                                 setIsInviteUsersOpen(false);
@@ -83,7 +84,9 @@ const ServiceIframeHeader = ({
                             }}
                         >
                             {/* @TODO: following condition can be removed once we have dialog/drawer implemented */}
-                            <Icon>{manageContextActionToggle && settingsTabValue != 'members'  ? <RiFolderLine /> : <RiListSettingsLine />}</Icon>
+                            <Icon>
+                                {manageContextActionToggle && settingsTabValue != 'members' ? <RiFolderLine /> : <RiListSettingsLine />}
+                            </Icon>
                         </ToggleButton>
                     </>
                 )}
