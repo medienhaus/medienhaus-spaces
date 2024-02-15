@@ -73,8 +73,12 @@ const ExploreMatrixActions = ({
             @TODO: first line of tab content are not on same height;
             @TODO: remove caption? negative margin for caption/table?
             -> hence the mt-5 tailwind class below
+
+            @NOTE: add some padding between the last element and
+                   viewport bottom via mb-8 tailwind class below
             */}
-            <TabsContent className="[&>*+*]:mt-8 [&>:first-child]:mt-5" value="settings">
+
+            <TabsContent className="[&>*+*]:mt-8 [&>:first-child]:mt-5 [&>:last-child]:mb-8" value="settings">
                 <>
                     {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
                         <div>
