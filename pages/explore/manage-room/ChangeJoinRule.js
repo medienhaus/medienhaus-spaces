@@ -38,9 +38,9 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
-            <h1>
+            <h3>
                 {t('Change Join Rule for')} {roomName}
-            </h1>
+            </h3>
             <Select id="joinRule" defaultValue={joinRule} onValueChange={(e) => setJoinRule(e.target.value)}>
                 <SelectTrigger>
                     <SelectValue placeholder={t('Join Rule')} />
