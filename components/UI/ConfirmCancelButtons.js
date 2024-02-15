@@ -1,33 +1,19 @@
-import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/UI/shadcn/Button';
 
-const ConfirmCancelButtonsWrapper = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: var(--margin);
-`;
-
-const SmallConfirmCancelButtonsWrapper = styled(ConfirmCancelButtonsWrapper)`
-    width: fit-content;
-`;
-
-const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small, destructive, disableConfirm }) => {
+const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, destructive, disableConfirm }) => {
     const { t } = useTranslation();
 
-    // We might want to use a special wrapper if we want to use a small version of this component
-    const Wrapper = small ? SmallConfirmCancelButtonsWrapper : ConfirmCancelButtonsWrapper;
-
     return (
-        <Wrapper>
+        <div className="grid grid-cols-2 gap-4">
             <Button variant="outline" type="reset" disabled={disabled}>
                 {cancelLabel || t('Cancel')}
             </Button>
             <Button type="submit" variant={destructive ? 'destructive' : 'default'} disabled={disabled || disableConfirm}>
                 {confirmLabel || t('Confirm')}
             </Button>
-        </Wrapper>
+        </div>
     );
 };
 
