@@ -294,8 +294,6 @@ export default function Explore() {
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                                 setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 setSettingsTabValue={setSettingsTabValue}
-                                /* @TODO: following line can be removed once we have dialog/drawer implemented */
-                                settingsTabValue={settingsTabValue}
                             />
                             <ServiceTableWrapper>
                                 {manageContextActionToggle ? (

@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine, RiUserLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiListSettingsLine, RiUserLine } from '@remixicon/react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -36,11 +36,8 @@ const ServiceIframeHeader = ({
     setIsInviteUsersOpen,
     joinRule,
     setSettingsTabValue,
-    /* @TODO: following line can be removed once we have dialog/drawer implemented */
-    settingsTabValue,
 }) => {
     const { t } = useTranslation('write');
-    console.log(settingsTabValue);
 
     return (
         <DefaultLayout.IframeHeader>
@@ -83,9 +80,8 @@ const ServiceIframeHeader = ({
                                 setSettingsTabValue('settings');
                             }}
                         >
-                            {/* @TODO: following condition can be removed once we have dialog/drawer implemented */}
                             <Icon>
-                                {manageContextActionToggle && settingsTabValue != 'members' ? <RiFolderLine /> : <RiListSettingsLine />}
+                                <RiListSettingsLine />
                             </Icon>
                         </ToggleButton>
                     </>
