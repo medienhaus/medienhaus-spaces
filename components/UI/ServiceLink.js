@@ -94,7 +94,7 @@ const ServiceLink = forwardRef(
                     <ServiceTable.Cell align="right">
                         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DropdownMenu>
-                                <DropdownMenuTrigger>
+                                <DropdownMenuTrigger className="align-middle">
                                     <RiMoreLine />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
