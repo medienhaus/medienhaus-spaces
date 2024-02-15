@@ -150,14 +150,17 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess, onCancel }) => {
  * @param {Function} onClick - Function to execute when the button is clicked.
  * @param {string} name - The name of the Matrix room.
  * @returns {React.ReactElement} - A React component representing the button for inviting users.
+ *
+ * @TODO: icon prop can be removed once we have dialog/drawer implemented
  */
-const InviteUsersButton = ({ onClick, name }) => {
+const InviteUsersButton = ({ onClick, name, icon }) => {
     const { t } = useTranslation('invitationModal');
 
     return (
         <TextButton onClick={onClick} title={t('Invite users to {{name}}', { name: name })}>
             <Icon>
-                <RiUserLine />
+                {/* @TODO: following condition can be removed once we have dialog/drawer implemented */}
+                {icon ? icon : <RiUserLine />}
             </Icon>
         </TextButton>
     );

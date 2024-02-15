@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine, RiUserLine } from '@remixicon/react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -37,8 +37,11 @@ const ServiceIframeHeader = ({
     setIsInviteUsersOpen,
     joinRule,
     setSettingsTabValue,
+    /* @TODO: following line can be removed once we have dialog/drawer implemented */
+    settingsTabValue,
 }) => {
     const { t } = useTranslation('write');
+                            console.log(settingsTabValue);
 
     return (
         <DefaultLayout.IframeHeader>
@@ -69,14 +72,18 @@ const ServiceIframeHeader = ({
                                 setIsInviteUsersOpen(!isInviteUsersOpen);
                             }}
                             inviteUsersOpen={isInviteUsersOpen}
+                            /* @TODO: following condition can be removed once we have dialog/drawer implemented */
+                            icon={manageContextActionToggle && settingsTabValue != 'settings' ? <RiFolderLine /> : <RiUserLine />}
                         />
                         <ToggleButton
                             onClick={() => {
                                 setIsInviteUsersOpen(false);
                                 setManageContextActionToggle(!manageContextActionToggle);
+                                setSettingsTabValue('settings');
                             }}
                         >
-                            <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiListSettingsLine />}</Icon>
+                            {/* @TODO: following condition can be removed once we have dialog/drawer implemented */}
+                            <Icon>{manageContextActionToggle && settingsTabValue != 'members'  ? <RiFolderLine /> : <RiListSettingsLine />}</Icon>
                         </ToggleButton>
                     </>
                 )}
