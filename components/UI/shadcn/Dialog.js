@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { RiCloseLine, RiCrossLine } from '@remixicon/react';
+import { RiCloseLine } from '@remixicon/react';
 
 import { cn } from '@/lib/utils';
 
@@ -36,7 +36,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
             {...props}
         >
             {children}
-            <DialogPrimitive.Close className="absolute right-6 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <DialogPrimitive.Close className="absolute right-1 top-1 rounded-sm text-muted ring-offset-background transition-opacity hover:text-destructive focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                 <RiCloseLine className="h-5 w-5" />
                 <span className="sr-only">Close</span>
             </DialogPrimitive.Close>
