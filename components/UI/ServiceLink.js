@@ -51,7 +51,16 @@ const NotificationBadge = styled.span`
 // @TODO success message closes too quickly
 
 const ServiceLink = forwardRef(
-    ({ roomId, href, name,parentName, selected, path, target, passwordProtected,
+    (
+        {
+            roomId,
+            href,
+            name,
+            parentName,
+            selected,
+            path,
+            target,
+            passwordProtected,
             thumbnail,
             notificationCount,
             small,
@@ -109,17 +118,18 @@ const ServiceLink = forwardRef(
                                 {wasRemoved ? (
                                     'was removed'
                                 ) : (
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            {t('Are you absolutely sure you want to remove {{name}}', { name: name })}
-                                        </DialogTitle>
-
-                                        <DialogDescription>
-                                            {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
-                                                name: name,
-                                                space: parentName,
-                                            })}
-                                        </DialogDescription>
+                                    <>
+                                        <DialogHeader>
+                                            <DialogTitle>
+                                                {t('Are you absolutely sure you want to remove {{name}}', { name: name })}
+                                            </DialogTitle>
+                                            <DialogDescription>
+                                                {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
+                                                    name: name,
+                                                    space: parentName,
+                                                })}
+                                            </DialogDescription>
+                                        </DialogHeader>
                                         <DialogFooter>
                                             <form
                                                 onSubmit={async (e) => {
@@ -133,10 +143,10 @@ const ServiceLink = forwardRef(
                                                 }}
                                                 onReset={() => setDialogOpen(false)}
                                             >
-                                                <ConfirmCancelButtons confirmLabel="Remove" />
+                                                <ConfirmCancelButtons confirmLabel="Remove" destructive />
                                             </form>
                                         </DialogFooter>
-                                    </DialogHeader>
+                                    </>
                                 )}
                             </DialogContent>
                         </Dialog>

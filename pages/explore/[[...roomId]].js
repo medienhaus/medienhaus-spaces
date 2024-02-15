@@ -5,7 +5,7 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
-import { RiAddLine, RiCloseLine } from '@remixicon/react';
+import { RiAddLine } from '@remixicon/react';
 
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -294,8 +294,6 @@ export default function Explore() {
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                                 setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 setSettingsTabValue={setSettingsTabValue}
-                                /* @TODO: following line can be removed once we have dialog/drawer implemented */
-                                settingsTabValue={settingsTabValue}
                             />
                             <ServiceTableWrapper>
                                 {manageContextActionToggle ? (
@@ -355,49 +353,6 @@ export default function Explore() {
                                                     />
                                                 );
                                             })}
-                                        {/* NOTE: let’s move the dialog trigger button after the table
-                                        {!manageContextActionToggle &&
-                                            matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
-                                                    <ServiceTable.Row className="cursor-pointer">
-                                                        <ServiceTable.Cell>
-                                                            <DialogTrigger asChild>
-                                                                <Button
-                                                                    className="w-full justify-start px-0 hover:text-accent"
-                                                                    variant="ghost"
-                                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                                >
-                                                                    {t('Add more …')}
-                                                                </Button>
-                                                            </DialogTrigger>
-                                                        </ServiceTable.Cell>
-                                                        <ServiceTable.Cell align="right">
-                                                            <DialogTrigger asChild>
-                                                                <Button
-                                                                    className="w-full justify-end px-0 align-middle hover:text-accent"
-                                                                    variant="ghost"
-                                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                                >
-                                                                    {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
-                                                                </Button>
-                                                            </DialogTrigger>
-                                                        </ServiceTable.Cell>
-                                                    </ServiceTable.Row>
-                                                    <DialogContent className="grid-flow-col gap-4 p-4 pt-12">
-                                                        <QuickAddExplore
-                                                            currentId={roomId}
-                                                            roomName={matrix.spaces.get(roomId).name}
-                                                            getSpaceChildren={getSpaceChildren}
-                                                            allChatRooms={allChatRooms}
-                                                            isQuickAddOpen={isQuickAddOpen}
-                                                            setIsQuickAddOpen={setIsQuickAddOpen}
-                                                        />
-                                                    </DialogContent>
-                                                </Dialog>
-                                            )}
-                                        */}
                                     </ServiceTable>
                                 )}
                                 {!manageContextActionToggle &&
@@ -412,10 +367,10 @@ export default function Explore() {
                                                     onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
                                                 >
                                                     {t('Add more …')}
-                                                    {isQuickAddOpen ? <RiCloseLine /> : <RiAddLine />}
+                                                    <RiAddLine />
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="grid-flow-col gap-4 p-4 pt-12">
+                                            <DialogContent className="grid-flow-col gap-4 pt-8">
                                                 <QuickAddExplore
                                                     currentId={roomId}
                                                     roomName={matrix.spaces.get(roomId).name}

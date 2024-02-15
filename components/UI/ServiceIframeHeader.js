@@ -1,13 +1,12 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
-import { RiDeleteBinLine, RiFolderLine, RiListSettingsLine, RiUserLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiListSettingsLine, RiUserLine } from '@remixicon/react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import TextButton from './TextButton';
 import DefaultLayout from '../layouts/default';
-import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
@@ -37,11 +36,8 @@ const ServiceIframeHeader = ({
     setIsInviteUsersOpen,
     joinRule,
     setSettingsTabValue,
-    /* @TODO: following line can be removed once we have dialog/drawer implemented */
-    settingsTabValue,
 }) => {
     const { t } = useTranslation('write');
-                            console.log(settingsTabValue);
 
     return (
         <DefaultLayout.IframeHeader>
@@ -64,17 +60,19 @@ const ServiceIframeHeader = ({
                 {myPowerLevel && (
                     <>
                         <Separator orientation="vertical" />
-                        <InviteUserToMatrixRoom.Button
-                            name={title}
+                        <TextButton
                             onClick={() => {
                                 setManageContextActionToggle(!manageContextActionToggle);
                                 setSettingsTabValue('members');
                                 setIsInviteUsersOpen(!isInviteUsersOpen);
                             }}
-                            inviteUsersOpen={isInviteUsersOpen}
-                            /* @TODO: following condition can be removed once we have dialog/drawer implemented */
-                            icon={manageContextActionToggle && settingsTabValue != 'settings' ? <RiFolderLine /> : <RiUserLine />}
-                        />
+                            title={t('Show members of {{name}}', { name: title })}
+                        >
+                            <Icon>
+                                <RiUserLine />
+                            </Icon>
+                        </TextButton>
+
                         <ToggleButton
                             onClick={() => {
                                 setIsInviteUsersOpen(false);
@@ -82,8 +80,9 @@ const ServiceIframeHeader = ({
                                 setSettingsTabValue('settings');
                             }}
                         >
-                            {/* @TODO: following condition can be removed once we have dialog/drawer implemented */}
-                            <Icon>{manageContextActionToggle && settingsTabValue != 'members'  ? <RiFolderLine /> : <RiListSettingsLine />}</Icon>
+                            <Icon>
+                                <RiListSettingsLine />
+                            </Icon>
                         </ToggleButton>
                     </>
                 )}
