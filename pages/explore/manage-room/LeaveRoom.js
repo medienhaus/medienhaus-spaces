@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from 'next/router';
+import { RiErrorWarningLine } from '@remixicon/react';
 
 import { useAuth } from '../../../lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
@@ -15,6 +16,7 @@ import {
     DialogTrigger,
 } from '@/components/UI/shadcn/Dialog';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import { Alert, AlertDescription } from '@/components/UI/shadcn/Alert';
 
 /**
  * LeaveRoom component for leaving a Matrix room.
@@ -56,7 +58,10 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
     return (
         <>
             <h3>{t('Leave {{ name }}?', { name: roomName })}</h3>
-            <p>{t('Leaving {{name}} means you cannot interact with it anymore.', { name: roomName })}</p>
+            <Alert variant="destructive">
+                <RiErrorWarningLine />
+                <AlertDescription>{t('Leaving {{name}} means you cannot interact with it anymore.', { name: roomName })}</AlertDescription>
+            </Alert>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                     <Button variant="destructive" disabled={isLeaving}>
