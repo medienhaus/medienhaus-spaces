@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
-import UserManagement from './UserManagement';
+// import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
 import ChangeTopic from './ChangeTopic';
 import ChangeAvatar from './ChangeAvatar';
