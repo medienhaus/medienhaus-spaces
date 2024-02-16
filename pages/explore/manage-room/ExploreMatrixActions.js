@@ -1,5 +1,4 @@
-import React from 'react';
-import { styled } from 'styled-components';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
@@ -10,6 +9,7 @@ import ChangeAvatar from './ChangeAvatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useAuth } from '@/lib/Auth';
+import { DrawerDialog, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -39,79 +39,129 @@ const ExploreMatrixActions = ({
     currentId,
     parentId,
     myPowerLevel,
+    // @TODO: do we still need the following ?
     setManageContextActionToggle,
-    setSettingsTabValue,
-    settingsTabValue,
+    trigger,
 }) => {
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
     const room = matrixClient.getRoom(currentId);
     if (!room) return <LoadingSpinner />;
 
     return (
-        /*
-        <ExploreMatrixActionWrapper>
-        */
-        <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
-            <TabsList>
-                <TabsTrigger value="members">{t('Members')}</TabsTrigger>
-                <TabsTrigger value="settings">{t('Settings')}</TabsTrigger>
-            </TabsList>
+        <>
+            {React.cloneElement(trigger, {
+                onClick: () => {
+                    setIsOpen(true);
+                },
+            })}
+            <DrawerDialog
+                isOpen={isOpen}
+                onOpenChange={(newState) => {
+                    setIsOpen(newState);
+                }}
+            >
+                <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
+                    <aside className="sticky top-0 z-10 translate-y-[-1.5rem] bg-background pt-6">
+                        <DrawerDialogHeader>
+                            <h3>{t('/explore actions')}</h3>
+                        </DrawerDialogHeader>
 
-            <TabsContent value="members">
-                <UserManagement
-                    myPowerLevel={myPowerLevel}
-                    roomId={currentId}
-                    roomName={room.name}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            </TabsContent>
+                        <br />
 
-            {/*
-            @TODO: first line of tab content are not on same height;
-            @TODO: remove caption? negative margin for caption/table?
-            -> hence the mt-5 tailwind class below
+                        <TabsList>
+                            {/* @NOTE: we do not want the members list as a tab in dialog/drawer */}
+                            {/*
+                            <TabsTrigger
+                                onClick={() => {
+                                    setSettingsTabValue('members');
+                                }}
+                                value="members"
+                            >
+                                {t('Members')}
+                            </TabsTrigger>
+                            */}
 
-            @NOTE: add some padding between the last element and
-                   viewport bottom via mb-8 tailwind class below
-            */}
+                            <TabsTrigger
+                                onClick={() => {
+                                    setSettingsTabValue('settings');
+                                }}
+                                value="settings"
+                            >
+                                {t('Settings')}
+                            </TabsTrigger>
+                        </TabsList>
 
-            <TabsContent className="[&>*+*]:mt-8 [&>:first-child]:mt-5 [&>:last-child]:mb-8" value="settings">
-                <>
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                        <div>
-                            <h3>{t('Topic (optional)')}</h3>
-                            <ChangeTopic roomId={currentId} roomName={room.name} />
-                        </div>
-                    )}
+                        {/* @NOTE: needs two <br /> elements before <hr />, as <TabsList /> is display:inline; */}
+                        <br />
+                        <br />
+                        <hr />
+                    </aside>
 
                     {/*
-                    @TODO: ChangeAvatar needs refactor; should use shadcn avatar component
+                    <TabsContent className="overflow-y-auto" value="members">
+                        <UserManagement
+                            myPowerLevel={myPowerLevel}
+                            roomId={currentId}
+                            roomName={room.name}
+                            // @TODO: do we still need the following ?
+                            onCancel={() => setManageContextActionToggle(false)}
+                        />
+                    </TabsContent>
                     */}
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                        <div>
-                            <h3>{t('Avatar')}</h3>
-                            <ChangeAvatar roomId={currentId} onCancel={() => setManageContextActionToggle(false)} />
-                        </div>
-                    )}
 
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
-                        <div>
-                            <ChangeJoinRule roomId={currentId} roomName={room.name} onCancel={() => setManageContextActionToggle(false)} />
-                        </div>
-                    )}
+                    {/*
+                    @TODO: first line of tab content are not on same height;
+                    @TODO: remove caption? negative margin for caption/table?
+                    */}
 
-                    <div>
-                        <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
-                    </div>
-                </>
-            </TabsContent>
-        </Tabs>
-        /*
-        </ExploreMatrixActionWrapper>
-        */
+                    <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
+                        <>
+                            {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
+                                <div>
+                                    <h3>{t('Topic (optional)')}</h3>
+                                    <ChangeTopic roomId={currentId} roomName={room.name} />
+                                </div>
+                            )}
+
+                            {/*
+                            @TODO: ChangeAvatar needs refactor; should use shadcn avatar component
+                            */}
+                            {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
+                                <div>
+                                    <h3>{t('Avatar')}</h3>
+                                    <ChangeAvatar
+                                        roomId={currentId}
+                                        /* @TODO: do we still need the following ? */
+                                        onCancel={() => setManageContextActionToggle(false)}
+                                    />
+                                </div>
+                            )}
+
+                            {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                                <div>
+                                    <ChangeJoinRule
+                                        roomId={currentId}
+                                        roomName={room.name}
+                                        /* @TODO: do we still need the following ? */
+                                        onCancel={() => setManageContextActionToggle(false)}
+                                    />
+                                </div>
+                            )}
+
+                            <div>
+                                <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
+                            </div>
+                        </>
+                    </TabsContent>
+                </Tabs>
+            </DrawerDialog>
+        </>
     );
 };
 

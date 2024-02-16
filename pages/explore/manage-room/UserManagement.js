@@ -22,7 +22,8 @@ const RoleSelect = styled.select`
     border: unset;
 `;
 
-const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
+// const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
+const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -59,7 +60,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
             */}
             <ServiceTable>
                 <ServiceTable.Caption>
-                    {t('All members of')} {roomName}
+                    {t('All members of {{room}}', { room: roomName })}
                 </ServiceTable.Caption>
                 <ServiceTable.Head>
                     <ServiceTable.Row>
@@ -161,7 +162,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
                     title={t(
                         hasHigherPowerLevel
                             ? 'Kick {{user}} from {{room}}'
-                            : 'Cannot kick {{ user }}, you don’t have the required permissions',
+                            : 'Cannot kick {{user}}, you don’t have the required permissions',
                         { user: displayName, room: roomName },
                     )}
                 >
