@@ -21,7 +21,6 @@ import logger from '../../lib/Logging';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/UI/shadcn/Dialog';
 import { Button } from '@/components/UI/shadcn/Button';
 
 const ServiceTableWrapper = styled.div`
@@ -49,7 +48,6 @@ export default function Explore() {
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
     const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     // Extract roomId and iframeRoomId from the query parameters
@@ -359,28 +357,22 @@ export default function Explore() {
                                     matrixClient
                                         .getRoom(roomId)
                                         ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                        <Dialog open={isQuickAddOpen} onOpenChange={setIsQuickAddOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    className="w-full justify-between px-0 hover:text-accent"
-                                                    variant="ghost"
-                                                    onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                >
-                                                    {t('Add more …')}
-                                                    <RiAddLine />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="grid-flow-col gap-4 pt-8">
-                                                <QuickAddExplore
-                                                    currentId={roomId}
-                                                    roomName={matrix.spaces.get(roomId).name}
-                                                    getSpaceChildren={getSpaceChildren}
-                                                    allChatRooms={allChatRooms}
-                                                    isQuickAddOpen={isQuickAddOpen}
-                                                    setIsQuickAddOpen={setIsQuickAddOpen}
-                                                />
-                                            </DialogContent>
-                                        </Dialog>
+                                            <QuickAddExplore
+                                                currentId={roomId}
+                                                roomName={matrix.spaces.get(roomId).name}
+                                                getSpaceChildren={getSpaceChildren}
+                                                allChatRooms={allChatRooms}
+                                                trigger={
+                                                    <Button
+                                                        className="w-full justify-between px-0 hover:text-accent"
+                                                        variant="ghost"
+                                                        // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                    >
+                                                        {t('Add more …')}
+                                                        <RiAddLine />
+                                                    </Button>
+                                                }
+                                            />
                                     )}
                             </ServiceTableWrapper>
                         </DefaultLayout.Wrapper>
