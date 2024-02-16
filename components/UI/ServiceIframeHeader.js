@@ -15,14 +15,15 @@ import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixA
 import { Separator } from '@/components/UI/shadcn/Separator';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 
+/*
 const ToggleButton = styled.button`
-    /* unset globally defined button styles; set height to line-height */
     width: unset;
     height: calc(var(--margin) * 1.3);
     padding: unset;
     background-color: unset;
     border: unset;
 `;
+*/
 
 // @TODO check if user actually has the needed power level to invite users to the matrix room
 const ServiceIframeHeader = ({
@@ -67,7 +68,7 @@ const ServiceIframeHeader = ({
                         <Separator orientation="vertical" />
 
                         {/* @NOTE: this switches between the contexts/items and members lists in the service table wrapper */}
-                        <ToggleButton
+                        <TextButton
                             onClick={() => {
                                 setManageContextActionToggle(!manageContextActionToggle);
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
@@ -76,7 +77,7 @@ const ServiceIframeHeader = ({
                             title={manageContextActionToggle ? t('Show contexts and items of {{name}}', { name: title }) : t('Show members of {{name}}', { name: title })}
                         >
                             <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiGroupLine />}</Icon>
-                        </ToggleButton>
+                        </TextButton>
 
                         <Separator orientation="vertical" />
 
@@ -121,14 +122,14 @@ const ServiceIframeHeader = ({
                             myPowerLevel={myPowerLevel}
                             settingsTabValue="settings"
                             trigger={
-                                <ToggleButton
+                                <TextButton
                                     variant="ghost"
                                     title={t('Show settings of {{name}}', { name: title })}
                                 >
                                     <Icon>
                                         <RiListSettingsLine />
                                     </Icon>
-                                </ToggleButton>
+                                </TextButton>
                             }
                         />
                     </>
