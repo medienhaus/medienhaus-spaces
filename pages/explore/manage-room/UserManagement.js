@@ -31,7 +31,6 @@ const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
     const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
     const { t } = useTranslation();
-    const [isInviteOpen, setIsInviteOpen] = useState(false);
 
     const handleKick = async (userId, name) => {
         if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
@@ -101,10 +100,9 @@ const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
                             <Button
                                 className="w-full justify-between px-0 pr-1.5 hover:text-accent"
                                 variant="ghost"
-                                onClick={() => setIsInviteOpen((prevState) => !prevState)}
                             >
                                 {t('Invite people to {{name}} …', { name: roomName })}
-                                {isInviteOpen ? <RiCloseLine /> : <RiAddLine />}
+                                <RiAddLine />
                             </Button>
                         }
                     />
