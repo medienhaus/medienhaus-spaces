@@ -266,6 +266,25 @@ export default function Explore() {
                             iframeRoomId={iframeRoomId}
                         />
                     )}
+                    {!manageContextActionToggle &&
+                        matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                            <QuickAddExplore
+                                currentId={roomId}
+                                roomName={matrix.spaces.get(roomId).name}
+                                getSpaceChildren={getSpaceChildren}
+                                allChatRooms={allChatRooms}
+                                trigger={
+                                    <Button
+                                        className="w-full justify-between px-0 hover:text-accent"
+                                        variant="ghost"
+                                        // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                    >
+                                        {t('Add more …')}
+                                        <RiAddLine />
+                                    </Button>
+                                }
+                            />
+                        )}
                 </ServiceTableWrapper>
             </DefaultLayout.Sidebar>
 
@@ -298,11 +317,7 @@ export default function Explore() {
                             />
                             <ServiceTableWrapper>
                                 {manageContextActionToggle ? (
-                                    <UserManagement
-                                        roomId={roomId}
-                                        roomName={matrix.spaces.get(roomId).name}
-                                        myPowerLevel={myPowerLevel}
-                                    >
+                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
                                             <Icon>
                                                 <RiUserLine />
