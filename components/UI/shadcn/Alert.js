@@ -4,12 +4,12 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const alertVariants = cva(
-    'my-2 w-fit rounded-lg border p-2 [&>svg]:mr-2 [&>svg]:inline [&>svg]:leading-[var(--icon-size)] [&>svg]:text-foreground',
+    'my-2 w-fit border-l-2 p-2 [&>svg]:mr-2 [&>svg]:inline [&>svg]:leading-[var(--icon-size)] [&>svg]:text-foreground',
     {
         variants: {
             variant: {
                 default: 'bg-background text-foreground',
-                destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+                destructive: 'border-destructive text-destructive dark:border-destructive [&>svg]:text-destructive',
             },
         },
         defaultVariants: {
