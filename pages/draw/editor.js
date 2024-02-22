@@ -1,8 +1,23 @@
 'use client';
-import { Tldraw, useEditor } from '@tldraw/tldraw';
+import { Tldraw, useEditor,track, setUserPreferences,
+    InstancePresenceRecordType,
+	TLAnyShapeUtilConstructor,
+	TLInstancePresence,
+	TLRecord,
+	TLStoreWithStatus,
+	computed,
+	createPresenceStateDerivation,
+	createTLStore,
+	defaultShapeUtils,
+	defaultUserPreferences,
+	getUserPreferences,
+	react,
+	transact
+ } from '@tldraw/tldraw';
 import { useState, useEffect } from 'react';
 import { styled } from 'styled-components';
-import _ from 'lodash';
+import _, { set } from 'lodash';
+import { useImmer } from 'use-immer';
 
 import '@tldraw/tldraw/tldraw.css';
 
@@ -10,8 +25,38 @@ const EditorSection = styled.div`
   height: 100%;
 `;
 
-export default function Editor({ store, addStoreElement, updateStoreElement, deleteStoreElement }) {
+export default function Editor({ store, addStoreElement, updateStoreElement, deleteStoreElement, user }) {
     const [editor, setEditor] = useState();
+
+    const [tldrawUserPreferences, setTldrawUserPreferences] = useImmer({ id: user.id, isDarkMode: true, name: user.displayname, color: '#FF0000'}); 
+
+    
+
+    // hangling darkmode
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const setDarkModeFromMediaQuery = () => {
+            console.log('a')
+
+            setTldrawUserPreferences(draft => {
+                set(draft, 'isDarkMode', darkModeMediaQuery.matches);
+            });
+           
+        };
+
+        setDarkModeFromMediaQuery();
+        darkModeMediaQuery.addListener(setDarkModeFromMediaQuery);
+
+        return () => darkModeMediaQuery.removeListener(setDarkModeFromMediaQuery);
+    }, [setTldrawUserPreferences]);
+
+
+    // updateing the tldrawstore with the current user settings
+    useEffect(() => {
+        setUserPreferences(tldrawUserPreferences)
+    }, [editor, tldrawUserPreferences]);
+
 
     const handleMount = (app) => {
         setEditor(app);
@@ -26,7 +71,9 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
                     deleteStoreElement(key, entry.changes.removed[key], entry.changes.removed[key].meta.eventId);
                 });
             }
+
         });
+ 
     };
 
     useEffect(() => {
@@ -76,10 +123,43 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
         editor.store.put([element]);
     };
 
+
+    const NameEditor = track(() => {
+      
+        if(!editor) return null;
+    
+        const { color, name } = editor.user
+    
+        return (
+            <div style={{ pointerEvents: 'all', display: 'flex' }}>
+                <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => {
+                        editor.user.updateUserPreferences({
+                            color: e.currentTarget.value,
+                            isDarkMode:true
+                        })
+                    }}
+                />
+                <input
+                    value={name}
+                    placeholder='name'
+                    onChange={(e) => {
+                        editor.user.updateUserPreferences({
+                            name: e.currentTarget.value,
+                            isDarkMode:true
+                        })
+                    }}
+                />
+            </div>
+        )
+    })
+
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <EditorSection>
-                <Tldraw onUiEvent={handleEvent} onMount={handleMount} />
+                <Tldraw onUiEvent={handleEvent} onMount={handleMount} shareZone={<NameEditor />} />
 
             </EditorSection>
 

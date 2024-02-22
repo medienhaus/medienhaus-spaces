@@ -23,6 +23,7 @@ import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixR
 import TextButton from '../../components/UI/TextButton';
 import Icon from '../../components/UI/Icon';
 
+
 const Editor = dynamic(() => import('./editor'), { ssr: false });
 
 const TlDrawListEntry = memo(({ name, href, roomId, ref, selected }) => {
@@ -36,6 +37,8 @@ export default function Draw() {
     const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
+    const [userDisplayname, setUserDisplayname] = useState('');
+
     const { t } = useTranslation('tldraw');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
@@ -48,6 +51,18 @@ export default function Draw() {
     const tldrawMatrix = TldrawMatrixProvider(roomId);
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     const [isDeletingSketch, setIsDeletingSketch] = useState(false);
+
+
+
+
+    // getting the displayname for the editor
+    const fetchProfileInfo = useCallback(async () => {
+        const profileInfo = await matrixClient.getProfileInfo(matrixClient.getUserId());
+        setUserDisplayname(profileInfo.displayname);
+    }, [matrixClient]);
+
+    fetchProfileInfo()
+
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
     // This makes the sidebar scroll to the element if it is outside of the current viewport.
@@ -229,6 +244,7 @@ export default function Draw() {
                                 updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
                                 addStoreElement={tldrawMatrix.addStoreElementToMatrix}
                                 deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
+                                user={{id: matrixClient.getUserId(), displayname: userDisplayname  }}
                             />
                         )
                     )}
