@@ -20,5 +20,6 @@
     "Decline": "Ablehnen",
     "The session for {{service}} has expired.": "Die Sitzung für {{service}} ist abgelaufen.",
     "Please enter your account password to continue using {{service}}:": "Bitte gib dein Passwort ein, um {{service}} wieder nutzen zu können:",
-    "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut."
+    "Something went wrong! Please try again.": "Da ist etwas schief gelaufen! Bitte versuche es erneut.",
+    "loading...": "lädt..."
 }

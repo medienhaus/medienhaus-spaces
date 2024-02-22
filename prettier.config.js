@@ -9,4 +9,5 @@ module.exports = {
     ...MatrixPrettierConfig,
     printWidth: 140, // Slightly more lax setting than what Matrix is doing; should be re-adjusted later
     singleQuote: true, // In non-JSX JavaScript code prefer single quotes over double quotes
+    plugins: ['prettier-plugin-tailwindcss'],
 };

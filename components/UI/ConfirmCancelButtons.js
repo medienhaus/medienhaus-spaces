@@ -1,6 +1,8 @@
 import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '@/components/UI/shadcn/Button';
+
 const ConfirmCancelButtonsWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -9,37 +11,6 @@ const ConfirmCancelButtonsWrapper = styled.div`
 
 const SmallConfirmCancelButtonsWrapper = styled(ConfirmCancelButtonsWrapper)`
     width: fit-content;
-
-    button {
-        height: var(--line-height);
-        padding: calc(var(--margin) * 0.1) calc(var(--margin) * 0.35);
-        font-size: 80%;
-        border-width: calc(var(--margin) * 0.125);
-    }
-
-    button[type='reset'] {
-        font-weight: 600;
-    }
-`;
-
-const ConfirmButton = styled.button`
-    color: var(--color-background);
-    background-color: var(--color-foreground);
-
-    &:disabled {
-        color: var(--color-background);
-        background-color: var(--color-disabled);
-    }
-`;
-
-const CancelButton = styled.button`
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-
-    &:disabled {
-        color: var(--color-disabled);
-        background-color: var(--color-background);
-    }
 `;
 
 const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) => {
@@ -50,12 +21,12 @@ const ConfirmCancelButtons = ({ disabled, confirmLabel, cancelLabel, small }) =>
 
     return (
         <Wrapper>
-            <CancelButton type="reset" disabled={disabled}>
+            <Button variant="outline" type="reset" disabled={disabled}>
                 {cancelLabel || t('Cancel')}
-            </CancelButton>
-            <ConfirmButton type="submit" disabled={disabled}>
+            </Button>
+            <Button type="submit" disabled={disabled}>
                 {confirmLabel || t('Confirm')}
-            </ConfirmButton>
+            </Button>
         </Wrapper>
     );
 };

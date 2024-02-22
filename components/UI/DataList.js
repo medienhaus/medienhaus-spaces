@@ -5,6 +5,8 @@ import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -142,7 +144,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
 
     return (
         <InviteUserForm onSubmit={handleSubmit}>
-            <input
+            <Input
                 type="text"
                 value={value}
                 onChange={handleChange}
@@ -185,7 +187,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     </ServiceTable.Body>
                 </ServiceTable>
             </TableWrapper>
-            <button disabled={selected.length === 0 && checked.length === 0}>{t('invite')}</button>
+            <Button disabled={selected.length === 0 && checked.length === 0}>{t('Invite')}</Button>
         </InviteUserForm>
     );
 }
