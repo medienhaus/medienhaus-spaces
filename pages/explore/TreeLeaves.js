@@ -27,22 +27,20 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat }) 
 
     const etherpad = auth.getAuthenticationProvider('etherpad');
     const [isPasswordProtected, setIsPasswordProtected] = useState(false);
-    if (!leaf) return <LoadingSpinner />;
 
     const roomId = leaf.id || leaf.room_id || leaf.roomId;
     const parentId = leaf.parent.id || leaf.parent.room_id || leaf.parent.roomId;
     const template = leaf.meta?.template;
     const name = isChat ? '💬 ' + leaf.name : getIcon(template, leaf.name);
 
-    // if an iframe is open we only want to show items in the list
-    if (selectedRoomId && leaf.type !== 'item') return null;
-
     useEffect(() => {
         let cancelled = false;
+
         if (template === 'etherpad' && !cancelled) {
             const checkIfPadHasPassword = async () => {
                 const url = matrix.roomContents.get(roomId)?.body;
                 const padId = url.split('/').pop();
+
                 return etherpad.isPadPasswordProtected(padId);
             };
 
@@ -50,7 +48,12 @@ const TreeLeaves = ({ leaf, selectedRoomId, isFetchingContent, small, isChat }) 
         }
 
         return () => (cancelled = true);
-    }, []);
+    }, [etherpad, matrix.roomContents, roomId, template]);
+
+    if (!leaf) return <LoadingSpinner />;
+
+    // if an iframe is open we only want to show items in the list
+    if (selectedRoomId && leaf.type !== 'item') return null;
 
     return (
         <ServiceLink
