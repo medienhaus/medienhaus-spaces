@@ -30,8 +30,10 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
     const createPad = async () => {
         if (password !== validatePassword) {
             setErrorMessage('Passwords do not match');
+
             return;
         }
+
         setIsLoading(true);
         setErrorMessage('');
         const createPad = await createPadAndOpen(padName, passwordProtected ? 'private' : 'public', password).catch((error) => {
