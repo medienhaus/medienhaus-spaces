@@ -298,11 +298,7 @@ export default function Explore() {
                             />
                             <ServiceTableWrapper>
                                 {manageContextActionToggle ? (
-                                    <UserManagement
-                                        roomId={roomId}
-                                        roomName={matrix.spaces.get(roomId).name}
-                                        myPowerLevel={myPowerLevel}
-                                    >
+                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
                                             <Icon>
                                                 <RiUserLine />
@@ -346,6 +342,7 @@ export default function Explore() {
                                                         isFetchingContent={isFetchingContent}
                                                         parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                                         onRemove={removeChildFromParent}
+                                                        myPowerLevel={myPowerLevel}
                                                     />
                                                 );
                                             })}

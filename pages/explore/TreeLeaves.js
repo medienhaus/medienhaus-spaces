@@ -16,13 +16,13 @@ const getIcon = (template, name) => {
         case 'studentproject':
             return '🎓 ' + name;
         case 'link':
-            return '🔗 ' + name
+            return '🔗 ' + name;
         default:
             return name;
     }
 };
 
-const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small, isChat, onRemove }) => {
+const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small, isChat, onRemove, myPowerLevel }) => {
     const router = useRouter();
     const auth = useAuth();
     const matrix = useMatrix();
@@ -78,6 +78,7 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
             onRemove={() => onRemove(roomId)}
             parentName={parentName}
             passwordProtected={isPasswordProtected}
+            myPowerLevel={myPowerLevel}
         />
     );
 };

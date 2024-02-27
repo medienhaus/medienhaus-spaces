@@ -21,6 +21,7 @@ import {
 } from '@/components/UI/shadcn/Dialog';
 import { Button } from '@/components/UI/shadcn/Button';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
+import { useAuth } from '@/lib/Auth';
 
 const LockIconWrapper = styled(Icon)`
     position: relative;
@@ -50,6 +51,71 @@ const NotificationBadge = styled.span`
 // @TODO figure out what to do with optional menu and logic for menu, could use better solution
 // @TODO success message closes too quickly
 
+function EllipsisMenu({ parentName, roomId, onRemove, myPowerLevel }) {
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [wasRemoved, setWasRemoved] = useState(false);
+    const { t } = useTranslation();
+    const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
+    const room = matrixClient.getRoom(roomId);
+    const canRemoveFromParent = room?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
+
+    // if we don't have sufficient rights for any of the options we return null
+    // this extra step makes more sense once the ellipsis menu has more options
+    if (!canRemoveFromParent) return null;
+
+    return (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DropdownMenu>
+                <DropdownMenuTrigger className="align-middle">
+                    <RiMoreLine />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {canRemoveFromParent && (
+                        <DropdownMenuItem>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost">{t('Remove')}</Button>
+                            </DialogTrigger>
+                        </DropdownMenuItem>
+                    )}
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <DialogContent>
+                {wasRemoved ? (
+                    'was removed'
+                ) : (
+                    <>
+                        <DialogHeader>
+                            <DialogTitle>{t('Are you absolutely sure you want to remove {{name}}', { name: name })}</DialogTitle>
+                            <DialogDescription>
+                                {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
+                                    name: name,
+                                    space: parentName,
+                                })}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <form
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    await onRemove();
+                                    setWasRemoved(true);
+                                    _.delay(() => {
+                                        setDialogOpen(false);
+                                        setWasRemoved(false);
+                                    }, 1000);
+                                }}
+                                onReset={() => setDialogOpen(false)}
+                            >
+                                <ConfirmCancelButtons confirmLabel="Remove" destructive />
+                            </form>
+                        </DialogFooter>
+                    </>
+                )}
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 const ServiceLink = forwardRef(
     (
         {
@@ -66,11 +132,10 @@ const ServiceLink = forwardRef(
             small,
             isFetchingContent,
             onRemove,
+            myPowerLevel,
         },
         ref,
     ) => {
-        const [dialogOpen, setDialogOpen] = useState(false);
-        const [wasRemoved, setWasRemoved] = useState(false);
         const { t } = useTranslation();
 
         return (
@@ -101,55 +166,7 @@ const ServiceLink = forwardRef(
                 </ServiceTable.Cell>
                 {onRemove && (
                     <ServiceTable.Cell align="right">
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="align-middle">
-                                    <RiMoreLine />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    <DropdownMenuItem>
-                                        <DialogTrigger asChild>
-                                            <Button variant="ghost">{t('Remove')}</Button>
-                                        </DialogTrigger>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                            <DialogContent>
-                                {wasRemoved ? (
-                                    'was removed'
-                                ) : (
-                                    <>
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                {t('Are you absolutely sure you want to remove {{name}}', { name: name })}
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
-                                                    name: name,
-                                                    space: parentName,
-                                                })}
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <DialogFooter>
-                                            <form
-                                                onSubmit={async (e) => {
-                                                    e.preventDefault();
-                                                    await onRemove();
-                                                    setWasRemoved(true);
-                                                    _.delay(() => {
-                                                        setDialogOpen(false);
-                                                        setWasRemoved(false);
-                                                    }, 1000);
-                                                }}
-                                                onReset={() => setDialogOpen(false)}
-                                            >
-                                                <ConfirmCancelButtons confirmLabel="Remove" destructive />
-                                            </form>
-                                        </DialogFooter>
-                                    </>
-                                )}
-                            </DialogContent>
-                        </Dialog>
+                        <EllipsisMenu parentName={parentName} onRemove={onRemove} myPowerLevel={myPowerLevel} roomId={roomId} />
                     </ServiceTable.Cell>
                 )}
             </ServiceTable.Row>
