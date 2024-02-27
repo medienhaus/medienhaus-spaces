@@ -3,16 +3,11 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiCloseLine, RiDeleteBinLine, RiMenuAddLine } from '@remixicon/react';
+import { styled } from 'styled-components';
 
-import CreateAnonymousPad from './actions/CreateAnonymousPad';
-import AddExistingPad from './actions/AddExistingPad';
-import CreateAuthoredPad from './actions/CreateAuthoredPad';
-import CreatePasswordPad from './actions/CreatePasswordPad';
-import ErrorMessage from '@/components/UI/ErrorMessage';
 import Icon from '@/components/UI/Icon';
 import DefaultLayout from '@/components/layouts/default';
-import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
 import TextButton from '@/components/UI/TextButton';
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
@@ -25,6 +20,16 @@ import logger from '@/lib/Logging';
 import { isMyPadsApiEnabled, path as etherpadPath } from '@/lib/Etherpad';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
+import CreateNewPad from './actions/CreateNewPad';
+
+const Header = styled.header`
+    display: grid;
+    grid-template-columns: 1fr auto;
+`;
+
+const ToggleButton = styled(TextButton)`
+    height: calc(var(--margin) * var(--line-height));
+`;
 
 const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
@@ -70,6 +75,7 @@ export default function Etherpad() {
     const [serverPads, setServerPads] = useState(null);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
     const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
+    const [displayCreatePad, setDisplayCreatePad] = useState(false);
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -248,29 +254,6 @@ export default function Etherpad() {
         setIsDeletingPad(false);
     };
 
-    const submenuItems = _.filter([
-        {
-            value: 'existingPad',
-            actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />,
-            label: t('Add existing pad'),
-        },
-        {
-            value: 'anonymousPad',
-            actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />,
-            label: t('Create new anonymous pad'),
-        },
-        isMyPadsApiEnabled && {
-            value: 'authoredPad',
-            actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />,
-            label: t('Create new authored pad'),
-        },
-        isMyPadsApiEnabled && {
-            value: 'passwordPad',
-            actionComponentToRender: <CreatePasswordPad createPadAndOpen={createPadAndOpen} />,
-            label: t('Create password protected pad'),
-        },
-    ]);
-
     const listEntries = useMemo(() => {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map((writeRoomId) => {
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
@@ -325,16 +308,13 @@ export default function Etherpad() {
                     </>
                 ) : (
                     <>
-                        <ServiceSubmenu
-                            title={<h2>{etherpadPath}</h2>}
-                            subheadline={t('What would you like to do?')}
-                            items={submenuItems}
-                        />
-                        {getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && (
-                            <ErrorMessage>
-                                {t("Can't connect to the provided {{path}} server. Please try again later.", { path: etherpadPath })}
-                            </ErrorMessage>
-                        )}
+                        <Header>
+                            <h2>{etherpadPath}</h2>
+                            <ToggleButton onClick={() => setDisplayCreatePad((prevState) => !prevState)}>
+                                <Icon>{displayCreatePad ? <RiCloseLine /> : <RiMenuAddLine />}</Icon>
+                            </ToggleButton>
+                        </Header>
+                        {displayCreatePad && <CreateNewPad createPadAndOpen={createPadAndOpen} isMyPadsApiEnabled={isMyPadsApiEnabled} />}
                         <ServiceTable>
                             <ServiceTable.Body>{listEntries}</ServiceTable.Body>
                         </ServiceTable>
