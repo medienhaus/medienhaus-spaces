@@ -6,7 +6,7 @@ import { logger } from 'matrix-js-sdk/lib/logger';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { useAuth } from '@/lib/Auth';
-import { DrawerDialog, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
+import { DrawerDialog, DrawerDialogFooter, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
 
 /**
  * A modal-like interface to invite other users to a given Matrix room.
@@ -125,6 +125,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                         </>
                     )}
                 </div>
+                <DrawerDialogFooter cancelLabel="Cancel" />
             </DrawerDialog>
         </>
     );

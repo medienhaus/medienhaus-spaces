@@ -3,15 +3,17 @@ import { useTranslation } from 'react-i18next';
 
 import { cn, useMediaQuery } from '@/lib/utils';
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/UI/shadcn/Drawer';
-import { Dialog, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
 import { Button } from '@/components/UI/shadcn/Button';
+
+const isDesktopMediaQuery = '(min-width: 768px)';
 
 /**
  * A dialog component that automatically becomes a drawer on mobile viewports.
  */
 const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChange, ...props }, ref) => {
     const { t } = useTranslation();
-    const isDesktop = useMediaQuery('(min-width: 768px)');
+    const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     if (isDesktop) {
         return (
@@ -25,11 +27,6 @@ const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChan
         <Drawer open={isOpen} onOpenChange={onOpenChange} ref={ref}>
             <DrawerContent>
                 <div className="px-4">{children}</div>
-                <DrawerFooter className="pt-2">
-                    <DrawerClose asChild>
-                        <Button variant="outline">{t('Cancel')}</Button>
-                    </DrawerClose>
-                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );
@@ -37,7 +34,7 @@ const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChan
 DrawerDialog.displayName = 'DrawerDialog';
 
 const DrawerDialogHeader = React.forwardRef(({ className, children, ...props }, ref) => {
-    const isDesktop = useMediaQuery('(min-width: 768px)');
+    const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     if (isDesktop) {
         return (
@@ -55,4 +52,29 @@ const DrawerDialogHeader = React.forwardRef(({ className, children, ...props }, 
 });
 DrawerDialogHeader.displayName = 'DrawerDialogHeader';
 
-export { DrawerDialog, DrawerDialogHeader };
+const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children, ...props }, ref) => {
+    const isDesktop = useMediaQuery(isDesktopMediaQuery);
+
+    if (isDesktop) {
+        return (
+            <DialogFooter ref={ref} className props>
+                <DialogClose className="float-left" ref={ref} asChild props>
+                    <Button variant="outline">{cancelLabel}</Button>
+                </DialogClose>
+                {children}
+            </DialogFooter>
+        );
+    }
+
+    return (
+        <DrawerFooter className={cn('px-0', props.className)} ref={ref} props>
+            <DrawerClose ref={ref} asChild props>
+                <Button variant="outline">{cancelLabel}</Button>
+            </DrawerClose>
+            {children}
+        </DrawerFooter>
+    );
+});
+DrawerDialogFooter.displayName = 'DrawerDialogFooter';
+
+export { DrawerDialog, DrawerDialogHeader, DrawerDialogFooter };
