@@ -175,7 +175,7 @@ export default function Etherpad() {
 
             return room;
         },
-        [matrix, etherpad],
+        [auth, matrix, etherpad],
     );
 
     /**
