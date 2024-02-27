@@ -125,7 +125,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                         </>
                     )}
                 </div>
-                <DrawerDialogFooter cancelLabel="Cancel" />
+                <DrawerDialogFooter cancelLabel={t('Cancel')} />
             </DrawerDialog>
         </>
     );
