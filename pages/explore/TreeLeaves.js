@@ -79,6 +79,7 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
             parentName={parentName}
             passwordProtected={isPasswordProtected}
             myPowerLevel={myPowerLevel}
+            parentRoomId={parentId}
         />
     );
 };

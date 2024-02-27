@@ -51,12 +51,12 @@ const NotificationBadge = styled.span`
 // @TODO figure out what to do with optional menu and logic for menu, could use better solution
 // @TODO success message closes too quickly
 
-function EllipsisMenu({ parentName, roomId, onRemove, myPowerLevel }) {
+function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [wasRemoved, setWasRemoved] = useState(false);
     const { t } = useTranslation();
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
-    const room = matrixClient.getRoom(roomId);
+    const room = matrixClient.getRoom(parentRoomId);
     const canRemoveFromParent = room?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
 
     // if we don't have sufficient rights for any of the options we return null
@@ -133,6 +133,7 @@ const ServiceLink = forwardRef(
             isFetchingContent,
             onRemove,
             myPowerLevel,
+            parentRoomId,
         },
         ref,
     ) => {
@@ -166,7 +167,7 @@ const ServiceLink = forwardRef(
                 </ServiceTable.Cell>
                 {onRemove && (
                     <ServiceTable.Cell align="right">
-                        <EllipsisMenu parentName={parentName} onRemove={onRemove} myPowerLevel={myPowerLevel} roomId={roomId} />
+                        <EllipsisMenu parentName={parentName} onRemove={onRemove} myPowerLevel={myPowerLevel} parentRoomId={parentRoomId} />
                     </ServiceTable.Cell>
                 )}
             </ServiceTable.Row>
