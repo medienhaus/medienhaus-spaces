@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { cn, useMediaQuery } from '@/lib/utils';
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/UI/shadcn/Drawer';
@@ -12,7 +11,6 @@ const isDesktopMediaQuery = '(min-width: 768px)';
  * A dialog component that automatically becomes a drawer on mobile viewports.
  */
 const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChange, ...props }, ref) => {
-    const { t } = useTranslation();
     const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     if (isDesktop) {
@@ -68,10 +66,10 @@ const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children,
 
     return (
         <DrawerFooter className={cn('px-0', props.className)} ref={ref} props>
+            {children}
             <DrawerClose ref={ref} asChild props>
                 <Button variant="outline">{cancelLabel}</Button>
             </DrawerClose>
-            {children}
         </DrawerFooter>
     );
 });
