@@ -21,7 +21,6 @@
     "lodash": "^4.17.21",
     "matrix-js-sdk": "^31.2.0",
     "next": "^14.1.0",
-    "normalize.css": "^8.0.1",
     "pino": "^8.18.0",
     "postcss": "^8.4.33",
     "react": "^18.2.0",

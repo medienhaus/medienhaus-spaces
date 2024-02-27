@@ -36,3 +36,6 @@ yarn-error.log*
 .vercel
 
 *.code-workspace
+
+# JetBrains IDE related things
+/.idea/workspace.xml
