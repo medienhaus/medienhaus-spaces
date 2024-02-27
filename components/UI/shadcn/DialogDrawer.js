@@ -16,7 +16,7 @@ const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChan
     if (isDesktop) {
         return (
             <Dialog open={isOpen} onOpenChange={onOpenChange} ref={ref}>
-                <DialogContent className="sm:max-w-[525px]">{children}</DialogContent>
+                <DialogContent className="max-h-[calc(100%-3rem)] max-w-[calc(767px-3rem)] overflow-y-auto">{children}</DialogContent>
             </Dialog>
         );
     }
