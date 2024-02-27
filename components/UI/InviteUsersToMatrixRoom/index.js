@@ -6,7 +6,8 @@ import { logger } from 'matrix-js-sdk/lib/logger';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { useAuth } from '@/lib/Auth';
-import { DrawerDialog, DrawerDialogFooter, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * A modal-like interface to invite other users to a given Matrix room.
@@ -97,36 +98,42 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                     setIsOpen(true);
                 },
             })}
-            <DrawerDialog
-                isOpen={isOpen}
+            <Dialog
+                open={isOpen}
                 onOpenChange={(newState) => {
                     setIsOpen(newState);
                 }}
             >
-                <DrawerDialogHeader>
-                    <h3>{t('Invite users')}</h3>
-                </DrawerDialogHeader>
-                <div>
-                    {userFeedback && _.isEmpty(errorFeedback) ? (
-                        <div>{userFeedback}</div>
-                    ) : (
-                        <>
-                            <Datalist
-                                options={searchResults}
-                                onInputChange={handleChange}
-                                keysToDisplay={['display_name', 'user_id']}
-                                onSubmit={handleInvite}
-                            />
-                            <div>
-                                {userFeedback && errorFeedback && userFeedback}
-                                {!_.isEmpty(errorFeedback) &&
-                                    errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
-                            </div>
-                        </>
-                    )}
-                </div>
-                <DrawerDialogFooter cancelLabel={t('Cancel')} />
-            </DrawerDialog>
+                <DialogContent>
+                    <DialogHeader>
+                        <h3>{t('Invite users')}</h3>
+                    </DialogHeader>
+                    <div>
+                        {userFeedback && _.isEmpty(errorFeedback) ? (
+                            <div>{userFeedback}</div>
+                        ) : (
+                            <>
+                                <Datalist
+                                    options={searchResults}
+                                    onInputChange={handleChange}
+                                    keysToDisplay={['display_name', 'user_id']}
+                                    onSubmit={handleInvite}
+                                />
+                                <div>
+                                    {userFeedback && errorFeedback && userFeedback}
+                                    {!_.isEmpty(errorFeedback) &&
+                                        errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild props>
+                            <Button variant="outline">{t('Cancel')}</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
