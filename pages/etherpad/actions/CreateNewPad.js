@@ -28,6 +28,10 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
     const [errorMessage, setErrorMessage] = useState('');
 
     const createPad = async () => {
+        if (password !== validatePassword) {
+            setErrorMessage('Passwords do not match');
+            return;
+        }
         setIsLoading(true);
         setErrorMessage('');
         const createPad = await createPadAndOpen(padName, passwordProtected ? 'private' : 'public', password).catch((error) => {
@@ -74,10 +78,10 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
                 value={validatePassword}
                 onChange={(e) => setValidatePassword(e.target.value)}
             />
-            <Button type="submit" disabled={!padName || (passwordProtected && !password) || password !== validatePassword}>
+            <Button type="submit" disabled={!padName || (passwordProtected && !password) || (passwordProtected && !validatePassword)}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
             </Button>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
         </Form>
     );
 }
