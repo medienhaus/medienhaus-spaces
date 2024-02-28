@@ -47,10 +47,10 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                 // const filterResults = users.results.filter(item => _.isEqual(item, option));
                 setSearchResults(usersWithoutMyself);
             } catch (err) {
-                logger.error(t('Error while trying to fetch users: ') + err);
+                logger.error('Error while trying to fetch users', err);
             }
         },
-        [matrixClient, t],
+        [matrixClient],
     );
 
     function clearInputs() {
