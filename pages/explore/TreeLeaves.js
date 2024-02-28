@@ -37,23 +37,45 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
     // if the room is a chat or service we want to show a different icon
 
     const name = isChat ? '💬 ' + leaf.name : getIcon(template, leaf.name);
+    const href = externalUrl
+        ? externalUrl
+        : Object.keys(getConfig().publicRuntimeConfig.authProviders)?.includes(template) || isChat
+          ? `/explore/${parentId}/${roomId}`
+          : `/explore/${roomId}`;
 
     useEffect(() => {
-        let cancelled = false;
+        const controller = new AbortController();
+        const signal = controller.signal;
 
-        if (template === 'etherpad' && !cancelled) {
+        if (template === 'etherpad') {
             const checkIfPadHasPassword = async () => {
-                const url = matrix.roomContents.get(roomId)?.body;
+                let url = matrix.roomContents.get(roomId)?.body;
+
+                if (!url) {
+                    url = await matrix.hydrateRoomContent(roomId, signal);
+                }
+
+                if (!url) return false;
                 const padId = url.split('/').pop();
 
                 return etherpad.isPadPasswordProtected(padId);
             };
 
-            checkIfPadHasPassword().then((isProtected) => setIsPasswordProtected(isProtected));
+            checkIfPadHasPassword().then(setIsPasswordProtected);
         }
 
-        return () => (cancelled = true);
-    }, [etherpad, matrix.roomContents, roomId, template]);
+        if (template === 'link') {
+            const hydrateContent = async () => {
+                if (!matrix.roomContents.get(roomId)?.body) {
+                    await matrix.hydrateRoomContent(roomId, signal);
+                }
+            };
+
+            hydrateContent();
+        }
+
+        return () => controller.abort();
+    }, [etherpad, matrix, matrix.roomContents, roomId, template]);
 
     if (!leaf) return <LoadingSpinner />;
 
@@ -65,13 +87,7 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
             small={small}
             roomId={roomId}
             target={template === 'link' ? '_blank' : '_self'}
-            href={
-                externalUrl
-                    ? externalUrl
-                    : getConfig().publicRuntimeConfig.templates?.item.includes(template) || isChat
-                      ? `/explore/${parentId}/${roomId}`
-                      : `/explore/${roomId}`
-            }
+            href={href}
             name={name}
             isFetchingContent={isFetchingContent}
             selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}

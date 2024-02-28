@@ -16,7 +16,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
 
     const [title, setTitle] = useState(parsedTitle);
 
-    const iframeUrl = currentTemplate === 'studentProject' ? iframeRoomId : new URL(matrix.roomContents.get(iframeRoomId)?.body);
+    const iframeUrl = currentTemplate ? new URL(matrix.roomContents.get(iframeRoomId)?.body) : iframeRoomId;
 
     // add auth token to etherpad iframe, so authors of the pad don't have to input the password again
     if (currentTemplate === 'etherpad') {
@@ -67,8 +67,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
             case 'link':
                 return (
                     <>
-                        <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false}
-                        />
+                        <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
                         <iframe title="sketch" src={iframeUrl} />
                     </>
                 );
