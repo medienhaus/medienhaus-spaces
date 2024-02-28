@@ -73,22 +73,18 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem
-                        className="w-full justify-start"
+                        className="grid w-full grid-flow-col justify-start gap-2"
                         onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
                     >
-                        <Icon>
-                            <RiClipboardLine />
-                        </Icon>
+                        <RiClipboardLine />
                         <span>{t('Copy link to clipboard')}</span>
                     </DropdownMenuItem>
                     {canRemoveFromParent && (
                         <>
                             <DropdownMenuSeparator />
                             <DialogTrigger asChild>
-                                <DropdownMenuItem className="w-full justify-start" variant="ghost">
-                                    <Icon>
-                                        <RiFolderCloseLine />
-                                    </Icon>
+                                <DropdownMenuItem className="grid w-full grid-flow-col justify-start gap-2" variant="ghost">
+                                    <RiFolderCloseLine />
                                     <span>{t('Remove')}</span>
                                 </DropdownMenuItem>
                             </DialogTrigger>
