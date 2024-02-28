@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { RiCloseLine, RiMenuAddLine } from '@remixicon/react';
+import { RiCloseLine, RiDeleteBinLine, RiMenuAddLine } from '@remixicon/react';
 import { styled } from 'styled-components';
 import Error from 'next/error';
 
@@ -125,8 +125,6 @@ export default function Etherpad() {
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
-        // closing any other open user function in case they are open
-        setIsInviteUsersOpen(false);
     }, [roomId]);
 
     const syncServerPadsAndSet = useCallback(async () => {

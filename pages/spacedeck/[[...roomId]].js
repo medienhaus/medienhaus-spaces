@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
 
 import AddExistingSketch from './actions/AddExistingSketch';
 import CreateNewSketch from './actions/CreateNewSketch';
@@ -40,7 +40,6 @@ export default function Spacedeck() {
     const content = matrix.roomContents.get(roomId);
     const [syncingServerSketches, setSyncingServerSketches] = useState(false);
     const [isSpacedeckServerDown, setIsSpacedeckServerDown] = useState(false);
-    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
@@ -259,10 +258,15 @@ export default function Spacedeck() {
                     <DefaultLayout.IframeHeader>
                         <h2>{matrix.rooms.get(roomId).name}</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom.Button
-                                name={matrix.rooms.get(roomId).name}
-                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                inviteUsersOpen={isInviteUsersOpen}
+                            <InviteUserToMatrixRoom
+                                roomId={roomId}
+                                trigger={
+                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                        <Icon>
+                                            <RiUserAddLine />
+                                        </Icon>
+                                    </TextButton>
+                                }
                             />
                             <AddBookmark roomId={roomId} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
@@ -277,15 +281,7 @@ export default function Spacedeck() {
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    {isInviteUsersOpen ? (
-                        <InviteUserToMatrixRoom
-                            roomId={roomId}
-                            roomName={matrix.rooms.get(roomId).name}
-                            onSuccess={() => setIsInviteUsersOpen(false)}
-                        />
-                    ) : (
-                        <iframe title={spacedeckPath} src={content.body} />
-                    )}
+                    <iframe title={spacedeckPath} src={content.body} />
                 </DefaultLayout.IframeWrapper>
             )}
         </>

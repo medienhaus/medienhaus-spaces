@@ -38,9 +38,9 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
 
     return (
         <Form onSubmit={handleChangeJoinRule}>
-            <h1>
+            <h3>
                 {t('Change Join Rule for')} {roomName}
-            </h1>
+            </h3>
             <Select id="joinRule" defaultValue={joinRule} onValueChange={(e) => setJoinRule(e.target.value)}>
                 <SelectTrigger>
                     <SelectValue placeholder={t('Join Rule')} />
@@ -56,7 +56,7 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                 </SelectContent>
             </Select>
             <PreviousNextButtons disableNext={joinRule === currentJoinRule || changingJoinRule} onCancel={onPreviousAction}>
-                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule')}
+                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change')}
             </PreviousNextButtons>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>

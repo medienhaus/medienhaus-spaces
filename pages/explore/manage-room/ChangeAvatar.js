@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import ImageUpload from '../../../components/UI/ImageUpload';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import PreviousNextButtons from '@/components/UI/PreviousNextButtons';
 
 const ChangeAvatar = ({ roomId, onPreviousAction }) => {
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,7 +28,6 @@ const ChangeAvatar = ({ roomId, onPreviousAction }) => {
         <>
             <ImageUpload roomId={roomId} callback={uploadRoomAvatar} />
             {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
-            <PreviousNextButtons disableNext onCancel={onPreviousAction} />
         </>
     );
 };

@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { RiCheckLine } from '@remixicon/react';
 
 import { useAuth } from '../../../lib/Auth';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
+import { Textarea } from '@/components/UI/shadcn/Textarea';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 
 const TopicInput = styled.textarea`
     width: 100%;
@@ -21,7 +22,7 @@ const TopicInput = styled.textarea`
     appearance: none;
 `;
 
-const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
+const ChangeTopic = ({ roomId, roomName }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const [newTopic, setNewTopic] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
@@ -51,6 +52,7 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
     }, [getCurrentTopic]);
 
     const handleTopicChange = (e) => {
+        console.log(e.target.value);
         setNewTopic(e.target.value);
     };
 
@@ -70,7 +72,6 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
 
         // Reset the input field and update status
         setIsUpdating(false);
-        console.log(sendTopic);
 
         if (sendTopic.event_id) {
             setSuccessMessage('Topic was successfully updated');
@@ -79,25 +80,22 @@ const ChangeTopic = ({ roomId, onPreviousAction, onCancel }) => {
     };
 
     return (
-        <Form onSubmit={(e) => updateTopic(e)}>
-            <TopicInput
-                type="text"
-                rows="5"
-                id="topic"
-                value={newTopic}
-                onChange={handleTopicChange}
-                disabled={isUpdating}
-                placeholder={t('Enter a new topic')}
-            />
-
-            <PreviousNextButtons onCancel={onPreviousAction} disableNext={isUpdating || currentTopic === newTopic} />
+        <>
+            <Form onSubmit={updateTopic} onReset={() => setNewTopic(currentTopic)}>
+                <Textarea
+                    placeholder={t('Enter a new topic, for example a short description of ') + roomName}
+                    value={newTopic}
+                    onChange={handleTopicChange}
+                />
+                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+                <ConfirmCancelButtons disabled={isUpdating || currentTopic === newTopic} />
+            </Form>
             {successMessage && (
                 <p>
-                    {t(successMessage)} + <RiCheckLine />
+                    {t(successMessage)} <RiCheckLine />
                 </p>
             )}
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </Form>
+        </>
     );
 };
 

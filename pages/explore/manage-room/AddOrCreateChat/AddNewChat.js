@@ -12,7 +12,7 @@ import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline
 import { Input } from '@/components/UI/shadcn/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
-export default function AddNewChat({ handleCancel, currentId, onSuccess, parentName, updateRoomList }) {
+export default function AddNewChat({ onPreviousAction, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
     const [roomName, setRoomName] = useState('');
     const [roomTopic, setRoomTopic] = useState('');
@@ -72,7 +72,7 @@ export default function AddNewChat({ handleCancel, currentId, onSuccess, parentN
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
-            <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={handleCancel}>
+            <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={onPreviousAction}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('add')}
             </PreviousNextButtons>
         </Form>

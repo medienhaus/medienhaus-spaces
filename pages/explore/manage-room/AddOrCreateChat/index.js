@@ -22,8 +22,8 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
     const [selectedOption, setSelectedOption] = useState(''); // 'existing' or 'new'
     // create an array of chat rooms, filtering all rooms with a dev.medienhaus.meta event (not chat rooms), and all dm's
     const allChatRooms = Array.from(matrix.rooms.values())
-        .filter(room => !room.meta)
-        .filter(room => !matrix.directMessages.has(room.roomId));
+        .filter((room) => !room.meta)
+        .filter((room) => !matrix.directMessages.has(room.roomId));
 
     const { t } = useTranslation('explore');
 
@@ -37,24 +37,28 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
     };
 
     if (selectedOption === 'existing') {
-        return <AddExistingChat
-            allChatRooms={allChatRooms}
-            handleCancel={() => setSelectedOption('')}
-            onSuccess={handleCancel}
-            currentId={currentId}
-            parentName={parentName}
-            updateRoomList={getSpaceChildren}
-        />;
+        return (
+            <AddExistingChat
+                allChatRooms={allChatRooms}
+                onPreviousAction={() => setSelectedOption('')}
+                onSuccess={handleCancel}
+                currentId={currentId}
+                parentName={parentName}
+                updateRoomList={getSpaceChildren}
+            />
+        );
     }
 
     if (selectedOption === 'new') {
-        return <AddNewChat
-            handleCancel={() => setSelectedOption('')}
-            onSuccess={handleCancel}
-            currentId={currentId}
-            parentName={parentName}
-            updateRoomList={getSpaceChildren}
-        />;
+        return (
+            <AddNewChat
+                onPreviousAction={() => setSelectedOption('')}
+                onSuccess={handleCancel}
+                currentId={currentId}
+                parentName={parentName}
+                updateRoomList={getSpaceChildren}
+            />
+        );
     }
 
     return (
@@ -65,15 +69,10 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
                 checked={selectedRadioButton === 'existing'}
                 onChange={() => handleOptionChange('existing')}
             >
-                { t('Add Existing Room') }
+                {t('Add Existing Room')}
             </RadioButton>
-            <RadioButton
-                value="new"
-                id="new"
-                checked={selectedRadioButton === 'new'}
-                onChange={() => handleOptionChange('new')}
-            >
-                { t('Create New Room') }
+            <RadioButton value="new" id="new" checked={selectedRadioButton === 'new'} onChange={() => handleOptionChange('new')}>
+                {t('Create New Room')}
             </RadioButton>
             <PreviousNextButtons disableNext={!selectedRadioButton} onCancel={onPreviousAction} />
         </Form>
@@ -81,4 +80,3 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
 };
 
 export default CreateChatOptions;
-

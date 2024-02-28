@@ -7,7 +7,7 @@ import CachedContextMultiLevelSelect from '../../../components/CachedContextMult
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
-import Form from '../../../components/UI/Form';
+import Form from '@/components/UI/Form';
 
 /**
  * Component for adding an existing item to a context.
@@ -43,10 +43,9 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
         e.preventDefault();
         setIsAddingContext(true);
 
-        const addChildToParent = await matrixAuthed.addSpaceChild(currentId, selectedLevels[selectedLevels.length - 1])
-            .catch((error) => [
-                setErrorMessage((error.data?.error || t('something went wrong, please try again'))),
-            ]);
+        const addChildToParent = await matrixAuthed
+            .addSpaceChild(currentId, selectedLevels[selectedLevels.length - 1])
+            .catch((error) => [setErrorMessage(error.data?.error || t('something went wrong, please try again'))]);
         setIsAddingContext(false);
 
         if (addChildToParent?.event_id) {
@@ -57,14 +56,12 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     };
 
     return (
-        <Form
-            onSubmit={addItemToContext}>
+        <Form onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} rootId={currentId} />
-            <PreviousNextButtons
-                disableNext={isAddingContext || !isItem}
-                onCancel={onPreviousAction}>{ isAddingContext ? <LoadingSpinnerInline inverted /> : t('add') }
+            <PreviousNextButtons disableNext={isAddingContext || !isItem} onCancel={onPreviousAction}>
+                {isAddingContext ? <LoadingSpinnerInline inverted /> : t('add')}
             </PreviousNextButtons>
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>
     );
 };
