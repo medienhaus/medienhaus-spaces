@@ -5,6 +5,7 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { RiChatNewLine, RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
 
+import { Button } from '@/components/UI/shadcn/Button';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import DefaultLayout from '@/components/layouts/default';
@@ -14,6 +15,7 @@ import { ServiceTable } from '@/components/UI/ServiceTable';
 import ServiceLink from '@/components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import LeaveRoom from './LeaveRoom';
 
 const sortRooms = function (room) {
     return [room.notificationCount === 0, room.name];
@@ -153,7 +155,8 @@ export default function Chat() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>
-                    <TextButton
+                    <Button
+                        variant="ghost"
                         onClick={() => {
                             router.push('/chat/new');
                         }}
@@ -162,7 +165,7 @@ export default function Chat() {
                         <Icon>
                             <RiChatNewLine />
                         </Icon>
-                    </TextButton>
+                    </Button>
                     /chat
                 </h2>
                 <details open>
@@ -222,24 +225,20 @@ export default function Chat() {
                                     <InviteUserToMatrixRoom
                                         roomId={roomId}
                                         trigger={
-                                            <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                            <Button
+                                                variant="ghost"
+                                                title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}
+                                            >
                                                 <Icon>
                                                     <RiUserAddLine />
                                                 </Icon>
-                                            </TextButton>
+                                            </Button>
                                         }
                                     />
                                     <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
-                                    <TextButton title={t('leave chat')} onClick={leaveMatrixRoom}>
-                                        {isLeavingRoom ? (
-                                            <LoadingSpinnerInline />
-                                        ) : (
-                                            <Icon>
-                                                <RiDoorOpenLine />
-                                            </Icon>
-                                        )}
-                                    </TextButton>
-                                    <TextButton
+                                    <LeaveRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                                    <Button
+                                        variant="ghost"
                                         title={t('call')}
                                         onClick={() =>
                                             iframe.current.contentWindow.document
@@ -254,8 +253,9 @@ export default function Chat() {
                                                 <RiPhoneLine />
                                             </Icon>
                                         )}
-                                    </TextButton>
-                                    <TextButton
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
                                         title={t('Threads')}
                                         onClick={() =>
                                             iframe.current.contentWindow.document
@@ -270,7 +270,7 @@ export default function Chat() {
                                                 <RiSidebarFoldLine />
                                             </Icon>
                                         )}
-                                    </TextButton>
+                                    </Button>
                                 </>
                             )}
                         </DefaultLayout.IframeHeaderButtonWrapper>
