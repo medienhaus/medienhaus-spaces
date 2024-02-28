@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const alertVariants = cva(
-    'my-2 w-fit border-l-2 p-2 [&>svg]:mr-2 [&>svg]:inline [&>svg]:leading-[var(--icon-size)] [&>svg]:text-foreground',
+    'my-4 w-fit border-l-2 pl-2 [&>svg]:mr-2 [&>svg]:inline [&>svg]:leading-[var(--icon-size)] [&>svg]:text-foreground',
     {
         variants: {
             variant: {
