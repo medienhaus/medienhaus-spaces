@@ -1,7 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
-import { RiArrowRightLine, RiLockLine, RiMoreLine } from '@remixicon/react';
+import { RiArrowRightLine, RiClipboardLine, RiFolderCloseLine, RiLockLine, RiMoreLine } from '@remixicon/react';
 import Link from 'next/link';
 import _ from 'lodash';
 
@@ -76,14 +76,20 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                         className="w-full justify-start"
                         onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
                     >
-                        {t('Copy link to clipboard')}
+                        <Icon>
+                            <RiClipboardLine />
+                        </Icon>
+                        <span>{t('Copy link to clipboard')}</span>
                     </DropdownMenuItem>
                     {canRemoveFromParent && (
                         <>
                             <DropdownMenuSeparator />
                             <DialogTrigger asChild>
                                 <DropdownMenuItem className="w-full justify-start" variant="ghost">
-                                    {t('Remove')}
+                                    <Icon>
+                                        <RiFolderCloseLine />
+                                    </Icon>
+                                    <span>{t('Remove')}</span>
                                 </DropdownMenuItem>
                             </DialogTrigger>
                         </>
