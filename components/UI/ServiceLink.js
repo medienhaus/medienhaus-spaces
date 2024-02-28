@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/UI/shadcn/Button';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
+import { isValidUrl } from '@/lib/utils';
 
 const LockIconWrapper = styled(Icon)`
     position: relative;
@@ -51,17 +52,13 @@ const NotificationBadge = styled.span`
 // @TODO figure out what to do with optional menu and logic for menu, could use better solution
 // @TODO success message closes too quickly
 
-function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel }) {
+function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [wasRemoved, setWasRemoved] = useState(false);
     const { t } = useTranslation();
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const room = matrixClient.getRoom(parentRoomId);
     const canRemoveFromParent = room?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
-
-    // if we don't have sufficient rights for any of the options we return null
-    // this extra step makes more sense once the ellipsis menu has more options
-    if (!canRemoveFromParent) return null;
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -70,6 +67,14 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel }) {
                     <RiMoreLine />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                    <DropdownMenuItem>
+                        <Button
+                            variant="ghost"
+                            onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
+                        >
+                            {t('Copy link to clipboard')}
+                        </Button>
+                    </DropdownMenuItem>
                     {canRemoveFromParent && (
                         <DropdownMenuItem>
                             <DialogTrigger asChild>
@@ -167,7 +172,13 @@ const ServiceLink = forwardRef(
                 </ServiceTable.Cell>
                 {onRemove && (
                     <ServiceTable.Cell align="right">
-                        <EllipsisMenu parentName={parentName} onRemove={onRemove} myPowerLevel={myPowerLevel} parentRoomId={parentRoomId} />
+                        <EllipsisMenu
+                            parentName={parentName}
+                            onRemove={onRemove}
+                            myPowerLevel={myPowerLevel}
+                            parentRoomId={parentRoomId}
+                            href={href}
+                        />
                     </ServiceTable.Cell>
                 )}
             </ServiceTable.Row>

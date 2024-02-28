@@ -8,6 +8,7 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { Input } from '@/components/UI/shadcn/Input';
+import { isValidUrl } from '@/lib/utils';
 
 const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction }) => {
     const auth = useAuth();
@@ -24,6 +25,14 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
         e.preventDefault();
         //first of all some content checking otherwise displaying custom error messages
         setIsLoading(true);
+
+        if (!isValidUrl(url)) {
+            setErrorMessage('Please enter a valid URL');
+            setIsLoading(false);
+
+            return;
+        }
+
         setErrorMessage('');
         //
         // if (!name) {
@@ -95,7 +104,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 placeholder="URL"
             />
             {
-                errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage> //error message container
+                errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage> //error message container
             }
             <PreviousNextButtons
                 className="mt-4"
