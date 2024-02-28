@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { RiChatNewLine, RiPhoneLine, RiSidebarFoldLine, RiDoorOpenLine, RiUserAddLine } from '@remixicon/react';
-
-import { Button } from '@/components/UI/shadcn/Button';
+import TextButton from '@/components/UI/TextButton';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import DefaultLayout from '@/components/layouts/default';
@@ -150,7 +149,7 @@ export default function Chat() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>
-                    <Button
+                    <TextButton
                         variant="ghost"
                         onClick={() => {
                             router.push('/chat/new');
@@ -160,7 +159,7 @@ export default function Chat() {
                         <Icon>
                             <RiChatNewLine />
                         </Icon>
-                    </Button>
+                    </TextButton>
                     /chat
                 </h2>
                 <details open>
@@ -220,23 +219,23 @@ export default function Chat() {
                                     <InviteUserToMatrixRoom
                                         roomId={roomId}
                                         trigger={
-                                            <Button
+                                            <TextButton
                                                 variant="ghost"
                                                 title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}
                                             >
                                                 <Icon>
                                                     <RiUserAddLine />
                                                 </Icon>
-                                            </Button>
+                                            </TextButton>
                                         }
                                     />
                                     <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
-                                    <Button variant="ghost" title={t('Leave chat')} onClick={leaveRoom}>
+                                    <TextButton variant="ghost" title={t('Leave chat')} onClick={leaveRoom}>
                                         <Icon>
                                             <RiDoorOpenLine />
                                         </Icon>
-                                    </Button>
-                                    <Button
+                                    </TextButton>
+                                    <TextButton
                                         variant="ghost"
                                         title={t('call')}
                                         onClick={() =>
@@ -248,8 +247,8 @@ export default function Chat() {
                                         <Icon>
                                             <RiPhoneLine />
                                         </Icon>
-                                    </Button>
-                                    <Button
+                                    </TextButton>
+                                    <TextButton
                                         variant="ghost"
                                         title={t('Threads')}
                                         onClick={() =>
@@ -261,7 +260,7 @@ export default function Chat() {
                                         <Icon>
                                             <RiSidebarFoldLine />
                                         </Icon>
-                                    </Button>
+                                    </TextButton>
                                 </>
                             )}
                         </DefaultLayout.IframeHeaderButtonWrapper>
