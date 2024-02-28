@@ -1,4 +1,3 @@
-import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 // import React, { useState } from 'react';
@@ -41,7 +40,7 @@ const ServiceIframeHeader = ({
     // setIsInviteUsersOpen,
     // setSettingsTabValue,
 }) => {
-    const { t } = useTranslation('write');
+    const { t } = useTranslation(['write', 'explore']);
 
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -74,7 +73,11 @@ const ServiceIframeHeader = ({
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
                                 // setSettingsTabValue('members');
                             }}
-                            title={manageContextActionToggle ? t('Show contexts and items of {{name}}', { name: title }) : t('Show members of {{name}}', { name: title })}
+                            title={
+                                manageContextActionToggle
+                                    ? t('Show contexts and items of {{name}}', { name: title })
+                                    : t('Show members of {{name}}', { name: title })
+                            }
                         >
                             <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiGroupLine />}</Icon>
                         </TextButton>
@@ -86,10 +89,7 @@ const ServiceIframeHeader = ({
                             currentId={roomId}
                             myPowerLevel={myPowerLevel}
                             trigger={
-                                <TextButton
-                                    variant="ghost"
-                                    title={t('Show members of {{name}}', { name: title })}
-                                >
+                                <TextButton variant="ghost" title={t('Show members of {{name}}', { name: title })}>
                                     <Icon>
                                         <RiUserAddLine />
                                     </Icon>
@@ -122,10 +122,7 @@ const ServiceIframeHeader = ({
                             myPowerLevel={myPowerLevel}
                             settingsTabValue="settings"
                             trigger={
-                                <TextButton
-                                    variant="ghost"
-                                    title={t('Show settings of {{name}}', { name: title })}
-                                >
+                                <TextButton variant="ghost" title={t('Show settings of {{name}}', { name: title })}>
                                     <Icon>
                                         <RiListSettingsLine />
                                     </Icon>

@@ -69,7 +69,7 @@ const ExploreMatrixActions = ({
                 <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
                     <aside className="sticky top-0 z-10 translate-y-[-1.5rem] bg-background pt-6">
                         <DrawerDialogHeader>
-                            <h3>{t('/explore actions')}</h3>
+                            <h3>{room.name}</h3>
                         </DrawerDialogHeader>
 
                         <br />
@@ -124,7 +124,7 @@ const ExploreMatrixActions = ({
                         <>
                             {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
                                 <div>
-                                    <h3>{t('Topic (optional)')}</h3>
+                                    <h3>{t('Topic')}</h3>
                                     <ChangeTopic roomId={currentId} roomName={room.name} />
                                 </div>
                             )}

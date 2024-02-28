@@ -56,7 +56,7 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                 </SelectContent>
             </Select>
             <PreviousNextButtons disableNext={joinRule === currentJoinRule || changingJoinRule} onCancel={onPreviousAction}>
-                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change Join Rule')}
+                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change')}
             </PreviousNextButtons>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>

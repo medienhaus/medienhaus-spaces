@@ -1,5 +1,13 @@
 {
+    "Add more …": "Mehr hinzufügen …",
     "Change Join Rule for": "Join-Regel ändern für",
+    "Join Rule": "Join-Regel",
+    "Leaving {{name}} means you cannot interact with it anymore.": "Wenn du {{name}} verlässt, kannst du nicht mehr damit interagieren.",
+    "Leave {{ name }}?": "{{ name }} verlassen?",
     "No context templates defined, please contact the administrator": "Es sind keine Kontextvorlagen definiert. Bitte kontaktiere den Administrator.",
+    "Show contexts and items of {{name}}": "Zeige Kontexte und Elemente von {{name}}",
+    "Show members of {{name}}" : "Zeige Mitglieder von {{name}}",
+    "Show settings of {{name}}": "Zeige Einstellungen von {{name}}",
+    "Topic": "Thema",
     "Topic was successfully updated.": "Thema wurde erfolgreich aktualisiert."
 }

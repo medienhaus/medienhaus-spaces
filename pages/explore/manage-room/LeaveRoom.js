@@ -36,7 +36,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const handleLeaveRoom = async (e) => {
         e.preventDefault();
