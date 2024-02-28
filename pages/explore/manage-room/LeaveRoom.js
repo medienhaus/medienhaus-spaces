@@ -64,7 +64,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
             </Alert>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="destructive" disabled={isLeaving}>
+                    <Button className="w-full" variant="destructive" disabled={isLeaving}>
                         {t('Leave')}
                     </Button>
                 </DialogTrigger>

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../../../lib/Auth';
-import Form from '../../../components/UI/Form';
 import presets from '../presets';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * JoinRuleChanger component for changing the join rule of a room.
@@ -37,7 +36,7 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
     };
 
     return (
-        <Form onSubmit={handleChangeJoinRule}>
+        <form className="[&>*+*]:mt-4" onSubmit={handleChangeJoinRule}>
             <h3>
                 {t('Change Join Rule for')} {roomName}
             </h3>
@@ -55,9 +54,11 @@ const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                     })}
                 </SelectContent>
             </Select>
-            <PreviousNextButtons nextLabel={changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change')} disableNext={joinRule === currentJoinRule || changingJoinRule} onCancel={onPreviousAction} />
+            <Button className="w-full" disable={joinRule === currentJoinRule || changingJoinRule}>
+                {changingJoinRule ? <LoadingSpinnerInline inverted /> : t('Change')}
+            </Button>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </Form>
+        </form>
     );
 };
 
