@@ -56,7 +56,7 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
 
         // Clear the interval when the component unmounts
         return () => clearInterval(intervalId);
-    }, [addStoreElement, editor.store, store.store, updateStoreElement]);
+    }, [addStoreElement, editor, store, updateStoreElement]);
 
     const handleEvent = (name, data) => {
         //dev
