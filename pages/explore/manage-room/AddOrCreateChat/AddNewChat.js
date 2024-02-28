@@ -64,7 +64,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
                     {presets.allowedJoinRules.map((joinRule) => {
                         return (
                             <SelectItem key={joinRule.name} value={joinRule.name}>
-                                {joinRule.label} -- <em>{joinRule.description}</em>
+                                {joinRule.label}
                             </SelectItem>
                         );
                     })}
@@ -72,8 +72,8 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
-            <PreviousNextButtons disableNext={!roomName || userFeedback} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('add')}
+            <PreviousNextButtons previousLabel={t('Back')} disableNext={!roomName || userFeedback} onCancel={onPreviousAction}>
+                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
             </PreviousNextButtons>
         </Form>
     );
