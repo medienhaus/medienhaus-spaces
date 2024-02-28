@@ -1,20 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine, RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
+import { RiChatNewLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
 
 import { Button } from '@/components/UI/shadcn/Button';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import DefaultLayout from '@/components/layouts/default';
-import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import ServiceLink from '@/components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
-import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import LeaveRoom from './LeaveRoom';
 
 const sortRooms = function (room) {
@@ -27,8 +25,6 @@ export default function Chat() {
     const roomId = _.get(router, 'query.roomId.0');
     const { t } = useTranslation('chat');
     const matrix = useMatrix();
-
-    const [isLeavingRoom, setIsLeavingRoom] = useState(false);
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -130,16 +126,6 @@ export default function Chat() {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
     });
-
-    /**
-     * Leave the matrix room
-     */
-    const leaveMatrixRoom = async () => {
-        setIsLeavingRoom(true);
-        await matrix.leaveRoom(roomId);
-        router.push('/chat/');
-        setIsLeavingRoom(false);
-    };
 
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
@@ -246,13 +232,9 @@ export default function Chat() {
                                                 .click()
                                         }
                                     >
-                                        {isLeavingRoom ? (
-                                            <LoadingSpinnerInline />
-                                        ) : (
-                                            <Icon>
-                                                <RiPhoneLine />
-                                            </Icon>
-                                        )}
+                                        <Icon>
+                                            <RiPhoneLine />
+                                        </Icon>
                                     </Button>
                                     <Button
                                         variant="ghost"
@@ -263,13 +245,9 @@ export default function Chat() {
                                                 .click()
                                         }
                                     >
-                                        {isLeavingRoom ? (
-                                            <LoadingSpinnerInline />
-                                        ) : (
-                                            <Icon>
-                                                <RiSidebarFoldLine />
-                                            </Icon>
-                                        )}
+                                        <Icon>
+                                            <RiSidebarFoldLine />
+                                        </Icon>
                                     </Button>
                                 </>
                             )}
