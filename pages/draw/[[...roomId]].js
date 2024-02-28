@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import _ from 'lodash';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
 
 import { useAuth } from '../../lib/Auth';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -197,10 +197,15 @@ export default function Draw() {
                     <DefaultLayout.IframeHeader>
                         <h2>{matrix.rooms.get(roomId).name}</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom.Button
-                                name={matrix.rooms.get(roomId).name}
-                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                inviteUsersOpen={isInviteUsersOpen}
+                            <InviteUserToMatrixRoom
+                                roomId={roomId}
+                                trigger={
+                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                        <Icon>
+                                            <RiUserAddLine />
+                                        </Icon>
+                                    </TextButton>
+                                }
                             />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
                             <TextButton title={t('Remove sketch from my library')} onClick={deleteSketch}>
