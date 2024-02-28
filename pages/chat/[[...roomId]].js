@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
+import { RiChatNewLine, RiPhoneLine, RiSidebarFoldLine, RiDoorOpenLine, RiUserAddLine } from '@remixicon/react';
 
 import { Button } from '@/components/UI/shadcn/Button';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
@@ -13,7 +13,6 @@ import Icon from '@/components/UI/Icon';
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import ServiceLink from '@/components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
-import LeaveRoom from './LeaveRoom';
 
 const sortRooms = function (room) {
     return [room.notificationCount === 0, room.name];
@@ -127,6 +126,16 @@ export default function Chat() {
         };
     });
 
+    /**
+     * leave the given matrixroom
+     */
+    const leaveRoom = async () => {
+        // Confirm if the user really wants to leave the matrixId
+        if (!confirm(t('Are you absolutely sure you want to leave this chatroom?'))) return;
+        await matrix.leaveRoom(roomId);
+        router.push('/chat');
+    };
+
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
@@ -222,7 +231,11 @@ export default function Chat() {
                                         }
                                     />
                                     <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
-                                    <LeaveRoom roomId={roomId} roomName={matrix.rooms.get(roomId).name} />
+                                    <Button variant="ghost" title={t('Leave chat')} onClick={leaveRoom}>
+                                        <Icon>
+                                            <RiDoorOpenLine />
+                                        </Icon>
+                                    </Button>
                                     <Button
                                         variant="ghost"
                                         title={t('call')}
