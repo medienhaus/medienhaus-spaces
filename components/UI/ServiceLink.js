@@ -9,7 +9,13 @@ import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/UI/shadcn/DropdownMenu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/UI/shadcn/DropdownMenu';
 import {
     Dialog,
     DialogContent,
@@ -19,7 +25,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/UI/shadcn/Dialog';
-import { Button } from '@/components/UI/shadcn/Button';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
 import { isValidUrl } from '@/lib/utils';
@@ -67,20 +72,21 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                     <RiMoreLine />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuItem>
-                        <Button
-                            variant="ghost"
-                            onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
-                        >
-                            {t('Copy link to clipboard')}
-                        </Button>
+                    <DropdownMenuItem
+                        className="w-full justify-start"
+                        onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
+                    >
+                        {t('Copy link to clipboard')}
                     </DropdownMenuItem>
                     {canRemoveFromParent && (
-                        <DropdownMenuItem>
+                        <>
+                            <DropdownMenuSeparator />
                             <DialogTrigger asChild>
-                                <Button variant="ghost">{t('Remove')}</Button>
+                                <DropdownMenuItem className="w-full justify-start" variant="ghost">
+                                    {t('Remove')}
+                                </DropdownMenuItem>
                             </DialogTrigger>
-                        </DropdownMenuItem>
+                        </>
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>

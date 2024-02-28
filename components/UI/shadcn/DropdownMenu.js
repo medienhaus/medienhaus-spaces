@@ -63,7 +63,7 @@ const DropdownMenuItem = React.forwardRef(({ className, inset, ...props }, ref) 
     <DropdownMenuPrimitive.Item
         ref={ref}
         className={cn(
-            'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+            'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 outline-none transition-colors focus:bg-accent focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
             inset && 'pl-8',
             className,
         )}
@@ -117,12 +117,12 @@ const DropdownMenuLabel = React.forwardRef(({ className, inset, ...props }, ref)
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 
 const DropdownMenuSeparator = React.forwardRef(({ className, ...props }, ref) => (
-    <DropdownMenuPrimitive.Separator ref={ref} className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
+    <DropdownMenuPrimitive.Separator ref={ref} className={cn('mx-1 my-1 h-px bg-muted-foreground/30', className)} {...props} />
 ));
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }) => {
-    return <span className={cn('text-xs ml-auto tracking-widest opacity-60', className)} {...props} />;
+    return <span className={cn('text ml-auto tracking-widest opacity-60', className)} {...props} />;
 };
 
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
