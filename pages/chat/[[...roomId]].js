@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine, RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiVideoChatLine,RiUserAddLine } from '@remixicon/react';
+import { RiChatNewLine, RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
 
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
@@ -14,8 +14,6 @@ import { ServiceTable } from '@/components/UI/ServiceTable';
 import ServiceLink from '@/components/UI/ServiceLink';
 import { useMatrix } from '@/lib/Matrix';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
-
-
 
 const sortRooms = function (room) {
     return [room.notificationCount === 0, room.name];
@@ -29,7 +27,6 @@ export default function Chat() {
     const matrix = useMatrix();
 
     const [isLeavingRoom, setIsLeavingRoom] = useState(false);
-
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -210,71 +207,80 @@ export default function Chat() {
                     </ServiceTable>
                 </details>
             </DefaultLayout.Sidebar>
-            {roomId  &&  (
+            {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <DefaultLayout.IframeHeader>
-                        {matrix?.rooms?.get(roomId) ? 
-                        <h2>{matrix?.rooms?.get(roomId)?.name}</h2>
-                        : (roomId === 'new' && (<h2>{t('new chat')}</h2>) ) }
+                        {matrix?.rooms?.get(roomId) ? (
+                            <h2>{matrix?.rooms?.get(roomId)?.name}</h2>
+                        ) : (
+                            roomId === 'new' && <h2>{t('new chat')}</h2>
+                        )}
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                        {matrix?.rooms?.get(roomId) && (<>  <InviteUserToMatrixRoom
-                                roomId={roomId}
-                                trigger={
-                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
-                                        <Icon>
-                                            <RiUserAddLine />
-                                        </Icon>
+                            {matrix?.rooms?.get(roomId) && (
+                                <>
+                                    {' '}
+                                    <InviteUserToMatrixRoom
+                                        roomId={roomId}
+                                        trigger={
+                                            <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                                <Icon>
+                                                    <RiUserAddLine />
+                                                </Icon>
+                                            </TextButton>
+                                        }
+                                    />
+                                    <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
+                                    <TextButton title={t('leave chat')} onClick={leaveMatrixRoom}>
+                                        {isLeavingRoom ? (
+                                            <LoadingSpinnerInline />
+                                        ) : (
+                                            <Icon>
+                                                <RiDoorOpenLine />
+                                            </Icon>
+                                        )}
                                     </TextButton>
-                                }
-                            />
-                            <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
-                            <TextButton title={t('leave chat')} onClick={leaveMatrixRoom}>
-                                {isLeavingRoom ? (
-                                    <LoadingSpinnerInline />
-                                ) : (
-                                    <Icon>
-                                        <RiDoorOpenLine />
-                                    </Icon>
-                                )}
-                            </TextButton>
-                            <TextButton
-                                title={t('call')}
-                                onClick={() =>
-                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
-                                }
-                            >
-                                {isLeavingRoom ? (
-                                    <LoadingSpinnerInline />
-                                ) : (
-                                    <Icon>
-                                        <RiPhoneLine />
-                                    </Icon>
-                                )}
-                            </TextButton>
-                            <TextButton
-                                title={t('Threads')}
-                                onClick={() =>
-                                    iframe.current.contentWindow.document.querySelector('header.mx_RoomHeader > div button:nth-child(3)').click()
-                                }
-                            >
-                                {isLeavingRoom ? (
-                                    <LoadingSpinnerInline />
-                                ) : (
-                                    <Icon>
-                                        <RiSidebarFoldLine />
-                                    </Icon>
-                                )}
-                            </TextButton></>)}
+                                    <TextButton
+                                        title={t('call')}
+                                        onClick={() =>
+                                            iframe.current.contentWindow.document
+                                                .querySelector('header.mx_RoomHeader > div button:nth-child(1)')
+                                                .click()
+                                        }
+                                    >
+                                        {isLeavingRoom ? (
+                                            <LoadingSpinnerInline />
+                                        ) : (
+                                            <Icon>
+                                                <RiPhoneLine />
+                                            </Icon>
+                                        )}
+                                    </TextButton>
+                                    <TextButton
+                                        title={t('Threads')}
+                                        onClick={() =>
+                                            iframe.current.contentWindow.document
+                                                .querySelector('header.mx_RoomHeader > div button:nth-child(2)')
+                                                .click()
+                                        }
+                                    >
+                                        {isLeavingRoom ? (
+                                            <LoadingSpinnerInline />
+                                        ) : (
+                                            <Icon>
+                                                <RiSidebarFoldLine />
+                                            </Icon>
+                                        )}
+                                    </TextButton>
+                                </>
+                            )}
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
 
-                     
-                        <iframe
-                            ref={iframe}
-                            title="/chat"
-                            src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
-                        />
-                    
+                    <iframe
+                        ref={iframe}
+                        title="/chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
+                    />
                 </DefaultLayout.IframeWrapper>
             )}
         </>

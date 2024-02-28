@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { router } from 'next/router';
 import { RiErrorWarningLine } from '@remixicon/react';
 
 import { useAuth } from '../../lib/Auth';
