@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
-import Form from '../../../../components/UI/Form';
 import presets from '../../presets';
 import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
@@ -53,7 +52,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
     };
 
     return (
-        <Form onSubmit={handleNewChat}>
+        <form className="[&>*+*]:mt-4" onSubmit={handleNewChat}>
             <Input type="text" placeholder={t('name of the room')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
             <Input type="text" placeholder={t('topic of the room')} value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)} />
             <Select defaultValue={selectedJoinRule} onValueChange={setSelectedJoinRule}>
@@ -73,11 +72,12 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
             <PreviousNextButtons
+                className="mt-4"
                 previousLabel={t('Back')}
                 nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
                 disableNext={!roomName || userFeedback}
                 onCancel={onPreviousAction}
             />
-        </Form>
+        </form>
     );
 }

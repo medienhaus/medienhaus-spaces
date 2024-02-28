@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
-import Form from '../../../../components/UI/Form';
 import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
@@ -43,7 +42,7 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
     };
 
     return (
-        <Form onSubmit={handleAddChat}>
+        <form className="[&>*+*]:mt-4" onSubmit={handleAddChat}>
             <Select onValueChange={setSelectedRoom}>
                 <SelectTrigger>
                     <SelectValue placeholder={`-- ${t('Choose Chat Room')} --`} />
@@ -63,11 +62,12 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
             <PreviousNextButtons
+                className="mt=4"
                 previousLabel={t('Back')}
                 nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
                 disableNext={!selectedRoom || userFeedback}
                 onCancel={onPreviousAction}
             />
-        </Form>
+        </form>
     );
 }

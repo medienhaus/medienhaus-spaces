@@ -7,7 +7,6 @@ import CachedContextMultiLevelSelect from '../../../components/CachedContextMult
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
-import Form from '@/components/UI/Form';
 
 /**
  * Component for adding an existing item to a context.
@@ -56,11 +55,11 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     };
 
     return (
-        <Form onSubmit={addItemToContext}>
+        <form className="[&>*+*]:mt-4" onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} rootId={currentId} />
-            <PreviousNextButtons previousLabel={t('Back')} nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={isAddingContext || !isItem} onCancel={onPreviousAction} />
+            <PreviousNextButtons className="mt-4" previousLabel={t('Back')} nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={isAddingContext || !isItem} onCancel={onPreviousAction} />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </Form>
+        </form>
     );
 };
 

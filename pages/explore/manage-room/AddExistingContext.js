@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../lib/Auth';
 import ContextMultiLevelSelect from '../../../components/ContextMultiLevelSelect';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
@@ -100,7 +99,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
     };
 
     return (
-        <Form onSubmit={addContextToParent}>
+        <form className="[&>*+*]:mt-4" onSubmit={addContextToParent}>
             <ContextMultiLevelSelect
                 onChange={setActiveContexts}
                 activeContexts={activeContexts}
@@ -116,8 +115,8 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
                 </p>
             )}
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <PreviousNextButtons previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={!isAddingAllowed} onCancel={onPreviousAction} />
-        </Form>
+            <PreviousNextButtons className="mt-4" previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={!isAddingAllowed} onCancel={onPreviousAction} />
+        </form>
     );
 };
 

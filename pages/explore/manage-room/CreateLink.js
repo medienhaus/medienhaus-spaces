@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../lib/Auth';
 import { useMatrix } from '../../../lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { Input } from '@/components/UI/shadcn/Input';
@@ -77,7 +76,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
     };
 
     return (
-        <Form onSubmit={createContext}>
+        <form className="[&>*+*]:mt-4" onSubmit={createContext}>
             <Input
                 type="text"
                 onChange={(e) => {
@@ -99,12 +98,13 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage> //error message container
             }
             <PreviousNextButtons
+                className="mt-4"
                 previousLabel={t('Back')}
                 nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
                 disableNext={isLoading || !name || !url}
                 onCancel={onPreviousAction}
             />
-        </Form>
+        </form>
     );
 };
 

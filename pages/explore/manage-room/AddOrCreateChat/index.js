@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Form from '../../../../components/UI/Form';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import { useMatrix } from '../../../../lib/Matrix';
 import RadioButton from '../../../../components/UI/RadioButton';
@@ -62,7 +61,7 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
     }
 
     return (
-        <Form onSubmit={() => setSelectedOption(selectedRadioButton)}>
+        <form onSubmit={() => setSelectedOption(selectedRadioButton)}>
             <RadioButton
                 value="existing"
                 id="existing"
@@ -75,7 +74,7 @@ const CreateChatOptions = ({ currentId, parentName, getSpaceChildren, onPrevious
                 {t('Create New Room')}
             </RadioButton>
             <PreviousNextButtons disableNext={!selectedRadioButton} onCancel={onPreviousAction} />
-        </Form>
+        </form>
     );
 };
 
