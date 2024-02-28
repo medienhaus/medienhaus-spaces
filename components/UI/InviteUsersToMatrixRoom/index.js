@@ -1,57 +1,29 @@
-/**
- * Provides a user interface for inviting other users to a Matrix room.
- *
- * @param {string} roomId - The ID of the Matrix room to invite users to.
- * @param {string} roomName - The name of the Matrix room.
- * @param {Function} onSuccess - An optional callback executed after a successful invitation.
- *
- * @returns {React.ReactElement} - A React component representing the invitation UI.
- *
- * @example
- * // Example usage of the InviteUserToMatrixRoom component:
- * <InviteUserToMatrixRoom roomId="your-room-id" roomName="Your Room" onSuccess={handleSuccess} />
- */
-
 import React, { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
-import { styled } from 'styled-components';
-import { RiUserAddLine, RiUserUnfollowLine } from '@remixicon/react';
 
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
-import { breakpoints } from '../../_breakpoints';
-import TextButton from '../TextButton';
-import Icon from '../Icon';
 import { useAuth } from '@/lib/Auth';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
+import { Button } from '@/components/UI/shadcn/Button';
 
-const ActionWrapper = styled.section`
-    display: grid;
-    align-content: start;
-    justify-self: start;
-    width: 100%;
-    height: 100%;
-    padding: 0 var(--margin);
-
-    @media ${breakpoints.tabletAndAbove} {
-        padding: 0 calc(var(--margin) * 1.5);
-    }
-
-    h3 {
-        line-height: calc(var(--margin) * 3);
-    }
-`;
-
-const FeedbackWrapper = styled.div`
-    margin-top: var(--margin);
-`;
-
-export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
+/**
+ * A modal-like interface to invite other users to a given Matrix room.
+ *
+ * @param {string} roomId - The ID of the Matrix room to invite users to.
+ * @param {React.ReactElement} trigger - Something like a button that will open the modal when clicked.
+ *
+ * @returns {React.ReactElement} - A React component representing the invitation UI.
+ */
+export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-    const [searchResults, setSearchResults] = useState([]);
     const { t } = useTranslation('invitationModal');
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
     const [userFeedback, setUserFeedback] = useState('');
     const [errorFeedback, setErrorFeedback] = useState([]);
 
@@ -75,10 +47,10 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
                 // const filterResults = users.results.filter(item => _.isEqual(item, option));
                 setSearchResults(usersWithoutMyself);
             } catch (err) {
-                logger.error(t('Error while trying to fetch users: ') + err);
+                logger.error('Error while trying to fetch users', err);
             }
         },
-        [matrixClient, t],
+        [matrixClient],
     );
 
     function clearInputs() {
@@ -106,62 +78,62 @@ export const InviteUserToMatrixRoom = ({ roomId, onSuccess }) => {
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 && setUserFeedback(<Trans t={t} i18nKey="invitedUser" count={successAmount}>{ { successAmount } } user was invited and needs to accept your invitation</Trans>);
-        _.delay(() => {
-            clearInputs();
-            if (onSuccess && successAmount === selectedUsers.length) onSuccess();
-        }, 2500);
+        successAmount > 0 &&
+            setUserFeedback(
+                <Trans t={t} i18nKey="invitedUser" count={successAmount}>
+                    {{ successAmount }} user was invited and needs to accept your invitation
+                </Trans>,
+            );
+        await new Promise(() =>
+            setTimeout(() => {
+                clearInputs();
+            }, 3000),
+        );
     };
 
     return (
-        <ActionWrapper>
-            <h3>{t('Invite users')}</h3>
-            {userFeedback && _.isEmpty(errorFeedback) ? (
-                <div>{userFeedback}</div>
-            ) : (
-                <>
-                    <Datalist
-                        options={searchResults}
-                        onInputChange={handleChange}
-                        keysToDisplay={['display_name', 'user_id']}
-                        onSubmit={handleInvite}
-                    />
-
-                    <FeedbackWrapper>
-                        {userFeedback && errorFeedback && userFeedback}
-                        {!_.isEmpty(errorFeedback) && errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
-                    </FeedbackWrapper>
-                </>
-            )}
-        </ActionWrapper>
+        <>
+            {React.cloneElement(trigger, {
+                onClick: () => {
+                    setIsOpen(true);
+                },
+            })}
+            <Dialog
+                open={isOpen}
+                onOpenChange={(newState) => {
+                    setIsOpen(newState);
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <h3>{t('Invite users')}</h3>
+                    </DialogHeader>
+                    <div>
+                        {userFeedback && _.isEmpty(errorFeedback) ? (
+                            <div>{userFeedback}</div>
+                        ) : (
+                            <>
+                                <Datalist
+                                    options={searchResults}
+                                    onInputChange={handleChange}
+                                    keysToDisplay={['display_name', 'user_id']}
+                                    onSubmit={handleInvite}
+                                />
+                                <div>
+                                    {userFeedback && errorFeedback && userFeedback}
+                                    {!_.isEmpty(errorFeedback) &&
+                                        errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild props>
+                            <Button variant="outline">{t('Cancel')}</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
-
-/**
- * Button component for toggling the invitation UI for the Matrix room.
- *
- * @component
- * @param {boolean} inviteUsersOpen - Flag indicating whether the invitation UI is open.
- * @param {Function} onClick - Function to execute when the button is clicked.
- * @param {string} name - The name of the Matrix room.
- * @returns {React.ReactElement} - A React component representing the button for inviting users.
- */
-const InviteUsersButton = ({ inviteUsersOpen, onClick, name }) => {
-    const { t } = useTranslation('invitationModal');
-
-    return (
-        <TextButton onClick={onClick} title={t('Invite users to {{name}}', { name: name })}>
-            {inviteUsersOpen ? (
-                <Icon>
-                    <RiUserUnfollowLine />
-                </Icon>
-            ) : (
-                <Icon>
-                    <RiUserAddLine />
-                </Icon>
-            )}
-        </TextButton>
-    );
-};
-
-InviteUserToMatrixRoom.Button = InviteUsersButton;

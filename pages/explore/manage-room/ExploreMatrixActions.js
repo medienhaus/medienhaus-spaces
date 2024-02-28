@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
-import { styled } from 'styled-components';
-import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { RiCloseLine } from '@remixicon/react';
 
-import { useAuth } from '@/lib/Auth';
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
-import CreateContext from './CreateContext';
-import AddExistingContext from './AddExistingContext';
-import AddExistingItem from './AddExistingItem';
-import Form from '../../../components/UI/Form';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
-import RemoveSpaceFromParent from './RemoveSpaceFromParent';
-import UserManagement from './UserManagement';
+// import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
-import ChangeJoinRule from './ChangeJoinRule';
-import { useMatrix } from '@/lib/Matrix';
 import ChangeTopic from './ChangeTopic';
-import CreateChatOptions from './AddOrCreateChat';
-import RadioButton from '../../../components/UI/RadioButton';
 import ChangeAvatar from './ChangeAvatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
+import ChangeJoinRule from './ChangeJoinRule';
+import { useAuth } from '@/lib/Auth';
+import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
+// import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
+// import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -30,219 +24,153 @@ import ChangeAvatar from './ChangeAvatar';
  * @returns {JSX.Element} - The rendered component.
  */
 
-const ExploreMatrixActionWrapper = styled.div`
-    width: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-    border-collapse: collapse;
-
-    > * + * {
-        margin-top: var(--margin);
-    }
-`;
-
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setManageContextActionToggle, spaceChildren, getSpaceChildren }) => {
+const ExploreMatrixActions = ({
+    currentId,
+    parentId,
+    myPowerLevel,
+    // @TODO: do we still need the following ?
+    setManageContextActionToggle,
+    trigger,
+}) => {
     const { t } = useTranslation('explore');
-    const matrix = useMatrix();
-    const roomName = matrix.spaces.get(currentId)?.name || matrix.rooms.get(currentId)?.name;
-    if (!roomName) return <LoadingSpinner />;
+    const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [settingsTabValue, setSettingsTabValue] = useState('settings');
+
+    if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
+    const room = matrixClient.getRoom(currentId);
+    if (!room) return <LoadingSpinner />;
 
     return (
-        <ExploreMatrixActionWrapper>
-            <h2>
-                {t('Manage contexts and items within ')}
-                {roomName}
-            </h2>
+        <>
+            {React.cloneElement(trigger, {
+                onClick: () => {
+                    setIsOpen(true);
+                },
+            })}
+            <Dialog
+                open={isOpen}
+                onOpenChange={(newState) => {
+                    setIsOpen(newState);
+                }}
+            >
+                <DialogContent>
+                    <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
+                        <aside className="sticky top-0 z-10 translate-y-[-1.5rem] bg-background pt-6">
+                            <DialogHeader>
+                                <h3>{room.name}</h3>
+                                {/* <h3>{room.name} {t('settings')}</h3> */}
+                            </DialogHeader>
 
-            {myPowerLevel && (
-                <RenderSwitch
-                    currentId={currentId}
-                    parentId={parentId}
-                    roomName={roomName}
-                    setManageContextActionToggle={setManageContextActionToggle}
-                    spaceChildren={spaceChildren}
-                    getSpaceChildren={getSpaceChildren}
-                    myPowerLevel={myPowerLevel}
-                />
-            )}
-        </ExploreMatrixActionWrapper>
+                            <br />
+
+                            <TabsList>
+                                {/* @NOTE: we do not want the members list as a tab in dialog */}
+                                {/*
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setSettingsTabValue('members');
+                                    }}
+                                    value="members"
+                                >
+                                    {t('Members')}
+                                </TabsTrigger>
+                                */}
+
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setSettingsTabValue('settings');
+                                    }}
+                                    value="settings"
+                                >
+                                    {t('Settings')}
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setSettingsTabValue('advanced');
+                                    }}
+                                    value="advanced"
+                                >
+                                    {t('Advanced')}
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <DialogClose className="absolute right-[-0.5rem] top-4 z-10 rounded border text-muted ring-offset-background transition-opacity hover:border-destructive hover:text-destructive focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                                <RiCloseLine className="h-6 w-6" />
+                                <span className="sr-only">Close</span>
+                            </DialogClose>
+
+                            {/* @NOTE: needs two <br /> elements before <hr />, as <TabsList /> is display:inline; */}
+                            <br />
+                            <br />
+                            <hr />
+                        </aside>
+
+                        {/*
+                        <TabsContent className="overflow-y-auto" value="members">
+                            <UserManagement
+                                myPowerLevel={myPowerLevel}
+                                roomId={currentId}
+                                roomName={room.name}
+                                // @TODO: do we still need the following ?
+                                onCancel={() => setManageContextActionToggle(false)}
+                            />
+                        </TabsContent>
+                        */}
+
+                        <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
+                            <>
+                                {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
+                                    <div>
+                                        <h3>{t('Topic')}</h3>
+                                        <ChangeTopic roomId={currentId} roomName={room.name} />
+                                    </div>
+                                )}
+
+                                {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
+                                    <div>
+                                        <h3>{t('Avatar')}</h3>
+                                        <ChangeAvatar
+                                            roomId={currentId}
+                                            /* @TODO: do we still need the following ? */
+                                            onCancel={() => setManageContextActionToggle(false)}
+                                        />
+                                    </div>
+                                )}
+                            </>
+                        </TabsContent>
+
+                        <TabsContent className="pb-6 [&>*+*]:mt-8" value="advanced">
+                            {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                                <div>
+                                    <ChangeJoinRule
+                                        roomId={currentId}
+                                        roomName={room.name}
+                                        /* @TODO: do we still need the following ? */
+                                        onCancel={() => setManageContextActionToggle(false)}
+                                    />
+                                </div>
+                            )}
+
+                            <div>
+                                <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
+                            </div>
+                        </TabsContent>
+
+                        {/* @NOTE: we do not want the bottom-aligned close button in this tabbed dialog */}
+                        {/*
+                        <DialogFooter className="pt-4 pb-8">
+                            <DialogClose asChild props>
+                                <Button variant="outline">{t('Cancel')}</Button>
+                            </DialogClose>
+                        </DialogFooter>
+                        */}
+                    </Tabs>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 
 export default ExploreMatrixActions;
-
-const RenderSwitch = ({ currentId, parentId, roomName, setManageContextActionToggle, spaceChildren, getSpaceChildren, myPowerLevel }) => {
-    const [selectedAction, setSelectedAction] = useState('');
-    const [selectedRadioButton, setSelectedRadioButton] = useState('');
-    const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
-    const room = matrixClient.getRoom(currentId);
-
-    const { t } = useTranslation();
-
-    const onPreviousAction = () => {
-        setSelectedRadioButton('');
-        setSelectedAction('');
-    };
-
-    switch (selectedAction) {
-        case 'substructure':
-            return (
-                <CreateContext
-                    currentId={currentId}
-                    parentId={parentId}
-                    getSpaceChildren={getSpaceChildren}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'existingItem':
-            return (
-                <AddExistingItem
-                    currentId={currentId}
-                    currentName={roomName}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'existingContext':
-            return (
-                <AddExistingContext
-                    parentId={currentId}
-                    parentName={roomName}
-                    contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'addOrCreateChat':
-            return (
-                <CreateChatOptions
-                    currentId={currentId}
-                    parentName={roomName}
-                    getSpaceChildren={getSpaceChildren}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'removeSpace':
-            return (
-                <RemoveSpaceFromParent
-                    currentId={currentId}
-                    parentId={currentId}
-                    parentName={roomName}
-                    spaceChildren={spaceChildren}
-                    getSpaceChildren={getSpaceChildren}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'manageUsers':
-            return (
-                <UserManagement
-                    roomId={currentId}
-                    roomName={roomName}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-        case 'leaveRoom':
-            return (
-                <LeaveRoom
-                    roomId={currentId}
-                    roomName={roomName}
-                    parentId={parentId}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-
-        case 'changeJoinRule':
-            return (
-                <ChangeJoinRule
-                    roomId={currentId}
-                    roomName={roomName}
-                    onPreviousAction={onPreviousAction}
-                    onCancel={() => setManageContextActionToggle(false)}
-                />
-            );
-
-        case 'changeTopic':
-            return (
-                <ChangeTopic roomId={currentId} onPreviousAction={onPreviousAction} onCancel={() => setManageContextActionToggle(false)} />
-            );
-
-        case 'changeAvatar':
-            return (
-                <ChangeAvatar roomId={currentId} onPreviousAction={onPreviousAction} onCancel={() => setManageContextActionToggle(false)} />
-            );
-        default:
-            return (
-                <Form
-                    onSubmit={(e) => {
-                        //@TODO check type submit thing
-                        e.preventDefault();
-                        setSelectedAction(selectedRadioButton);
-                    }}
-                    onChange={(e) => setSelectedRadioButton(e.target.value)}
-                >
-                    {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <>
-                            <RadioButton id="substructure" name="action" value="substructure">
-                                {t('Create new substructure')}
-                            </RadioButton>
-
-                            <RadioButton id="existingItem" name="action" value="existingItem">
-                                {t('Add existing item')}
-                            </RadioButton>
-
-                            <RadioButton id="existingContext" name="action" value="existingContext">
-                                {t('Add existing context')}
-                            </RadioButton>
-
-                            <RadioButton id="addOrCreateChat" name="action" value="addOrCreateChat">
-                                {t('Add existing chat or create one')}
-                            </RadioButton>
-
-                            <RadioButton id="removeSpace" name="action" value="removeSpace">
-                                {t('Remove items or contexts')}
-                            </RadioButton>
-                        </>
-                    )}
-                    {room.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                        <RadioButton id="manageUsers" name="action" value="manageUsers">
-                            {t('Manage users in')} {roomName}
-                        </RadioButton>
-                    )}
-
-                    <RadioButton id="leaveRoom" name="action" value="leaveRoom">
-                        {t('Leave')} {roomName}
-                    </RadioButton>
-
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
-                        <RadioButton id="changeJoinRule" name="action" value="changeJoinRule">
-                            {t('Change join rule')}
-                        </RadioButton>
-                    )}
-
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                        <RadioButton id="changeTopic" name="action" value="changeTopic">
-                            {t('Change topic')}
-                        </RadioButton>
-                    )}
-
-                    {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                        <RadioButton id="changeAvatar" name="action" value="changeAvatar">
-                            {t('Change avatar')}
-                        </RadioButton>
-                    )}
-
-                    <PreviousNextButtons
-                        disabled={!selectedRadioButton}
-                        disableNext={selectedAction}
-                        disablePrev={!selectedAction}
-                        onCancel={onPreviousAction}
-                    />
-                </Form>
-            );
-    }
-};

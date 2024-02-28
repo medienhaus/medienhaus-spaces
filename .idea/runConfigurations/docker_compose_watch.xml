@@ -1,0 +1,19 @@
+<!-- Assumes that this medienhaus-spaces repository sits within a subdirectory of medienhaus-docker-dev -->
+<!-- https://github.com/medienhaus/medienhaus-docker-dev -->
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="docker compose watch" type="ShConfigurationType">
+    <option name="SCRIPT_TEXT" value="docker compose watch" />
+    <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="SCRIPT_PATH" value="" />
+    <option name="SCRIPT_OPTIONS" value="" />
+    <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+    <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
+    <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+    <option name="INTERPRETER_PATH" value="/usr/local/bin/docker compose watch" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="EXECUTE_IN_TERMINAL" value="false" />
+    <option name="EXECUTE_SCRIPT_FILE" value="false" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,38 +1,6 @@
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/UI/shadcn/Button';
-
-const PreviousNextButtonsWrapper = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: var(--margin);
-
-    &:not(:first-child) {
-        margin-top: var(--margin);
-    }
-`;
-
-const NextButton = styled.button`
-    color: var(--color-background);
-    background-color: ${(props) => (props.warning ? 'var(--color-notification)' : 'var(--color-foreground)')};
-    border-color: ${(props) => props.warning && 'var(--color-notification)'};
-
-    &:disabled {
-        color: var(--color-background);
-        background-color: var(--color-disabled);
-    }
-`;
-
-const PreviousButton = styled.button`
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-
-    &:disabled {
-        color: var(--color-disabled);
-        background-color: var(--color-background);
-    }
-`;
 
 /**
  * React Component which returns
@@ -43,6 +11,7 @@ const PreviousButton = styled.button`
  * @param {Boolean} disableNext disables 'next' button if true
  * @param {Boolean} disablePrev disables 'previous' button if true
  * @returns {React.JSX} two inline buttons.  'previous' and 'next'
+ *
  */
 const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
     const { t } = useTranslation();
@@ -54,14 +23,14 @@ const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disabl
     };
 
     return (
-        <PreviousNextButtonsWrapper>
+        <div className="grid grid-cols-2 gap-4">
             <Button variant="outline" type="reset" disabled={disabled || disablePrev} onClick={handlePrevious}>
                 {t('Previous')}
             </Button>
-            <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled}>
+            <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled || disableNext}>
                 {children || t('Next')}
             </Button>
-        </PreviousNextButtonsWrapper>
+        </div>
     );
 };
 

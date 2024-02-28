@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { MatrixEvent } from 'matrix-js-sdk';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiAddLine, RiCloseLine, RiDeleteBinLine } from '@remixicon/react';
 
 import { ServiceTable } from '../../../components/UI/ServiceTable';
 import { useAuth } from '../../../lib/Auth';
@@ -11,7 +11,8 @@ import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import presets from '../presets';
-import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import { Button } from '@/components/UI/shadcn/Button';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -21,8 +22,8 @@ const RoleSelect = styled.select`
     border: unset;
 `;
 
-const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
-    console.log(roomId);
+// const UserManagement = ({ roomId, roomName, myPowerLevel, onCancel }) => {
+const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -53,9 +54,13 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
 
     return (
         <>
+            {/*
+            @TODO: first line of tab content are not on same height;
+            @TODO: remove caption? negative margin for caption/table?
+            */}
             <ServiceTable>
                 <ServiceTable.Caption>
-                    {t('All members of')} {roomName}
+                    {t('All members of {{room}}', { room: roomName })}
                 </ServiceTable.Caption>
                 <ServiceTable.Head>
                     <ServiceTable.Row>
@@ -71,7 +76,7 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                         // therefore we need to filter them
                         if (member.membership === 'leave') return null;
                         // we don't want to display the currently logged in user
-                        if (member.userId === selfObject.userId) return null;
+                        // if (member.userId === selfObject.userId) return null;
 
                         return (
                             <UserTableRow
@@ -88,9 +93,23 @@ const UserManagement = ({ roomId, roomName, onPreviousAction, onCancel }) => {
                     })}
                 </ServiceTable.Body>
             </ServiceTable>
+            {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                <>
+                    <InviteUserToMatrixRoom
+                        roomId={roomId}
+                        trigger={
+                            <Button
+                                className="w-full justify-between px-0 pr-1.5 hover:text-accent"
+                                variant="ghost"
+                            >
+                                {t('Invite people to {{name}} …', { name: roomName })}
+                                <RiAddLine />
+                            </Button>
+                        }
+                    />
+                </>
+            )}
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-            <PreviousNextButtons disableNext={true} onCancel={onPreviousAction} />
         </>
     );
 };
@@ -143,7 +162,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
                     title={t(
                         hasHigherPowerLevel
                             ? 'Kick {{user}} from {{room}}'
-                            : 'Cannot kick {{ user }}, you don’t have the required permissions',
+                            : 'Cannot kick {{user}}, you don’t have the required permissions',
                         { user: displayName, room: roomName },
                     )}
                 >

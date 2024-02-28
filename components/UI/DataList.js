@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
 import { Input } from '@/components/UI/shadcn/Input';
-import { Button } from '@/components/UI/shadcn/Button';
+import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -32,6 +32,7 @@ const Row = styled(ServiceTable.Row)`
 
 const InviteUserForm = styled(Form)`
     display: grid;
+    grid-template-rows: auto 1fr auto;
     height: 100%;
 
     > :last-child {
@@ -43,7 +44,7 @@ const TableWrapper = styled.section`
     overflow-x: auto;
 `;
 
-export default function DataList({ options, onInputChange, keysToDisplay, onSubmit }) {
+export default function DataList({ options, onInputChange, keysToDisplay, onSubmit, onCancel }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -143,7 +144,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     };
 
     return (
-        <InviteUserForm onSubmit={handleSubmit}>
+        <InviteUserForm onSubmit={handleSubmit} onReset={onCancel}>
             <Input
                 type="text"
                 value={value}
@@ -187,7 +188,12 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     </ServiceTable.Body>
                 </ServiceTable>
             </TableWrapper>
-            <Button disabled={selected.length === 0 && checked.length === 0}>{t('Invite')}</Button>
+            <ConfirmCancelButtons
+                onCancel={onCancel}
+                disableConfirm={selected.length === 0 && checked.length === 0}
+                cancelLabel="Close"
+                confirmLabel="Invite"
+            />
         </InviteUserForm>
     );
 }

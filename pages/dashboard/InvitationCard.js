@@ -91,11 +91,10 @@ export default function InvitationCard({ roomId, roomName, inviterUsername, avat
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {' '}
                     {wasHandled ? (
                         link ? (
                             // Invitation accepted
-                            <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName: roomName }}>
+                            <Trans t={t} i18nKey="invitationCardHandled" values={{ roomName }}>
                                 You can now view{' '}
                                 <Link href={link}>
                                     <strong>{roomName}</strong>
