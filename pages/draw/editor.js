@@ -44,8 +44,6 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
         _.forEach(store.store, (value, key) => {
             if (value.meta.eventId) {
                 editor?.store?.put([value]);
-
-                return;
             }
         });
 
@@ -58,14 +56,10 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
 
         // Clear the interval when the component unmounts
         return () => clearInterval(intervalId);
-    }, [editor, store]);
+    }, [addStoreElement, editor.store, store.store, updateStoreElement]);
 
     const handleEvent = (name, data) => {
         //dev
-    };
-
-    const addToEditorFromMatrix = (element) => {
-        editor.store.put([element]);
     };
 
     return (
