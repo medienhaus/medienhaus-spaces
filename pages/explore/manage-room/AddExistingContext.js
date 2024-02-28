@@ -116,9 +116,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
                 </p>
             )}
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={!isAddingAllowed} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={!isAddingAllowed} onCancel={onPreviousAction} />
         </Form>
     );
 };

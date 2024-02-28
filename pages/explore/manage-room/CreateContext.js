@@ -109,9 +109,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
             {
                 createNewContextErrorMessage && <ErrorMessage>{createNewContextErrorMessage}</ErrorMessage> //error message container
             }
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={isLoading || !name || !template} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create')}
-            </PreviousNextButtons>
+            <PreviousNextButtons previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Create')} disableNext={isLoading || !name || !template} onCancel={onPreviousAction} />
         </Form>
     );
 };

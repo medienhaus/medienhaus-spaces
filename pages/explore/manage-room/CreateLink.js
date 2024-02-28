@@ -98,9 +98,12 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
             {
                 errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage> //error message container
             }
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={isLoading || !name || !url} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons
+                previousLabel={t('Back')}
+                nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={isLoading || !name || !url}
+                onCancel={onPreviousAction}
+            />
         </Form>
     );
 };

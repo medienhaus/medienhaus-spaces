@@ -72,9 +72,12 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={!roomName || userFeedback} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons
+                previousLabel={t('Back')}
+                nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={!roomName || userFeedback}
+                onCancel={onPreviousAction}
+            />
         </Form>
     );
 }

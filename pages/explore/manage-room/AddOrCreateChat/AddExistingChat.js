@@ -62,9 +62,12 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {userFeedback && <p>{userFeedback}</p>}
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={!selectedRoom || userFeedback} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons
+                previousLabel={t('Back')}
+                nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={!selectedRoom || userFeedback}
+                onCancel={onPreviousAction}
+            />
         </Form>
     );
 }

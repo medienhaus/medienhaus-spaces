@@ -58,9 +58,7 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     return (
         <Form onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} rootId={currentId} />
-            <PreviousNextButtons previousLabel={t('Back')} disableNext={isAddingContext || !isItem} onCancel={onPreviousAction}>
-                {isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons previousLabel={t('Back')} nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={isAddingContext || !isItem} onCancel={onPreviousAction} />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Form>
     );

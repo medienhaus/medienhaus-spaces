@@ -13,7 +13,7 @@ import { Button } from '@/components/UI/shadcn/Button';
  * @returns {React.JSX} two inline buttons.  'previous' and 'next'
  *
  */
-const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, previousLabel, nextLabel, warning }) => {
+const PreviousNextButtons = ({ disabled, onCancel, disableNext, disablePrev, previousLabel, nextLabel, warning }) => {
     const { t } = useTranslation();
 
     const handlePrevious = (e) => {
@@ -28,7 +28,7 @@ const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disabl
                 {previousLabel || t('Previous')}
             </Button>
             <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled || disableNext}>
-                {nextLabel || children || t('Next')}
+                {nextLabel || t('Next')}
             </Button>
         </div>
     );
