@@ -46,4 +46,25 @@ DialogHeader.displayName = 'DialogHeader';
 const DialogFooter = ({ className, ...props }) => <div className={cn('grid grid-flow-col gap-4', className)} {...props} />;
 DialogFooter.displayName = 'DialogFooter';
 
-export { Dialog, DialogPortal, DialogOverlay, DialogClose, DialogTrigger, DialogContent, DialogHeader, DialogFooter };
+const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
+    <DialogPrimitive.Title ref={ref} className={className} {...props} />
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
+
+const DialogDescription = React.forwardRef(({ className, ...props }, ref) => (
+    <DialogPrimitive.Description ref={ref} className={className} {...props} />
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+export {
+    Dialog,
+    DialogPortal,
+    DialogOverlay,
+    DialogClose,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle,
+    DialogDescription,
+};
