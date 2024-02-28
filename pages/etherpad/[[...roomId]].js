@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { RiDeleteBinLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
 
 import CreateAnonymousPad from './actions/CreateAnonymousPad';
 import AddExistingPad from './actions/AddExistingPad';
@@ -69,7 +69,6 @@ export default function Etherpad() {
 
     const [serverPads, setServerPads] = useState(null);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
-    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -107,8 +106,6 @@ export default function Etherpad() {
     const selectedPadRef = useRef(null);
     useEffect(() => {
         selectedPadRef.current?.focus();
-        // closing any other open user function in case they are open
-        setIsInviteUsersOpen(false);
     }, [roomId]);
 
     const syncServerPadsAndSet = useCallback(async () => {
@@ -346,10 +343,15 @@ export default function Etherpad() {
                     <DefaultLayout.IframeHeader>
                         <h2>{matrix.rooms.get(roomId).name}</h2>
                         <DefaultLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom.Button
-                                name={matrix.rooms.get(roomId).name}
-                                onClick={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                inviteUsersOpen={isInviteUsersOpen}
+                            <InviteUserToMatrixRoom
+                                roomId={roomId}
+                                trigger={
+                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                        <Icon>
+                                            <RiUserAddLine />
+                                        </Icon>
+                                    </TextButton>
+                                }
                             />
                             <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
                             <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
@@ -363,15 +365,7 @@ export default function Etherpad() {
                             </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    {isInviteUsersOpen ? (
-                        <InviteUserToMatrixRoom
-                            roomId={roomId}
-                            roomName={matrix.rooms.get(roomId).name}
-                            onSuccess={() => setIsInviteUsersOpen(false)}
-                        />
-                    ) : (
-                        <iframe title={etherpadPath} src={iframeUrl.toString()} />
-                    )}
+                    <iframe title={etherpadPath} src={iframeUrl.toString()} />
                 </DefaultLayout.IframeWrapper>
             )}
         </>
