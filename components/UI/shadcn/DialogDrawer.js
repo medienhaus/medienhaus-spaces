@@ -10,19 +10,19 @@ const isDesktopMediaQuery = '(min-width: 768px)';
 /**
  * A dialog component that automatically becomes a drawer on mobile viewports.
  */
-const DrawerDialog = React.forwardRef(({ className, children, isOpen, onOpenChange, ...props }, ref) => {
+const DrawerDialog = React.forwardRef(({ className, children, isOpen, ...props }, ref) => {
     const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     if (isDesktop) {
         return (
-            <Dialog open={isOpen} onOpenChange={onOpenChange} ref={ref}>
+            <Dialog open={isOpen} className={className} ref={ref} {...props}>
                 <DialogContent className="max-h-[calc(100%-3rem)] max-w-[calc(767px-3rem)] overflow-y-auto">{children}</DialogContent>
             </Dialog>
         );
     }
 
     return (
-        <Drawer open={isOpen} onOpenChange={onOpenChange} ref={ref}>
+        <Drawer open={isOpen} className={className} ref={ref} {...props}>
             <DrawerContent>
                 <div className="px-4">{children}</div>
             </DrawerContent>
@@ -36,14 +36,14 @@ const DrawerDialogHeader = React.forwardRef(({ className, children, ...props }, 
 
     if (isDesktop) {
         return (
-            <DialogHeader ref={ref} props>
+            <DialogHeader className={className} ref={ref} {...props}>
                 {children}
             </DialogHeader>
         );
     }
 
     return (
-        <DrawerHeader className={cn('-mx-4 text-left', props.className)} ref={ref} props>
+        <DrawerHeader className={cn('-mx-4 text-left', props.className)} ref={ref} {...props}>
             {children}
         </DrawerHeader>
     );
@@ -55,8 +55,8 @@ const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children,
 
     if (isDesktop) {
         return (
-            <DialogFooter ref={ref} className props>
-                <DialogClose className="float-left" ref={ref} asChild props>
+            <DialogFooter className={className} ref={ref} {...props}>
+                <DialogClose ref={ref} asChild>
                     <Button variant="outline">{cancelLabel}</Button>
                 </DialogClose>
                 {children}
@@ -65,9 +65,9 @@ const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children,
     }
 
     return (
-        <DrawerFooter className={cn('px-0', props.className)} ref={ref} props>
+        <DrawerFooter className={cn('px-0', props.className)} ref={ref} {...props}>
             {children}
-            <DrawerClose ref={ref} asChild props>
+            <DrawerClose ref={ref} asChild>
                 <Button variant="outline">{cancelLabel}</Button>
             </DrawerClose>
         </DrawerFooter>
