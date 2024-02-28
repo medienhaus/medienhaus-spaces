@@ -34,7 +34,7 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     const onLevelSelect = (levels) => {
         setSelectedLevels(levels);
         const item = matrix.rooms.get(levels[levels.length - 1]);
-        setIsItem(!!item);
+        setIsItem(item?.meta.type === 'content');
         // if (isLeaf && getConfig().publicRuntimeConfig.templates.item.includes(item?.meta.template)) setIsItem(true);
         // else setIsItem(false);
     };
