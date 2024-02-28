@@ -54,8 +54,8 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                 <DrawerDialogHeader>
                     <h3>{t('Add more …')}</h3>
                 </DrawerDialogHeader>
+
                 {!selectedOption && (
-                    /* @TODO: layout here affects both dialog and drawer */
                     <div className="grid gap-4 grid-cols-2">
                         <Card
                             className="cursor-pointer text-center hover:bg-accent hover:text-white"
@@ -95,6 +95,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         </Card>
                     </div>
                 )}
+
                 {selectedOption === 'context' && (
                     <>
                         <Card
@@ -144,6 +145,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                 {selectedOption === 'existingItem' && (
                     <AddExistingItem currentId={currentId} onCancel={onClose} onPreviousAction={() => setSelectedOption('')} />
                 )}
+
                 {selectedOption === 'existingContext' && (
                     <AddExistingContext
                         onCancel={onClose}
@@ -153,6 +155,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onPreviousAction={() => setSelectedOption('')}
                     />
                 )}
+
                 {selectedOption === 'newContext' && (
                     <CreateContext
                         onCancel={onClose}
@@ -161,6 +164,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onPreviousAction={() => setSelectedOption('')}
                     />
                 )}
+
                 {selectedOption === 'existingChat' && (
                     <AddExistingChat
                         currentId={currentId}
@@ -171,6 +175,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onPreviousAction={() => setSelectedOption('')}
                     />
                 )}
+
                 {selectedOption === 'newChat' && (
                     <AddNewChat
                         updateRoomList={getSpaceChildren}
@@ -180,6 +185,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onPreviousAction={() => setSelectedOption('')}
                     />
                 )}
+
                 {selectedOption === 'link' && (
                     <CreateLink
                         currentId={currentId}
