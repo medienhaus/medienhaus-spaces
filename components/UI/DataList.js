@@ -5,6 +5,8 @@ import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Form from './Form';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -19,34 +21,29 @@ import Form from './Form';
  */
 
 const Row = styled(ServiceTable.Row)`
-  text-decoration: ${props => props.$focused && 'underline' };
-  cursor: pointer;
+    text-decoration: ${(props) => props.$focused && 'underline'};
+    cursor: pointer;
 
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
 `;
 
 const InviteUserForm = styled(Form)`
-  display: grid;
-  height: 100%;
+    display: grid;
+    height: 100%;
 
-  > :last-child {
-    align-self: end;
-  }
+    > :last-child {
+        align-self: end;
+    }
 `;
 
 const TableWrapper = styled.section`
-  overflow-x: auto;
+    overflow-x: auto;
 `;
 
-export default function DataList({
-    options,
-    onInputChange,
-    keysToDisplay,
-    onSubmit,
-}) {
+export default function DataList({ options, onInputChange, keysToDisplay, onSubmit }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -87,7 +84,7 @@ export default function DataList({
     };
 
     const handleKeyDown = (e) => {
-    // Handle keyboard navigation when options are available
+        // Handle keyboard navigation when options are available
         if (!isOpen && !selected) return;
 
         if (e.key === 'ArrowDown') {
@@ -106,8 +103,8 @@ export default function DataList({
     };
 
     const handleSelect = (selectedOption) => {
-    // if a user wants to uncheck an option which is inside the 'selected' array, selectedIndex will be bigger than the amount of entries within filteredOptions,
-    // since 'selected' options are rendered below filteredOptions.
+        // if a user wants to uncheck an option which is inside the 'selected' array, selectedIndex will be bigger than the amount of entries within filteredOptions,
+        // since 'selected' options are rendered below filteredOptions.
         if (selectedIndex > filteredOptions.length - 1) {
             setSelected((prevState) =>
                 prevState.filter((option, index) => {
@@ -129,7 +126,7 @@ export default function DataList({
                 return _.uniq([...prevState, selectedOption]);
             }
         });
-    // inputRef.current.focus();
+        // inputRef.current.focus();
     };
 
     const handleRemove = (option) => {
@@ -147,55 +144,50 @@ export default function DataList({
 
     return (
         <InviteUserForm onSubmit={handleSubmit}>
-            <>
-                <input
-                    type="text"
-                    value={value}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setSelectedIndex(-1)}
-                    ref={inputRef}
-                />
-
-                <TableWrapper>
-                    <ServiceTable>
-                        <ServiceTable.Body>
-                            { isOpen &&
-                filteredOptions.map((option, index) => (
-                    <DataListRow
-                        key={index}
-                        option={option}
-                        focus={selectedIndex === index}
-                        index={index}
-                        keysToDisplay={keysToDisplay}
-                        handleSelect={handleSelect}
-                        isChecked={checked.includes(option)}
-                        handleKeyDown={handleKeyDown}
-                        setSelectedIndex={setSelectedIndex}
-                    />
-                )) }
-                            { selected.map((option, index) => (
+            <Input
+                type="text"
+                value={value}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setSelectedIndex(-1)}
+                ref={inputRef}
+            />
+            <TableWrapper>
+                <ServiceTable>
+                    <ServiceTable.Body>
+                        {isOpen &&
+                            filteredOptions.map((option, index) => (
                                 <DataListRow
                                     key={index}
                                     option={option}
-                                    // we need to add the number of options to the index to highlight the correct item in the list
-                                    // and not have multiple items show up as selected
-                                    focus={selectedIndex === index + filteredOptions.length}
-                                    index={index + filteredOptions.length}
+                                    focus={selectedIndex === index}
+                                    index={index}
                                     keysToDisplay={keysToDisplay}
-                                    handleSelect={handleRemove}
-                                    isChecked={selected.includes(option)}
+                                    handleSelect={handleSelect}
+                                    isChecked={checked.includes(option)}
                                     handleKeyDown={handleKeyDown}
                                     setSelectedIndex={setSelectedIndex}
                                 />
-                            )) }
-                        </ServiceTable.Body>
-                    </ServiceTable>
-                </TableWrapper>
-                <button disabled={selected.length === 0 && checked.length === 0}>
-                    { t('invite') }
-                </button>
-            </>
+                            ))}
+                        {selected.map((option, index) => (
+                            <DataListRow
+                                key={index}
+                                option={option}
+                                // we need to add the number of options to the index to highlight the correct item in the list
+                                // and not have multiple items show up as selected
+                                focus={selectedIndex === index + filteredOptions.length}
+                                index={index + filteredOptions.length}
+                                keysToDisplay={keysToDisplay}
+                                handleSelect={handleRemove}
+                                isChecked={selected.includes(option)}
+                                handleKeyDown={handleKeyDown}
+                                setSelectedIndex={setSelectedIndex}
+                            />
+                        ))}
+                    </ServiceTable.Body>
+                </ServiceTable>
+            </TableWrapper>
+            <Button disabled={selected.length === 0 && checked.length === 0}>{t('Invite')}</Button>
         </InviteUserForm>
     );
 }
@@ -215,16 +207,7 @@ export default function DataList({
  * @returns {React.ReactNode}
  */
 
-const DataListRow = ({
-    option,
-    keysToDisplay,
-    handleSelect,
-    index,
-    isChecked,
-    handleKeyDown,
-    focus,
-    setSelectedIndex,
-}) => {
+const DataListRow = ({ option, keysToDisplay, handleSelect, index, isChecked, handleKeyDown, focus, setSelectedIndex }) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -259,13 +242,13 @@ const DataListRow = ({
                     }}
                 />
             </ServiceTable.Cell>
-            { keysToDisplay.map((key) => {
+            {keysToDisplay.map((key) => {
                 return (
                     <ServiceTable.Cell htmlFor={index} key={key}>
-                        { option[key] }
+                        {option[key]}
                     </ServiceTable.Cell>
                 );
-            }) }
+            })}
         </Row>
     );
 };

@@ -3,10 +3,12 @@ import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
-import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
-import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import { path } from '../../../lib/Spacedeck';
+import ErrorMessage from '@/components/UI/ErrorMessage';
+import Form from '@/components/UI/Form';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
+import { path } from '@/lib/Spacedeck';
+import { Input } from '@/components/UI/shadcn/Input';
+import { Button } from '@/components/UI/shadcn/Button';
 
 const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parsedError }) => {
     const [sketchName, setSketchName] = useState('');
@@ -27,13 +29,14 @@ const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parse
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
-        const roomId = await createSketchRoom(sketchLink, sketchName)
-            .catch(error => setErrorMessage((err) => {
+        const roomId = await createSketchRoom(sketchLink, sketchName).catch((error) =>
+            setErrorMessage((err) => {
                 setErrorMessage(error.data?.error);
                 setLoading(false);
 
                 return;
-            }));
+            }),
+        );
         router.push(`${path}/${roomId}`);
         setSketchLink('');
         callbackDone && callbackDone();
@@ -42,13 +45,20 @@ const AddExistingSketch = ({ callbackDone, createSketchRoom, errorMessage: parse
 
     return (
         <Form onSubmit={handleSubmit}>
-            <input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
-            <input type="text" placeholder={t('Link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
-            { !validLink && sketchLink !== '' && <ErrorMessage>{ t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl }) }</ErrorMessage> }
+            <Input type="text" placeholder={t('Name')} value={sketchName} onChange={(e) => setSketchName(e.target.value)} />
+            <Input type="text" placeholder={t('Link to sketch')} value={sketchLink} onChange={handleExistingSketch} />
+            {!validLink && sketchLink !== '' && (
+                <ErrorMessage>
+                    {t('Make sure your link includes "{{url}}"', { url: getConfig().publicRuntimeConfig.authProviders.spacedeck.baseUrl })}
+                </ErrorMessage>
+            )}
 
-            <button type="submit" disabled={!sketchName || !validLink || loading}>{ loading ? <LoadingSpinnerInline inverted /> : t('Add sketch') }</button>
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-        </Form>);
+            <Button type="submit" disabled={!sketchName || !validLink || loading}>
+                {loading ? <LoadingSpinnerInline inverted /> : t('Add sketch')}
+            </Button>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        </Form>
+    );
 };
 
 export default AddExistingSketch;
