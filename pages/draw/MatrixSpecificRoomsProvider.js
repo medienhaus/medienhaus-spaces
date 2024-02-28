@@ -1,5 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { createClient as createMatrixClient, EventType, Filter } from 'matrix-js-sdk';
+import { createClient as createMatrixClient, Filter } from 'matrix-js-sdk';
 import pino from 'pino';
 
 class MatrixSpecificRoomsProvider {
@@ -23,9 +22,7 @@ class MatrixSpecificRoomsProvider {
         const filter = new Filter(this.matrixClient.getUserId());
         filter.setDefinition({
             presence: {
-                not_types: [
-                    '*',
-                ],
+                not_types: ['*'],
             },
             room: {
                 rooms: this.roomIds ? this.roomIds : [],
@@ -44,11 +41,19 @@ class MatrixSpecificRoomsProvider {
     }
 
     async fetchRoomMessages(roomId, limit = 1, abortSignal) {
-        return this.matrixClient.http.authedRequest('GET', `/rooms/${roomId}/messages`, { limit: limit, dir: 'b', filter: JSON.stringify({ types: ['m.room.message'] }) }, undefined, { abortSignal });
+        return this.matrixClient.http.authedRequest(
+            'GET',
+            `/rooms/${roomId}/messages`,
+            { limit: limit, dir: 'b', filter: JSON.stringify({ types: ['m.room.message'] }) },
+            undefined,
+            { abortSignal },
+        );
     }
 
     async fetchLatestEventIdFromThread(roomId, threadId, abortSignal) {
-        return (await this.matrixClient.http.authedRequest('GET', `/rooms/${roomId}/event/${threadId}`, undefined, undefined, { abortSignal }))?.unsigned?.['m.relations']?.['m.thread']?.latest_event?.event_id;
+        return (
+            await this.matrixClient.http.authedRequest('GET', `/rooms/${roomId}/event/${threadId}`, undefined, undefined, { abortSignal })
+        )?.unsigned?.['m.relations']?.['m.thread']?.latest_event?.event_id;
     }
 
     async createRoom(name, isSpace, topic, joinRule, type, template, parentId, customInitialStateEvents) {
@@ -60,21 +65,23 @@ class MatrixSpecificRoomsProvider {
             creation_content: {
                 type: isSpace ? 'm.space' : 'm.room',
             },
-            initial_state: [{
-                type: 'm.room.history_visibility',
-                content: { history_visibility: 'world_readable' }, // history has to be world_readable so content of the rooms is visible for everyone who joins the room at a later point in time
-            },
-            {
-                type: 'm.room.join_rules',
-                content: { join_rule: joinRule }, // can be set to either public, invite or knock
-            }, {
-                type: 'dev.medienhaus.meta',
-                content: {
-                    type: type,
-                    template: template,
-                    version: '0.4',
+            initial_state: [
+                {
+                    type: 'm.room.history_visibility',
+                    content: { history_visibility: 'world_readable' }, // history has to be world_readable so content of the rooms is visible for everyone who joins the room at a later point in time
                 },
-            },
+                {
+                    type: 'm.room.join_rules',
+                    content: { join_rule: joinRule }, // can be set to either public, invite or knock
+                },
+                {
+                    type: 'dev.medienhaus.meta',
+                    content: {
+                        type: type,
+                        template: template,
+                        version: '0.4',
+                    },
+                },
             ],
             power_level_content_override: {
                 // we only want users with moderation rights to be able to do any actions, people joining the room will have a default level of 0.

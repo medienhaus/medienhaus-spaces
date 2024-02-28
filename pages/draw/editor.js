@@ -1,14 +1,6 @@
-'use client';
-import { Tldraw, useEditor } from '@tldraw/tldraw';
+import { Tldraw } from '@tldraw/tldraw';
 import { useState, useEffect } from 'react';
-import { styled } from 'styled-components';
 import _ from 'lodash';
-
-import '@tldraw/tldraw/tldraw.css';
-
-const EditorSection = styled.div`
-  height: 100%;
-`;
 
 export default function Editor({ store, addStoreElement, updateStoreElement, deleteStoreElement }) {
     const [editor, setEditor] = useState();
@@ -22,7 +14,7 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
             }
 
             if (Object.keys(entry.changes.removed).length > 0) {
-                Object.keys(entry.changes.removed).forEach(key => {
+                Object.keys(entry.changes.removed).forEach((key) => {
                     deleteStoreElement(key, entry.changes.removed[key], entry.changes.removed[key].meta.eventId);
                 });
             }
@@ -33,7 +25,7 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
         const intervalId = setInterval(() => {
             const currentStore = editor.store.getSnapshot();
 
-            Object.keys(currentStore.store).forEach(key => {
+            Object.keys(currentStore.store).forEach((key) => {
                 if (!store.store[key]) {
                     addStoreElement(key, currentStore.store[key]);
                 } else if (store.store[key].typeName !== 'page' && store.store[key].typeName !== 'document') {
@@ -77,12 +69,8 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
     };
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
-            <EditorSection>
-                <Tldraw onUiEvent={handleEvent} onMount={handleMount} />
-
-            </EditorSection>
-
+        <div className="h-full w-full">
+            <Tldraw onUiEvent={handleEvent} onMount={handleMount} />
         </div>
     );
 }
