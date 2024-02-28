@@ -6,7 +6,8 @@ import { logger } from 'matrix-js-sdk/lib/logger';
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { useAuth } from '@/lib/Auth';
-import { DrawerDialog, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * A modal-like interface to invite other users to a given Matrix room.
@@ -46,10 +47,10 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                 // const filterResults = users.results.filter(item => _.isEqual(item, option));
                 setSearchResults(usersWithoutMyself);
             } catch (err) {
-                logger.error(t('Error while trying to fetch users: ') + err);
+                logger.error('Error while trying to fetch users', err);
             }
         },
-        [matrixClient, t],
+        [matrixClient],
     );
 
     function clearInputs() {
@@ -83,9 +84,11 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                     {{ successAmount }} user was invited and needs to accept your invitation
                 </Trans>,
             );
-        _.delay(() => {
-            clearInputs();
-        }, 2500);
+        await new Promise(() =>
+            setTimeout(() => {
+                clearInputs();
+            }, 3000),
+        );
     };
 
     return (
@@ -95,36 +98,42 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                     setIsOpen(true);
                 },
             })}
-            <DrawerDialog
-                isOpen={isOpen}
+            <Dialog
+                open={isOpen}
                 onOpenChange={(newState) => {
                     setIsOpen(newState);
                 }}
             >
-                <DrawerDialogHeader>
-                    <h3>{t('Invite users')}</h3>
-                </DrawerDialogHeader>
-                <div>
-                    {userFeedback && _.isEmpty(errorFeedback) ? (
-                        <div>{userFeedback}</div>
-                    ) : (
-                        <>
-                            <Datalist
-                                options={searchResults}
-                                onInputChange={handleChange}
-                                keysToDisplay={['display_name', 'user_id']}
-                                onSubmit={handleInvite}
-                                onCancel={() => setIsOpen(false)}
-                            />
-                            <div>
-                                {userFeedback && errorFeedback && userFeedback}
-                                {!_.isEmpty(errorFeedback) &&
-                                    errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
-                            </div>
-                        </>
-                    )}
-                </div>
-            </DrawerDialog>
+                <DialogContent>
+                    <DialogHeader>
+                        <h3>{t('Invite users')}</h3>
+                    </DialogHeader>
+                    <div>
+                        {userFeedback && _.isEmpty(errorFeedback) ? (
+                            <div>{userFeedback}</div>
+                        ) : (
+                            <>
+                                <Datalist
+                                    options={searchResults}
+                                    onInputChange={handleChange}
+                                    keysToDisplay={['display_name', 'user_id']}
+                                    onSubmit={handleInvite}
+                                />
+                                <div>
+                                    {userFeedback && errorFeedback && userFeedback}
+                                    {!_.isEmpty(errorFeedback) &&
+                                        errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild props>
+                            <Button variant="outline">{t('Cancel')}</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
