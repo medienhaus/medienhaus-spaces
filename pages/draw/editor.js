@@ -70,7 +70,7 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
 
     return (
         <div className="h-full w-full">
-            <Tldraw onUiEvent={handleEvent} onMount={handleMount} />
+            <Tldraw onUiEvent={handleEvent} onMount={handleMount} inferDarkMode />
         </div>
     );
 }
