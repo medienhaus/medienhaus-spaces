@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { RiCloseLine, RiMenuLine } from '@remixicon/react';
 
+import { useAuth } from '@/lib/Auth';
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
@@ -114,7 +115,26 @@ const Copyleft = styled.span`
 `;
 
 export default function BaseLayout({ children }) {
+    const auth = useAuth();
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+
+    if (auth.user === null) {
+        return null;
+    }
+
+    if (auth.user === false) {
+        return (
+            <>
+                <Wrapper>
+                    <Header>
+                        <h1>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</h1>
+                    </Header>
+                    <Sidebar />
+                    {children}
+                </Wrapper>
+            </>
+        );
+    }
 
     return (
         <>
