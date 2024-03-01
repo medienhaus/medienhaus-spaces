@@ -21,6 +21,7 @@
     "name of the room": "Name des Raums",
     "New chat": "neuen Chat",
     "No context templates defined, please contact the administrator.": "Es sind keine Kontextvorlagen definiert. Bitte kontaktiere den Administrator.",
+    "Role": "Funktion",
     "Show contexts and items of {{name}}": "Zeige Kontexte und Elemente von {{name}}",
     "Show members of {{name}}" : "Zeige Mitglieder von {{name}}",
     "Show settings of {{name}}": "Zeige Einstellungen von {{name}}",
