@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import React, { useState } from 'react';
 import { RiChat4Line, RiChatNewLine, RiFileLine, RiFolderAddLine, RiFolderLine, RiLink } from '@remixicon/react';
-import _ from 'lodash';
 
 import AddExistingItem from './AddExistingItem';
 import AddExistingContext from './AddExistingContext';
@@ -12,7 +11,6 @@ import AddNewChat from './AddOrCreateChat/AddNewChat';
 import CreateLink from './CreateLink';
 import { DrawerDialog, DrawerDialogFooter, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
 import { Button } from '@/components/UI/shadcn/Button';
-import PreviousNextButtons from '@/components/UI/PreviousNextButtons';
 
 /**
  * QuickAddExplore component
