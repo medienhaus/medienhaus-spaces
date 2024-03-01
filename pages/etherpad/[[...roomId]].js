@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { RiCloseLine, RiDeleteBinLine, RiMenuAddLine } from '@remixicon/react';
+import { RiCloseLine, RiMenuAddLine } from '@remixicon/react';
 import { styled } from 'styled-components';
 import Error from 'next/error';
 
@@ -173,7 +173,7 @@ export default function Etherpad() {
 
             return room;
         },
-        [auth, matrix, etherpad],
+        [matrix, etherpad],
     );
 
     /**
