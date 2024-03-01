@@ -88,7 +88,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                                 variant="outline"
                             >
                                 <RiLink />
-                                <p>{t('Add a link')}</p>
+                                <p>{t('Add link')}</p>
                             </Button>
                         </div>
                         <DrawerDialogFooter />

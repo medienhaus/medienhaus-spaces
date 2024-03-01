@@ -108,7 +108,7 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
             {selectedContextName && isAddingAllowed && (
                 <p>
                     {' '}
-                    {t('You are about to add {{ selectedContextName }} to {{parentName}}', {
+                    {t('Add {{selectedContextName}} to {{parentName}}?', {
                         selectedContextName: selectedContextName,
                         parentName: parentName,
                     })}

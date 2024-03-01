@@ -68,7 +68,7 @@ const ChangeTopic = ({ roomId, roomName }) => {
         <>
             <form className="[&>*+*]:mt-4" onSubmit={updateTopic} onReset={() => setNewTopic(currentTopic)}>
                 <Textarea
-                    placeholder={t('Enter a new topic, for example a short description of ') + roomName}
+                    placeholder={t('Enter a new topic, for example a short description of {{name}}', { name: roomName })}
                     value={newTopic}
                     onChange={handleTopicChange}
                 />

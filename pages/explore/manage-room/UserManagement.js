@@ -98,7 +98,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                         roomId={roomId}
                         trigger={
                             <Button className="w-full justify-between px-0 pr-1.5 hover:text-accent" variant="ghost">
-                                {t('Invite people to {{name}} …', { name: roomName })}
+                                {t('Invite to {{name}} …', { name: roomName })}
                                 <RiAddLine />
                             </Button>
                         }
@@ -116,7 +116,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
     const hasHigherPowerLevel = powerLevel < selfPowerLevel;
     const [isKicking, setIsKicking] = useState(false);
     const [isChangingPowerLevel, setIsChangingPowerLevel] = useState(false);
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const onKickClick = async (e) => {
         e.preventDefault();

@@ -19,7 +19,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const createContext = async (e) => {
         e.preventDefault();
@@ -93,7 +93,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 }}
                 value={name}
                 required
-                placeholder="name"
+                placeholder={t('name')}
             />
             <Input
                 type="text"
@@ -101,7 +101,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                     setUrl(e?.target?.value);
                 }}
                 value={url}
-                placeholder="URL"
+                placeholder={t('URL')}
             />
             {
                 errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage> //error message container
