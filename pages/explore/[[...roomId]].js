@@ -240,7 +240,7 @@ export default function Explore() {
         return () => {
             cancelled = true;
         };
-    }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace, getSpaceChildren, myPowerLevel, roomId]);
+    }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
     const removeChildFromParent = async (idToRemove) => {
         await auth
