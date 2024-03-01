@@ -74,7 +74,7 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                 <DropdownMenuContent>
                     <DropdownMenuItem
                         className="grid w-full grid-flow-col justify-start gap-2"
-                        onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
+                        onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.protocol}//${location.hostname}${href}`)}
                     >
                         <RiClipboardLine />
                         <span>{t('Copy link to clipboard')}</span>
