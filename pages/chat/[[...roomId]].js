@@ -151,7 +151,6 @@ export default function Chat() {
             <DefaultLayout.Sidebar>
                 <h2>
                     <TextButton
-                        variant="ghost"
                         onClick={() => {
                             router.push('/chat/new');
                         }}
@@ -211,7 +210,7 @@ export default function Chat() {
                         {matrix?.rooms?.get(roomId) ? (
                             <h2>{matrix?.rooms?.get(roomId)?.name}</h2>
                         ) : (
-                            roomId === 'new' && <h2>{t('new chat')}</h2>
+                            roomId === 'new' && <h2>{t('New chat')}</h2>
                         )}
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             {matrix?.rooms?.get(roomId) && (
@@ -220,25 +219,24 @@ export default function Chat() {
                                     <InviteUserToMatrixRoom
                                         roomId={roomId}
                                         trigger={
-                                            <TextButton
-                                                variant="ghost"
-                                                title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}
-                                            >
+                                            <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
                                                 <Icon>
                                                     <RiUserAddLine />
                                                 </Icon>
                                             </TextButton>
                                         }
                                     />
-                                    <CopyToClipboard title={t('Copy chat link to clipboard')} content={'chat/' + roomId} />
-                                    <TextButton variant="ghost" title={t('Leave chat')} onClick={leaveRoom}>
+                                    <CopyToClipboard
+                                        title={t('Copy chat link to clipboard')}
+                                        content={window.location.origin + '/chat/' + roomId}
+                                    />
+                                    <TextButton title={t('Leave chat')} onClick={leaveRoom}>
                                         <Icon>
                                             <RiDoorOpenLine />
                                         </Icon>
                                     </TextButton>
                                     <TextButton
-                                        variant="ghost"
-                                        title={t('call')}
+                                        title={t('Call')}
                                         onClick={() =>
                                             iframe.current.contentWindow.document
                                                 .querySelector('header.mx_RoomHeader > div button:nth-child(1)')
@@ -250,7 +248,6 @@ export default function Chat() {
                                         </Icon>
                                     </TextButton>
                                     <TextButton
-                                        variant="ghost"
                                         title={t('Threads')}
                                         onClick={() =>
                                             iframe.current.contentWindow.document
