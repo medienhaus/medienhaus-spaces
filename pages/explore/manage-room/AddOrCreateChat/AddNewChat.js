@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { toast } from 'sonner';
 import { RiInfoI } from '@remixicon/react';
 
 import { useMatrix } from '@/lib/Matrix';
@@ -13,7 +14,6 @@ import { Input } from '@/components/UI/shadcn/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 import { Button } from '@/components/UI/shadcn/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/UI/shadcn/Popover';
-import { toast } from 'sonner';
 
 /**
  * This component is used to add a new chat room.
