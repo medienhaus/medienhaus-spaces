@@ -81,7 +81,7 @@ module.exports = {
             label: 'Chat Room 💬',
             joinRule: 'knock_restricted',
             description:
-                'Chat rooms are for casual conversations and discussions. By default they are open to anyone who has already joined the parent space. Members can participate.',
+                'Chat rooms are for conversations and discussions. By default they are open to anyone who has already joined the parent space. Members can participate.',
         },
     },
 
