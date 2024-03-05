@@ -40,7 +40,7 @@ const ServiceIframeHeader = ({
     // setIsInviteUsersOpen,
     // setSettingsTabValue,
 }) => {
-    const { t } = useTranslation(['write', 'explore']);
+    const { t } = useTranslation(['etherpad', 'explore']);
 
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
