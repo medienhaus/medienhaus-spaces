@@ -6,7 +6,7 @@ import { RiInfoI } from '@remixicon/react';
 
 import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
-import presets from '../../presets';
+import presets from '@/lib/matrixPresets';
 import ErrorMessage from '../../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';

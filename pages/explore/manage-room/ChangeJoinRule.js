@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useAuth } from '../../../lib/Auth';
-import presets from '../presets';
+import { useAuth } from '@/lib/Auth';
+import presets from '@/lib/matrixPresets';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
@@ -17,7 +17,7 @@ import { Button } from '@/components/UI/shadcn/Button';
  * @returns {JSX.Element} - The rendered component.
  */
 
-const JoinRuleChanger = ({ roomId, roomName, onPreviousAction, onCancel }) => {
+const JoinRuleChanger = ({ roomId, roomName }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const currentJoinRule = matrixClient.getRoom(roomId).getJoinRule();
     const [joinRule, setJoinRule] = useState(currentJoinRule);
