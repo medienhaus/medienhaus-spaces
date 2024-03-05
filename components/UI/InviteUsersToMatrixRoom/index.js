@@ -59,20 +59,17 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
         const errors = [];
 
         for (const user of selectedUsers) {
-            await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
+            const invite = await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
                 // avoid adding duplicates
                 if (errors.includes(error.data.error)) return;
                 // display errors in a toast
                 errors.push(error.data.error);
-                toast.error(error.data.error);
+                toast.error('The following error occurred: ' + error.data.error);
             });
-        }
 
-        // if everything is okay, we let the user know and exit the view.
-        for (const selectedUser of selectedUsers) {
-            toast.success(
-                t('{{selectedUser}} was invited and needs to accept your invitation', { selectedUser: selectedUser.display_name }),
-            );
+            if (!invite) continue;
+            // if everything is okay, we let the user know and exit the view.
+            toast.success(t('{{selectedUser}} was invited and needs to accept your invitation', { selectedUser: user.display_name }));
         }
 
         await new Promise(() =>
