@@ -64,7 +64,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                 if (errors.includes(error.data.error)) return;
                 // display errors in a toast
                 errors.push(error.data.error);
-                toast.error(error.data.error);
+                toast.error('The following error occurred: ' + error.data.error);
             });
 
             if (!invite) continue;
