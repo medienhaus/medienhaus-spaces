@@ -247,6 +247,8 @@ export default function Explore() {
         return () => {
             cancelled = true;
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
     const removeChildFromParent = async (idToRemove) => {
