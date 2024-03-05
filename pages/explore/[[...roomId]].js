@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
 import { RiAddLine, RiUserLine } from '@remixicon/react';
+import { toast } from 'sonner';
 
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -49,7 +50,6 @@ export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -124,7 +124,7 @@ export default function Explore() {
                                 }),
                             )
                         ) {
-                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => setErrorMessage(error.data?.error));
+                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => toast.error(error.data?.error));
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
                             if (joinRoom) return await roomHierarchyFromServer();
@@ -133,7 +133,10 @@ export default function Explore() {
                         return matrix
                             .handleRateLimit(error, () => roomHierarchyFromServer())
                             .catch((error) => {
-                                setErrorMessage(error.message);
+                                if (error.message !== 'Event not found.') {
+                                    // we don't want to display unnecessary error messages.
+                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
+                                }
                             }); // Handle other errors by setting an error message.
                     }
                 });
@@ -161,7 +164,10 @@ export default function Explore() {
                         return matrix
                             .handleRateLimit(error, () => getMetaEvent(space))
                             .catch((error) => {
-                                setErrorMessage(error.message);
+                                if (error.message !== 'Event not found.') {
+                                    // we don't want to display unnecessary error messages.
+                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
+                                }
                             });
                     });
                 }
@@ -240,6 +246,8 @@ export default function Explore() {
         return () => {
             cancelled = true;
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
     const removeChildFromParent = async (idToRemove) => {
@@ -374,7 +382,6 @@ export default function Explore() {
                     </>
                 )
             )}
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </>
     );
 }

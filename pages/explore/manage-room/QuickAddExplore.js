@@ -35,6 +35,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
 
     const onClose = () => {
         setSelectedOption('');
+        setIsOpen(false);
     };
 
     return (
@@ -88,7 +89,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                                 variant="outline"
                             >
                                 <RiLink />
-                                <p>{t('Add a link')}</p>
+                                <p>{t('Add link')}</p>
                             </Button>
                         </div>
                         <DrawerDialogFooter />
@@ -199,7 +200,6 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         getSpaceChildren={getSpaceChildren}
                     />
                 )}
-
             </DrawerDialog>
         </>
     );

@@ -30,8 +30,6 @@ import { useAuth } from '@/lib/Auth';
 import { isValidUrl } from '@/lib/utils';
 
 const LockIconWrapper = styled(Icon)`
-    position: relative;
-    top: 0.195rem;
     display: inline-block;
     margin-left: calc(var(--margin) / 2);
     transform: scale(70%);
@@ -74,9 +72,13 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                 <DropdownMenuContent>
                     <DropdownMenuItem
                         className="grid w-full grid-flow-col justify-start gap-2"
-                        onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
+                        onClick={() =>
+                            navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.protocol}//${location.hostname}${href}`)
+                        }
                     >
-                        <RiClipboardLine />
+                        <Icon>
+                            <RiClipboardLine />
+                        </Icon>
                         <span>{t('Copy link to clipboard')}</span>
                     </DropdownMenuItem>
                     {canRemoveFromParent && (
@@ -84,7 +86,9 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                             <DropdownMenuSeparator />
                             <DialogTrigger asChild>
                                 <DropdownMenuItem className="grid w-full grid-flow-col justify-start gap-2" variant="ghost">
-                                    <RiFolderCloseLine />
+                                    <Icon>
+                                        <RiFolderCloseLine />
+                                    </Icon>
                                     <span>{t('Remove')}</span>
                                 </DropdownMenuItem>
                             </DialogTrigger>

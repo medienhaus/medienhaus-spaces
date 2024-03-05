@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -19,7 +20,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const createContext = async (e) => {
         e.preventDefault();
@@ -81,6 +82,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
         setName('');
         setUrl('');
         setIsLoading(false);
+        toast.success(t('Link added successfully'));
         onCancel();
     };
 
@@ -93,7 +95,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 }}
                 value={name}
                 required
-                placeholder="name"
+                placeholder={t('name')}
             />
             <Input
                 type="text"
@@ -101,7 +103,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                     setUrl(e?.target?.value);
                 }}
                 value={url}
-                placeholder="URL"
+                placeholder={t('URL')}
             />
             {
                 errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage> //error message container

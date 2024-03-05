@@ -32,7 +32,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     // get the current members of the room and sort them first from highest to lowest power level and then alphabetically
     const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const handleKick = async (userId, name) => {
         if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
@@ -98,7 +98,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                         roomId={roomId}
                         trigger={
                             <Button className="w-full justify-between px-0 pr-1.5 hover:text-accent" variant="ghost">
-                                {t('Invite people to {{name}} …', { name: roomName })}
+                                {t('Invite to {{name}} …', { name: roomName })}
                                 <RiAddLine />
                             </Button>
                         }
@@ -116,7 +116,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
     const hasHigherPowerLevel = powerLevel < selfPowerLevel;
     const [isKicking, setIsKicking] = useState(false);
     const [isChangingPowerLevel, setIsChangingPowerLevel] = useState(false);
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const onKickClick = async (e) => {
         e.preventDefault();
