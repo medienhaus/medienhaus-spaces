@@ -2,8 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { toast } from 'sonner';
 
-import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
 import { useAuth } from '@/lib/Auth';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
@@ -24,8 +24,6 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
-    const [userFeedback, setUserFeedback] = useState('');
-    const [errorFeedback, setErrorFeedback] = useState([]);
 
     const handleChange = (searchString) => {
         debouncedFetchUsersForContributorSearch(searchString);
@@ -54,41 +52,40 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
     );
 
     function clearInputs() {
-        setUserFeedback('');
         setSearchResults([]);
     }
 
     const handleInvite = async (selectedUsers) => {
-        setErrorFeedback([]);
         const errors = [];
 
         for (const user of selectedUsers) {
             await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
                 // avoid adding duplicates
                 if (errors.includes(error.data.error)) return;
+                // display errors in a toast
                 errors.push(error.data.error);
+                toast.error(error.data.error);
             });
-        }
-
-        if (errors.length !== 0) {
-            // if something went wrong we display the errors and clear all inputs
-            setErrorFeedback(errors);
         }
 
         const successAmount = selectedUsers.length - errors.length;
 
         // if everything is okay, we let the user know and exit the view.
         successAmount > 0 &&
-            setUserFeedback(
+            toast.success(
                 <Trans t={t} i18nKey="invitedUser" count={successAmount}>
                     {{ successAmount }} user was invited and needs to accept your invitation
                 </Trans>,
             );
+
         await new Promise(() =>
             setTimeout(() => {
                 clearInputs();
             }, 3000),
         );
+
+        // close the modal if there are no errors
+        if (errors.length === 0) setIsOpen(false);
     };
 
     return (
@@ -109,23 +106,12 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                         <h3>{t('Invite users')}</h3>
                     </DialogHeader>
                     <div>
-                        {userFeedback && _.isEmpty(errorFeedback) ? (
-                            <div>{userFeedback}</div>
-                        ) : (
-                            <>
-                                <Datalist
-                                    options={searchResults}
-                                    onInputChange={handleChange}
-                                    keysToDisplay={['display_name', 'user_id']}
-                                    onSubmit={handleInvite}
-                                />
-                                <div>
-                                    {userFeedback && errorFeedback && userFeedback}
-                                    {!_.isEmpty(errorFeedback) &&
-                                        errorFeedback.map((error) => <ErrorMessage key={error}>{error}</ErrorMessage>)}
-                                </div>
-                            </>
-                        )}
+                        <Datalist
+                            options={searchResults}
+                            onInputChange={handleChange}
+                            keysToDisplay={['display_name', 'user_id']}
+                            onSubmit={handleInvite}
+                        />
                     </div>
                     <DialogFooter>
                         <DialogClose asChild props>
