@@ -41,29 +41,29 @@ module.exports = {
     allowedJoinRules: [
         {
             name: 'public',
-            label: 'Public 🌐',
+            label: '🌐 Public',
             description: 'anyone can join',
             default: true,
         },
         {
             name: 'restricted',
-            label: 'Restricted 🔐',
+            label: '🔐 Restricted',
             description: 'anyone able to satisfy at least one of the allow conditions is able to join the room',
         },
         {
             name: 'knock',
-            label: 'Knock 🛎️',
+            label: '🛎 Knock',
             description: 'users can request to join, you have the chance to accept or reject those requests.',
         },
         {
             name: 'knock_restricted',
-            label: 'Restricted Knock 🛎️',
+            label: '🛎 Restricted Knock',
             description:
                 'a user can request an invite using the same functions offered by the knock join rule, or can attempt to join having satisfied an allow condition.',
         },
         {
             name: 'invite',
-            label: 'Invite Only 🔒',
+            label: '🔒 Invite Only',
             description: 'a user must first receive an invite from someone already in the room in order to join.',
         },
     ],
@@ -71,14 +71,14 @@ module.exports = {
     chatTemplates: {
         announcement: {
             name: 'announcement',
-            label: 'Announcement Room 📣',
+            label: '📣 Announcement Room',
             joinRule: 'public',
             description:
                 'Announcement rooms are for important announcements. Anyone can join them, in order to receive notifications. They are read-only for most members unless they were explicitly promoted to "moderator". You can think of announcement rooms as a newsletter or a bulletin board.',
         },
         chat: {
             name: 'chat',
-            label: 'Chat Room 💬',
+            label: '💬 Chat Room',
             joinRule: 'knock_restricted',
             description:
                 'Chat rooms are for conversations and discussions. By default they are open to anyone who has already joined the parent space. Members can participate.',
