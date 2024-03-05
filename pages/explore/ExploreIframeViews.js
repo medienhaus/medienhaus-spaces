@@ -72,7 +72,13 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                     </>
                 );
             default:
-                return <ChatIframeView title="chat" src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />;
+                return (
+                    <ChatIframeView
+                        title="chat"
+                        src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
+                        roomId={iframeRoomId}
+                    />
+                );
         }
     };
 

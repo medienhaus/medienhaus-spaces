@@ -1,7 +1,21 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
+import { RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
 
-const ChatIframeView = ({ src }) => {
+import { useMatrix } from '@/lib/Matrix';
+import DefaultLayout from '@/components/layouts/default';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
+import TextButton from '@/components/UI/TextButton';
+import Icon from '@/components/UI/Icon';
+
+const ChatIframeView = ({ src, roomId }) => {
     const iframe = useRef();
+    const matrix = useMatrix();
+    const router = useRouter();
+    const { t } = useTranslation('chat');
+
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
         const iframeReference = iframe.current;
@@ -59,12 +73,8 @@ const ChatIframeView = ({ src }) => {
                 .mx_MatrixChat_splashButtons { display: none; }
                 /* Hide the search bar buttons to only allow searching inside current room */
                 .mx_SearchBar_buttons { display: none !important; }
-                /* Make the header look like the "header" component we use in other pages */
-                .mx_RoomHeader { border-bottom: none; height: unset; padding: calc(var(--margin) * 1.695) calc(var(--margin) * 1.5); }
-                .mx_RoomHeader:hover { background-color: unset; }
-                .mx_RoomHeader_heading { font-weight: 900; }
-                /* Hide avatar of the user we're chatting with */
-                .mx_RoomHeader_infoWrapper .mx_BaseAvatar { display: none !important; }
+                /* Hide the header of the chat */
+                .mx_RoomHeader { display: none; }
                 /* Give that bar to manage pending knocks our background-color */
                 /* Override all of the colorful usernames with the default text color */
                 .mx_EventTile .mx_DisambiguatedProfile > span { color: var(--cpd-color-text-primary) !important; }
@@ -94,7 +104,7 @@ const ChatIframeView = ({ src }) => {
                 .mx_HomePage_button_explore { display: none !important }
                 .mx_HomePage_default_buttons { display: initial !important }
                 /* Don't display Element welcome message */
-                .mx_HomePage_default_wrapper > div:first-child { display: none }
+                .mx_HomePage_default_wrapper > *:not(.mx_HomePage_default_buttons) { display: none }
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
@@ -107,12 +117,73 @@ const ChatIframeView = ({ src }) => {
         };
     });
 
+    /**
+     * leave the given matrix room
+     */
+    const leaveRoom = async () => {
+        // Confirm if the user really wants to leave the matrixId
+        if (!confirm(t('Are you absolutely sure you want to leave this chatroom?'))) return;
+        await matrix.leaveRoom(roomId);
+        router.push('/chat');
+    };
+
     return (
-        <iframe
-            ref={iframe}
-            title="/chat"
-            src={src}
-        />
+        <>
+            <DefaultLayout.IframeHeader>
+                {matrix?.rooms?.get(roomId) ? <h2>{matrix?.rooms?.get(roomId)?.name}</h2> : roomId === 'new' && <h2>{t('New chat')}</h2>}
+                <DefaultLayout.IframeHeaderButtonWrapper>
+                    {matrix?.rooms?.get(roomId) && (
+                        <>
+                            {' '}
+                            <InviteUserToMatrixRoom
+                                roomId={roomId}
+                                trigger={
+                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                        <Icon>
+                                            <RiUserAddLine />
+                                        </Icon>
+                                    </TextButton>
+                                }
+                            />
+                            <CopyToClipboard
+                                title={t('Copy chat link to clipboard')}
+                                content={window.location.origin + '/chat/' + roomId}
+                            />
+                            <TextButton title={t('Leave chat')} onClick={leaveRoom}>
+                                <Icon>
+                                    <RiDoorOpenLine />
+                                </Icon>
+                            </TextButton>
+                            <TextButton
+                                title={t('Call')}
+                                onClick={() =>
+                                    iframe.current.contentWindow.document
+                                        .querySelector('header.mx_RoomHeader > div button:nth-child(1)')
+                                        .click()
+                                }
+                            >
+                                <Icon>
+                                    <RiPhoneLine />
+                                </Icon>
+                            </TextButton>
+                            <TextButton
+                                title={t('Threads')}
+                                onClick={() =>
+                                    iframe.current.contentWindow.document
+                                        .querySelector('header.mx_RoomHeader > div button:nth-child(2)')
+                                        .click()
+                                }
+                            >
+                                <Icon>
+                                    <RiSidebarFoldLine />
+                                </Icon>
+                            </TextButton>
+                        </>
+                    )}
+                </DefaultLayout.IframeHeaderButtonWrapper>
+            </DefaultLayout.IframeHeader>
+            <iframe ref={iframe} title="/chat" src={src} />
+        </>
     );
 };
 

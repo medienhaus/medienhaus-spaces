@@ -90,11 +90,11 @@ export default function Chat() {
                         </ServiceTable.Body>
                     </ServiceTable>
                 </details>
-                <br />
             </DefaultLayout.Sidebar>
             {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <ChatIframeView
+                        roomId={roomId}
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />
                 </DefaultLayout.IframeWrapper>
