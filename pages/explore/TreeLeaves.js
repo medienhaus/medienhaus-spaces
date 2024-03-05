@@ -6,6 +6,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import ServiceLink from '../../components/UI/ServiceLink';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import logger from '@/lib/Logging';
 
 const getIcon = (template, name) => {
     switch (template) {
@@ -49,14 +50,21 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
 
         if (template === 'etherpad') {
             const checkIfPadHasPassword = async () => {
-                let url = matrix.roomContents.get(roomId)?.body;
+                let url = matrix.roomContents.get(roomId);
 
                 if (!url) {
-                    url = await matrix.hydrateRoomContent(roomId, signal);
+                    url = await matrix.hydrateRoomContent(roomId, signal).catch((error) => {
+                        if (error.name === 'AbortError') {
+                            console.log('AbortError: Fetch request aborted');
+                        }
+
+                        return null;
+                    });
                 }
 
-                if (!url) return false;
-                const padId = url.split('/').pop();
+                if (!url?.body) return false;
+                console.log(url);
+                const padId = url.body.split('/').pop();
 
                 return etherpad.isPadPasswordProtected(padId);
             };
@@ -67,7 +75,13 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
         if (template === 'link') {
             const hydrateContent = async () => {
                 if (!matrix.roomContents.get(roomId)?.body) {
-                    await matrix.hydrateRoomContent(roomId, signal);
+                    await matrix.hydrateRoomContent(roomId, signal).catch((error) => {
+                        if (error.name === 'AbortError') {
+                            logger.error('AbortError: Fetch request aborted');
+                        } else {
+                            logger.error('Error hydrating room content', error);
+                        }
+                    });
                 }
             };
 
