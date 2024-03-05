@@ -51,7 +51,10 @@ const ServiceIframeHeader = ({
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
                 <CopyToClipboard content={content} />
                 {deleteContent && (
-                    <TextButton title={myPadsObject ? t('Delete pad', { ns: 'etherpad' }) : t('Remove pad from my library', { ns: 'etherpad' })} onClick={deleteContent}>
+                    <TextButton
+                        title={myPadsObject ? t('Delete pad', { ns: 'etherpad' }) : t('Remove pad from my library', { ns: 'etherpad' })}
+                        onClick={deleteContent}
+                    >
                         {isDeletingPad ? (
                             <LoadingSpinnerInline />
                         ) : (
@@ -86,7 +89,7 @@ const ServiceIframeHeader = ({
 
                         {/* @NOTE: this opens the invitation modal in dialog/drawer */}
                         <InviteUserToMatrixRoom
-                            currentId={roomId}
+                            roomId={roomId}
                             myPowerLevel={myPowerLevel}
                             trigger={
                                 <TextButton variant="ghost" title={t('Show members of {{name}}', { name: title })}>
