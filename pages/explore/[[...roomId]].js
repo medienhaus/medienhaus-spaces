@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
 import { RiAddLine, RiUserLine } from '@remixicon/react';
+import { toast } from 'sonner';
 
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -133,7 +134,10 @@ export default function Explore() {
                         return matrix
                             .handleRateLimit(error, () => roomHierarchyFromServer())
                             .catch((error) => {
-                                setErrorMessage(error.message);
+                                if (error.message !== 'Event not found.') {
+                                    // we don't want to display unnecessary error messages.
+                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
+                                }
                             }); // Handle other errors by setting an error message.
                     }
                 });
@@ -161,7 +165,10 @@ export default function Explore() {
                         return matrix
                             .handleRateLimit(error, () => getMetaEvent(space))
                             .catch((error) => {
-                                setErrorMessage(error.message);
+                                if (error.message !== 'Event not found.') {
+                                    // we don't want to display unnecessary error messages.
+                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
+                                }
                             });
                     });
                 }
@@ -374,7 +381,6 @@ export default function Explore() {
                     </>
                 )
             )}
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </>
     );
 }
