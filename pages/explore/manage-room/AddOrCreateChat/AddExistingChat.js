@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import _ from 'lodash';
+import { toast } from 'sonner';
 
 import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
@@ -13,7 +13,6 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
     const matrix = useMatrix();
     const [selectedRoom, setSelectedRoom] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [userFeedback, setUserFeedback] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation('explore');
 
@@ -27,14 +26,10 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
 
         if (addChildToParent.event_id) {
             logger.log('Added existing room to parentId:', currentId);
-            setUserFeedback(`Successfully added to ${parentName}`);
             await updateRoomList(e, currentId);
-
-            _.delay(() => {
-                setSelectedRoom('');
-                setUserFeedback('');
-                onSuccess();
-            }, 2500);
+            toast.success(t('Successfully added to {{parentName}}', { parentName: parentName }));
+            setSelectedRoom('');
+            onSuccess();
         }
 
         setIsLoading(false);
@@ -60,12 +55,11 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
                 </SelectContent>
             </Select>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            {userFeedback && <p>{userFeedback}</p>}
             <PreviousNextButtons
                 className="mt=4"
                 previousLabel={t('Back')}
                 nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
-                disableNext={!selectedRoom || userFeedback}
+                disableNext={!selectedRoom}
                 onCancel={onPreviousAction}
             />
         </form>

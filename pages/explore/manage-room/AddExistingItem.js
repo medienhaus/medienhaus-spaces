@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import CachedContextMultiLevelSelect from '../../../components/CachedContextMultiLevelSelect';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -13,6 +14,7 @@ import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
  *
  * @param {String} currentId - The id of the current observed explore room.
  * @param {Function} onCancel - Callback function to cancel the operation.
+ * @param {Function} onPreviousAction - Callback function to go back to the previous step.
  *
  * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
  */
@@ -50,6 +52,7 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
         if (addChildToParent?.event_id) {
             setSelectedLevels([applicationsFolder]);
             setErrorMessage('');
+            toast.success(t('Item added to context'));
             onCancel();
         }
     };
@@ -57,7 +60,13 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     return (
         <form className="[&>*+*]:mt-4" onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} rootId={currentId} />
-            <PreviousNextButtons className="mt-4" previousLabel={t('Back')} nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={isAddingContext || !isItem} onCancel={onPreviousAction} />
+            <PreviousNextButtons
+                className="mt-4"
+                previousLabel={t('Back')}
+                nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={isAddingContext || !isItem}
+                onCancel={onPreviousAction}
+            />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </form>
     );

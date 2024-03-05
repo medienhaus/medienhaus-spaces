@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -81,6 +82,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
         setName('');
         setUrl('');
         setIsLoading(false);
+        toast.success(t('Link added successfully'));
         onCancel();
     };
 
