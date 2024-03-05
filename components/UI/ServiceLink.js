@@ -1,6 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
+import { toast } from 'sonner';
 import { RiArrowRightLine, RiClipboardLine, RiFolderCloseLine, RiLockLine, RiMoreLine } from '@remixicon/react';
 import Link from 'next/link';
 
@@ -27,7 +28,6 @@ import {
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
 import { isValidUrl } from '@/lib/utils';
-import { toast } from 'sonner';
 
 const LockIconWrapper = styled(Icon)`
     display: inline-block;
@@ -111,6 +111,7 @@ function EllipsisMenu({ parentName, name, parentRoomId, onRemove, myPowerLevel, 
                             onSubmit={async (e) => {
                                 e.preventDefault();
                                 const remove = await onRemove();
+
                                 if (remove) {
                                     setDialogOpen(false);
                                     toast.success(t('You have removed {{name}} from {{space}}', { name: name, space: parentName }));
