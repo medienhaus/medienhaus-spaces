@@ -9,8 +9,6 @@ import Icon from './Icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
 
 const LockIconWrapper = styled(Icon)`
-    position: relative;
-    top: 0.195rem;
     display: inline-block;
     margin-left: calc(var(--margin) / 2);
     transform: scale(70%);
