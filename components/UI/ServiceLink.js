@@ -30,8 +30,6 @@ import { useAuth } from '@/lib/Auth';
 import { isValidUrl } from '@/lib/utils';
 
 const LockIconWrapper = styled(Icon)`
-    position: relative;
-    top: 0.195rem;
     display: inline-block;
     margin-left: calc(var(--margin) / 2);
     transform: scale(70%);
