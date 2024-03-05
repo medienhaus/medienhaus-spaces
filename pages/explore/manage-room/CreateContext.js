@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 import TemplateSelect from './TemplateSelect';
-import { useMatrix } from '../../../lib/Matrix';
+import { useMatrix } from '@/lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
@@ -82,6 +83,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
         setTopic('');
         setTemplate('');
         setIsLoading(false);
+        toast.success(t('Context {{name}} succesfully created', { name: name }));
         onCancel();
     };
 
@@ -108,7 +110,13 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
             {
                 createNewContextErrorMessage && <ErrorMessage>{createNewContextErrorMessage}</ErrorMessage> //error message container
             }
-            <PreviousNextButtons className="mt-4" previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Create')} disableNext={isLoading || !name || !template} onCancel={onPreviousAction} />
+            <PreviousNextButtons
+                className="mt-4"
+                previousLabel={t('Back')}
+                nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Create')}
+                disableNext={isLoading || !name || !template}
+                onCancel={onPreviousAction}
+            />
         </form>
     );
 };

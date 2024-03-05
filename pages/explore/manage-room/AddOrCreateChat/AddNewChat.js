@@ -13,6 +13,7 @@ import { Input } from '@/components/UI/shadcn/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 import { Button } from '@/components/UI/shadcn/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/UI/shadcn/Popover';
+import { toast } from 'sonner';
 
 /**
  * This component is used to add a new chat room.
@@ -56,16 +57,16 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
         // If room was successfully added to parent
         if (addChildToParent.event_id) {
             logger.log('Adding new room to parentId:', currentId);
-            setUserFeedback(`${roomName} was successfully created and added to ${parentName}`);
             await updateRoomList(e, currentId);
 
-            // Reset form fields and user feedback after a delay
-            _.delay(() => {
-                setRoomName('');
-                setRoomTopic('');
-                setUserFeedback('');
-                onSuccess();
-            }, 2500);
+            // Reset form fields
+            setRoomName('');
+            setRoomTopic('');
+            setUserFeedback('');
+            toast.success(
+                t('{{roomName}} was successfully created and added to {{parentName}}', { roomName: roomName, parentName: parentName }),
+            );
+            onSuccess();
         }
 
         setIsLoading(false);
