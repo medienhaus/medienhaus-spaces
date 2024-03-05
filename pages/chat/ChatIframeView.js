@@ -38,6 +38,7 @@ const ChatIframeView = ({ src, roomId }) => {
                 }
 
                 /* Unset the border-radius override from above for certain elements again */
+                #matrixchat, .mx_RoomView_wrapper { border-radius: 0 !important; }
                 .mx_RoomHeader { border-radius: 0 !important; }
                 .mx_RoomHeader .mx_FacePile .mx_BaseAvatar { border-radius: 50% !important; }
                 .mx_RoomKnocksBar { border-radius: 0 !important; }
