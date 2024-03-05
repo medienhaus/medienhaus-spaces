@@ -78,8 +78,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
      */
     const handleTemplateSelect = (value) => {
         setSelectedTemplate(value);
-        if (value === 'announcement') setSelectedJoinRule('public');
-        else setSelectedJoinRule('knock_restricted');
+        setSelectedJoinRule(presets.chatTemplates[value].joinRule || 'public');
     };
 
     return (
@@ -92,8 +91,13 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
                         <SelectValue placeholder={t('join rule')} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="announcement">{t('Announcement Room')}</SelectItem>
-                        <SelectItem value="chat">{t('Chat Room')}</SelectItem>
+                        {_.map(presets.chatTemplates, (template, key) => {
+                            return (
+                                <SelectItem key={key} value={template.name}>
+                                    {t(template.label)}
+                                </SelectItem>
+                            );
+                        })}
                     </SelectContent>
                 </Select>
                 <Popover>
@@ -102,9 +106,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
                             variant="outline"
                             title={
                                 // using title to show the tooltip on desktop
-                                selectedTemplate === 'announcement'
-                                    ? t('Announcement rooms are for important announcements and discussions.')
-                                    : t('Chat rooms are for casual conversations and discussions.')
+                                t(presets.chatTemplates[selectedTemplate].description)
                             }
                         >
                             <RiInfoI />
@@ -113,9 +115,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
                     <PopoverContent>
                         {
                             // using Popover to show the tooltip on mobile
-                            selectedTemplate === 'announcement'
-                                ? t('Announcement rooms are for important announcements and discussions.')
-                                : t('Chat rooms are for casual conversations and discussions.')
+                            t(presets.chatTemplates[selectedTemplate].description)
                         }
                     </PopoverContent>
                 </Popover>
