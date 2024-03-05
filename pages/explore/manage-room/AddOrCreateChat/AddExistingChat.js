@@ -45,7 +45,7 @@ export default function AddExistingChat({ allChatRooms, onPreviousAction, curren
         <form className="[&>*+*]:mt-4" onSubmit={handleAddChat}>
             <Select onValueChange={setSelectedRoom}>
                 <SelectTrigger>
-                    <SelectValue placeholder={`-- ${t('Choose Chat Room')} --`} />
+                    <SelectValue placeholder={`-- ${t('choose chat room')} --`} />
                 </SelectTrigger>
                 <SelectContent>
                     {allChatRooms.map((room) => {

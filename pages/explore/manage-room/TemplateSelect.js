@@ -20,13 +20,13 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
 
 const TemplateSelect = ({ currentTemplate, setTemplate }) => {
     const contextTemplates = getConfig().publicRuntimeConfig.templates?.context; //
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const onChangeTemplateSelect = (e) => {
         setTemplate(e.target.value);
     };
 
-    if (!contextTemplates) return <ErrorMessage>{ t('No context templates defined, please contact the administrator') }</ErrorMessage>;
+    if (!contextTemplates) return <ErrorMessage>{t('No context templates defined, please contact the administrator.')}</ErrorMessage>;
 
     return (
         <>

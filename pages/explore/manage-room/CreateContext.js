@@ -22,7 +22,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
     const [powerLevels, setPowerLevels] = useState();
     const [createNewContextErrorMessage, setCreateNewContextErrorMessage] = useState();
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const createContext = async (e) => {
         e.preventDefault();
@@ -94,7 +94,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
                 }}
                 value={name}
                 required
-                placeholder="name"
+                placeholder={t('name')}
             />
             <Input
                 type="text"
@@ -102,7 +102,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
                     setTopic(e?.target?.value);
                 }}
                 value={topic}
-                placeholder="topic (optional)"
+                placeholder={t('topic') + ' (optional)'}
             />
             <TemplateSelect currentId={currentId} currentTemplate={template} setTemplate={setTemplate} />
             {

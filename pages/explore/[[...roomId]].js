@@ -374,7 +374,7 @@ export default function Explore() {
                     </>
                 )
             )}
-            {/*{ errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }*/}
+            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
         </>
     );
 }

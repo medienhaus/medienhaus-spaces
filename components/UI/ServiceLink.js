@@ -73,8 +73,10 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem
-                        className="w-full justify-start"
-                        onClick={() => navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.hostname}${href}`)}
+                        className="grid w-full grid-flow-col justify-start gap-2"
+                        onClick={() =>
+                            navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.protocol}//${location.hostname}${href}`)
+                        }
                     >
                         <Icon>
                             <RiClipboardLine />
@@ -85,7 +87,7 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                         <>
                             <DropdownMenuSeparator />
                             <DialogTrigger asChild>
-                                <DropdownMenuItem className="w-full justify-start" variant="ghost">
+                                <DropdownMenuItem className="grid w-full grid-flow-col justify-start gap-2" variant="ghost">
                                     <Icon>
                                         <RiFolderCloseLine />
                                     </Icon>
