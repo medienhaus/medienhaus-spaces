@@ -57,7 +57,6 @@ const NotificationBadge = styled.span`
 
 function EllipsisMenu({ parentName, name, parentRoomId, onRemove, myPowerLevel, href }) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [wasRemoved, setWasRemoved] = useState(false);
     const { t } = useTranslation();
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const room = matrixClient.getRoom(parentRoomId);
@@ -114,7 +113,6 @@ function EllipsisMenu({ parentName, name, parentRoomId, onRemove, myPowerLevel, 
                                 const remove = await onRemove();
                                 if (remove) {
                                     setDialogOpen(false);
-                                    setWasRemoved(false);
                                     toast.success(t('You have removed {{name}} from {{space}}', { name: name, space: parentName }));
                                 }
                             }}
