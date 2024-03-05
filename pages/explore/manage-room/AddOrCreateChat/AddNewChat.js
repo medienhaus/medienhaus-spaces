@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
+import { RiInfoI } from '@remixicon/react';
 
 import { useMatrix } from '@/lib/Matrix';
 import logger from '../../../../lib/Logging';
@@ -10,12 +11,29 @@ import PreviousNextButtons from '../../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../../components/UI/LoadingSpinnerInline';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
+import { Button } from '@/components/UI/shadcn/Button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/UI/shadcn/Popover';
 
+/**
+ * This component is used to add a new chat room.
+ *
+ * @param {Function} onPreviousAction - The function to be called when the previous action is triggered.
+ * @param {string} currentId - The current ID of the room.
+ * @param {Function} onSuccess - The function to be called when the room is successfully created.
+ * @param {string} parentName - The name of the parent room.
+ * @param {Function} updateRoomList - The function to update the list of rooms.
+ *
+ * @returns {JSX.Element} - The JSX element representing the add new chat component.
+ *
+ * @TODO templates need proper explanations.
+ * @TODO add dev.medienhaus.meta event to the room when announcement template is selected? Alternatively check if it's possible whcih 'preset' was used when creating a matrix room.
+ */
 export default function AddNewChat({ onPreviousAction, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
     const [roomName, setRoomName] = useState('');
     const [roomTopic, setRoomTopic] = useState('');
     const [selectedJoinRule, setSelectedJoinRule] = useState('knock_restricted');
+    const [selectedTemplate, setSelectedTemplate] = useState('chat');
     const [errorMessage, setErrorMessage] = useState('');
     const [userFeedback, setUserFeedback] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -35,11 +53,13 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
             .addSpaceChild(currentId, roomId)
             .catch((error) => [setErrorMessage(error.data?.error || t('something went wrong, please try again'))]);
 
+        // If room was successfully added to parent
         if (addChildToParent.event_id) {
             logger.log('Adding new room to parentId:', currentId);
             setUserFeedback(`${roomName} was successfully created and added to ${parentName}`);
             await updateRoomList(e, currentId);
 
+            // Reset form fields and user feedback after a delay
             _.delay(() => {
                 setRoomName('');
                 setRoomTopic('');
@@ -51,11 +71,56 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
         setIsLoading(false);
     };
 
+    /**
+     * Handles the selection of a template and adjusts the join rule accordingly.
+     *
+     * @param {string} value - The selected template.
+     */
+    const handleTemplateSelect = (value) => {
+        setSelectedTemplate(value);
+        if (value === 'announcement') setSelectedJoinRule('public');
+        else setSelectedJoinRule('knock_restricted');
+    };
+
     return (
         <form className="[&>*+*]:mt-4" onSubmit={handleNewChat}>
             <Input type="text" placeholder={t('name of the room')} value={roomName} onChange={(e) => setRoomName(e.target.value)} />
             <Input type="text" placeholder={t('topic of the room')} value={roomTopic} onChange={(e) => setRoomTopic(e.target.value)} />
-            <Select defaultValue={selectedJoinRule} onValueChange={setSelectedJoinRule}>
+            <div className="flex gap-4">
+                <Select value={selectedTemplate} onValueChange={handleTemplateSelect}>
+                    <SelectTrigger>
+                        <SelectValue placeholder={t('join rule')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="announcement">{t('Announcement Room')}</SelectItem>
+                        <SelectItem value="chat">{t('Chat Room')}</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            title={
+                                // using title to show the tooltip on desktop
+                                selectedTemplate === 'announcement'
+                                    ? t('Announcement rooms are for important announcements and discussions.')
+                                    : t('Chat rooms are for casual conversations and discussions.')
+                            }
+                        >
+                            <RiInfoI />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        {
+                            // using Popover to show the tooltip on mobile
+                            selectedTemplate === 'announcement'
+                                ? t('Announcement rooms are for important announcements and discussions.')
+                                : t('Chat rooms are for casual conversations and discussions.')
+                        }
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <Select value={selectedJoinRule} onValueChange={setSelectedJoinRule}>
                 <SelectTrigger>
                     <SelectValue placeholder={t('join rule')} />
                 </SelectTrigger>
