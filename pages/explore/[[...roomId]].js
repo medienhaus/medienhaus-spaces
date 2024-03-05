@@ -256,8 +256,12 @@ export default function Explore() {
             .removeSpaceChild(roomId, idToRemove)
             .catch((error) => {
                 logger.error(error.data?.error);
+
+                return toast.error(error.data?.error);
             });
         await getSpaceChildren(null, roomId);
+
+        return true;
     };
 
     if (typeof window === 'undefined') return <LoadingSpinner />;

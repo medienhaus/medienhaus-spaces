@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
 import { RiArrowRightLine, RiClipboardLine, RiFolderCloseLine, RiLockLine, RiMoreLine } from '@remixicon/react';
 import Link from 'next/link';
-import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
@@ -28,6 +27,7 @@ import {
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
 import { isValidUrl } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const LockIconWrapper = styled(Icon)`
     display: inline-block;
@@ -55,7 +55,7 @@ const NotificationBadge = styled.span`
 // @TODO figure out what to do with optional menu and logic for menu, could use better solution
 // @TODO success message closes too quickly
 
-function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }) {
+function EllipsisMenu({ parentName, name, parentRoomId, onRemove, myPowerLevel, href }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [wasRemoved, setWasRemoved] = useState(false);
     const { t } = useTranslation();
@@ -97,37 +97,33 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel, href }
                 </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent>
-                {wasRemoved ? (
-                    'was removed'
-                ) : (
-                    <>
-                        <DialogHeader>
-                            <DialogTitle>{t('Are you absolutely sure you want to remove {{name}}', { name: name })}</DialogTitle>
-                            <DialogDescription>
-                                {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
-                                    name: name,
-                                    space: parentName,
-                                })}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <form
-                                onSubmit={async (e) => {
-                                    e.preventDefault();
-                                    await onRemove();
-                                    setWasRemoved(true);
-                                    _.delay(() => {
-                                        setDialogOpen(false);
-                                        setWasRemoved(false);
-                                    }, 1000);
-                                }}
-                                onReset={() => setDialogOpen(false)}
-                            >
-                                <ConfirmCancelButtons confirmLabel="Remove" destructive />
-                            </form>
-                        </DialogFooter>
-                    </>
-                )}
+                <>
+                    <DialogHeader>
+                        <DialogTitle>{t('Are you absolutely sure you want to remove {{name}}', { name: name })}</DialogTitle>
+                        <DialogDescription>
+                            {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
+                                name: name,
+                                space: parentName,
+                            })}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <form
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                const remove = await onRemove();
+                                if (remove) {
+                                    setDialogOpen(false);
+                                    setWasRemoved(false);
+                                    toast.success(t('You have removed {{name}} from {{space}}', { name: name, space: parentName }));
+                                }
+                            }}
+                            onReset={() => setDialogOpen(false)}
+                        >
+                            <ConfirmCancelButtons confirmLabel="Remove" destructive />
+                        </form>
+                    </DialogFooter>
+                </>
             </DialogContent>
         </Dialog>
     );
@@ -189,6 +185,7 @@ const ServiceLink = forwardRef(
                             onRemove={onRemove}
                             myPowerLevel={myPowerLevel}
                             parentRoomId={parentRoomId}
+                            name={name}
                             href={href}
                         />
                     </ServiceTable.Cell>
