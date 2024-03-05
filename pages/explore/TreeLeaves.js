@@ -63,7 +63,6 @@ const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small
                 }
 
                 if (!url?.body) return false;
-                console.log(url);
                 const padId = url.body.split('/').pop();
 
                 return etherpad.isPadPasswordProtected(padId);
