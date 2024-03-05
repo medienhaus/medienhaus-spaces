@@ -27,7 +27,7 @@ const ChatIframeView = ({ src, roomId }) => {
                 * {
                     --margin: 1rem;
 
-                    --cpd-color-theme-bg: rgb(255 255 255) !important; 
+                    --cpd-color-theme-bg: rgb(255 255 255) !important;
                     --cpd-avatar-bg: #000000 !important;
                     --cpd-avatar-color: #ffffff !important;
                     --cpd-color-text-action-accent: #000 !important;
@@ -36,12 +36,12 @@ const ChatIframeView = ({ src, roomId }) => {
 
                     border-radius: 4px !important;
                 }
-                
+
                 /* Unset the border-radius override from above for certain elements again */
                 .mx_RoomHeader { border-radius: 0 !important; }
                 .mx_RoomHeader .mx_FacePile .mx_BaseAvatar { border-radius: 50% !important; }
                 .mx_RoomKnocksBar { border-radius: 0 !important; }
-                
+
                 @media (prefers-color-scheme: dark) {
                     * {
                         --cpd-color-theme-bg: hsl(0deg 0% 8%) !important;
@@ -51,21 +51,21 @@ const ChatIframeView = ({ src, roomId }) => {
                         --cpd-color-bg-subtle-secondary: hsl(0deg 0% 0%) !important;
                         --color-foreground-alpha: rgb(255 255 255 / 7%);
                     }
-                    
+
                    .mx_HomePage_button_createGroup, .mx_HomePage_button_sendDm, .mx_AccessibleButton.mx_AccessibleButton_kind_icon_primary, .mx_AccessibleButton.mx_AccessibleButton_kind_primary {
                         background-color: #ffffff !important;
                         color: #000000 !important;
                     }
-                    
-                   .mx_HomePage_button_createGroup.mx_AccessibleButton::before, 
+
+                   .mx_HomePage_button_createGroup.mx_AccessibleButton::before,
                    .mx_HomePage_button_sendDm.mx_AccessibleButton::before {
                         background-color: #000 !important;
                    }
-                    
+
                   .mx_Dialog_primary {
                         color: #000000 !important;
                   }
-                }   
+                }
 
                 /* Hide the left sidebar and that drag-to-resize thingy */
                 .mx_LeftPanel_outerWrapper, .mx_LeftPanel_outerWrapper + .mx_ResizeHandle { display: none; !important }
@@ -91,8 +91,8 @@ const ChatIframeView = ({ src, roomId }) => {
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_EventTile_line,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary,
                     .mx_RoomView_timeline_rr_enabled .mx_EventTile[data-layout=group] .mx_ThreadSummary_icon { margin-right: unset; }
-                    
-                    /* Make all Element modal dialogs span across the whole screen; this also affects dialogs on the "new chat" home screen */ 
+
+                    /* Make all Element modal dialogs span across the whole screen; this also affects dialogs on the "new chat" home screen */
                     .mx_Dialog { position: absolute; top: 0; left: 0; right: 0; bottom: 0; max-height: unset !important; border-radius: 0 !important; }
                     .mx_Dialog_fixedWidth { width: 100% !important; max-width: unset !important; }
                 }
