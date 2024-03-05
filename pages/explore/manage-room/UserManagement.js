@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/Auth';
 import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import presets from '../presets';
+import presets from '@/lib/matrixPresets';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import { Button } from '@/components/UI/shadcn/Button';
 import Icon from '@/components/UI/Icon';
