@@ -6,6 +6,7 @@
     "Add link": "Link hinzufügen",
     "Add more …": "Mehr hinzufügen …",
     "Add more to {{name}}": "Mehr hinzufügen zu {{name}}",
+    "Add {{selectedContextName}} to {{parentName}}?": "{{selectedContextName}} zu {{parentName}} hinzugefügen?",
     "Advanced": "Erweitert",
     "All members of {{room}}": "Alle Mitglieder von {{room}}",
     "Change Join Rule for": "Beitrittsregel ändern für",
@@ -15,6 +16,7 @@
     "Existing chat": "bestehenden Chat",
     "Invite to {{name}} …": "Zu {{name}} einladen …",
     "Join Rule": "Join-Regel",
+    "Kick": "Entfernen",
     "Leaving {{name}} means you cannot interact with it anymore.": "Wenn du {{name}} verlässt, kannst du nicht mehr damit interagieren.",
     "Leave {{ name }}?": "{{ name }} verlassen?",
     "name": "Name",
@@ -28,6 +30,5 @@
     "Topic": "Thema",
     "topic": "Thema",
     "topic of the room": "Thema des Raums",
-    "Topic was successfully updated.": "Thema wurde erfolgreich aktualisiert.",
-    "Add {{selectedContextName}} to {{parentName}}?": "{{selectedContextName}} zu {{parentName}} hinzugefügen?"
+    "Topic was successfully updated.": "Thema wurde erfolgreich aktualisiert."
 }

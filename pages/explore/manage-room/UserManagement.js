@@ -32,7 +32,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     // get the current members of the room and sort them first from highest to lowest power level and then alphabetically
     const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const handleKick = async (userId, name) => {
         if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
