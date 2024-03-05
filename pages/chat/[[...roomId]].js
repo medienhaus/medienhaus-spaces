@@ -113,7 +113,7 @@ export default function Chat() {
                 .mx_HomePage_button_explore { display: none !important }
                 .mx_HomePage_default_buttons { display: initial !important }
                 /* Don't display Element welcome message */
-                .mx_HomePage_default_wrapper > div:first-child { display: none }
+                .mx_HomePage_default_wrapper > *:not(.mx_HomePage_default_buttons) { display: none }
             `);
             styleTag.appendChild(styleContent);
             iframeReference.contentDocument.getElementsByTagName('html')[0].appendChild(styleTag);
