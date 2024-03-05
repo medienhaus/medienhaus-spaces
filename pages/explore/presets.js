@@ -1,7 +1,7 @@
 // eslint-disable no-undef
 
 /**
- * HELPERFILE 'presets' for actions
+ * HELP FILE 'presets' for actions
  *
  * @TODO
  *  - changing all text to translatable entries.
@@ -9,7 +9,7 @@
  *  - adding the option to use an own 'preset file' as part of a config
  *
  *
-*/
+ */
 
 module.exports = {
     name: {
@@ -41,31 +41,49 @@ module.exports = {
     allowedJoinRules: [
         {
             name: 'public',
-            label: 'Public 🌐',
+            label: '🌐 Public',
             description: 'anyone can join',
             default: true,
         },
         {
             name: 'restricted',
-            label: 'Restricted 🔐',
+            label: '🔐 Restricted',
             description: 'anyone able to satisfy at least one of the allow conditions is able to join the room',
         },
         {
             name: 'knock',
-            label: 'Knock 🛎️',
+            label: '🛎 Knock',
             description: 'users can request to join, you have the chance to accept or reject those requests.',
         },
         {
             name: 'knock_restricted',
-            label: 'Restricted Knock 🛎️',
-            description: 'a user can request an invite using the same functions offered by the knock join rule, or can attempt to join having satisfied an allow condition.',
+            label: '🛎 Restricted Knock',
+            description:
+                'a user can request an invite using the same functions offered by the knock join rule, or can attempt to join having satisfied an allow condition.',
         },
         {
             name: 'invite',
-            label: 'Invite Only 🔒',
+            label: '🔒 Invite Only',
             description: 'a user must first receive an invite from someone already in the room in order to join.',
         },
     ],
+
+    chatTemplates: {
+        announcement: {
+            name: 'announcement',
+            label: '📣 Announcement Room',
+            joinRule: 'public',
+            description:
+                'Announcement rooms are for important announcements. Anyone can join them, in order to receive notifications. They are read-only for most members unless they were explicitly promoted to "moderator". You can think of announcement rooms as a newsletter or a bulletin board.',
+        },
+        chat: {
+            name: 'chat',
+            label: '💬 Chat Room',
+            joinRule: 'knock_restricted',
+            description:
+                'Chat rooms are for conversations and discussions. By default they are open to anyone who has already joined the parent space. Members can participate.',
+        },
+    },
 
     allowedHistoryVisibility: [
         {
@@ -97,8 +115,8 @@ module.exports = {
             description: 'public (default); all members can add content.',
             default: true,
             powerLevels: {
-                'users_default': 0,
-                'events': {
+                users_default: 0,
+                events: {
                     'm.room.avatar': 50,
                     'm.room.canonical_alias': 50,
                     'm.room.encryption': 100,
@@ -113,13 +131,13 @@ module.exports = {
                     'm.reaction': 50,
                     'dev.medienhaus.meta': 100,
                 },
-                'events_default': 0,
-                'state_default': 50,
-                'ban': 50,
-                'kick': 50,
-                'redact': 50,
-                'invite': 50,
-                'historical': 100,
+                events_default: 0,
+                state_default: 50,
+                ban: 50,
+                kick: 50,
+                redact: 50,
+                invite: 50,
+                historical: 100,
             },
         },
         {
@@ -127,8 +145,8 @@ module.exports = {
             display: '📣',
             description: 'announce; read only. only moderators and admins can add things.',
             powerLevels: {
-                'users_default': 0,
-                'events': {
+                users_default: 0,
+                events: {
                     'm.room.avatar': 50,
                     'm.room.canonical_alias': 50,
                     'm.room.encryption': 100,
@@ -143,13 +161,13 @@ module.exports = {
                     'm.reaction': 50,
                     'dev.medienhaus.meta': 100,
                 },
-                'events_default': 50,
-                'state_default': 50,
-                'ban': 50,
-                'kick': 50,
-                'redact': 50,
-                'invite': 50,
-                'historical': 100,
+                events_default: 50,
+                state_default: 50,
+                ban: 50,
+                kick: 50,
+                redact: 50,
+                invite: 50,
+                historical: 100,
             },
         },
     ],
