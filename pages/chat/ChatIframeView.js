@@ -41,6 +41,7 @@ const ChatIframeView = ({ src, roomId }) => {
                 .mx_RoomHeader { border-radius: 0 !important; }
                 .mx_RoomHeader .mx_FacePile .mx_BaseAvatar { border-radius: 50% !important; }
                 .mx_RoomKnocksBar { border-radius: 0 !important; }
+                div[class^="_container_"] > div[class^="_ui_"] { border-radius: 9999px !important; }
 
                 @media (prefers-color-scheme: dark) {
                     * {
