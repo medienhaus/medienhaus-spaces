@@ -50,7 +50,6 @@ export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -125,7 +124,7 @@ export default function Explore() {
                                 }),
                             )
                         ) {
-                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => setErrorMessage(error.data?.error));
+                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => toast.error(error.data?.error));
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
                             if (joinRoom) return await roomHierarchyFromServer();
