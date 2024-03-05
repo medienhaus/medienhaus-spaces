@@ -51,7 +51,7 @@ const ServiceIframeHeader = ({
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
                 <CopyToClipboard content={content} />
                 {deleteContent && (
-                    <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deleteContent}>
+                    <TextButton title={myPadsObject ? t('Delete pad') : t('Remove pad from my library')} onClick={deleteContent}>
                         {isDeletingPad ? (
                             <LoadingSpinnerInline />
                         ) : (
