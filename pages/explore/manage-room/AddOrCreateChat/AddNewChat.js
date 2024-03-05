@@ -25,8 +25,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/UI/shadcn/
  *
  * @returns {JSX.Element} - The JSX element representing the add new chat component.
  *
- * @TODO templates need proper explanations.
- * @TODO add dev.medienhaus.meta event to the room when announcement template is selected? Alternatively check if it's possible whcih 'preset' was used when creating a matrix room.
+ * @TODO check if rights of users for each chat template are correct.
+ * @TODO add dev.medienhaus.meta event to the room when announcement template is selected? Alternatively check if it's possible to see 'preset' was used when creating a matrix room.
  */
 export default function AddNewChat({ onPreviousAction, currentId, onSuccess, parentName, updateRoomList }) {
     const matrix = useMatrix();
