@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { cn, useMediaQuery } from '@/lib/utils';
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/UI/shadcn/Drawer';
@@ -51,13 +52,14 @@ const DrawerDialogHeader = React.forwardRef(({ className, children, ...props }, 
 DrawerDialogHeader.displayName = 'DrawerDialogHeader';
 
 const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children, ...props }, ref) => {
+    const { t } = useTranslation();
     const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     if (isDesktop) {
         return (
             <DialogFooter className={className} ref={ref} {...props}>
                 <DialogClose ref={ref} asChild>
-                    <Button variant="outline">{cancelLabel}</Button>
+                    <Button variant="outline">{cancelLabel || t('Cancel')}</Button>
                 </DialogClose>
                 {children}
             </DialogFooter>
@@ -68,7 +70,7 @@ const DrawerDialogFooter = React.forwardRef(({ className, cancelLabel, children,
         <DrawerFooter className={cn('px-0', props.className)} ref={ref} {...props}>
             {children}
             <DrawerClose ref={ref} asChild>
-                <Button variant="outline">{cancelLabel}</Button>
+                <Button variant="outline">{cancelLabel || t('Cancel')}</Button>
             </DrawerClose>
         </DrawerFooter>
     );
