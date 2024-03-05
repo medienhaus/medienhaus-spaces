@@ -40,7 +40,7 @@ const ServiceIframeHeader = ({
     // setIsInviteUsersOpen,
     // setSettingsTabValue,
 }) => {
-    const { t } = useTranslation(['etherpad', 'explore']);
+    const { t } = useTranslation(['explore', 'etherpad']);
 
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -51,7 +51,7 @@ const ServiceIframeHeader = ({
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
                 <CopyToClipboard content={content} />
                 {deleteContent && (
-                    <TextButton title={myPadsObject ? t('Delete pad') : t('Remove pad from my library')} onClick={deleteContent}>
+                    <TextButton title={myPadsObject ? t('Delete pad', { ns: 'etherpad' }) : t('Remove pad from my library', { ns: 'etherpad' })} onClick={deleteContent}>
                         {isDeletingPad ? (
                             <LoadingSpinnerInline />
                         ) : (
