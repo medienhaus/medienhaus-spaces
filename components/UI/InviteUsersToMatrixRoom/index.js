@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { toast } from 'sonner';
@@ -68,15 +68,12 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
             });
         }
 
-        const successAmount = selectedUsers.length - errors.length;
-
         // if everything is okay, we let the user know and exit the view.
-        successAmount > 0 &&
+        for (const selectedUser of selectedUsers) {
             toast.success(
-                <Trans t={t} i18nKey="invitedUser" count={successAmount}>
-                    {{ successAmount }} user was invited and needs to accept your invitation
-                </Trans>,
+                t('{{selectedUser}} was invited and needs to accept your invitation', { selectedUser: selectedUser.display_name }),
             );
+        }
 
         await new Promise(() =>
             setTimeout(() => {
