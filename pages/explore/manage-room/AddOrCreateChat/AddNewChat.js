@@ -103,6 +103,7 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
+                            className="px-2"
                             variant="outline"
                             title={
                                 // using title to show the tooltip on desktop
