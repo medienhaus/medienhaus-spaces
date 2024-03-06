@@ -94,6 +94,7 @@ export default function Chat() {
             {roomId && (
                 <DefaultLayout.IframeWrapper>
                     <ChatIframeView
+                        title={matrix.rooms.get(roomId)?.name}
                         roomId={roomId}
                         src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/${roomId === 'new' ? 'home' : `room/${roomId}`}`}
                     />

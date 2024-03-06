@@ -10,7 +10,7 @@ import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 
-const ChatIframeView = ({ src, roomId }) => {
+const ChatIframeView = ({ src, roomId, title }) => {
     const iframe = useRef();
     const matrix = useMatrix();
     const router = useRouter();
@@ -132,7 +132,7 @@ const ChatIframeView = ({ src, roomId }) => {
     return (
         <>
             <DefaultLayout.IframeHeader>
-                {matrix?.rooms?.get(roomId) ? <h2>{matrix?.rooms?.get(roomId)?.name}</h2> : roomId === 'new' && <h2>{t('New chat')}</h2>}
+                {title}
                 <DefaultLayout.IframeHeaderButtonWrapper>
                     {matrix?.rooms?.get(roomId) && (
                         <>

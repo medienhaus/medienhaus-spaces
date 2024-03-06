@@ -97,7 +97,9 @@ export default function Explore() {
         const signal = controller.signal;
 
         const checkForRoomContent = async () => {
-            await matrix.hydrateRoomContent(iframeRoomId, signal);
+            await matrix.hydrateRoomContent(iframeRoomId, signal).catch((error) => {
+                logger.error(error);
+            });
         };
 
         iframeRoomId && checkForRoomContent();
@@ -135,7 +137,7 @@ export default function Explore() {
                             .catch((error) => {
                                 if (error.message !== 'Event not found.') {
                                     // we don't want to display unnecessary error messages.
-                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
+                                    toast(error.message);
                                 }
                             }); // Handle other errors by setting an error message.
                     }
@@ -164,10 +166,11 @@ export default function Explore() {
                         return matrix
                             .handleRateLimit(error, () => getMetaEvent(space))
                             .catch((error) => {
-                                if (error.message !== 'Event not found.') {
-                                    // we don't want to display unnecessary error messages.
-                                    toast(<ErrorMessage>{error.message}</ErrorMessage>);
-                                }
+                                // we don't want to display unnecessary error messages.
+                                if (error.message === 'Event not found.') return;
+                                if (error.message.includes('not in room')) return;
+
+                                toast.error(error.message);
                             });
                     });
                 }
@@ -288,7 +291,7 @@ export default function Explore() {
                     title={
                         matrix.spaces.get(router.query.roomId[0])?.name ||
                         matrix.rooms.get(router.query.roomId[0])?.name ||
-                        selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name
+                        selectedSpaceChildren[selectedSpaceChildren.length - 1].filter((child) => child.room_id === iframeRoomId)[0]?.name
                     }
                 />
             ) : (
