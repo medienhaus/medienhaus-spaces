@@ -159,9 +159,7 @@ const ChatIframeView = ({ src, roomId }) => {
                             <TextButton
                                 title={t('Call')}
                                 onClick={() =>
-                                    iframe.current.contentWindow.document
-                                        .querySelector('header.mx_RoomHeader > div button:nth-child(1)')
-                                        .click()
+                                    iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()
                                 }
                             >
                                 <Icon>
@@ -171,9 +169,7 @@ const ChatIframeView = ({ src, roomId }) => {
                             <TextButton
                                 title={t('Threads')}
                                 onClick={() =>
-                                    iframe.current.contentWindow.document
-                                        .querySelector('header.mx_RoomHeader > div button:nth-child(2)')
-                                        .click()
+                                    iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
                                 }
                             >
                                 <Icon>
