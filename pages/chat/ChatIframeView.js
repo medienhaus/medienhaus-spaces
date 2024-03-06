@@ -15,6 +15,7 @@ const ChatIframeView = ({ src, roomId, title }) => {
     const matrix = useMatrix();
     const router = useRouter();
     const { t } = useTranslation('chat');
+    const iframeCurrent = iframe.current?.contentDocument || iframe.contentDocument; // dev and prod have different iframe.current?
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -158,9 +159,7 @@ const ChatIframeView = ({ src, roomId, title }) => {
                             </TextButton>
                             <TextButton
                                 title={t('Call')}
-                                onClick={() =>
-                                    iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()
-                                }
+                                onClick={() => iframeCurrent.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()}
                             >
                                 <Icon>
                                     <RiPhoneLine />
@@ -168,9 +167,7 @@ const ChatIframeView = ({ src, roomId, title }) => {
                             </TextButton>
                             <TextButton
                                 title={t('Threads')}
-                                onClick={() =>
-                                    iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
-                                }
+                                onClick={() => iframeCurrent.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()}
                             >
                                 <Icon>
                                     <RiSidebarFoldLine />
