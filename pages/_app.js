@@ -56,7 +56,8 @@ export default function App({ Component, pageProps }) {
                         visibleToasts={10}
                         toastOptions={{
                             classNames: {
-                                error: '!border-destructive  !text-destructive-foreground ',
+                                toast: '[&>div>svg]:w-5',
+                                error: '!border-destructive !text-destructive-foreground',
                             },
                         }}
                         icons={{ success: <RiCheckboxCircleLine />, error: <RiErrorWarningLine /> }}
