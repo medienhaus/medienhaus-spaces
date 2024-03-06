@@ -1,0 +1,12 @@
+diff --git a/node_modules/matrix-crdt/dist/matrix-crdt.js b/node_modules/matrix-crdt/dist/matrix-crdt.js
+index fa2af44..da6783b 100644
+--- a/node_modules/matrix-crdt/dist/matrix-crdt.js
++++ b/node_modules/matrix-crdt/dist/matrix-crdt.js
+@@ -177,7 +177,6 @@ class Ht extends ae.Disposable {
+     if (!this.disposed)
+       try {
+         this.pendingPollRequest = this.matrixClient.http.authedRequest(
+-          void 0,
+           jt.Get,
+           "/events",
+           {

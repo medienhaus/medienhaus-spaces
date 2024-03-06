@@ -1,0 +1,34 @@
+diff --git a/node_modules/tldraw/dist-esm/lib/ui/hooks/useClipboardEvents.mjs b/node_modules/tldraw/dist-esm/lib/ui/hooks/useClipboardEvents.mjs
+index cc58edc..335f28f 100644
+--- a/node_modules/tldraw/dist-esm/lib/ui/hooks/useClipboardEvents.mjs
++++ b/node_modules/tldraw/dist-esm/lib/ui/hooks/useClipboardEvents.mjs
+@@ -4,13 +4,28 @@ import {
+   useEditor,
+   useValue
+ } from "@tldraw/editor";
+-import { compressToBase64, decompressFromBase64 } from "lz-string";
+ import { useCallback, useEffect } from "react";
+ import { useUiEvents } from "../context/events.mjs";
+ import { pasteExcalidrawContent } from "./clipboard/pasteExcalidrawContent.mjs";
+ import { pasteFiles } from "./clipboard/pasteFiles.mjs";
+ import { pasteTldrawContent } from "./clipboard/pasteTldrawContent.mjs";
+ import { pasteUrl } from "./clipboard/pasteUrl.mjs";
++function compressToBase64(input) {
++  if (input == null) return "";
++  var res = LZString._compress(input, 6, function(a){return keyStrBase64.charAt(a);});
++  switch (res.length % 4) { // To produce valid Base64
++    default: // When could this happen ?
++    case 0 : return res;
++    case 1 : return res+"===";
++    case 2 : return res+"==";
++    case 3 : return res+"=";
++  }
++}
++function decompressFromBase64(input) {
++  if (input == null) return "";
++  if (input == "") return null;
++  return LZString._decompress(input.length, 32, function(index) { return getBaseValue(keyStrBase64, input.charAt(index)); });
++}
+ function stripHtml(html) {
+   const doc = document.implementation.createHTMLDocument("");
+   doc.documentElement.innerHTML = html.trim();

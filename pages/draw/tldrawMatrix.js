@@ -8,10 +8,9 @@ function TldrawMatrixProvider(roomId) {
     const [store, setStore] = useImmer(null);
 
     const [matrixRoomClient, setMatrixRoomClient] = useImmer(null);
+
     const [initialSyncDone, setInitialSyncDone] = useState(false);
     const initiallyPopulated = useRef(false);
-
-    if (matrixRoomClient) matrixRoomClient.startClient();
 
     const SyncEvent = useCallback(
         (newState, prevState) => {
@@ -50,6 +49,19 @@ function TldrawMatrixProvider(roomId) {
     );
 
     useEffect(() => {
+        if (!matrixRoomClient) return;
+        matrixRoomClient.getMatrixClient().on('Room.timeline', RoomTimelineEvent);
+        matrixRoomClient.getMatrixClient().on('sync', SyncEvent);
+
+        return () => {
+            matrixRoomClient.getMatrixClient().off('Room.timeline', RoomTimelineEvent);
+            matrixRoomClient.getMatrixClient().off('sync', SyncEvent);
+        };
+    }, [RoomTimelineEvent, matrixRoomClient, SyncEvent]);
+
+    // =====================================================================================================================================
+
+    useEffect(() => {
         if (!roomId) return;
 
         setStore(null);
@@ -72,17 +84,6 @@ function TldrawMatrixProvider(roomId) {
         setInitialSyncDone(false);
         initiallyPopulated.current = false;
     }, [roomId]);
-
-    useEffect(() => {
-        if (!matrixRoomClient) return;
-        matrixRoomClient.getMatrixClient().on('Room.timeline', RoomTimelineEvent);
-        matrixRoomClient.getMatrixClient().on('sync', SyncEvent);
-
-        return () => {
-            matrixRoomClient.getMatrixClient().off('Room.timeline', RoomTimelineEvent);
-            matrixRoomClient.getMatrixClient().off('sync', SyncEvent);
-        };
-    }, [RoomTimelineEvent, matrixRoomClient, SyncEvent]);
 
     useEffect(() => {
         if (!initialSyncDone) return;

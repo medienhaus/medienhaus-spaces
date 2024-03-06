@@ -19,19 +19,8 @@ class MatrixSpecificRoomsProvider {
 
     startClient() {
         // We filter out all presence events of other users; we do not care about those right now
-        const filter = new Filter(this.matrixClient.getUserId());
-        filter.setDefinition({
-            presence: {
-                not_types: ['*'],
-            },
-            room: {
-                rooms: this.roomIds ? this.roomIds : [],
-            },
-        });
-
         return this.matrixClient.startClient({
             lazyLoadMembers: true,
-            filter: filter,
             threadSupport: true,
         });
     }

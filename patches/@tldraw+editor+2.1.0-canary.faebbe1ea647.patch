@@ -1,0 +1,26 @@
+diff --git a/node_modules/@tldraw/editor/dist-esm/lib/editor/Editor.mjs b/node_modules/@tldraw/editor/dist-esm/lib/editor/Editor.mjs
+index e576e31..9b6304e 100644
+--- a/node_modules/@tldraw/editor/dist-esm/lib/editor/Editor.mjs
++++ b/node_modules/@tldraw/editor/dist-esm/lib/editor/Editor.mjs
+@@ -42,7 +42,7 @@ import {
+   sortByIndex,
+   structuredClone
+ } from "@tldraw/utils";
+-import { EventEmitter } from "eventemitter3";
++import { default as EventEmitter } from "eventemitter3";
+ import { createTLUser } from "../config/createTLUser.mjs";
+ import { checkShapesAndAddCore } from "../config/defaultShapes.mjs";
+ import {
+diff --git a/node_modules/@tldraw/editor/src/lib/editor/Editor.ts b/node_modules/@tldraw/editor/src/lib/editor/Editor.ts
+index fdaba11..4e45947 100644
+--- a/node_modules/@tldraw/editor/src/lib/editor/Editor.ts
++++ b/node_modules/@tldraw/editor/src/lib/editor/Editor.ts
+@@ -60,7 +60,7 @@ import {
+ 	sortByIndex,
+ 	structuredClone,
+ } from '@tldraw/utils'
+-import { EventEmitter } from 'eventemitter3'
++import { default as EventEmitter } from 'eventemitter3'
+ import { TLUser, createTLUser } from '../config/createTLUser'
+ import { checkShapesAndAddCore } from '../config/defaultShapes'
+ import {
