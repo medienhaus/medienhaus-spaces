@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
 
-import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
 import ErrorMessage from '@/components/UI/ErrorMessage';
@@ -47,7 +46,8 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
     };
 
     return (
-        <Form
+        <form
+            className="mb-8 [&>*+*]:mt-4"
             onSubmit={(e) => {
                 e.preventDefault();
                 createPad();
@@ -84,6 +84,6 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
             </Button>
             {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
-        </Form>
+        </form>
     );
 }
