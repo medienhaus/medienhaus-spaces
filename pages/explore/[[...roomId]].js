@@ -129,16 +129,17 @@ export default function Explore() {
                             const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => toast.error(error.data?.error));
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                            if (joinRoom) return await roomHierarchyFromServer();
+                            if (joinRoom) return await getHierarchyFromServer(roomId);
                         }
                     } else {
                         return matrix
-                            .handleRateLimit(error, () => roomHierarchyFromServer())
+                            .handleRateLimit(error, () => getHierarchyFromServer(roomId))
                             .catch((error) => {
-                                if (error.message !== 'Event not found.') {
-                                    // we don't want to display unnecessary error messages.
-                                    toast(error.message);
-                                }
+                                // we don't want to display unnecessary error messages.
+                                if (error.message === 'Event not found.') return;
+                                if (error.message.includes('not in room')) return;
+                                console.log(error);
+                                toast.error(error.message);
                             }); // Handle other errors by setting an error message.
                     }
                 });
@@ -193,6 +194,7 @@ export default function Explore() {
                             spaceHierarchy.push(copy);
                         } else {
                             const getChildFromServer = await getHierarchyFromServer(roomId);
+
                             getChildFromServer[0].parent = cachedSpace;
                             spaceHierarchy.push(getChildFromServer[0]);
                         }
