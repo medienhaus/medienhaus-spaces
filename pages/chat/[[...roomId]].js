@@ -238,9 +238,7 @@ export default function Chat() {
                                     <TextButton
                                         title={t('Call')}
                                         onClick={() =>
-                                            iframe.current.contentDocument
-                                                .querySelector('header.mx_RoomHeader > div button:nth-child(1)')
-                                                .click()
+                                            iframe.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()
                                         }
                                     >
                                         <Icon>
@@ -250,9 +248,7 @@ export default function Chat() {
                                     <TextButton
                                         title={t('Threads')}
                                         onClick={() =>
-                                            iframe.current.contentDocument
-                                                .querySelector('header.mx_RoomHeader > div button:nth-child(2)')
-                                                .click()
+                                            iframe.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
                                         }
                                     >
                                         <Icon>
