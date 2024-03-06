@@ -46,9 +46,22 @@ export default function AddNewChat({ onPreviousAction, currentId, onSuccess, par
         setErrorMessage('');
 
         // create new room
-        const roomId = await matrix.createRoom(roomName, false, roomTopic, selectedJoinRule, null, null, currentId).catch((error) => {
-            setErrorMessage(error.data?.error || t('something went wrong, please try again'));
-        });
+        const roomId = await matrix
+            .createRoom(
+                roomName,
+                false,
+                roomTopic,
+                selectedJoinRule,
+                null,
+                null,
+                currentId,
+                presets.chatTemplates[selectedTemplate].visibility,
+                presets.chatTemplates[selectedTemplate].historyVisibility,
+                presets.chatTemplates[selectedTemplate].powerLevelContentOverride,
+            )
+            .catch((error) => {
+                setErrorMessage(error.data?.error || t('something went wrong, please try again'));
+            });
         // add created room to parent
         const addChildToParent = await matrix
             .addSpaceChild(currentId, roomId)
