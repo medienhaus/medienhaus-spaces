@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
-import { RiChatNewLine, RiPhoneLine, RiSidebarFoldLine, RiDoorOpenLine, RiUserAddLine } from '@remixicon/react';
+import { RiChatNewLine, RiDoorOpenLine, RiPhoneLine, RiSidebarFoldLine, RiUserAddLine } from '@remixicon/react';
 
 import TextButton from '@/components/UI/TextButton';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
@@ -124,7 +124,7 @@ export default function Chat() {
         return () => {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
-    });
+    }, []);
 
     /**
      * leave the given matrixroom
