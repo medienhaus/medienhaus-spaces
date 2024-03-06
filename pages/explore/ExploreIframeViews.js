@@ -27,8 +27,11 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
         let cancelled = false;
 
         const fetchRoomName = async () => {
-            const nameEvent = await matrixClient.getStateEvent(iframeRoomId, 'm.room.name').catch(() => {});
-            setTitle(nameEvent?.name);
+            if (parsedTitle) setTitle(parsedTitle);
+            else {
+                const nameEvent = await matrixClient.getStateEvent(iframeRoomId, 'm.room.name').catch(() => {});
+                setTitle(nameEvent?.name);
+            }
         };
 
         if (!cancelled) fetchRoomName();
@@ -80,7 +83,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                     default:
                         return (
                             <ChatIframeView
-                                title="chat"
+                                title={title}
                                 src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
                                 roomId={iframeRoomId}
                             />

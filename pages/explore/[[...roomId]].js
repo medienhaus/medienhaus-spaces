@@ -291,7 +291,7 @@ export default function Explore() {
                     title={
                         matrix.spaces.get(router.query.roomId[0])?.name ||
                         matrix.rooms.get(router.query.roomId[0])?.name ||
-                        selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name
+                        selectedSpaceChildren[selectedSpaceChildren.length - 1].filter((child) => child.room_id === iframeRoomId)[0]?.name
                     }
                 />
             ) : (
