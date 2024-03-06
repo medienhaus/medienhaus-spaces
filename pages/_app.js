@@ -3,6 +3,7 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { enableMapSet } from 'immer';
+import { RiCheckboxCircleLine, RiErrorWarningLine } from '@remixicon/react';
 
 import DefaultLayout from '@/components/layouts/default';
 import LostConnection from '@/components/UI/LostConnection';
@@ -53,7 +54,15 @@ export default function App({ Component, pageProps }) {
                             <Component {...pageProps} />
                         )}
                     </DefaultLayout.Layout>
-                    <Toaster />
+                    <Toaster
+                        visibleToasts={10}
+                        toastOptions={{
+                            classNames: {
+                                error: '!border-destructive  !text-destructive-foreground ',
+                            },
+                        }}
+                        icons={{ success: <RiCheckboxCircleLine />, error: <RiErrorWarningLine /> }}
+                    />
                 </MatrixContext.Provider>
             </AuthContext.Provider>
         </>
