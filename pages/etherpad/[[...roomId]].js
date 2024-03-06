@@ -191,6 +191,7 @@ export default function Etherpad() {
 
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
         const roomId = await createWriteRoom(link, name);
+        setDisplayCreatePad(false);
 
         return router.push(`${etherpadPath}/${roomId}`);
     };
