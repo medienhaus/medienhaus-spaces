@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
 
-import Form from '../../../components/UI/Form';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import logger from '../../../lib/Logging';
 import ErrorMessage from '@/components/UI/ErrorMessage';
@@ -28,6 +27,12 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
     const [errorMessage, setErrorMessage] = useState('');
 
     const createPad = async () => {
+        if (password !== validatePassword) {
+            setErrorMessage('Passwords do not match');
+
+            return;
+        }
+
         setIsLoading(true);
         setErrorMessage('');
         const createPad = await createPadAndOpen(padName, passwordProtected ? 'private' : 'public', password).catch((error) => {
@@ -41,7 +46,8 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
     };
 
     return (
-        <Form
+        <form
+            className="mb-8 [&>*+*]:mt-4"
             onSubmit={(e) => {
                 e.preventDefault();
                 createPad();
@@ -74,10 +80,10 @@ export default function CreateNewPad({ createPadAndOpen, isMyPadsApiEnabled, cal
                 value={validatePassword}
                 onChange={(e) => setValidatePassword(e.target.value)}
             />
-            <Button type="submit" disabled={!padName || (passwordProtected && !password) || password !== validatePassword}>
+            <Button type="submit" disabled={!padName || (passwordProtected && !password) || (passwordProtected && !validatePassword)}>
                 {isLoading ? <LoadingSpinnerInline inverted /> : t('Create pad')}
             </Button>
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </Form>
+            {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
+        </form>
     );
 }
