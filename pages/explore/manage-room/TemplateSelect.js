@@ -3,6 +3,7 @@ import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
 import ErrorMessage from '../../../components/UI/ErrorMessage';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 /**
  * TEMPLATE SELECT COMPONENT
@@ -18,29 +19,35 @@ import ErrorMessage from '../../../components/UI/ErrorMessage';
  * - in the future `contextTemplates` needs to check if an array or string is supplied. If string (roomId) is supplied we need to fetch them from the roomId.
 */
 
-const TemplateSelect = ({ currentTemplate, setTemplate }) => {
+const TemplateSelect = ({ setTemplate }) => {
     const contextTemplates = getConfig().publicRuntimeConfig.templates?.context; //
     const { t } = useTranslation('explore');
 
-    const onChangeTemplateSelect = (e) => {
-        setTemplate(e.target.value);
+    const onChangeTemplateSelect = (value) => {
+        setTemplate(value);
     };
 
     if (!contextTemplates) return <ErrorMessage>{t('No context templates defined, please contact the administrator.')}</ErrorMessage>;
 
     return (
-        <>
-            <select name="template" defaultValue="" value={currentTemplate} onChange={onChangeTemplateSelect}>
-                <option value="" disabled>Template</option>
-                { contextTemplates?.map((template, key) => {
-                    {/* cycle through all context templates supplied in the config */}
+        <Select defaultValue={contextTemplates?.[0] || '-'} onValueChange={onChangeTemplateSelect}>
+            <SelectTrigger>
+                <SelectValue placeholder={t('template')} />
+            </SelectTrigger>
+            <SelectContent>
+                {contextTemplates?.map((template, key) => {
+                    {
+                        /* cycle through all context templates supplied in the config */
+                    }
 
-                    return <option key={key} value={template}>
-                        { template }
-                    </option>;
-                }) }
-            </select>
-        </>
+                    return (
+                        <SelectItem key={key} value={template}>
+                            {template}
+                        </SelectItem>
+                    );
+                })}
+            </SelectContent>
+        </Select>
     );
 };
 
