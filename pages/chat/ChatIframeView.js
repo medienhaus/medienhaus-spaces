@@ -117,7 +117,7 @@ const ChatIframeView = ({ src, roomId }) => {
         return () => {
             iframeReference && iframeReference.removeEventListener('load', injectCss);
         };
-    });
+    }, []);
 
     /**
      * leave the given matrix room
