@@ -53,17 +53,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
                     </>
                 );
             case 'spacedeck':
-                return (
-                    <>
-                        <ServiceIframeHeader
-                            content={matrix.roomContents.get(iframeRoomId)?.body}
-                            title={title}
-                            removeLink={() => console.log('removing sketch from parent')}
-                            removingLink={false}
-                        />
-                        <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
-                    </>
-                );
+                return <ChatIframeView roomId={iframeRoomId} src={iframeUrl} />;
             case 'link':
                 return (
                     <>
