@@ -45,7 +45,7 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, thumb
                             <AvatarFallback />
                         </Avatar>
                     )}
-                    <span className="flex-grow">{name}</span>
+                    <span className="w-0 flex-grow overflow-hidden text-ellipsis">{name}</span>
                     {/* Show a lock icon if this Link is password protected */}
                     {passwordProtected && (
                         <LockIconWrapper title={t('password protected')}>
@@ -55,7 +55,7 @@ const ServiceLink = forwardRef(({ name, href, selected, passwordProtected, thumb
                     {/* Show notification badge if there are notifications */}
                     {notificationCount > 0 && <NotificationBadge>{notificationCount < 100 ? notificationCount : '99+'}</NotificationBadge>}
                     {/* Tell if this is our active item by displaying an arrow */}
-                    {selected && <RiArrowRightLine className="h-4 w-4 ml-2" />}
+                    {selected && <RiArrowRightLine className="ml-2 h-4 w-4" />}
                 </Link>
             </ServiceTable.Cell>
         </ServiceTable.Row>
