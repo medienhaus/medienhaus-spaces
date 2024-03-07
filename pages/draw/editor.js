@@ -48,11 +48,11 @@ export default function Editor({ store, addStoreElement, updateStoreElement, del
         });
 
         // removing in editor from matrix
-        _.forEach(editor?.store?.allRecords(), (element) => {
-            if (!store.store[element.id]) {
-                editor?.store?.remove([element]);
-            }
-        });
+        // _.forEach(editor?.store?.allRecords(), (element) => {
+        //     if (!store.store[element.id]) {
+        //         editor?.store?.remove([element]);
+        //     }
+        // });
 
         // Clear the interval when the component unmounts
         return () => clearInterval(intervalId);

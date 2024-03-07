@@ -1,9 +1,20 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
-import _ from 'lodash';
+import _, { set } from 'lodash';
+import {
+    ClientEvent,
+    createClient as createMatrixClient,
+    EventTimeline,
+    EventType,
+    Filter,
+    RoomEvent,
+    TimelineWindow,
+} from 'matrix-js-sdk';
 import { RiUserAddLine } from '@remixicon/react';
+import pino from 'pino';
+import { useImmer } from 'use-immer';
 
 import { useAuth } from '@/lib/Auth';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
@@ -22,7 +33,7 @@ import Icon from '@/components/UI/Icon';
 
 const Editor = dynamic(() => import('../draw/editor'), { ssr: false });
 
-export default function Tldraw() {
+export default function Tldraw(callback, deps) {
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -33,14 +44,158 @@ export default function Tldraw() {
     const serviceSpaceId = matrix.serviceSpaces.tldraw;
     const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter((child) => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
 
-    const tldrawMatrix = TldrawMatrixProvider(roomId);
+    // const tldrawMatrix = TldrawMatrixProvider(roomId);
+
+    const [store, setStore] = useImmer({});
+    const [initialSyncDone, setInitialSyncDone] = useState(false);
+
+    /**
+     * @type {MatrixClient}
+     */
+    const roomSpecificMatrixClient = useMemo(() => {
+        if (!roomId) return;
+
+        console.error('fnwbr Create new matrixclient');
+
+        return createMatrixClient({
+            baseUrl: matrixClient.getHomeserverUrl(),
+            accessToken: matrixClient.getAccessToken(),
+            userId: matrixClient.getUserId(),
+            useAuthorizationHeader: true,
+            timelineSupport: true,
+            // Hide all of the matrix-js-sdk logging output
+            logger: pino({ level: 'error' }),
+        });
+    }, [roomId]);
 
     // Whenever the roomId changes (e.g. after a new item was created), automatically focus that element.
     // This makes the sidebar scroll to the element if it is outside of the current viewport.
     const selectedDrawRef = useRef(null);
     useEffect(() => {
+        setStore({});
+        setInitialSyncDone(false);
         selectedDrawRef.current?.focus();
     }, [roomId]);
+
+    useEffect(() => {
+        const letsgo = async () => {
+            if (!roomSpecificMatrixClient) return;
+
+            console.warn('fnwbr Initial population of store, async!');
+
+            const stateStoreSchema = await roomSpecificMatrixClient.getStateEvent(roomId, 'dev.medienhaus.tldraw.store.schema', '');
+            const stateStoreStore = await roomSpecificMatrixClient.getStateEvent(roomId, 'dev.medienhaus.tldraw.store.store', '');
+            setStore((draft) => ({
+                schema: stateStoreSchema,
+                store: stateStoreStore,
+            }));
+
+            console.warn('fnwbr Creating filters and attaching event listeners...');
+
+            roomSpecificMatrixClient.on(RoomEvent.Timeline, RoomTimelineEvent);
+            roomSpecificMatrixClient.on(ClientEvent.Sync, SyncEvent);
+
+            // We filter two things:
+            // 1. Ignore all presence events of other users; we do not care about those right now
+            // 2. Only care about events in the room of the given roomId
+            const filter = new Filter(roomSpecificMatrixClient.getUserId());
+            filter.setDefinition({
+                presence: {
+                    not_types: ['*'],
+                },
+                room: {
+                    rooms: [roomId],
+                },
+            });
+
+            console.warn('fnwbr NOW STARTING CLIENT');
+
+            roomSpecificMatrixClient.startClient({
+                lazyLoadMembers: true,
+                threadSupport: true,
+            });
+        };
+
+        letsgo();
+
+        return () => {
+            console.error('fnwbr stopping old client for roomId', roomId);
+            roomSpecificMatrixClient.off(ClientEvent.Sync, SyncEvent);
+            roomSpecificMatrixClient.off(RoomEvent.Timeline, RoomTimelineEvent);
+            roomSpecificMatrixClient.stopClient();
+        };
+    }, [roomId, roomSpecificMatrixClient]);
+
+    useEffect(() => {
+        const getAllEvents = async () => {
+            if (!initialSyncDone) return;
+
+            console.warn('fnwbr matrix-client INITIAL SYNC DONE');
+
+            console.log('fnwbr', roomSpecificMatrixClient.getRoom(roomId).getUnfilteredTimelineSet());
+
+            const x = new TimelineWindow(roomSpecificMatrixClient, roomSpecificMatrixClient.getRoom(roomId).getUnfilteredTimelineSet());
+            x.load();
+
+            console.log('fnwbr', x);
+            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            console.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
+            console.log('fnwbr', x);
+            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            console.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
+            console.log('fnwbr', x);
+            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            console.warn('fnwbr STORE', store);
+        };
+
+        getAllEvents();
+    }, [initialSyncDone]);
+
+    const SyncEvent = useCallback(
+        (newState, prevState) => {
+            if (newState === 'SYNCING' && prevState === 'PREPARED') {
+                (() => {
+                    setInitialSyncDone(true);
+                })();
+            }
+        },
+        [setInitialSyncDone],
+    );
+
+    const RoomTimelineEvent = useCallback(
+        /**
+         * @param {MatrixEvent} event
+         * @param {Room} room
+         */
+        (event, room) => {
+            // Because of the filter defined above this shouldn't ever happen, BUT:
+            // If this is a timeline event for a room other than the one we're looking at, we want to ignore it
+            if (event.getRoomId() !== roomId) return;
+
+            console.log('fnwbr', event);
+
+            if (event.event.type === 'm.room.message' && event.event.content.msgtype === 'dev.medienhaus.tldraw.store.store') {
+                const content = JSON.parse(event.event.content.body);
+                if (!content) return;
+                const newStoreEntry = {
+                    [Object.keys(content)[0]]: { ...content[Object.keys(content)[0]], ...{ meta: { eventId: event.event.event_id } } },
+                };
+
+                setStore((draft) => {
+                    set(draft, `store.${Object.keys(content)[0]}`, newStoreEntry[Object.keys(newStoreEntry)[0]]);
+                });
+            } else if (event.event.type === 'm.room.redaction') {
+                if (event.event.redacts) {
+                    setStore((draft) => {
+                        const storeElement = _.find(draft, (s) => s.meta.eventId === event.event.redacts);
+
+                        set(draft, `store.${storeElement.id}`, undefined);
+                    });
+                }
+            }
+        },
+        [roomId, setStore],
+    );
 
     // based on the createWriteRoom in etherpad. there was a @TODO mentioned with 'function creates infinite loop in useEffect below' dont know if this applies here as well.
     const createSketchRoom = useCallback(
@@ -161,12 +316,12 @@ export default function Tldraw() {
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    {tldrawMatrix && tldrawMatrix.store && (
+                    {store && (
                         <Editor
-                            store={tldrawMatrix.store}
-                            updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
-                            addStoreElement={tldrawMatrix.addStoreElementToMatrix}
-                            deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
+                            store={store}
+                            // updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
+                            // addStoreElement={tldrawMatrix.addStoreElementToMatrix}
+                            // deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
                         />
                     )}
                 </DefaultLayout.IframeWrapper>
