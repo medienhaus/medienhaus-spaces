@@ -23,7 +23,7 @@ export default function UdkTmp() {
                 </section>
                 <section>
                     <h3>
-                        <a href="https://spaces.udk-berlin.de/rundgang/" rel="nofollow noopener noreferrer" target="_blank">
+                        <a href="https://content.udk-berlin.de/" rel="nofollow noopener noreferrer" target="_blank">
                             /rundgang
                         </a>
                     </h3>
