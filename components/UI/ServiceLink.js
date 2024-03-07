@@ -161,7 +161,7 @@ const ServiceLink = forwardRef(
                                 <AvatarFallback />
                             </Avatar>
                         )}
-                        <span className="flex-grow">{name}</span>
+                        <span className="w-0 flex-grow overflow-hidden text-ellipsis">{name}</span>
                         {roomId && isFetchingContent === roomId && <LoadingSpinnerInline />}
                         {/* Show a lock icon if this Link is password protected */}
                         {passwordProtected && (

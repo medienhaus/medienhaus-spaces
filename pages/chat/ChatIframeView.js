@@ -15,7 +15,6 @@ const ChatIframeView = ({ src, roomId, title }) => {
     const matrix = useMatrix();
     const router = useRouter();
     const { t } = useTranslation('chat');
-    const iframeCurrent = iframe.current?.contentDocument || iframe.contentDocument; // dev and prod have different iframe.current?
 
     // Injecting custom CSS into the Element <iframe>
     useEffect(() => {
@@ -130,6 +129,14 @@ const ChatIframeView = ({ src, roomId, title }) => {
         router.push('/chat');
     };
 
+    const toggleCall = () => {
+        iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click();
+    };
+
+    const toggleThreads = () => {
+        iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click();
+    };
+
     return (
         <>
             <DefaultLayout.IframeHeader>
@@ -157,18 +164,12 @@ const ChatIframeView = ({ src, roomId, title }) => {
                                     <RiDoorOpenLine />
                                 </Icon>
                             </TextButton>
-                            <TextButton
-                                title={t('Call')}
-                                onClick={() => iframeCurrent.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()}
-                            >
+                            <TextButton title={t('Call')} onClick={toggleCall}>
                                 <Icon>
                                     <RiPhoneLine />
                                 </Icon>
                             </TextButton>
-                            <TextButton
-                                title={t('Threads')}
-                                onClick={() => iframeCurrent.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()}
-                            >
+                            <TextButton title={t('Threads')} onClick={toggleThreads}>
                                 <Icon>
                                     <RiSidebarFoldLine />
                                 </Icon>
