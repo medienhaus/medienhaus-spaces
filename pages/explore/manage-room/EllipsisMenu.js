@@ -34,7 +34,9 @@ const EllipsisMenu = ({ parentName, name, parentRoomId, onRemove, myPowerLevel, 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DropdownMenu>
                 <DropdownMenuTrigger className="align-middle">
-                    <RiMoreLine />
+                    <Icon>
+                        <RiMoreLine />
+                    </Icon>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem

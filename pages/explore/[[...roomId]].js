@@ -5,7 +5,18 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
-import { RiAddLine, RiBrush2Line, RiBrushLine, RiChat1Line, RiFolderLine, RiLink, RiPencilLine, RiUserLine } from '@remixicon/react';
+import {
+    RiAddLine,
+    RiBrush2Line,
+    RiBrushLine,
+    RiChat1Line,
+    RiFolderLine,
+    RiFolderSettingsLine,
+    RiFolderUnknowLine,
+    RiLink,
+    RiPencilLine,
+    RiUserLine,
+} from '@remixicon/react';
 import { toast } from 'sonner';
 import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -296,7 +307,11 @@ export default function Explore() {
     const columns = [
         {
             accessorKey: 'icon',
-            header: 'Type',
+            header: (
+                <Icon>
+                    <RiFolderUnknowLine />
+                </Icon>
+            ),
             cell: ({ row }) => {
                 console.log(row);
 
@@ -359,11 +374,24 @@ export default function Explore() {
             ),
         },
         {
+            accessorKey: 'roomId',
+            header: 'Room ID',
+            cell: ({ row }) => (
+                <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
+                    {row.getValue('name')}
+                </Link>
+            ),
+        },
+        {
             id: 'actions',
-            header: <div className="text-right">Options</div>,
+            header: (
+                    <Icon className="grid justify-end">
+                        <RiFolderSettingsLine />
+                    </Icon>
+            ),
             cell: ({ row }) => {
                 return (
-                    <div className="text-right">
+                    <div className="grid justify-end">
                         <EllipsisMenu
                             parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                             onRemove={() => removeChildFromParent(row.roomId)}

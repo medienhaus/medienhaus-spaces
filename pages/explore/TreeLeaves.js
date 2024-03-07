@@ -84,10 +84,18 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
         <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => {
                 if (cell.id.includes('icon')) {
-                    return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
+                    return (
+                        <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                    );
                 }
 
-                return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
+                return (
+                    <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                );
             })}
         </TableRow>
     );
