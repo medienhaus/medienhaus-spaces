@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
+import { flexRender } from '@tanstack/react-table';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import logger from '@/lib/Logging';
 import { TableCell, TableRow } from '@/components/UI/shadcn/Table';
-import { flexRender } from '@tanstack/react-table';
 
 const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small, onRemove, myPowerLevel }, ref) => {
     const auth = useAuth();
@@ -49,7 +49,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
 
                 if (!url?.body) return false;
                 const padId = url.body.split('/').pop();
-                // console.log(etherpad.isPadPasswordProtected(padId));
+
                 return etherpad.isPadPasswordProtected(padId);
             };
 
@@ -86,6 +86,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
                 if (cell.id.includes('icon')) {
                     return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
                 }
+
                 return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
             })}
         </TableRow>

@@ -7,6 +7,9 @@ import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
 import { RiAddLine, RiBrush2Line, RiBrushLine, RiChat1Line, RiFolderLine, RiLink, RiPencilLine, RiUserLine } from '@remixicon/react';
 import { toast } from 'sonner';
+import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import Link from 'next/link';
+
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
@@ -23,9 +26,7 @@ import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import TreeLeaves from './TreeLeaves';
-import Link from 'next/link';
 import EllipsisMenu from './manage-room/EllipsisMenu';
 
 const ServiceTableWrapper = styled.div`
@@ -259,10 +260,13 @@ export default function Explore() {
     const removeChildFromParent = async (idToRemove) => {
         if (idToRemove === roomId) {
             toast.error('You cannot remove the parent room from itself');
+
             return false;
         }
+
         if (!idToRemove) {
             toast.error('No room id provided');
+
             return false;
         }
 
@@ -295,6 +299,7 @@ export default function Explore() {
             header: 'Type',
             cell: ({ row }) => {
                 console.log(row);
+
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
@@ -302,6 +307,7 @@ export default function Explore() {
                         </Icon>
                     );
                 }
+
                 if (row.original?.meta?.template === 'spacedeck') {
                     return (
                         <Icon>
@@ -309,6 +315,7 @@ export default function Explore() {
                         </Icon>
                     );
                 }
+
                 if (row.original?.meta?.template === 'tldraw') {
                     return (
                         <Icon>
@@ -324,6 +331,7 @@ export default function Explore() {
                         </Icon>
                     );
                 }
+
                 if (row.original?.meta?.type === 'context') {
                     return (
                         <Icon>
@@ -331,6 +339,7 @@ export default function Explore() {
                         </Icon>
                     );
                 }
+
                 if (!row.original?.meta) {
                     return (
                         <Icon>
@@ -351,7 +360,7 @@ export default function Explore() {
         },
         {
             id: 'actions',
-            header: <div className={'text-right'}>Options</div>,
+            header: <div className="text-right">Options</div>,
             cell: ({ row }) => {
                 return (
                     <div className="text-right">
@@ -379,6 +388,7 @@ export default function Explore() {
     if (typeof window === 'undefined') return <LoadingSpinner />;
     // console.log(selectedSpaceChildren[selectedSpaceChildren.length - 1]);
     console.log(table);
+
     return (
         <>
             <DefaultLayout.Sidebar>
@@ -452,7 +462,8 @@ export default function Explore() {
                                                 {table.getRowModel().rows?.length ? (
                                                     table.getRowModel().rows.map((row, index) => {
                                                         if (index === 0) return null;
-                                                        return <TreeLeaves row={row} />;
+
+                                                        return <TreeLeaves key={row.id} row={row} />;
                                                     })
                                                 ) : (
                                                     <TableRow>
