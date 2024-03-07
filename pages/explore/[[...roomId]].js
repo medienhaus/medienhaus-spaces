@@ -291,7 +291,7 @@ export default function Explore() {
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {
-            accessorKey: 'template',
+            accessorKey: 'icon',
             header: 'Type',
             cell: ({ row }) => {
                 console.log(row);
