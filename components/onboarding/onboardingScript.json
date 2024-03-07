@@ -1,0 +1,62 @@
+[
+    {
+        "route": "/intro",
+        "description": "This is the intro tour.",
+        "steps": [
+            {
+                "element": "p:first-of-type",
+                "popover": {
+                    "title": "Step 1",
+                    "description": "This is the first step of the tour."
+                }
+            },
+            {
+                "element": "h3:first-of-type",
+                "popover": {
+                    "title": "Step 2",
+                    "description": "This is the second step of the tour."
+                }
+            },
+            {
+                "element": "h3:nth-of-type(2)",
+                "popover": {
+                    "title": "Step 3",
+                    "description": "This is the third step of the tour."
+                }
+            },
+            {
+                "element": "h3:last-of-type",
+                "popover": {
+                    "title": "Step 4",
+                    "description": "This is the last step of the tour."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/account",
+        "description": "This is the account tour.",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Step -1",
+                    "description": "This is the first step of the tour."
+                }
+            },
+            {
+                "element": "p:first-of-type",
+                "popover": {
+                    "title": "Step 5",
+                    "description": "This is the first step of the tour."
+                }
+            },
+            {
+                "element": "h3:first-of-type",
+                "popover": {
+                    "title": "Step 6",
+                    "description": "This is the second step of the tour."
+                }
+            }
+        ]
+    }
+]

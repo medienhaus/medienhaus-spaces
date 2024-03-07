@@ -8,9 +8,14 @@ import DefaultLayout from '@/components/layouts/default';
 import LostConnection from '@/components/UI/LostConnection';
 import { AuthContext, useAuthProvider } from '@/lib/Auth';
 import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
+
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
 import '../assets/driverJsCustom.css';
+
+import { useOnboardingProvider, OnboardingContext } from '@/components/onboarding/onboardingContext';
+
+import OnboardingPilot from '@/components/onboarding/onboardingPilot';
 
 // Enable immer support for Map() and Set()
 enableMapSet();
@@ -19,6 +24,8 @@ const guestRoutes = ['/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
+
+    const onboarding = useOnboardingProvider();
 
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData);
@@ -43,12 +50,15 @@ export default function App({ Component, pageProps }) {
                 <link rel="mask-icon" type="image/svg+xml" href="./favicon.svg" />
                 <title>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</title>
             </Head>
-            <AuthContext.Provider value={authData}>
+            <AuthContext.Provider value={(authData, onboarding)}>
                 <MatrixContext.Provider value={matrixData}>
                     {!matrixData.isConnectedToServer && <LostConnection />}
                     <DefaultLayout.Layout>
                         {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
-                            <Component {...pageProps} />
+                            <OnboardingContext.Provider value={onboarding}>
+                                <OnboardingPilot />
+                                <Component {...pageProps} />
+                            </OnboardingContext.Provider>
                         )}
                     </DefaultLayout.Layout>
                 </MatrixContext.Provider>
