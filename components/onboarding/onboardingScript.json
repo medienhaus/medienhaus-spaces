@@ -6,15 +6,15 @@
             {
                 "element": "p:first-of-type",
                 "popover": {
-                    "title": "Step 1",
-                    "description": "This is the first step of the tour."
+                    "title": "Welcome",
+                    "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
                 }
             },
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Step 2",
-                    "description": "This is the second step of the tour."
+                    "title": "Follow the Dots",
+                    "description": "This is the first step of the tour."
                 }
             },
             {

@@ -13,29 +13,29 @@ function useOnboardingProvider() {
     const router = useRouter();
     const [active, setActive] = useState(false);
 
-    const [onboardingCurrentRoute, setOnboardingCurrentRoute] = useState('');
+    const [currentRoute, setCurrentRoute] = useState('');
 
-    const [onboardingCurrentSteps, setOnboardingCurrentSteps] = useState([]);
+    const [CurrentSteps, setCurrentSteps] = useState([]);
 
-    const [onboardingOpen, setOnboardingOpen] = useState(true);
-    const [onbordingSize, setOnboardingSize] = useState('bottomRight');
+    const [opened, setOpened] = useState(true);
+    const [size, setSize] = useState('bottomRight');
 
-    const [onboardingCurrentStep, setOnboardingCurrentStep] = useState(0);
-    const [onboadingHasPrev, setOnboadingHasPrev] = useState(false);
-    const [onboadingHasNext, setOnboadingHasNext] = useState(true);
-    const [onboardingCurrentStepDescription, setOnboardingCurrentStepDescription] = useState('');
-    const [onboadingCurretnStepTitle, setOnboadingCurretnStepTitle] = useState('');
+    const [currentStep, setCurrentStep] = useState(0);
+    const [hasPrev, setHasPrev] = useState(false);
+    const [HasNext, setHasNext] = useState(true);
+    const [currentStepDescription, setCurrentStepDescription] = useState('');
+    const [currentStepTitle, setCurrentStepTitle] = useState('');
 
     useEffect(() => {
         console.log('active', active);
-        setOnboardingCurrentRoute();
+        setCurrentRoute();
     }, [active]);
 
     useEffect(() => {
-        if (onboardingCurrentRoute) {
-            router.push(onboardingCurrentRoute);
+        if (currentRoute) {
+            router.push(currentRoute);
         }
-    }, [onboardingCurrentRoute, router]);
+    }, [currentRoute, router]);
 
     const [driverJsConfig, setDriverJsConfig] = useState({
         allowClose: false,
@@ -46,86 +46,52 @@ function useOnboardingProvider() {
         popoverClass: 'driverJsPopOver',
         disableButtons: ['next', 'previous', 'close'],
         showButtons: [],
-        steps: onboardingCurrentSteps,
+        steps: CurrentSteps,
     });
 
-    console.log(onboadingScript);
+    const [tourInstance, setTourInstance] = useState(driver(driverJsConfig));
 
-    const tourInstance = driver(driverJsConfig);
-
-    const onbaordingProcessStep = (offset) => {
+    const processStep = (offset) => {
         if (!tourInstance.isActive()) {
             tourInstance.drive();
-            setOnboardingCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-            setOnboadingCurretnStepTitle(tourInstance.getActiveStep().popover.title);
+            setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
+            setCurrentStepTitle(tourInstance.getActiveStep().popover.title);
 
             return;
         }
 
         if (offset > 0 && !tourInstance.isLastStep()) {
             tourInstance.moveNext();
-            setOnboardingCurrentStep(tourInstance.getActiveIndex() - 1);
+            setCurrentStep(tourInstance.getActiveIndex() - 1);
         } else if (offset < 0 && !tourInstance.isFirstStep()) {
             tourInstance.movePrevious();
-            setOnboardingCurrentStep(tourInstance.getActiveIndex() + 1);
+            setCurrentStep(tourInstance.getActiveIndex() + 1);
         }
 
-        setOnboardingCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-        setOnboadingCurretnStepTitle(tourInstance.getActiveStep().popover.title);
+        setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
+        setCurrentStepTitle(tourInstance.getActiveStep().popover.title);
 
         tourInstance.refresh();
-        setOnboadingHasPrev(!tourInstance.isFirstStep());
-        setOnboadingHasNext(!tourInstance.isLastStep());
+        setHasPrev(!tourInstance.isFirstStep());
+        setHasNext(!tourInstance.isLastStep());
     };
 
     return {
         active,
         setActive,
+        currentRoute,
+        CurrentSteps,
+        opened,
+        setOpened,
+        size,
+        currentStep,
+        hasPrev,
+        HasNext,
+        currentStepDescription,
+        currentStepTitle,
+        tourInstance,
+        setSize,
     };
-
-    // return (
-    //         <>
-    //             {active && (
-    //                 <Sheet open={onboardingOpen} onOpenChange={setOnboardingOpen} modal={false}>
-    //                     <SheetContent side={onbordingSize}>
-    //                         <SheetHeader>
-    //                             <Button
-    //                                 onClick={() => {
-    //                                     setOnboardingSize(onbordingSize === 'bottomRight' ? 'minimized' : 'bottomRight');
-    //                                 }}
-    //                             >
-    //                                 __
-    //                             </Button>
-    //                             <SheetTitle>{onboadingCurretnStepTitle}</SheetTitle>
-    //                             <SheetDescription>
-    //                                 <Button
-    //                                     disabled={!onboadingHasPrev}
-    //                                     onClick={() => {
-    //                                         onbaordingProcessStep(-1);
-    //                                     }}
-    //                                 >
-    //                                     prev
-    //                                 </Button>
-    //                                 <Button
-    //                                     disabled={!onboadingHasNext}
-    //                                     onClick={() => {
-    //                                         onbaordingProcessStep(1);
-    //                                     }}
-    //                                 >
-    //                                     next
-    //                                 </Button>
-
-    //                                 <hr />
-    //                                 {onboardingCurrentStepDescription}
-    //                             </SheetDescription>
-    //                         </SheetHeader>
-    //                         some test
-    //                         {active && onboadingHasNext && <Button>continue with </Button>}
-    //                     </SheetContent>
-    //                 </Sheet>
-    //             )}
-    //         </>
-    // );
 }
 
 function useOnboarding() {

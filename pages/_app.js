@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }) {
                 <link rel="mask-icon" type="image/svg+xml" href="./favicon.svg" />
                 <title>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</title>
             </Head>
-            <AuthContext.Provider value={(authData, onboarding)}>
+            <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     {!matrixData.isConnectedToServer && <LostConnection />}
                     <DefaultLayout.Layout>
