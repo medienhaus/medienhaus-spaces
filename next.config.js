@@ -43,12 +43,13 @@ module.exports = {
             rewriteConfig.push(
                 {
                     source: SpacesConfig.authProviders.tldraw.path,
-                    destination: '/draw',
+                    destination: '/tldraw',
                 },
                 {
                     source: SpacesConfig.authProviders.tldraw.path + '/:roomId',
-                    destination: '/draw/:roomId',
-                });
+                    destination: '/tldraw/:roomId',
+                },
+            );
         }
 
         return rewriteConfig;

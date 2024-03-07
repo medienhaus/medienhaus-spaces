@@ -1,36 +1,28 @@
-import React, { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import _ from 'lodash';
-import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
+import { RiUserAddLine } from '@remixicon/react';
 
-import { useAuth } from '../../lib/Auth';
-import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
-import { useMatrix } from '../../lib/Matrix';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import { ServiceSubmenu } from '../../components/UI/ServiceSubmenu';
-import DefaultLayout from '../../components/layouts/default';
-import { ServiceTable } from '../../components/UI/ServiceTable';
-import ServiceLink from '../../components/UI/ServiceLink';
-import { path as tldrawPath } from '../../lib/Tldraw';
-import { TldrawMatrixProvider } from './tldrawMatrix';
-import CreateNewTlDrawSketch from './actions/CreateNewTlDrawSketch';
-import CopyToClipboard from '../../components/UI/CopyToClipboard';
-import { InviteUserToMatrixRoom } from '../../components/UI/InviteUsersToMatrixRoom';
-import TextButton from '../../components/UI/TextButton';
-import Icon from '../../components/UI/Icon';
+import { useAuth } from '@/lib/Auth';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
+import { useMatrix } from '@/lib/Matrix';
+import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
+import DefaultLayout from '@/components/layouts/default';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import ServiceLink from '@/components/UI/ServiceLink';
+import { path as tldrawPath } from '@/lib/Tldraw';
+import { TldrawMatrixProvider } from '../draw/tldrawMatrix';
+import CreateNewTldraw from './actions/CreateNewTldraw';
+import CopyToClipboard from '@/components/UI/CopyToClipboard';
+import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
+import TextButton from '@/components/UI/TextButton';
+import Icon from '@/components/UI/Icon';
 
-const Editor = dynamic(() => import('./editor'), { ssr: false });
+const Editor = dynamic(() => import('../draw/editor'), { ssr: false });
 
-const TlDrawListEntry = memo(({ name, href, roomId, ref, selected }) => {
-    return <ServiceLink key={roomId} name={name} href={href} selected={selected} ref={ref} />;
-});
-
-TlDrawListEntry.displayName = 'TlDrawListEntry';
-
-export default function Draw() {
+export default function Tldraw() {
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -38,37 +30,17 @@ export default function Draw() {
     const { t } = useTranslation('tldraw');
     const router = useRouter();
     const roomId = _.get(router, 'query.roomId.0');
-
-    const [errorMessage, setErrorMessage] = useState(false);
     const serviceSpaceId = matrix.serviceSpaces.tldraw;
     const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter((child) => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
-    const [syncingServerSketches, setSyncingServerSketches] = useState(false);
 
     const tldrawMatrix = TldrawMatrixProvider(roomId);
-    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    const [isDeletingSketch, setIsDeletingSketch] = useState(false);
 
-    // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
+    // Whenever the roomId changes (e.g. after a new item was created), automatically focus that element.
     // This makes the sidebar scroll to the element if it is outside of the current viewport.
-    const selectedSketchRef = useRef(null);
+    const selectedDrawRef = useRef(null);
     useEffect(() => {
-        console.error('roomId::', roomId);
-        setIsInviteUsersOpen(false);
-
-        // setTldrawMatrix(TldrawMatrixProvider(roomId));
-        selectedSketchRef.current?.focus();
+        selectedDrawRef.current?.focus();
     }, [roomId]);
-
-    const listEntries = useMemo(() => {
-        return matrix.spaces.get(matrix.serviceSpaces.tldraw)?.children?.map((tldrawRoomId) => {
-            const name = _.get(matrix.rooms.get(tldrawRoomId), 'name');
-
-            // if the room name is undefined we don't want to display it
-            if (!name) return;
-
-            return <TlDrawListEntry key={tldrawRoomId} name={name} roomId={tldrawRoomId} selected={tldrawRoomId === roomId} />;
-        });
-    }, [matrix.rooms, matrix.serviceSpaces.tldraw, matrix.spaces, roomId]);
 
     // based on the createWriteRoom in etherpad. there was a @TODO mentioned with 'function creates infinite loop in useEffect below' dont know if this applies here as well.
     const createSketchRoom = useCallback(
@@ -131,25 +103,6 @@ export default function Draw() {
         [matrix, auth, serviceSpaceId, matrixClient],
     );
 
-    /**
-     * copied from etherpad and modified to fit our needs
-     */
-    const deleteSketch = async () => {
-        // Confirm if the user really wants to remove/delete this pad ...
-        let confirmDeletionMessage;
-
-        // ... and cancel the process if the user decided otherwise.
-        if (!confirm(confirmDeletionMessage)) return;
-
-        setIsDeletingSketch(true);
-
-        await auth.getAuthenticationProvider('matrix').removeSpaceChild(matrix.serviceSpaces.etherpad, roomId);
-        await matrix.leaveRoom(roomId);
-
-        router.push(tldrawPath);
-        setIsDeletingSketch(false);
-    };
-
     return (
         <>
             <DefaultLayout.Sidebar>
@@ -159,14 +112,13 @@ export default function Draw() {
                     disabled={!serviceSpaceId}
                     items={[
                         {
-                            value: 'createtldrawsketch',
-                            actionComponentToRender: <CreateNewTlDrawSketch createTlDrawRoom={createSketchRoom} />,
-                            label: t('Create new sketch'),
+                            value: 'createNew',
+                            actionComponentToRender: <CreateNewTldraw createTlDrawRoom={createSketchRoom} />,
+                            label: t('Create new draw'),
                         },
                     ]}
                 />
-                {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-                {!serviceSpaceId || syncingServerSketches ? (
+                {!serviceSpaceId ? (
                     <LoadingSpinner />
                 ) : (
                     <>
@@ -182,7 +134,7 @@ export default function Draw() {
                                             name={room.name}
                                             href={`${tldrawPath}/${tldrawSketchRoomId}`}
                                             selected={roomId === tldrawSketchRoomId}
-                                            ref={tldrawSketchRoomId === roomId ? selectedSketchRef : null}
+                                            ref={tldrawSketchRoomId === roomId ? selectedDrawRef : null}
                                         />
                                     );
                                 })}
@@ -207,33 +159,15 @@ export default function Draw() {
                                 }
                             />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
-                            <TextButton title={t('Remove sketch from my library')} onClick={deleteSketch}>
-                                {isDeletingSketch ? (
-                                    <LoadingSpinnerInline />
-                                ) : (
-                                    <Icon>
-                                        <RiDeleteBinLine />
-                                    </Icon>
-                                )}
-                            </TextButton>
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    {isInviteUsersOpen ? (
-                        <InviteUserToMatrixRoom
-                            roomId={roomId}
-                            roomName={matrix.rooms.get(roomId).name}
-                            onSuccess={() => setIsInviteUsersOpen(false)}
+                    {tldrawMatrix && tldrawMatrix.store && (
+                        <Editor
+                            store={tldrawMatrix.store}
+                            updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
+                            addStoreElement={tldrawMatrix.addStoreElementToMatrix}
+                            deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
                         />
-                    ) : (
-                        tldrawMatrix &&
-                        tldrawMatrix.store && (
-                            <Editor
-                                store={tldrawMatrix.store}
-                                updateStoreElement={tldrawMatrix.updateStoreElementInMatrix}
-                                addStoreElement={tldrawMatrix.addStoreElementToMatrix}
-                                deleteStoreElement={tldrawMatrix.deleteStoreElementInMatrix}
-                            />
-                        )
                     )}
                 </DefaultLayout.IframeWrapper>
             )}
