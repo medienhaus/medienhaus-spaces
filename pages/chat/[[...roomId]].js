@@ -136,6 +136,14 @@ export default function Chat() {
         router.push('/chat');
     };
 
+    const toggleCall = () => {
+        iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click();
+    };
+
+    const toggleThreads = () => {
+        iframe.current.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click();
+    };
+
     const directMessages = _.sortBy([...matrix.directMessages.values()], sortRooms);
     // Other rooms contains all rooms, except for the ones that ...
     const otherRooms = _([...matrix.rooms.values()])
@@ -235,22 +243,12 @@ export default function Chat() {
                                             <RiDoorOpenLine />
                                         </Icon>
                                     </TextButton>
-                                    <TextButton
-                                        title={t('Call')}
-                                        onClick={() =>
-                                            iframe.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(1)').click()
-                                        }
-                                    >
+                                    <TextButton title={t('Call')} onClick={toggleCall}>
                                         <Icon>
                                             <RiPhoneLine />
                                         </Icon>
                                     </TextButton>
-                                    <TextButton
-                                        title={t('Threads')}
-                                        onClick={() =>
-                                            iframe.contentDocument.querySelector('header.mx_RoomHeader > div button:nth-child(2)').click()
-                                        }
-                                    >
+                                    <TextButton title={t('Threads')} onClick={toggleThreads}>
                                         <Icon>
                                             <RiSidebarFoldLine />
                                         </Icon>
