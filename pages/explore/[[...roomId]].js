@@ -374,20 +374,11 @@ export default function Explore() {
             ),
         },
         {
-            accessorKey: 'roomId',
-            header: 'Room ID',
-            cell: ({ row }) => (
-                <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
-                    {row.getValue('name')}
-                </Link>
-            ),
-        },
-        {
             id: 'actions',
             header: (
-                    <Icon className="grid justify-end">
-                        <RiFolderSettingsLine />
-                    </Icon>
+                <Icon className="grid justify-end">
+                    <RiFolderSettingsLine />
+                </Icon>
             ),
             cell: ({ row }) => {
                 return (
