@@ -83,9 +83,10 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
     return (
         <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => {
-                if (cell.id.includes('icon')) {
+                // @NOTE: the classes below are responsible for making the respective columns not wider than necessary
+                if (cell.id.includes('icon') || cell.id.includes('actions')) {
                     return (
-                        <TableCell key={cell.id}>
+                        <TableCell className="whitespace-nowrap w-[1px]" key={cell.id}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                     );
