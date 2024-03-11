@@ -463,10 +463,11 @@ export default function Explore() {
                                     <>
                                         <Table>
                                             {/*
-                                              @NOTE: we use border-top/-bottom: 2px; here (compared to 1px for tbody > tr) because
-                                              the use of background-color on thead draws over one half of the defined border-width
+                                              @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
+                                              fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
+                                              from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
                                              */}
-                                            <TableHeader className="sticky top-0 border-y-2 bg-background">
+                                            <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                 {table.getHeaderGroups().map((headerGroup) => (
                                                     <TableRow key={headerGroup.id}>
                                                         {headerGroup.headers.map((header) => {
@@ -526,7 +527,7 @@ export default function Explore() {
                                                     </TableFooter>
                                                 )}
                                         </Table>
-                                        <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background py-4">
+                                        <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
                                             <div className="flex-1 text-sm text-muted-foreground">
                                                 Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                                             </div>

@@ -10,7 +10,9 @@ const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = 'Table';
 
 const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn('border-y border-muted-foreground/20', className)} {...props} />
+    // @NOTE: border-top/-bottom does not work here if we want a sticky thead;
+    // see <TableHeader className="..."> in pages/explore/[[...roomId.js]].js
+    <thead ref={ref} className={cn('', className)} {...props} />
 ));
 TableHeader.displayName = 'TableHeader';
 
