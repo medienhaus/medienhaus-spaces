@@ -501,8 +501,8 @@ export default function Explore() {
                                                     .getRoom(roomId)
                                                     ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
                                                     <TableFooter>
-                                                        <tr>
-                                                            <td colSpan="3">
+                                                        <TableRow>
+                                                            <TableCell colSpan="3">
                                                                 <QuickAddExplore
                                                                     currentId={roomId}
                                                                     roomName={matrix.spaces.get(roomId).name}
@@ -521,8 +521,8 @@ export default function Explore() {
                                                                         </Button>
                                                                     }
                                                                 />
-                                                            </td>
-                                                        </tr>
+                                                            </TableCell>
+                                                        </TableRow>
                                                     </TableFooter>
                                                 )}
                                         </Table>
