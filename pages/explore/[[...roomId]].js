@@ -463,10 +463,10 @@ export default function Explore() {
                                     <>
                                         <Table>
                                             {/*
-                                              @NOTE: we use border-bottom: 2px; here (compared to 1px for tbody > tr), because
-                                              the use of background-color on thead draws over one half of the set border-width
+                                              @NOTE: we use border-top/-bottom: 2px; here (compared to 1px for tbody > tr) because
+                                              the use of background-color on thead draws over one half of the defined border-width
                                              */}
-                                            <TableHeader className="sticky top-0 border-b-2 bg-background">
+                                            <TableHeader className="sticky top-0 border-y-2 bg-background">
                                                 {table.getHeaderGroups().map((headerGroup) => (
                                                     <TableRow key={headerGroup.id}>
                                                         {headerGroup.headers.map((header) => {
