@@ -36,7 +36,7 @@ import { Button } from '@/components/UI/shadcn/Button';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
 
@@ -376,7 +376,7 @@ export default function Explore() {
         {
             id: 'actions',
             header: (
-                <Icon className="grid justify-end">
+                <Icon>
                     <RiFolderSettingsLine />
                 </Icon>
             ),
@@ -450,7 +450,7 @@ export default function Explore() {
                                 // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 // setSettingsTabValue={setSettingsTabValue}
                             />
-                            <ServiceTableWrapper>
+                            <ServiceTableWrapper className="flex h-full flex-col justify-between">
                                 {manageContextActionToggle ? (
                                     <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
@@ -462,7 +462,11 @@ export default function Explore() {
                                 ) : (
                                     <>
                                         <Table>
-                                            <TableHeader>
+                                            {/*
+                                              @NOTE: we use border-bottom: 2px; here (compared to 1px for tbody > tr), because
+                                              the use of background-color on thead draws over one half of the set border-width
+                                             */}
+                                            <TableHeader className="sticky top-0 border-b-2 bg-background">
                                                 {table.getHeaderGroups().map((headerGroup) => (
                                                     <TableRow key={headerGroup.id}>
                                                         {headerGroup.headers.map((header) => {
@@ -492,31 +496,37 @@ export default function Explore() {
                                                     </TableRow>
                                                 )}
                                             </TableBody>
+                                            {!manageContextActionToggle &&
+                                                matrixClient
+                                                    .getRoom(roomId)
+                                                    ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                    <TableFooter>
+                                                        <tr>
+                                                            <td colSpan="3">
+                                                                <QuickAddExplore
+                                                                    currentId={roomId}
+                                                                    roomName={matrix.spaces.get(roomId).name}
+                                                                    getSpaceChildren={getSpaceChildren}
+                                                                    allChatRooms={allChatRooms}
+                                                                    trigger={
+                                                                        <Button
+                                                                            className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                                            variant="ghost"
+                                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                                        >
+                                                                            {t('Add more …')}
+                                                                            <Icon>
+                                                                                <RiAddLine />
+                                                                            </Icon>
+                                                                        </Button>
+                                                                    }
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    </TableFooter>
+                                                )}
                                         </Table>
-                                        {!manageContextActionToggle &&
-                                            matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                <QuickAddExplore
-                                                    currentId={roomId}
-                                                    roomName={matrix.spaces.get(roomId).name}
-                                                    getSpaceChildren={getSpaceChildren}
-                                                    allChatRooms={allChatRooms}
-                                                    trigger={
-                                                        <Button
-                                                            className="grid w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                            variant="ghost"
-                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                        >
-                                                            {t('Add more …')}
-                                                            <div className="px-4">
-                                                                <RiAddLine />
-                                                            </div>
-                                                        </Button>
-                                                    }
-                                                />
-                                            )}
-                                        <div className="flex items-center justify-end space-x-2 py-4">
+                                        <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background py-4">
                                             <div className="flex-1 text-sm text-muted-foreground">
                                                 Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                                             </div>
