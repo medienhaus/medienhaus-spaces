@@ -452,95 +452,102 @@ export default function Explore() {
                                     </UserManagement>
                                 ) : (
                                     <>
-                                        <Table>
-                                            {/*
+                                        {table.getRowModel().rows?.length > 1 && (
+                                            <Table>
+                                                {/*
                                               @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
                                               fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
                                               from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
                                              */}
-                                            <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                {table.getHeaderGroups().map((headerGroup) => (
-                                                    <TableRow key={headerGroup.id}>
-                                                        {headerGroup.headers.map((header) => {
-                                                            return (
-                                                                <TableHead key={header.id}>
-                                                                    {header.isPlaceholder
-                                                                        ? null
-                                                                        : flexRender(header.column.columnDef.header, header.getContext())}
-                                                                </TableHead>
-                                                            );
-                                                        })}
-                                                    </TableRow>
-                                                ))}
-                                            </TableHeader>
-                                            <TableBody>
-                                                {table.getRowModel().rows?.length ? (
-                                                    table.getRowModel().rows.map((row, index) => {
-                                                        if (index === 0) return null;
+                                                <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                    {table.getHeaderGroups().map((headerGroup) => (
+                                                        <TableRow key={headerGroup.id}>
+                                                            {headerGroup.headers.map((header) => {
+                                                                return (
+                                                                    <TableHead key={header.id}>
+                                                                        {header.isPlaceholder
+                                                                            ? null
+                                                                            : flexRender(
+                                                                                  header.column.columnDef.header,
+                                                                                  header.getContext(),
+                                                                              )}
+                                                                    </TableHead>
+                                                                );
+                                                            })}
+                                                        </TableRow>
+                                                    ))}
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {table.getRowModel().rows?.length ? (
+                                                        table.getRowModel().rows.map((row, index) => {
+                                                            if (index === 0) return null;
 
-                                                        return <TreeLeaves key={row.id} row={row} />;
-                                                    })
-                                                ) : (
-                                                    <TableRow>
-                                                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                                                            Thank you, {auth.user.displayname}! But our item is in another context! 🍄
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </TableBody>
-                                            {!manageContextActionToggle &&
-                                                matrixClient
-                                                    .getRoom(roomId)
-                                                    ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                    <TableFooter>
+                                                            return <TreeLeaves key={row.id} row={row} />;
+                                                        })
+                                                    ) : (
                                                         <TableRow>
-                                                            <TableCell colSpan="3">
-                                                                <QuickAddExplore
-                                                                    currentId={roomId}
-                                                                    roomName={matrix.spaces.get(roomId).name}
-                                                                    getSpaceChildren={getSpaceChildren}
-                                                                    allChatRooms={allChatRooms}
-                                                                    trigger={
-                                                                        <Button
-                                                                            className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                            variant="ghost"
-                                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                                        >
-                                                                            {t('Add more …')}
-                                                                            <Icon>
-                                                                                <RiAddLine />
-                                                                            </Icon>
-                                                                        </Button>
-                                                                    }
-                                                                />
+                                                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                                                Thank you, {auth.user.displayname}! But our item is in another context! 🍄
                                                             </TableCell>
                                                         </TableRow>
-                                                    </TableFooter>
-                                                )}
-                                        </Table>
-                                        <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
-                                            <div className="flex-1 text-sm text-muted-foreground">
-                                                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                                                    )}
+                                                </TableBody>
+                                                {!manageContextActionToggle &&
+                                                    matrixClient
+                                                        .getRoom(roomId)
+                                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                        <TableFooter>
+                                                            <TableRow>
+                                                                <TableCell colSpan="3">
+                                                                    <QuickAddExplore
+                                                                        currentId={roomId}
+                                                                        roomName={matrix.spaces.get(roomId).name}
+                                                                        getSpaceChildren={getSpaceChildren}
+                                                                        allChatRooms={allChatRooms}
+                                                                        trigger={
+                                                                            <Button
+                                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                                                variant="ghost"
+                                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                                            >
+                                                                                {t('Add more …')}
+                                                                                <Icon>
+                                                                                    <RiAddLine />
+                                                                                </Icon>
+                                                                            </Button>
+                                                                        }
+                                                                    />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableFooter>
+                                                    )}
+                                            </Table>
+                                        )}
+                                        {table.getRowModel().rows?.length > 1 && (
+                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
+                                                <div className="flex-1 text-sm text-muted-foreground">
+                                                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                                                </div>
+                                                <div className="space-x-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => table.previousPage()}
+                                                        disabled={!table.getCanPreviousPage()}
+                                                    >
+                                                        Previous
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => table.nextPage()}
+                                                        disabled={!table.getCanNextPage()}
+                                                    >
+                                                        Next
+                                                    </Button>
+                                                </div>
                                             </div>
-                                            <div className="space-x-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => table.previousPage()}
-                                                    disabled={!table.getCanPreviousPage()}
-                                                >
-                                                    Previous
-                                                </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => table.nextPage()}
-                                                    disabled={!table.getCanNextPage()}
-                                                >
-                                                    Next
-                                                </Button>
-                                            </div>
-                                        </div>
+                                        )}
                                     </>
                                 )}
                             </ServiceTableWrapper>
