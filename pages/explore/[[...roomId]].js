@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
 import {
@@ -39,11 +38,6 @@ import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
-
-const ServiceTableWrapper = styled.div`
-    width: 100%;
-    overflow: auto;
-`;
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -398,7 +392,7 @@ export default function Explore() {
         <>
             <DefaultLayout.Sidebar>
                 <h2>/explore {_.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline />}</h2>
-                <ServiceTableWrapper>
+                <div className="w-full overflow-auto">
                     {!_.isEmpty(selectedSpaceChildren) && (
                         <TreePath
                             selectedSpaceChildren={selectedSpaceChildren}
@@ -406,7 +400,7 @@ export default function Explore() {
                             iframeRoomId={iframeRoomId}
                         />
                     )}
-                </ServiceTableWrapper>
+                </div>
             </DefaultLayout.Sidebar>
 
             {iframeRoomId ? (
@@ -436,7 +430,7 @@ export default function Explore() {
                                 // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 // setSettingsTabValue={setSettingsTabValue}
                             />
-                            <ServiceTableWrapper className="flex h-full flex-col justify-between">
+                            <div className="flex h-full w-full flex-col overflow-auto">
                                 {manageContextActionToggle ? (
                                     <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
@@ -450,10 +444,10 @@ export default function Explore() {
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
                                                 {/*
-                                              @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
-                                              fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
-                                              from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
-                                             */}
+                                                  @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
+                                                  fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
+                                                  from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
+                                                */}
                                                 <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     {table.getHeaderGroups().map((headerGroup) => (
                                                         <TableRow key={headerGroup.id}>
@@ -487,35 +481,6 @@ export default function Explore() {
                                                         </TableRow>
                                                     )}
                                                 </TableBody>
-                                                {!manageContextActionToggle &&
-                                                    matrixClient
-                                                        .getRoom(roomId)
-                                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                        <TableFooter>
-                                                            <TableRow>
-                                                                <TableCell colSpan="3">
-                                                                    <QuickAddExplore
-                                                                        currentId={roomId}
-                                                                        roomName={matrix.spaces.get(roomId).name}
-                                                                        getSpaceChildren={getSpaceChildren}
-                                                                        allChatRooms={allChatRooms}
-                                                                        trigger={
-                                                                            <Button
-                                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                                variant="ghost"
-                                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                                            >
-                                                                                {t('Add more …')}
-                                                                                <Icon>
-                                                                                    <RiAddLine />
-                                                                                </Icon>
-                                                                            </Button>
-                                                                        }
-                                                                    />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </TableFooter>
-                                                    )}
                                             </Table>
                                         )}
                                         {/*pagination component which we are currently not using, but might in the future*/}
@@ -544,9 +509,34 @@ export default function Explore() {
                                         {/*        </div>*/}
                                         {/*    </div>*/}
                                         {/*)}*/}
+                                        {!manageContextActionToggle &&
+                                            matrixClient
+                                                .getRoom(roomId)
+                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)] bg-background">
+                                                    <QuickAddExplore
+                                                        currentId={roomId}
+                                                        roomName={matrix.spaces.get(roomId).name}
+                                                        getSpaceChildren={getSpaceChildren}
+                                                        allChatRooms={allChatRooms}
+                                                        trigger={
+                                                            <Button
+                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                                variant="ghost"
+                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                            >
+                                                                {t('Add more …')}
+                                                                <Icon>
+                                                                    <RiAddLine />
+                                                                </Icon>
+                                                            </Button>
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
                                     </>
                                 )}
-                            </ServiceTableWrapper>
+                            </div>
                         </DefaultLayout.Wrapper>
                     </>
                 )

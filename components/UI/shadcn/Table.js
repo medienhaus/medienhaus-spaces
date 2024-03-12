@@ -19,7 +19,7 @@ TableHeader.displayName = 'TableHeader';
 const TableBody = React.forwardRef(({ className, ...props }, ref) => (
     <tbody
         ref={ref}
-        className={cn('[&_tr:hover]:bg-accent-foreground/20 [&_tr]:border-b [&_tr]:border-muted-foreground/20', className)}
+        className={cn('[&_tr:hover]:bg-accent-foreground/20 [&_tr:not(:last-of-type)]:border-b [&_tr]:border-muted-foreground/20', className)}
         {...props}
     />
 ));
