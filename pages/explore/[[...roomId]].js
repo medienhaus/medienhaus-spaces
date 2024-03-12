@@ -395,22 +395,10 @@ export default function Explore() {
 
     return (
         <>
-            {iframeRoomId && (
-                <DefaultLayout.Sidebar>
-                    <ServiceTableWrapper>
-                        {!_.isEmpty(selectedSpaceChildren) && (
-                            <TreePath
-                                selectedSpaceChildren={selectedSpaceChildren}
-                                isFetchingContent={isFetchingContent}
-                                iframeRoomId={iframeRoomId}
-                            />
-                        )}
-                    </ServiceTableWrapper>
-                </DefaultLayout.Sidebar>
-            )}
-
             {iframeRoomId ? (
                 <ExploreIframeViews
+                    selectedSpaceChildren={selectedSpaceChildren}
+                    isFetchtingContent={isFetchingContent}
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
                     title={
