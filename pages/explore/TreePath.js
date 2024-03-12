@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { RiBrush2Line, RiBrushLine, RiChat1Line, RiFolderLine, RiFolderUnknowLine, RiLink, RiPencilLine } from '@remixicon/react';
+import { RiBrush2Line, RiBrushLine, RiChat1Line, RiEditLine, RiFolderLine, RiFolderUnknowLine, RiLink } from '@remixicon/react';
 import { useRouter } from 'next/router';
 
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -46,7 +46,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
-                            <RiPencilLine />
+                            <RiEditLine />
                         </Icon>
                     );
                 }
