@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, createContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
 
@@ -18,12 +18,9 @@ function useOnboardingProvider() {
 
     const [currentSteps, setCurrentSteps] = useState([]);
 
-    const [opened, setOpened] = useState(true);
-    const [size, setSize] = useState('onboardingBottomRight');
-
     const [currentStep, setCurrentStep] = useState(0);
     const [hasPrev, setHasPrev] = useState(false);
-    const [hasNext, setHasNext] = useState(true);
+    const [hasNext, setHasNext] = useState(false);
     const [currentStepDescription, setCurrentStepDescription] = useState('');
     const [currentStepTitle, setCurrentStepTitle] = useState('');
 
@@ -129,19 +126,14 @@ function useOnboardingProvider() {
 
     return {
         active,
-        setActive,
         currentRoute,
         currentSteps,
-        opened,
-        setOpened,
-        size,
         currentStep,
         hasPrev,
         hasNext,
         currentStepDescription,
         currentStepTitle,
         tourInstance,
-        setSize,
         startTour,
         processStep,
         nextRoute,

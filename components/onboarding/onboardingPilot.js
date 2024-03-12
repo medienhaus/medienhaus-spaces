@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/UI/shadcn/Sheet';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
@@ -9,14 +10,15 @@ const OnboardingPilot = () => {
     const onboarding = useOnboarding();
 
     const { t } = useTranslation('onboarding');
-    const size = onboarding?.size;
+    const [side, setSide] = useState('onboardingBottomRight');
+    const [isOpen, setIsOpen] = useState(true);
 
     return (
         <>
             {onboarding?.active && (
-                <Sheet open={onboarding?.opened} onOpenChange={onboarding?.setOpened} modal={false}>
+                <Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
                     <SheetContent
-                        side={size}
+                        side={side}
                         onInteractOutside={(e) => {
                             e.preventDefault();
                         }}
@@ -24,10 +26,12 @@ const OnboardingPilot = () => {
                         <SheetHeader>
                             <Button
                                 onClick={() => {
-                                    onboarding?.setSize(size === 'onboardingBottomRight' ? 'onboardingMinimized' : 'onboardingBottomRight');
+                                    setSide((prevState) =>
+                                        prevState === 'onboardingBottomRight' ? 'onboardingMinimized' : 'onboardingBottomRight',
+                                    );
                                 }}
                             >
-                                {size === 'onboardingBottomRight' ? '\u035F' : '⌅'}
+                                {side === 'onboardingBottomRight' ? '\u035F' : '⌅'}
                             </Button>
                             <SheetTitle>
                                 {onboarding?.currentRoute} — {onboarding?.currentStepTitle}
