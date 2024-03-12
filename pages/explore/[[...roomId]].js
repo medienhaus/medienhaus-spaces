@@ -294,15 +294,6 @@ export default function Explore() {
         return true;
     };
 
-    // const data = [
-    //     {
-    //         user_id: '728ed52f',
-    //         roomId: 100,
-    //         status: 'pending',
-    //         room_name: 'm@example.com',
-    //     },
-    // ];
-
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {

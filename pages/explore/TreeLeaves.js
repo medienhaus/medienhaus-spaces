@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
 import { flexRender } from '@tanstack/react-table';
-import { RiLockPasswordLine } from '@remixicon/react';
+import { RiArrowRightLine, RiLockPasswordLine } from '@remixicon/react';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
@@ -10,10 +10,9 @@ import logger from '@/lib/Logging';
 import { TableCell, TableRow } from '@/components/UI/shadcn/Table';
 import Icon from '@/components/UI/Icon';
 
-const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small, onRemove, myPowerLevel }, ref) => {
+const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small, onRemove, myPowerLevel, selected }, ref) => {
     const auth = useAuth();
     const matrix = useMatrix();
-    console.log(row);
     const etherpad = auth.getAuthenticationProvider('etherpad');
     const [isPasswordProtected, setIsPasswordProtected] = useState(false);
 
@@ -102,6 +101,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
                                 <RiLockPasswordLine />
                             </Icon>
                         )}
+                        {selected && <RiArrowRightLine className="ml-2 h-4 w-4" />}
                     </TableCell>
                 );
             })}
