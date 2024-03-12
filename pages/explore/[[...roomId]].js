@@ -18,7 +18,7 @@ import {
     RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
@@ -304,8 +304,6 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                console.log(row);
-
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
@@ -392,12 +390,9 @@ export default function Explore() {
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
     });
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
-    // console.log(selectedSpaceChildren[selectedSpaceChildren.length - 1]);
-    console.log(table);
 
     return (
         <>
@@ -523,31 +518,32 @@ export default function Explore() {
                                                     )}
                                             </Table>
                                         )}
-                                        {table.getRowModel().rows?.length > 1 && (
-                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
-                                                <div className="flex-1 text-sm text-muted-foreground">
-                                                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                                                </div>
-                                                <div className="space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.previousPage()}
-                                                        disabled={!table.getCanPreviousPage()}
-                                                    >
-                                                        Previous
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.nextPage()}
-                                                        disabled={!table.getCanNextPage()}
-                                                    >
-                                                        Next
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )}
+                                        {/*pagination component which we are currently not using, but might in the future*/}
+                                        {/*{table.getRowModel().rows?.length > 1 && (*/}
+                                        {/*    <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">*/}
+                                        {/*        <div className="flex-1 text-sm text-muted-foreground">*/}
+                                        {/*            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div className="space-x-2">*/}
+                                        {/*            <Button*/}
+                                        {/*                variant="outline"*/}
+                                        {/*                size="sm"*/}
+                                        {/*                onClick={() => table.previousPage()}*/}
+                                        {/*                disabled={!table.getCanPreviousPage()}*/}
+                                        {/*            >*/}
+                                        {/*                Previous*/}
+                                        {/*            </Button>*/}
+                                        {/*            <Button*/}
+                                        {/*                variant="outline"*/}
+                                        {/*                size="sm"*/}
+                                        {/*                onClick={() => table.nextPage()}*/}
+                                        {/*                disabled={!table.getCanNextPage()}*/}
+                                        {/*            >*/}
+                                        {/*                Next*/}
+                                        {/*            </Button>*/}
+                                        {/*        </div>*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
                                     </>
                                 )}
                             </ServiceTableWrapper>
