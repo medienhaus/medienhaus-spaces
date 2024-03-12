@@ -19,7 +19,6 @@ import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Button } from '@/components/UI/shadcn/Button';
@@ -273,18 +272,19 @@ export default function Explore() {
 
     return (
         <>
-            <DefaultLayout.Sidebar>
-                <h2>/explore {_.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline />}</h2>
-                <ServiceTableWrapper>
-                    {!_.isEmpty(selectedSpaceChildren) && (
-                        <TreePath
-                            selectedSpaceChildren={selectedSpaceChildren}
-                            isFetchingContent={isFetchingContent}
-                            iframeRoomId={iframeRoomId}
-                        />
-                    )}
-                </ServiceTableWrapper>
-            </DefaultLayout.Sidebar>
+            {iframeRoomId && (
+                <DefaultLayout.Sidebar>
+                    <ServiceTableWrapper>
+                        {!_.isEmpty(selectedSpaceChildren) && (
+                            <TreePath
+                                selectedSpaceChildren={selectedSpaceChildren}
+                                isFetchingContent={isFetchingContent}
+                                iframeRoomId={iframeRoomId}
+                            />
+                        )}
+                    </ServiceTableWrapper>
+                </DefaultLayout.Sidebar>
+            )}
 
             {iframeRoomId ? (
                 <ExploreIframeViews
@@ -302,7 +302,15 @@ export default function Explore() {
                         <DefaultLayout.Wrapper>
                             <ServiceIframeHeader
                                 content={window.location.href}
-                                title={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                title={
+                                    !_.isEmpty(selectedSpaceChildren) && (
+                                        <TreePath
+                                            selectedSpaceChildren={selectedSpaceChildren}
+                                            isFetchingContent={isFetchingContent}
+                                            iframeRoomId={iframeRoomId}
+                                        />
+                                    )
+                                }
                                 removingLink={false}
                                 roomId={roomId}
                                 manageContextActionToggle={manageContextActionToggle}
