@@ -15,14 +15,19 @@ const OnboardingPilot = () => {
         <>
             {onboarding?.active && (
                 <Sheet open={onboarding?.opened} onOpenChange={onboarding?.setOpened} modal={false}>
-                    <SheetContent side={size}>
+                    <SheetContent
+                        side={size}
+                        onInteractOutside={(e) => {
+                            e.preventDefault();
+                        }}
+                    >
                         <SheetHeader>
                             <Button
                                 onClick={() => {
-                                    onboarding?.setSize(size === 'bottomRight' ? 'minimized' : 'bottomRight');
+                                    onboarding?.setSize(size === 'onboardingBottomRight' ? 'onboardingMinimized' : 'onboardingBottomRight');
                                 }}
                             >
-                                {size === 'bottomRight' ? '\u035F' : '⌅'}
+                                {size === 'onboardingBottomRight' ? '\u035F' : '⌅'}
                             </Button>
                             <SheetTitle>
                                 {onboarding?.currentRoute} — {onboarding?.currentStepTitle}
@@ -30,7 +35,7 @@ const OnboardingPilot = () => {
                             <SheetDescription>{onboarding?.currentStepDescription}</SheetDescription>
                         </SheetHeader>
 
-                        <SheetFooter>
+                        <SheetFooter className="mt-8 ">
                             <Button
                                 disabled={!onboarding?.hasPrev}
                                 onClick={() => {

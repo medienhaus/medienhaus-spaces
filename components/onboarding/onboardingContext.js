@@ -19,7 +19,7 @@ function useOnboardingProvider() {
     const [currentSteps, setCurrentSteps] = useState([]);
 
     const [opened, setOpened] = useState(true);
-    const [size, setSize] = useState('bottomRight');
+    const [size, setSize] = useState('onboardingBottomRight');
 
     const [currentStep, setCurrentStep] = useState(0);
     const [hasPrev, setHasPrev] = useState(false);
