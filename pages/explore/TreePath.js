@@ -43,8 +43,6 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                 </Icon>
             ),
             cell: ({ row }) => {
-                console.log(row);
-
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
