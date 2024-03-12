@@ -23,7 +23,7 @@
         --destructive: 348 78% 50%;
         --destructive-foreground: 348 98% 70%;
         --border: 0 0% 90%;
-        --input: 0 0% 90%;
+        --input: 0 0% 50%;
         --ring: 0 0% 0%;
         --radius: 0.25rem;
     }
@@ -65,8 +65,8 @@
         --destructive: 348 78% 50%;
         --destructive-foreground: 348 98% 70%;
         --border: 0 0% 90%;
-        --input: 0 0% 90%;
-        --ring: 0 0% 0%;
+        --input: 0 0% 50%;
+        --ring: 0 0% 100%;
 
         /* color definitions (legacy support) */
         --color-background: hsl(var(--background));
