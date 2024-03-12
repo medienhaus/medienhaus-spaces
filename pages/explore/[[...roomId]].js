@@ -9,11 +9,11 @@ import {
     RiBrush2Line,
     RiBrushLine,
     RiChat1Line,
+    RiEditLine,
     RiFolderLine,
     RiFolderSettingsLine,
     RiFolderUnknowLine,
     RiLink,
-    RiPencilLine,
     RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
@@ -301,7 +301,7 @@ export default function Explore() {
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
-                            <RiPencilLine />
+                            <RiEditLine />
                         </Icon>
                     );
                 }
