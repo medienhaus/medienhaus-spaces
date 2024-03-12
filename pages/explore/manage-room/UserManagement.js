@@ -97,9 +97,11 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                     <InviteUserToMatrixRoom
                         roomId={roomId}
                         trigger={
-                            <Button className="w-full justify-between px-0 pr-1.5 hover:text-accent" variant="ghost">
+                            <Button className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent" variant="ghost">
                                 {t('Invite to {{name}} …', { name: roomName })}
-                                <RiAddLine />
+                                <Icon>
+                                    <RiAddLine />
+                                </Icon>
                             </Button>
                         }
                     />
