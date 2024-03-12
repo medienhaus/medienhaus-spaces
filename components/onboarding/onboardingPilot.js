@@ -1,7 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
-import { driver } from 'driver.js'; // import driver.js
-
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
 import { Button } from '@/components/UI/shadcn/Button';
