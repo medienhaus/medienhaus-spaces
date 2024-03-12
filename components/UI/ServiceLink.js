@@ -1,15 +1,21 @@
 import React, { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { styled } from 'styled-components';
-import { RiArrowRightLine, RiLockLine, RiMoreLine } from '@remixicon/react';
+import { toast } from 'sonner';
+import { RiArrowRightLine, RiClipboardLine, RiFolderCloseLine, RiLockLine, RiMoreLine } from '@remixicon/react';
 import Link from 'next/link';
-import _ from 'lodash';
 
 import { ServiceTable } from './ServiceTable';
 import Icon from './Icon';
 import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/UI/shadcn/Avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/UI/shadcn/DropdownMenu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/UI/shadcn/DropdownMenu';
 import {
     Dialog,
     DialogContent,
@@ -19,13 +25,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/UI/shadcn/Dialog';
-import { Button } from '@/components/UI/shadcn/Button';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { useAuth } from '@/lib/Auth';
+import { isValidUrl } from '@/lib/utils';
 
 const LockIconWrapper = styled(Icon)`
-    position: relative;
-    top: 0.195rem;
     display: inline-block;
     margin-left: calc(var(--margin) / 2);
     transform: scale(70%);
@@ -51,17 +55,12 @@ const NotificationBadge = styled.span`
 // @TODO figure out what to do with optional menu and logic for menu, could use better solution
 // @TODO success message closes too quickly
 
-function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel }) {
+function EllipsisMenu({ parentName, name, parentRoomId, onRemove, myPowerLevel, href }) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [wasRemoved, setWasRemoved] = useState(false);
     const { t } = useTranslation();
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const room = matrixClient.getRoom(parentRoomId);
     const canRemoveFromParent = room?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
-
-    // if we don't have sufficient rights for any of the options we return null
-    // this extra step makes more sense once the ellipsis menu has more options
-    if (!canRemoveFromParent) return null;
 
     return (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -70,47 +69,60 @@ function EllipsisMenu({ parentName, parentRoomId, onRemove, myPowerLevel }) {
                     <RiMoreLine />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                    <DropdownMenuItem
+                        className="grid w-full grid-flow-col justify-start gap-2"
+                        onClick={() =>
+                            navigator.clipboard.writeText(isValidUrl(href) ? href : `${location.protocol}//${location.hostname}${href}`)
+                        }
+                    >
+                        <Icon>
+                            <RiClipboardLine />
+                        </Icon>
+                        <span>{t('Copy link to clipboard')}</span>
+                    </DropdownMenuItem>
                     {canRemoveFromParent && (
-                        <DropdownMenuItem>
+                        <>
+                            <DropdownMenuSeparator />
                             <DialogTrigger asChild>
-                                <Button variant="ghost">{t('Remove')}</Button>
+                                <DropdownMenuItem className="grid w-full grid-flow-col justify-start gap-2" variant="ghost">
+                                    <Icon>
+                                        <RiFolderCloseLine />
+                                    </Icon>
+                                    <span>{t('Remove')}</span>
+                                </DropdownMenuItem>
                             </DialogTrigger>
-                        </DropdownMenuItem>
+                        </>
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent>
-                {wasRemoved ? (
-                    'was removed'
-                ) : (
-                    <>
-                        <DialogHeader>
-                            <DialogTitle>{t('Are you absolutely sure you want to remove {{name}}', { name: name })}</DialogTitle>
-                            <DialogDescription>
-                                {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
-                                    name: name,
-                                    space: parentName,
-                                })}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                            <form
-                                onSubmit={async (e) => {
-                                    e.preventDefault();
-                                    await onRemove();
-                                    setWasRemoved(true);
-                                    _.delay(() => {
-                                        setDialogOpen(false);
-                                        setWasRemoved(false);
-                                    }, 1000);
-                                }}
-                                onReset={() => setDialogOpen(false)}
-                            >
-                                <ConfirmCancelButtons confirmLabel="Remove" destructive />
-                            </form>
-                        </DialogFooter>
-                    </>
-                )}
+                <>
+                    <DialogHeader>
+                        <DialogTitle>{t('Are you absolutely sure you want to remove {{name}}', { name: name })}</DialogTitle>
+                        <DialogDescription>
+                            {t('This will only remove {{name}} from {{space}}. It will not delete {{name}}', {
+                                name: name,
+                                space: parentName,
+                            })}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <form
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                const remove = await onRemove();
+
+                                if (remove) {
+                                    setDialogOpen(false);
+                                    toast.success(t('You have removed {{name}} from {{space}}', { name: name, space: parentName }));
+                                }
+                            }}
+                            onReset={() => setDialogOpen(false)}
+                        >
+                            <ConfirmCancelButtons confirmLabel="Remove" destructive />
+                        </form>
+                    </DialogFooter>
+                </>
             </DialogContent>
         </Dialog>
     );
@@ -149,7 +161,7 @@ const ServiceLink = forwardRef(
                                 <AvatarFallback />
                             </Avatar>
                         )}
-                        <span className="flex-grow">{name}</span>
+                        <span className="w-0 flex-grow overflow-hidden text-ellipsis">{name}</span>
                         {roomId && isFetchingContent === roomId && <LoadingSpinnerInline />}
                         {/* Show a lock icon if this Link is password protected */}
                         {passwordProtected && (
@@ -167,7 +179,14 @@ const ServiceLink = forwardRef(
                 </ServiceTable.Cell>
                 {onRemove && (
                     <ServiceTable.Cell align="right">
-                        <EllipsisMenu parentName={parentName} onRemove={onRemove} myPowerLevel={myPowerLevel} parentRoomId={parentRoomId} />
+                        <EllipsisMenu
+                            parentName={parentName}
+                            onRemove={onRemove}
+                            myPowerLevel={myPowerLevel}
+                            parentRoomId={parentRoomId}
+                            name={name}
+                            href={href}
+                        />
                     </ServiceTable.Cell>
                 )}
             </ServiceTable.Row>

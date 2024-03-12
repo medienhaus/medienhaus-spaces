@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../lib/Auth';
 import ContextMultiLevelSelect from '../../../components/ContextMultiLevelSelect';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 
@@ -23,7 +22,7 @@ import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
  *  return name from ContextMultiLevelSelect instead of fetching it again in fetchRoomName
  *  disable other selects when fetching new children
  *
-*/
+ */
 
 const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAction, onCancel }) => {
     const auth = useAuth();
@@ -70,16 +69,20 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
     const addContextToParent = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const call = await matrix.addSpaceChild(parentId, activeContexts[activeContexts.length - 1])
-            .catch(error => {
-                setErrorMessage(error.data?.error);
+        const call = await matrix.addSpaceChild(parentId, activeContexts[activeContexts.length - 1]).catch((error) => {
+            setErrorMessage(error.data?.error);
 
-                return;
-            });
+            return;
+        });
 
         if (call?.event_id) {
             // call worked as expected
-            alert(t('{{selectedContextName}} was successfully added to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }));
+            alert(
+                t('{{selectedContextName}} was successfully added to {{parentName}}', {
+                    selectedContextName: selectedContextName,
+                    parentName: parentName,
+                }),
+            );
             cleanUp();
         }
 
@@ -96,16 +99,24 @@ const AddExistingContext = ({ parentId, parentName, contextRootId, onPreviousAct
     };
 
     return (
-        <Form
-            onSubmit={addContextToParent}>
-            <ContextMultiLevelSelect onChange={setActiveContexts} activeContexts={activeContexts} setSelectedContextName={setSelectedContextName} />
-            { selectedContextName && isAddingAllowed && <p> { t('You are about to add {{ selectedContextName }} to {{parentName}}', { selectedContextName: selectedContextName, parentName: parentName }) }</p> }
-            { errorMessage && <ErrorMessage>{ errorMessage }</ErrorMessage> }
-            <PreviousNextButtons
-                disableNext={!isAddingAllowed}
-                onCancel={onPreviousAction}>{ isLoading ? <LoadingSpinnerInline inverted /> : t('add') }
-            </PreviousNextButtons>
-        </Form>
+        <form className="[&>*+*]:mt-4" onSubmit={addContextToParent}>
+            <ContextMultiLevelSelect
+                onChange={setActiveContexts}
+                activeContexts={activeContexts}
+                setSelectedContextName={setSelectedContextName}
+            />
+            {selectedContextName && isAddingAllowed && (
+                <p>
+                    {' '}
+                    {t('Add {{selectedContextName}} to {{parentName}}?', {
+                        selectedContextName: selectedContextName,
+                        parentName: parentName,
+                    })}
+                </p>
+            )}
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            <PreviousNextButtons className="mt-4" previousLabel={t('Back')} nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')} disableNext={!isAddingAllowed} onCancel={onPreviousAction} />
+        </form>
     );
 };
 

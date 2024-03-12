@@ -99,14 +99,7 @@ const RemoveSpaceFromParent = ({ spaceChildren, parentId, currentId, parentName,
                         return <ErrorMessage key={index}>{errorMessage} </ErrorMessage>;
                     })}
             </RemoveSection>
-
-            <PreviousNextButtons disableNext={itemsToRemove.length === 0} onCancel={onPreviousAction}>
-                {isRemovingChild ? (
-                    <LoadingSpinnerInline inverted />
-                ) : (
-                    `${t('remove')} ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}`
-                )}
-            </PreviousNextButtons>
+            <PreviousNextButtons nextLabel={isRemovingChild ? <LoadingSpinnerInline inverted /> : ( `${t('remove')} ${itemsToRemove.length > 0 ? itemsToRemove.length : ''}` )} disableNext={itemsToRemove.length === 0} onCancel={onPreviousAction} />
         </Form>
     );
 };

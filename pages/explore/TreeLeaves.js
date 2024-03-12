@@ -1,86 +1,117 @@
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
+import { flexRender } from '@tanstack/react-table';
+import { RiArrowRightLine, RiLockPasswordLine } from '@remixicon/react';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import ServiceLink from '../../components/UI/ServiceLink';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import logger from '@/lib/Logging';
+import { TableCell, TableRow } from '@/components/UI/shadcn/Table';
+import Icon from '@/components/UI/Icon';
 
-const getIcon = (template, name) => {
-    switch (template) {
-        case 'etherpad':
-            return '📝 ' + name;
-        case 'spacedeck':
-            return '🎨 ' + name;
-        case 'studentproject':
-            return '🎓 ' + name;
-        case 'link':
-            return '🔗 ' + name;
-        default:
-            return name;
-    }
-};
-
-const TreeLeaves = ({ leaf, parentName, selectedRoomId, isFetchingContent, small, isChat, onRemove, myPowerLevel }) => {
-    const router = useRouter();
+const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small, onRemove, myPowerLevel, selected }, ref) => {
     const auth = useAuth();
     const matrix = useMatrix();
-
     const etherpad = auth.getAuthenticationProvider('etherpad');
     const [isPasswordProtected, setIsPasswordProtected] = useState(false);
 
-    const roomId = leaf.id || leaf.room_id || leaf.roomId;
-    const parentId = leaf.parent.id || leaf.parent.room_id || leaf.parent.roomId;
-    const template = leaf.meta?.template;
+    const roomId = row.original.id || row.original.room_id || row.original.roomId;
+    const parentId = row.original.parent.id || row.original.parent.room_id || row.original.parent.roomId;
+    const template = row.original.meta?.template;
     const externalUrl = template === 'link' && matrix.roomContents.get(roomId)?.body;
+    const isChat = (!row.original.meta && !row.original.room_type) || (!row.original.meta && row.original.room_type === 'm.room');
     // if the room is a chat or service we want to show a different icon
-
-    const name = isChat ? '💬 ' + leaf.name : getIcon(template, leaf.name);
+    row.ref = ref;
+    row.href = externalUrl
+        ? externalUrl
+        : Object.keys(getConfig().publicRuntimeConfig.authProviders)?.includes(template) || isChat
+          ? `/explore/${parentId}/${roomId}`
+          : `/explore/${roomId}`;
+    row.roomId = roomId;
 
     useEffect(() => {
-        let cancelled = false;
+        const controller = new AbortController();
+        const signal = controller.signal;
 
-        if (template === 'etherpad' && !cancelled) {
+        if (template === 'etherpad') {
             const checkIfPadHasPassword = async () => {
-                const url = matrix.roomContents.get(roomId)?.body;
-                const padId = url.split('/').pop();
+                let url = matrix.roomContents.get(roomId);
+
+                if (!url) {
+                    url = await matrix.hydrateRoomContent(roomId, signal).catch((error) => {
+                        if (error.name === 'AbortError') {
+                            console.log('AbortError: Fetch request aborted');
+                        }
+
+                        return null;
+                    });
+                }
+
+                if (!url?.body) return false;
+                const padId = url.body.split('/').pop();
 
                 return etherpad.isPadPasswordProtected(padId);
             };
 
-            checkIfPadHasPassword().then((isProtected) => setIsPasswordProtected(isProtected));
+            checkIfPadHasPassword().then(setIsPasswordProtected);
         }
 
-        return () => (cancelled = true);
-    }, [etherpad, matrix.roomContents, roomId, template]);
+        if (template === 'link') {
+            const hydrateContent = async () => {
+                if (!matrix.roomContents.get(roomId)?.body) {
+                    await matrix.hydrateRoomContent(roomId, signal).catch((error) => {
+                        if (error.name === 'AbortError') {
+                            logger.error('AbortError: Fetch request aborted');
+                        } else {
+                            logger.error('Error hydrating room content', error);
+                        }
+                    });
+                }
+            };
 
-    if (!leaf) return <LoadingSpinner />;
+            hydrateContent();
+        }
+
+        return () => controller.abort();
+    }, [etherpad, matrix, matrix.roomContents, roomId, template]);
+
+    if (!row.original) return <LoadingSpinner />;
 
     // if an iframe is open we only want to show items in the list
-    if (selectedRoomId && leaf.type !== 'item') return null;
+    if (selectedRoomId && row.original.type !== 'item') return null;
 
     return (
-        <ServiceLink
-            small={small}
-            roomId={roomId}
-            target={template === 'link' ? '_blank' : '_self'}
-            href={
-                externalUrl
-                    ? externalUrl
-                    : getConfig().publicRuntimeConfig.templates?.item.includes(template) || isChat
-                      ? `/explore/${parentId}/${roomId}`
-                      : `/explore/${roomId}`
-            }
-            name={name}
-            isFetchingContent={isFetchingContent}
-            selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
-            onRemove={() => onRemove(roomId)}
-            parentName={parentName}
-            passwordProtected={isPasswordProtected}
-            myPowerLevel={myPowerLevel}
-            parentRoomId={parentId}
-        />
+        <TableRow key={row.id}>
+            {row.getVisibleCells().map((cell) => {
+                // @NOTE: the classes below are responsible for making the respective columns not wider than necessary
+                if (cell.id.includes('icon') || cell.id.includes('actions')) {
+                    return (
+                        <TableCell className="w-[1px] whitespace-nowrap" key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                    );
+                }
+
+                return (
+                    <TableCell className="flex items-center justify-between gap-2" key={cell.id}>
+                        <div className="flex gap-2">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            {isPasswordProtected && (
+                                <Icon className="text-muted-foreground">
+                                    <RiLockPasswordLine className="!w-4" />
+                                </Icon>
+                            )}
+                        </div>
+                        {selected && (
+                            <Icon>
+                                <RiArrowRightLine />
+                            </Icon>
+                        )}
+                    </TableCell>
+                );
+            })}
+        </TableRow>
     );
 };
 

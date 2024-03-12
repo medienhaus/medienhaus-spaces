@@ -13,14 +13,14 @@ const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
 CardHeader.displayName = 'CardHeader';
 
 const CardTitle = React.forwardRef(({ className, children, ...props }, ref) => (
-    <h3 ref={ref} className={cn('flex items-center gap-2 leading-none tracking-tight', className)} {...props}>
+    <h3 ref={ref} className={cn('flex items-center gap-2', className)} {...props}>
         {children}
     </h3>
 ));
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text text-muted-foreground', className)} {...props} />
+    <p ref={ref} className={cn('text-muted-foreground', className)} {...props} />
 ));
 CardDescription.displayName = 'CardDescription';
 

@@ -3,14 +3,14 @@ import getConfig from 'next/config';
 import React, { useState } from 'react';
 import { RiChat4Line, RiChatNewLine, RiFileLine, RiFolderAddLine, RiFolderLine, RiLink } from '@remixicon/react';
 
-import { Card, CardContent, CardHeader } from '@/components/UI/shadcn/Card';
 import AddExistingItem from './AddExistingItem';
 import AddExistingContext from './AddExistingContext';
 import CreateContext from './CreateContext';
 import AddExistingChat from './AddOrCreateChat/AddExistingChat';
 import AddNewChat from './AddOrCreateChat/AddNewChat';
 import CreateLink from './CreateLink';
-import { DrawerDialog, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
+import { DrawerDialog, DrawerDialogFooter, DrawerDialogHeader } from '@/components/UI/shadcn/DialogDrawer';
+import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * QuickAddExplore component
@@ -25,7 +25,6 @@ import { DrawerDialog, DrawerDialogHeader } from '@/components/UI/shadcn/DialogD
  *
  * @returns {JSX.Element} The rendered QuickAddExplore component.
  *
- * @TODO change Card component to mobile friendly option
  */
 // const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, setIsQuickAddOpen, trigger }) => {
 const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, trigger }) => {
@@ -36,12 +35,14 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
 
     const onClose = () => {
         setSelectedOption('');
+        setIsOpen(false);
     };
 
     return (
         <>
             {React.cloneElement(trigger, {
                 onClick: () => {
+                    setSelectedOption('');
                     setIsOpen(true);
                 },
             })}
@@ -52,93 +53,98 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                 }}
             >
                 <DrawerDialogHeader>
-                    <h3>{t('Add more …')}</h3>
+                    <h3>{t('Add more to {{name}}', { name: roomName })}</h3>
                 </DrawerDialogHeader>
 
                 {!selectedOption && (
-                    <div className="grid gap-4 grid-cols-2">
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('existingItem')}
-                        >
-                            <CardHeader className="items-center">
+                    <>
+                        <div className="grid grid-cols-2 gap-4">
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('existingItem')}
+                                variant="outline"
+                            >
                                 <RiFileLine />
-                            </CardHeader>
-                            <CardContent>{t('Add item to {{name}}', { name: roomName })}</CardContent>
-                        </Card>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('context')}
-                        >
-                            <CardHeader className="items-center">
+                                <p>{t('Add item')}</p>
+                            </Button>
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('context')}
+                                variant="outline"
+                            >
                                 <RiFolderLine />
-                            </CardHeader>
-                            <CardContent>{t('Add context to {{name}}', { name: roomName })}</CardContent>
-                        </Card>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('chat')}
-                        >
-                            <CardHeader className="items-center">
+                                <p>{t('Add context')}</p>
+                            </Button>
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('chat')}
+                                variant="outline"
+                            >
                                 <RiChat4Line />
-                            </CardHeader>
-                            <CardContent>{t('Add chat to {{name}}', { name: roomName })}</CardContent>
-                        </Card>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('link')}
-                        >
-                            <CardHeader className="items-center">
+                                <p>{t('Add chat')}</p>
+                            </Button>
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('link')}
+                                variant="outline"
+                            >
                                 <RiLink />
-                            </CardHeader>
-                            <CardContent>{t('Add a link to {{name}}', { name: roomName })}</CardContent>
-                        </Card>
-                    </div>
+                                <p>{t('Add link')}</p>
+                            </Button>
+                        </div>
+                        <DrawerDialogFooter />
+                    </>
                 )}
 
                 {selectedOption === 'context' && (
                     <>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('existingContext')}
-                        >
-                            <CardHeader className="items-center">
+                        <div className="grid grid-cols-2 gap-4">
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('existingContext')}
+                                variant="outline"
+                            >
                                 <RiFolderLine />
-                            </CardHeader>
-                            <CardContent>{t('Add existing context')}</CardContent>
-                        </Card>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('newContext')}
-                        >
-                            <CardHeader className="items-center">
+                                <p>{t('Add existing context')}</p>
+                            </Button>
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('newContext')}
+                                variant="outline"
+                            >
                                 <RiFolderAddLine />
-                            </CardHeader>
-                            <CardContent>{t('Create new context')}</CardContent>
-                        </Card>
+                                <p>{t('Create new context')}</p>
+                            </Button>
+                        </div>
+                        <Button onClick={() => setSelectedOption('')} className="w-full max-[767px]:mt-4" variant="outline">
+                            {t('Back')}
+                        </Button>
                     </>
                 )}
 
                 {selectedOption === 'chat' && (
                     <>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('existingChat')}
-                        >
-                            <CardHeader className="items-center">
+                        <div className="grid grid-cols-2 gap-4">
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('existingChat')}
+                                variant="outline"
+                            >
                                 <RiChat4Line />
-                            </CardHeader>
-                            <CardContent>existing chat</CardContent>
-                        </Card>
-                        <Card
-                            className="cursor-pointer text-center hover:bg-accent hover:text-white"
-                            onClick={() => setSelectedOption('newChat')}
-                        >
-                            <CardHeader className="items-center">
+                                <p>{t('Existing chat')}</p>
+                            </Button>
+                            <Button
+                                className="grid h-auto auto-rows-fr justify-items-center gap-2 text-wrap"
+                                onClick={() => setSelectedOption('newChat')}
+                                variant="outline"
+                            >
                                 <RiChatNewLine />
-                            </CardHeader>
-                            <CardContent>new chat</CardContent>
-                        </Card>
+                                <p>{t('New chat')}</p>
+                            </Button>
+                        </div>
+                        <Button onClick={() => setSelectedOption('')} className="w-full max-[767px]:mt-4" variant="outline">
+                            {t('Back')}
+                        </Button>
                     </>
                 )}
 
@@ -152,7 +158,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         parentId={currentId}
                         parentName={roomName}
                         contextRootId={getConfig().publicRuntimeConfig.contextRootSpaceRoomId}
-                        onPreviousAction={() => setSelectedOption('')}
+                        onPreviousAction={() => setSelectedOption('context')}
                     />
                 )}
 
@@ -161,7 +167,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onCancel={onClose}
                         currentId={currentId}
                         getSpaceChildren={getSpaceChildren}
-                        onPreviousAction={() => setSelectedOption('')}
+                        onPreviousAction={() => setSelectedOption('context')}
                     />
                 )}
 
@@ -172,7 +178,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         allChatRooms={allChatRooms}
                         onSuccess={onClose}
                         updateRoomList={getSpaceChildren}
-                        onPreviousAction={() => setSelectedOption('')}
+                        onPreviousAction={() => setSelectedOption('chat')}
                     />
                 )}
 
@@ -182,7 +188,7 @@ const QuickAddExplore = ({ currentId, roomName, getSpaceChildren, allChatRooms, 
                         onSuccess={onClose}
                         currentId={currentId}
                         parentName={roomName}
-                        onPreviousAction={() => setSelectedOption('')}
+                        onPreviousAction={() => setSelectedOption('chat')}
                     />
                 )}
 

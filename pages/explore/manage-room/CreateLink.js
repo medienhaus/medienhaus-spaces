@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
-import Form from '../../../components/UI/Form';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import { Input } from '@/components/UI/shadcn/Input';
+import { isValidUrl } from '@/lib/utils';
 
 const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction }) => {
     const auth = useAuth();
@@ -19,42 +19,27 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const createContext = async (e) => {
         e.preventDefault();
         //first of all some content checking otherwise displaying custom error messages
         setIsLoading(true);
+
+        if (!isValidUrl(url)) {
+            setErrorMessage('Please enter a valid URL');
+            setIsLoading(false);
+
+            return;
+        }
+
         setErrorMessage('');
-        //
-        // if (!name) {
-        //     setErrorMessage('name not set');
-        //
-        //     return;
-        // }
-        //
-        // if (!url) {
-        //     setErrorMessage('link not set');
-        // }
 
         // create the new context space
         const createNewLink = await matrix
-            .createRoom(
-                name,
-                false,
-                '',
-                'public',
-                'context',
-                'link',
-                getConfig().publicRuntimeConfig.name,
-                'public',
-                'world_readable',
-                'public_chat',
-            )
+            .createRoom(name, false, '', 'public', 'context', 'link', currentId, 'public', 'world_readable')
             .catch(async (err) => {
                 setErrorMessage(err.message);
-
-                return;
             });
 
         // then add our new context to the parent.
@@ -65,19 +50,21 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 .catch(async (err) => {
                     setErrorMessage(err.message);
                 });
+
+            await matrix.sendMessage(createNewLink, url).catch((error) => setErrorMessage(error));
+
+            await getSpaceChildren(null, currentId);
+            setName('');
+            setUrl('');
+            toast.success(t('Link added successfully'));
+            onCancel();
         }
 
-        await matrix.sendMessage(createNewLink, url).catch((error) => setErrorMessage(error));
-
-        await getSpaceChildren(null, currentId);
-        setName('');
-        setUrl('');
         setIsLoading(false);
-        onCancel();
     };
 
     return (
-        <Form onSubmit={createContext}>
+        <form className="[&>*+*]:mt-4" onSubmit={createContext}>
             <Input
                 type="text"
                 onChange={(e) => {
@@ -85,7 +72,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 }}
                 value={name}
                 required
-                placeholder="name"
+                placeholder={t('name')}
             />
             <Input
                 type="text"
@@ -93,15 +80,19 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                     setUrl(e?.target?.value);
                 }}
                 value={url}
-                placeholder="URL"
+                placeholder={t('URL')}
             />
             {
-                errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage> //error message container
+                errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage> //error message container
             }
-            <PreviousNextButtons disableNext={isLoading || !name || !url} onCancel={onPreviousAction}>
-                {isLoading ? <LoadingSpinnerInline inverted /> : t('Create Link')}
-            </PreviousNextButtons>
-        </Form>
+            <PreviousNextButtons
+                className="mt-4"
+                previousLabel={t('Back')}
+                nextLabel={isLoading ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={isLoading || !name || !url}
+                onCancel={onPreviousAction}
+            />
+        </form>
     );
 };
 

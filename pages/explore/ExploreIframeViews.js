@@ -16,7 +16,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
 
     const [title, setTitle] = useState(parsedTitle);
 
-    const iframeUrl = currentTemplate === 'studentProject' ? iframeRoomId : new URL(matrix.roomContents.get(iframeRoomId)?.body);
+    const iframeUrl = currentTemplate ? new URL(matrix.roomContents.get(iframeRoomId)?.body) : iframeRoomId;
 
     // add auth token to etherpad iframe, so authors of the pad don't have to input the password again
     if (currentTemplate === 'etherpad') {
@@ -27,8 +27,11 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
         let cancelled = false;
 
         const fetchRoomName = async () => {
-            const nameEvent = await matrixClient.getStateEvent(iframeRoomId, 'm.room.name').catch(() => {});
-            setTitle(nameEvent?.name);
+            if (parsedTitle) setTitle(parsedTitle);
+            else {
+                const nameEvent = await matrixClient.getStateEvent(iframeRoomId, 'm.room.name').catch(() => {});
+                setTitle(nameEvent?.name);
+            }
         };
 
         if (!cancelled) fetchRoomName();
@@ -36,50 +39,57 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
         return () => (cancelled = true);
     }, [iframeRoomId, matrixClient, parsedTitle]);
 
-    const CurrentView = () => {
-        switch (currentTemplate) {
-            case 'studentproject':
-                return <ProjectView content={iframeUrl} />;
-            case 'etherpad':
-                return (
-                    <>
-                        <ServiceIframeHeader
-                            content={matrix.roomContents.get(iframeRoomId)?.body}
-                            title={title}
-                            removeLink={() => console.log('removing pad from parent')}
-                            removingLink={false}
-                        />
-                        <iframe title="etherpad" src={iframeUrl} />
-                    </>
-                );
-            case 'spacedeck':
-                return (
-                    <>
-                        <ServiceIframeHeader
-                            content={matrix.roomContents.get(iframeRoomId)?.body}
-                            title={title}
-                            removeLink={() => console.log('removing sketch from parent')}
-                            removingLink={false}
-                        />
-                        <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
-                    </>
-                );
-            case 'link':
-                return (
-                    <>
-                        <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false}
-                        />
-                        <iframe title="sketch" src={iframeUrl} />
-                    </>
-                );
-            default:
-                return <ChatIframeView title="chat" src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`} />;
-        }
-    };
-
     return (
         <DefaultLayout.IframeWrapper>
-            <CurrentView />
+            {(() => {
+                switch (currentTemplate) {
+                    case 'studentproject':
+                        return <ProjectView content={iframeUrl} />;
+                    case 'etherpad':
+                        return (
+                            <>
+                                <ServiceIframeHeader
+                                    content={matrix.roomContents.get(iframeRoomId)?.body}
+                                    title={title}
+                                    removeLink={() => console.log('removing pad from parent')}
+                                    removingLink={false}
+                                />
+                                <iframe title="etherpad" src={iframeUrl} />
+                            </>
+                        );
+                    case 'spacedeck':
+                        return (
+                            <>
+                                <ServiceIframeHeader
+                                    content={matrix.roomContents.get(iframeRoomId)?.body}
+                                    title={title}
+                                    removeLink={() => console.log('removing sketch from parent')}
+                                    removingLink={false}
+                                />
+                                <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
+                            </>
+                        );
+                    case 'link':
+                        return (
+                            <>
+                                <ServiceIframeHeader
+                                    content={matrix.roomContents.get(iframeRoomId)?.body}
+                                    title={title}
+                                    removingLink={false}
+                                />
+                                <iframe title="sketch" src={iframeUrl} />
+                            </>
+                        );
+                    default:
+                        return (
+                            <ChatIframeView
+                                title={title}
+                                src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
+                                roomId={iframeRoomId}
+                            />
+                        );
+                }
+            })()}
         </DefaultLayout.IframeWrapper>
     );
 };
