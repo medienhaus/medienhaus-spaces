@@ -1,10 +1,8 @@
 [
     {
         "route": "/intro",
-        "description": "This is the intro tour.",
         "steps": [
             {
-                "element": "p:first-of-type",
                 "popover": {
                     "title": "Welcome",
                     "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
@@ -14,7 +12,7 @@
                 "element": "h3:first-of-type",
                 "popover": {
                     "title": "Follow the Dots",
-                    "description": "This is the first step of the tour."
+                    "description": "There is an indicator as a blinking ◯ next to the element that you need to focus on."
                 }
             },
             {
@@ -35,7 +33,6 @@
     },
     {
         "route": "/account",
-        "description": "This is the account tour.",
         "steps": [
             {
                 "element": "h3:first-of-type",
@@ -62,7 +59,6 @@
     },
     {
         "route": "/chat",
-        "description": "This is the chat tour.",
         "steps": [
             {
                 "element": "h3:first-of-type",

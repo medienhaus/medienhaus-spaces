@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
@@ -10,20 +10,11 @@ import { useOnboarding } from './onboardingContext';
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
 
-    const active = onboarding?.active;
-
-    const currentRoute = onboarding?.currentRoute;
-    const currentSteps = onboarding?.currentSteps;
-    const opened = onboarding?.open;
     const size = onboarding?.size;
-    const currentStepDescription = onboarding?.currentStepDescription;
-    const currentStepTitle = onboarding?.currentStepTitle;
-
-    const tourInstance = onboarding?.tourInstance;
 
     return (
         <>
-            {active && (
+            {onboarding?.active && (
                 <Sheet open={onboarding?.opened} onOpenChange={onboarding?.setOpened} modal={false}>
                     <SheetContent side={size}>
                         <SheetHeader>
@@ -32,18 +23,24 @@ const OnboardingPilot = () => {
                                     onboarding?.setSize(size === 'bottomRight' ? 'minimized' : 'bottomRight');
                                 }}
                             >
-                                __
+                                {size === 'bottomRight' ? '\u035F' : '⌅'}
                             </Button>
-                            <SheetTitle>{onboarding?.currentStepTitle}</SheetTitle>
-                            <SheetDescription>
-                                <Button
-                                    disabled={!onboarding?.hasPrev}
-                                    onClick={() => {
-                                        onboarding.processStep(-1);
-                                    }}
-                                >
-                                    prev
-                                </Button>
+                            <SheetTitle>
+                                {onboarding?.currentRoute} — {onboarding?.currentStepTitle}
+                            </SheetTitle>
+                            <SheetDescription>{onboarding?.currentStepDescription}</SheetDescription>
+                        </SheetHeader>
+
+                        <SheetFooter>
+                            <Button
+                                disabled={!onboarding?.hasPrev}
+                                onClick={() => {
+                                    onboarding.processStep(-1);
+                                }}
+                            >
+                                prev
+                            </Button>
+                            {onboarding?.active && onboarding?.hasNext && (
                                 <Button
                                     disabled={!onboarding?.hasNext}
                                     onClick={() => {
@@ -52,21 +49,27 @@ const OnboardingPilot = () => {
                                 >
                                     next
                                 </Button>
+                            )}
 
-                                <hr />
-                                {onboarding?.currentStepDescription}
-                            </SheetDescription>
-                        </SheetHeader>
-                        some test
-                        {active && !onboarding?.hasNext && (
-                            <Button
-                                onClick={() => {
-                                    onboarding?.nextRoute();
-                                }}
-                            >
-                                continue with {onboarding?.nextRouteName}
-                            </Button>
-                        )}
+                            {onboarding?.active && !onboarding?.hasNext && onboarding?.nextRouteName.length > 0 && (
+                                <Button
+                                    onClick={() => {
+                                        onboarding?.nextRoute();
+                                    }}
+                                >
+                                    continue with {onboarding?.nextRouteName}
+                                </Button>
+                            )}
+                            {onboarding?.active && !onboarding?.hasNext && !onboarding?.nextRouteName.length > 0 && (
+                                <Button
+                                    onClick={() => {
+                                        onboarding?.exit();
+                                    }}
+                                >
+                                    exit Onboarding
+                                </Button>
+                            )}
+                        </SheetFooter>
                     </SheetContent>
                 </Sheet>
             )}

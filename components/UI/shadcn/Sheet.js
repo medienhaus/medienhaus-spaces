@@ -25,8 +25,8 @@ const sheetVariants = cva('fixed z-50 gap-4 bg-background p-6 shadow-lg', {
             bottom: 'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
             left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm',
             right: 'inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
-            bottomRight: 'fixed right-8 bottom-8 w-1/4 h-1/4 rounded-lg bg-onboarding',
-            minimized: 'fixed right-8 bottom-8 w-20 h-16 rounded-lg bg-onboarding',
+            bottomRight: 'fixed right-8 bottom-8 w-1/4 rounded-lg bg-onboarding',
+            minimized: 'fixed right-8 bottom-8 w-20 h-16 rounded-lg bg-onboarding overflow-hidden p-3',
         },
     },
     defaultVariants: {
@@ -57,7 +57,7 @@ const SheetHeader = ({ className, ...props }) => (
 SheetHeader.displayName = 'SheetHeader';
 
 const SheetFooter = ({ className, ...props }) => (
-    <div className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />
+    <div className={cn('mt-8 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />
 );
 SheetFooter.displayName = 'SheetFooter';
 
