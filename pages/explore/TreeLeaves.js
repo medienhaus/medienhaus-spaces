@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
 import { flexRender } from '@tanstack/react-table';
+import { RiLockPasswordLine } from '@remixicon/react';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import logger from '@/lib/Logging';
 import { TableCell, TableRow } from '@/components/UI/shadcn/Table';
+import Icon from '@/components/UI/Icon';
 
 const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small, onRemove, myPowerLevel }, ref) => {
     const auth = useAuth();
@@ -86,15 +88,20 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
                 // @NOTE: the classes below are responsible for making the respective columns not wider than necessary
                 if (cell.id.includes('icon') || cell.id.includes('actions')) {
                     return (
-                        <TableCell className="whitespace-nowrap w-[1px]" key={cell.id}>
+                        <TableCell className="w-[1px] whitespace-nowrap" key={cell.id}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                     );
                 }
 
                 return (
-                    <TableCell key={cell.id}>
+                    <TableCell className="flex items-center gap-2" key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {isPasswordProtected && (
+                            <Icon className="text-muted-foreground">
+                                <RiLockPasswordLine />
+                            </Icon>
+                        )}
                     </TableCell>
                 );
             })}
