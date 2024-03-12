@@ -170,47 +170,46 @@ export default function Chat() {
                     </TextButton>
                     /chat
                 </h2>
-                <details open>
-                    <summary>
-                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('People')}</h3>
-                    </summary>
-                    <ServiceTable>
-                        <ServiceTable.Body>
-                            {directMessages &&
-                                directMessages.map((room) => (
-                                    <ServiceLink
-                                        key={room.roomId}
-                                        href={`/chat/${room.roomId}`}
-                                        name={room.name}
-                                        thumbnail={room.avatar || ' '}
-                                        notificationCount={room.notificationCount}
-                                        selected={roomId === room.roomId}
-                                    />
-                                ))}
-                        </ServiceTable.Body>
-                    </ServiceTable>
-                </details>
-                <br />
-                <details open>
-                    <summary>
-                        <h3 style={{ display: 'inline-block', marginBottom: '1rem' }}>{t('Rooms')}</h3>
-                    </summary>
-                    <ServiceTable>
-                        <ServiceTable.Body>
-                            {otherRooms &&
-                                otherRooms.map((room) => (
-                                    <ServiceLink
-                                        key={room.roomId}
-                                        href={`/chat/${room.roomId}`}
-                                        name={room.name}
-                                        thumbnail={room.avatar || ' '}
-                                        notificationCount={room.notificationCount}
-                                        selected={roomId === room.roomId}
-                                    />
-                                ))}
-                        </ServiceTable.Body>
-                    </ServiceTable>
-                </details>
+                <ServiceTable>
+                    <ServiceTable.Row>
+                        <ServiceTable.Cell>
+                            <h3>{t('People')}</h3>
+                        </ServiceTable.Cell>
+                    </ServiceTable.Row>
+                    <ServiceTable.Body>
+                        {directMessages &&
+                            directMessages.map((room) => (
+                                <ServiceLink
+                                    key={room.roomId}
+                                    href={`/chat/${room.roomId}`}
+                                    name={room.name}
+                                    thumbnail={room.avatar || ' '}
+                                    notificationCount={room.notificationCount}
+                                    selected={roomId === room.roomId}
+                                />
+                            ))}
+                    </ServiceTable.Body>
+                </ServiceTable>
+                <ServiceTable style={{ borderTop: '0' }}>
+                    <ServiceTable.Row style={{ borderTop: '0' }}>
+                        <ServiceTable.Cell>
+                            <h3>{t('Rooms')}</h3>
+                        </ServiceTable.Cell>
+                    </ServiceTable.Row>
+                    <ServiceTable.Body>
+                        {otherRooms &&
+                            otherRooms.map((room) => (
+                                <ServiceLink
+                                    key={room.roomId}
+                                    href={`/chat/${room.roomId}`}
+                                    name={room.name}
+                                    thumbnail={room.avatar || ' '}
+                                    notificationCount={room.notificationCount}
+                                    selected={roomId === room.roomId}
+                                />
+                            ))}
+                    </ServiceTable.Body>
+                </ServiceTable>
             </DefaultLayout.Sidebar>
             {roomId && (
                 <DefaultLayout.IframeWrapper>

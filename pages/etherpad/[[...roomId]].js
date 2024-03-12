@@ -305,7 +305,7 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
-    if (!auth.connectionStatus.etherpad)
+    if (isMyPadsApiEnabled && !auth.connectionStatus.etherpad)
         return (
             <DefaultLayout.LameColumn>
                 <LoginPrompt service={etherpadPath} />
