@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -35,35 +34,12 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
         }
 
         setErrorMessage('');
-        //
-        // if (!name) {
-        //     setErrorMessage('name not set');
-        //
-        //     return;
-        // }
-        //
-        // if (!url) {
-        //     setErrorMessage('link not set');
-        // }
 
         // create the new context space
         const createNewLink = await matrix
-            .createRoom(
-                name,
-                false,
-                '',
-                'public',
-                'context',
-                'link',
-                getConfig().publicRuntimeConfig.name,
-                'public',
-                'world_readable',
-                'public_chat',
-            )
+            .createRoom(name, false, '', 'public', 'context', 'link', currentId, 'public', 'world_readable')
             .catch(async (err) => {
                 setErrorMessage(err.message);
-
-                return;
             });
 
         // then add our new context to the parent.
@@ -74,16 +50,17 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
                 .catch(async (err) => {
                     setErrorMessage(err.message);
                 });
+
+            await matrix.sendMessage(createNewLink, url).catch((error) => setErrorMessage(error));
+
+            await getSpaceChildren(null, currentId);
+            setName('');
+            setUrl('');
+            toast.success(t('Link added successfully'));
+            onCancel();
         }
 
-        await matrix.sendMessage(createNewLink, url).catch((error) => setErrorMessage(error));
-
-        await getSpaceChildren(null, currentId);
-        setName('');
-        setUrl('');
         setIsLoading(false);
-        toast.success(t('Link added successfully'));
-        onCancel();
     };
 
     return (
