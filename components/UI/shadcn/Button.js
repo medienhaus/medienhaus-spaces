@@ -18,9 +18,10 @@ const buttonVariants = cva(
             },
             size: {
                 default: 'h-10 px-4 py-2',
-                sm: 'h-9 rounded px-3',
-                lg: 'h-11 rounded px-8',
-                icon: 'h-10 w-10',
+                sm: 'h-8 px-2 text-sm',
+                // @NOTE: variant="ghost" && size="icon" should now be the same as <TextButton /> styled component;
+                // @TODO: needs to be universally verified, and then <TextButton /> could be replaced by <Button />
+                icon: 'h-[unset] min-w-[24px]'
             },
         },
         defaultVariants: {

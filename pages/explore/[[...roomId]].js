@@ -5,17 +5,27 @@ import _ from 'lodash';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { EventTimeline } from 'matrix-js-sdk';
-import { RiAddLine, RiUserLine } from '@remixicon/react';
+import {
+    RiAddLine,
+    RiBrush2Line,
+    RiBrushLine,
+    RiChat1Line,
+    RiFolderLine,
+    RiFolderSettingsLine,
+    RiFolderUnknowLine,
+    RiLink,
+    RiPencilLine,
+    RiUserLine,
+} from '@remixicon/react';
 import { toast } from 'sonner';
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import Link from 'next/link';
 
-import { ServiceTable } from '@/components/UI/ServiceTable';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 // import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
-import ErrorMessage from '../../components/UI/ErrorMessage';
-import TreeLeaves from './TreeLeaves';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
@@ -25,6 +35,9 @@ import { Button } from '@/components/UI/shadcn/Button';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
+import TreeLeaves from './TreeLeaves';
+import EllipsisMenu from './manage-room/EllipsisMenu';
 
 const ServiceTableWrapper = styled.div`
     width: 100%;
@@ -255,6 +268,18 @@ export default function Explore() {
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
     const removeChildFromParent = async (idToRemove) => {
+        if (idToRemove === roomId) {
+            toast.error('You cannot remove the parent room from itself');
+
+            return false;
+        }
+
+        if (!idToRemove) {
+            toast.error('No room id provided');
+
+            return false;
+        }
+
         await auth
             .getAuthenticationProvider('matrix')
             .removeSpaceChild(roomId, idToRemove)
@@ -267,6 +292,104 @@ export default function Explore() {
 
         return true;
     };
+
+    const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
+    const columns = [
+        {
+            accessorKey: 'icon',
+            header: (
+                <Icon>
+                    <RiFolderUnknowLine />
+                </Icon>
+            ),
+            cell: ({ row }) => {
+                if (row.original?.meta?.template === 'etherpad') {
+                    return (
+                        <Icon>
+                            <RiPencilLine />
+                        </Icon>
+                    );
+                }
+
+                if (row.original?.meta?.template === 'spacedeck') {
+                    return (
+                        <Icon>
+                            <RiBrush2Line />
+                        </Icon>
+                    );
+                }
+
+                if (row.original?.meta?.template === 'tldraw') {
+                    return (
+                        <Icon>
+                            <RiBrushLine />
+                        </Icon>
+                    );
+                }
+
+                if (row.original?.meta?.template === 'link') {
+                    return (
+                        <Icon>
+                            <RiLink />
+                        </Icon>
+                    );
+                }
+
+                if (row.original?.meta?.type === 'context') {
+                    return (
+                        <Icon>
+                            <RiFolderLine />
+                        </Icon>
+                    );
+                }
+
+                if (!row.original?.meta) {
+                    return (
+                        <Icon>
+                            <RiChat1Line />
+                        </Icon>
+                    );
+                }
+            },
+        },
+        {
+            accessorKey: 'name',
+            header: 'Name',
+            cell: ({ row }) => (
+                <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
+                    {row.getValue('name')}
+                </Link>
+            ),
+        },
+        {
+            id: 'actions',
+            header: (
+                <Icon>
+                    <RiFolderSettingsLine />
+                </Icon>
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className="grid justify-end">
+                        <EllipsisMenu
+                            parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                            onRemove={() => removeChildFromParent(row.roomId)}
+                            myPowerLevel={myPowerLevel}
+                            parentRoomId={roomId}
+                            name={row.name}
+                            href={row.href}
+                        />
+                    </div>
+                );
+            },
+        },
+    ];
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
 
     if (typeof window === 'undefined') return <LoadingSpinner />;
 
@@ -321,7 +444,7 @@ export default function Explore() {
                                 // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 // setSettingsTabValue={setSettingsTabValue}
                             />
-                            <ServiceTableWrapper>
+                            <ServiceTableWrapper className="flex h-full flex-col justify-between">
                                 {manageContextActionToggle ? (
                                     <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
@@ -331,69 +454,106 @@ export default function Explore() {
                                         </TextButton>
                                     </UserManagement>
                                 ) : (
-                                    <ServiceTable>
-                                        {selectedSpaceChildren[selectedSpaceChildren.length - 1]
-                                            .sort(function (a, b) {
-                                                if (a.type === 'item' && b.type !== 'item') {
-                                                    return -1; // 'a' comes before 'b'
-                                                } else if (a.type !== 'item' && b.type === 'item') {
-                                                    return 1; // 'a' comes after 'b'
-                                                } else {
-                                                    return 0; // No sorting necessary
-                                                }
-                                            })
-                                            .map((leaf, index) => {
-                                                if (leaf.length <= 1) {
-                                                    return (
-                                                        <ErrorMessage key="error-message">
-                                                            Thank you, {auth.user.displayname}! But our item is in another context! 🍄
-                                                        </ErrorMessage>
-                                                    );
-                                                }
+                                    <>
+                                        {table.getRowModel().rows?.length > 1 && (
+                                            <Table>
+                                                {/*
+                                              @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
+                                              fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
+                                              from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
+                                             */}
+                                                <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                    {table.getHeaderGroups().map((headerGroup) => (
+                                                        <TableRow key={headerGroup.id}>
+                                                            {headerGroup.headers.map((header) => {
+                                                                return (
+                                                                    <TableHead key={header.id}>
+                                                                        {header.isPlaceholder
+                                                                            ? null
+                                                                            : flexRender(
+                                                                                  header.column.columnDef.header,
+                                                                                  header.getContext(),
+                                                                              )}
+                                                                    </TableHead>
+                                                                );
+                                                            })}
+                                                        </TableRow>
+                                                    ))}
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {table.getRowModel().rows?.length ? (
+                                                        table.getRowModel().rows.map((row, index) => {
+                                                            if (index === 0) return null;
 
-                                                if (index === 0) return null;
-                                                const roomId = leaf.id || leaf.room_id || leaf.roomId;
-
-                                                // Sort the array to display objects of type 'item' before others
-                                                return (
-                                                    <TreeLeaves
-                                                        depth={selectedSpaceChildren.length}
-                                                        leaf={leaf}
-                                                        isChat={
-                                                            (!leaf.meta && !leaf.room_type) || (!leaf.meta && leaf.room_type === 'm.room')
-                                                        } // chat rooms created with element do not have a room_type attribute. therefore we have to check for both cases
-                                                        key={roomId + '_' + index}
-                                                        iframeRoomId={iframeRoomId}
-                                                        isFetchingContent={isFetchingContent}
-                                                        parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                                                        onRemove={removeChildFromParent}
-                                                        myPowerLevel={myPowerLevel}
-                                                    />
-                                                );
-                                            })}
-                                    </ServiceTable>
+                                                            return <TreeLeaves key={row.id} row={row} />;
+                                                        })
+                                                    ) : (
+                                                        <TableRow>
+                                                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                                                Thank you, {auth.user.displayname}! But our item is in another context! 🍄
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </TableBody>
+                                                {!manageContextActionToggle &&
+                                                    matrixClient
+                                                        .getRoom(roomId)
+                                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                        <TableFooter>
+                                                            <TableRow>
+                                                                <TableCell colSpan="3">
+                                                                    <QuickAddExplore
+                                                                        currentId={roomId}
+                                                                        roomName={matrix.spaces.get(roomId).name}
+                                                                        getSpaceChildren={getSpaceChildren}
+                                                                        allChatRooms={allChatRooms}
+                                                                        trigger={
+                                                                            <Button
+                                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                                                variant="ghost"
+                                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                                            >
+                                                                                {t('Add more …')}
+                                                                                <Icon>
+                                                                                    <RiAddLine />
+                                                                                </Icon>
+                                                                            </Button>
+                                                                        }
+                                                                    />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableFooter>
+                                                    )}
+                                            </Table>
+                                        )}
+                                        {/*pagination component which we are currently not using, but might in the future*/}
+                                        {/*{table.getRowModel().rows?.length > 1 && (*/}
+                                        {/*    <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">*/}
+                                        {/*        <div className="flex-1 text-sm text-muted-foreground">*/}
+                                        {/*            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}*/}
+                                        {/*        </div>*/}
+                                        {/*        <div className="space-x-2">*/}
+                                        {/*            <Button*/}
+                                        {/*                variant="outline"*/}
+                                        {/*                size="sm"*/}
+                                        {/*                onClick={() => table.previousPage()}*/}
+                                        {/*                disabled={!table.getCanPreviousPage()}*/}
+                                        {/*            >*/}
+                                        {/*                Previous*/}
+                                        {/*            </Button>*/}
+                                        {/*            <Button*/}
+                                        {/*                variant="outline"*/}
+                                        {/*                size="sm"*/}
+                                        {/*                onClick={() => table.nextPage()}*/}
+                                        {/*                disabled={!table.getCanNextPage()}*/}
+                                        {/*            >*/}
+                                        {/*                Next*/}
+                                        {/*            </Button>*/}
+                                        {/*        </div>*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
+                                    </>
                                 )}
-                                {!manageContextActionToggle &&
-                                    matrixClient
-                                        .getRoom(roomId)
-                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                        <QuickAddExplore
-                                            currentId={roomId}
-                                            roomName={matrix.spaces.get(roomId).name}
-                                            getSpaceChildren={getSpaceChildren}
-                                            allChatRooms={allChatRooms}
-                                            trigger={
-                                                <Button
-                                                    className="w-full justify-between px-0 hover:text-accent"
-                                                    variant="ghost"
-                                                    // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                >
-                                                    {t('Add more …')}
-                                                    <RiAddLine />
-                                                </Button>
-                                            }
-                                        />
-                                    )}
                             </ServiceTableWrapper>
                         </DefaultLayout.Wrapper>
                     </>
