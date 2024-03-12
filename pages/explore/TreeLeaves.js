@@ -99,7 +99,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             {isPasswordProtected && (
                                 <Icon className="text-muted-foreground">
-                                    <RiLockPasswordLine />
+                                    <RiLockPasswordLine className="!w-4" />
                                 </Icon>
                             )}
                         </div>
