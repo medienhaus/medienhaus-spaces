@@ -3,7 +3,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto">
+    <div className="relative w-full">
         <table ref={ref} className={cn('w-full caption-bottom', className)} {...props} />
     </div>
 ));
@@ -19,7 +19,7 @@ TableHeader.displayName = 'TableHeader';
 const TableBody = React.forwardRef(({ className, ...props }, ref) => (
     <tbody
         ref={ref}
-        className={cn('[&_tr:hover]:bg-accent-foreground/20 [&_tr]:border-b [&_tr]:border-muted-foreground/20', className)}
+        className={cn('[&_tr:hover]:bg-accent-foreground/20 [&_tr:not(:last-of-type)]:border-b [&_tr]:border-muted-foreground/20', className)}
         {...props}
     />
 ));
@@ -38,14 +38,14 @@ TableRow.displayName = 'TableRow';
 const TableHead = React.forwardRef(({ className, ...props }, ref) => (
     <th
         ref={ref}
-        className={cn('h-12 text-left align-middle font-medium text-muted-foreground [&+th]:pl-4 [&:has([role=checkbox])]:pr-0', className)}
+        className={cn('min-h-12 text-left align-middle font-medium text-muted-foreground [&+th]:pl-4 [&:has([role=checkbox])]:pr-0', className)}
         {...props}
     />
 ));
 TableHead.displayName = 'TableHead';
 
 const TableCell = React.forwardRef(({ className, ...props }, ref) => (
-    <td ref={ref} className={cn('h-12 align-middle [&+td]:pl-4 [&:has([role=checkbox])]:pr-0', className)} {...props} />
+    <td ref={ref} className={cn('min-h-12 align-middle [&+td]:pl-4 [&:has([role=checkbox])]:pr-0', className)} {...props} />
 ));
 TableCell.displayName = 'TableCell';
 

@@ -1,12 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { RiBrush2Line, RiBrushLine, RiChat1Line, RiFolderLine, RiFolderUnknowLine, RiLink, RiPencilLine } from '@remixicon/react';
+import { RiBrush2Line, RiBrushLine, RiChat1Line, RiEditLine, RiFolderLine, RiFolderUnknowLine, RiLink } from '@remixicon/react';
 import { useRouter } from 'next/router';
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/UI/shadcn/DropdownMenu';
-import { ServiceTable } from '@/components/UI/ServiceTable';
 import TreeLeaves from './TreeLeaves';
 import {
     Breadcrumb,
@@ -19,27 +17,6 @@ import {
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import Icon from '@/components/UI/Icon';
 import { Table, TableBody } from '@/components/UI/shadcn/Table';
-
-const Leaf = styled(ServiceTable.Cell)`
-    cursor: pointer;
-    animation: fade-in 0.3s;
-
-    a {
-        &:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
-
-    @keyframes fade-in {
-        0% {
-            opacity: 0;
-        }
-        100% {
-            opacity: 1;
-        }
-    }
-`;
 
 const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) => {
     const router = useRouter();
@@ -55,7 +32,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                 if (row.original?.meta?.template === 'etherpad') {
                     return (
                         <Icon>
-                            <RiPencilLine />
+                            <RiEditLine />
                         </Icon>
                     );
                 }
