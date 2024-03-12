@@ -16,38 +16,10 @@ const OnboardingPilot = () => {
     const currentSteps = onboarding?.currentSteps;
     const opened = onboarding?.open;
     const size = onboarding?.size;
-    const currentStep = onboarding?.currentStep;
-    const hasPrev = onboarding?.hasPrev;
-    const hasNext = onboarding?.hasNext;
     const currentStepDescription = onboarding?.currentStepDescription;
     const currentStepTitle = onboarding?.currentStepTitle;
 
     const tourInstance = onboarding?.tourInstance;
-
-    const onbaordingProcessStep = (offset) => {
-        if (!tourInstance.isActive()) {
-            tourInstance.drive();
-            setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-            setCurretnStepTitle(tourInstance.getActiveStep().popover.title);
-
-            return;
-        }
-
-        if (offset > 0 && !tourInstance.isLastStep()) {
-            tourInstance.moveNext();
-            setCurrentStep(tourInstance.getActiveIndex() - 1);
-        } else if (offset < 0 && !tourInstance.isFirstStep()) {
-            tourInstance.movePrevious();
-            setCurrentStep(tourInstance.getActiveIndex() + 1);
-        }
-
-        setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-        setCurretnStepTitle(tourInstance.getActiveStep().popover.title);
-
-        tourInstance.refresh();
-        setHasPrev(!tourInstance.isFirstStep());
-        setHasNext(!tourInstance.isLastStep());
-    };
 
     return (
         <>
@@ -62,31 +34,39 @@ const OnboardingPilot = () => {
                             >
                                 __
                             </Button>
-                            <SheetTitle>{currentStepTitle}</SheetTitle>
+                            <SheetTitle>{onboarding?.currentStepTitle}</SheetTitle>
                             <SheetDescription>
                                 <Button
-                                    disabled={!hasPrev}
+                                    disabled={!onboarding?.hasPrev}
                                     onClick={() => {
-                                        onbaordingProcessStep(-1);
+                                        onboarding.processStep(-1);
                                     }}
                                 >
                                     prev
                                 </Button>
                                 <Button
-                                    disabled={!hasNext}
+                                    disabled={!onboarding?.hasNext}
                                     onClick={() => {
-                                        onbaordingProcessStep(1);
+                                        onboarding.processStep(1);
                                     }}
                                 >
                                     next
                                 </Button>
 
                                 <hr />
-                                {currentStepDescription}
+                                {onboarding?.currentStepDescription}
                             </SheetDescription>
                         </SheetHeader>
                         some test
-                        {active && hasNext && <Button>continue with </Button>}
+                        {active && !onboarding?.hasNext && (
+                            <Button
+                                onClick={() => {
+                                    onboarding?.nextRoute();
+                                }}
+                            >
+                                continue with {onboarding?.nextRouteName}
+                            </Button>
+                        )}
                     </SheetContent>
                 </Sheet>
             )}

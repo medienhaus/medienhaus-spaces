@@ -10,7 +10,6 @@ import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Button } from '@/components/UI/shadcn/Button';
-
 import { OnboardingContext, useOnboarding } from '@/components/onboarding/onboardingContext';
 
 const IntroSection = styled(DefaultLayout.LameColumn)`
@@ -30,13 +29,6 @@ export default function Intro() {
     const { t } = useTranslation('intro');
 
     const onboading = useOnboarding();
-    console.log('intro onboarding', onboading);
-    const active = onboading?.active;
-    //const [active, setActive] = useState(false);
-
-    useEffect(() => {
-        console.log('activeIntro', active);
-    }, [active]);
 
     const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -96,7 +88,7 @@ export default function Intro() {
                         disabled={!termsAccepted}
                         variant="onboarding"
                         onClick={() => {
-                            onboading.setActive(true);
+                            onboading.startTour();
                         }}
                     >
                         Start Onboarding

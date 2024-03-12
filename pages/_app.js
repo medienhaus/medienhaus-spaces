@@ -14,7 +14,6 @@ import '../assets/_globalCss.css';
 import '../assets/driverJsCustom.css';
 
 import { useOnboardingProvider, OnboardingContext } from '@/components/onboarding/onboardingContext';
-
 import OnboardingPilot from '@/components/onboarding/onboardingPilot';
 
 // Enable immer support for Map() and Set()

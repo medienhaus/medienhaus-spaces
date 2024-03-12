@@ -38,6 +38,7 @@
         "description": "This is the account tour.",
         "steps": [
             {
+                "element": "h3:first-of-type",
                 "popover": {
                     "title": "Step -1",
                     "description": "This is the first step of the tour."
@@ -55,6 +56,33 @@
                 "popover": {
                     "title": "Step 6",
                     "description": "This is the second step of the tour."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/chat",
+        "description": "This is the chat tour.",
+        "steps": [
+            {
+                "element": "h3:first-of-type",
+                "popover": {
+                    "title": "Step 10",
+                    "description": "abc"
+                }
+            },
+            {
+                "element": "p:first-of-type",
+                "popover": {
+                    "title": "Step 11",
+                    "description": "def"
+                }
+            },
+            {
+                "element": "h3:first-of-type",
+                "popover": {
+                    "title": "Step 12",
+                    "description": "gih"
                 }
             }
         ]
