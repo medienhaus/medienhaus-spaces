@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
 import { Button } from '@/components/UI/shadcn/Button';
@@ -6,6 +8,7 @@ import { useOnboarding } from './onboardingContext';
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
 
+    const { t } = useTranslation('onboarding');
     const size = onboarding?.size;
 
     return (
@@ -34,7 +37,7 @@ const OnboardingPilot = () => {
                                     onboarding.processStep(-1);
                                 }}
                             >
-                                prev
+                                {t('prev')}
                             </Button>
                             {onboarding?.active && onboarding?.hasNext && (
                                 <Button
@@ -43,7 +46,7 @@ const OnboardingPilot = () => {
                                         onboarding.processStep(1);
                                     }}
                                 >
-                                    next
+                                    {t('next')}
                                 </Button>
                             )}
 
@@ -53,7 +56,7 @@ const OnboardingPilot = () => {
                                         onboarding?.nextRoute();
                                     }}
                                 >
-                                    continue with {onboarding?.nextRouteName}
+                                    {t('continue with')} {onboarding?.nextRouteName}
                                 </Button>
                             )}
                             {onboarding?.active && !onboarding?.hasNext && !onboarding?.nextRouteName.length > 0 && (
@@ -62,7 +65,7 @@ const OnboardingPilot = () => {
                                         onboarding?.exit();
                                     }}
                                 >
-                                    exit Onboarding
+                                    {t('exit onboarding')}
                                 </Button>
                             )}
                         </SheetFooter>
