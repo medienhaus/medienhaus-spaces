@@ -27,12 +27,8 @@
 
 @keyframes blink {
     0% {
-        opacity: 0;
-    }
-    1% {
         opacity: 1;
     }
-
     49% {
         opacity: 1;
     }

@@ -35,7 +35,7 @@ const OnboardingPilot = () => {
                             <SheetDescription>{onboarding?.currentStepDescription}</SheetDescription>
                         </SheetHeader>
 
-                        <SheetFooter className="mt-8 ">
+                        <SheetFooter className="mt-8 grid grid-cols-2 gap-4">
                             <Button
                                 disabled={!onboarding?.hasPrev}
                                 onClick={() => {
@@ -61,7 +61,7 @@ const OnboardingPilot = () => {
                                         onboarding?.nextRoute();
                                     }}
                                 >
-                                    {t('continue with')} {onboarding?.nextRouteName}
+                                    {'\uE1D8'} {onboarding?.nextRouteName}
                                 </Button>
                             )}
                             {onboarding?.active && !onboarding?.hasNext && !onboarding?.nextRouteName.length > 0 && (
@@ -70,7 +70,7 @@ const OnboardingPilot = () => {
                                         onboarding?.exit();
                                     }}
                                 >
-                                    {t('exit onboarding')}
+                                    {t('close')}
                                 </Button>
                             )}
                         </SheetFooter>
