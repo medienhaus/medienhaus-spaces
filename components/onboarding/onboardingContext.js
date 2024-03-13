@@ -1,4 +1,4 @@
-import { createContext, use, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
 
@@ -35,13 +35,23 @@ function useOnboardingProvider() {
 
     const isScriptCustom = onboadingScriptCustom?.length > 0;
 
-    const startTour = () => {
+    const startTour = (position = 0) => {
+        if (position > onboadingScript.length - 1) {
+            position = 0;
+        }
+
         // start the tour with the first route and its steps. reset everything to the initial state
-        setCurrentRoute(onboadingScript[0].route);
-        setCurrentSteps(onboadingScript[0].steps);
+        setCurrentRoute(onboadingScript[position].route);
+        setCurrentSteps(onboadingScript[position].steps);
+        setCurrentRouteIndex(position);
         setCurrentStep(0);
         setActive(true);
-        router.push(onboadingScript[0].route);
+
+        if (position > 0) {
+            setPrevRouteName(onboadingScript[position - 1].route);
+        }
+
+        router.push(onboadingScript[position].route);
     };
 
     useEffect(() => {
@@ -70,8 +80,8 @@ function useOnboardingProvider() {
         // start the tour if the instance is created, which is the case after a route change
         if (tourInstance) {
             tourInstance.drive();
-            setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-            setCurrentStepTitle(tourInstance.getActiveStep().popover.title);
+            setCurrentStepDescription(tourInstance?.getActiveStep()?.popover?.description);
+            setCurrentStepTitle(tourInstance?.getActiveStep()?.popover?.title);
             tourInstance.refresh();
             setHasPrev(!tourInstance.isFirstStep());
             setHasNext(!tourInstance.isLastStep());
@@ -143,15 +153,32 @@ function useOnboardingProvider() {
 
     const exit = () => {
         setActive(false);
-        tourInstance.destroy();
+        tourInstance?.destroy();
         setCurrentRouteIndex(0);
         setCurrentSteps([]);
     };
 
+    const writeOnboardStateToAccountData = async (matrixClient, overwrittenData) => {
+        const data = {
+            active: active,
+            currentRouteIndex: currentRouteIndex,
+            completed: false,
+        };
+
+        Object.keys(overwrittenData).forEach((key) => {
+            data[key] = overwrittenData[key];
+        });
+
+        await matrixClient.setAccountData('dev.medienhaus.spaces.onboarding', data);
+    };
+
     return {
         active,
+        setActive,
+        setCurrentRoute,
         currentRoute,
         currentSteps,
+        currentRouteIndex,
         currentStep,
         hasPrev,
         hasNext,
@@ -166,6 +193,7 @@ function useOnboardingProvider() {
         nextRouteName,
         exit,
         isScriptCustom,
+        writeOnboardStateToAccountData,
     };
 }
 

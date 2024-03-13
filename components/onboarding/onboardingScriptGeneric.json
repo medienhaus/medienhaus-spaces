@@ -4,28 +4,28 @@
         "steps": [
             {
                 "popover": {
-                    "title": "Welcome",
+                    "title": "0:0",
                     "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
                 }
             },
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Follow the Dots",
+                    "title": "0:1",
                     "description": "There is an indicator as a blinking ◯ next to the element that you need to focus on."
                 }
             },
             {
                 "element": "h3:nth-of-type(2)",
                 "popover": {
-                    "title": "Step 3",
+                    "title": "0:2",
                     "description": "This is the third step of the tour."
                 }
             },
             {
                 "element": "h3:last-of-type",
                 "popover": {
-                    "title": "Step 4",
+                    "title": "0:3",
                     "description": "This is the last step of the tour."
                 }
             }
@@ -37,21 +37,21 @@
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Step -1",
+                    "title": "1:0",
                     "description": "This is the first step of the tour."
                 }
             },
             {
                 "element": "p:first-of-type",
                 "popover": {
-                    "title": "Step 5",
+                    "title": "1:1",
                     "description": "This is the first step of the tour."
                 }
             },
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Step 6",
+                    "title": "1:2",
                     "description": "This is the second step of the tour."
                 }
             }
@@ -63,21 +63,21 @@
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Step 10",
+                    "title": "2:0",
                     "description": "abc"
                 }
             },
             {
                 "element": "p:first-of-type",
                 "popover": {
-                    "title": "Step 11",
+                    "title": "2:1",
                     "description": "def"
                 }
             },
             {
                 "element": "h3:first-of-type",
                 "popover": {
-                    "title": "Step 12",
+                    "title": "2:2",
                     "description": "gih"
                 }
             }

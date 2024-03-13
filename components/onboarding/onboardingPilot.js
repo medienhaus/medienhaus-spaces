@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
+import { useMatrix } from '@/lib/Matrix';
+import { useAuth } from '@/lib/Auth';
 
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
+    const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const matrix = useMatrix();
 
     const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
     const [side, setSide] = useState('onboardingBottomRight');
     const [isOpen, setIsOpen] = useState(true);
+
+    //no clue why it is not possible to use the matrix.onboardingData object directly in the context file. therefore we have to use it here and pass it to the context – schade…
+    useEffect(() => {
+        if (matrix?.onboardingData?.hasOwnProperty('completed') && matrix.onboardingData.completed && onboarding.active) {
+            onboarding.exit();
+        } else if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active !== onboarding.active) {
+            if (matrix?.onboardingData?.active) {
+                if (matrix?.onboardingData?.hasOwnProperty('completed') && matrix.onboardingData.completed === false) {
+                    onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
+                }
+            } else {
+                onboarding.setActive(false);
+            }
+        }
+    }, [matrix.onboardingData, onboarding]);
+
+    if (!auth?.user) return null;
 
     if (!onboarding) return null;
 
@@ -54,7 +76,10 @@ const OnboardingPilot = () => {
                             )}
                             {onboarding.active && !onboarding.hasPrev && onboarding.prevRouteName && (
                                 <Button
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await onboarding.writeOnboardStateToAccountData(matrixClient, {
+                                            currentRouteIndex: onboarding.currentRouteIndex - 1,
+                                        });
                                         onboarding.prevRoute();
                                     }}
                                 >
@@ -74,7 +99,10 @@ const OnboardingPilot = () => {
 
                             {onboarding.active && !onboarding.hasNext && onboarding.nextRouteName.length > 0 && (
                                 <Button
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await onboarding.writeOnboardStateToAccountData(matrixClient, {
+                                            currentRouteIndex: onboarding.currentRouteIndex + 1,
+                                        });
                                         onboarding.nextRoute();
                                     }}
                                 >
@@ -83,8 +111,9 @@ const OnboardingPilot = () => {
                             )}
                             {onboarding.active && !onboarding.hasNext && !onboarding.nextRouteName.length > 0 && (
                                 <Button
-                                    onClick={() => {
+                                    onClick={async () => {
                                         onboarding.exit();
+                                        await onboarding.writeOnboardStateToAccountData(matrixClient, { completed: true, active: false });
                                     }}
                                 >
                                     {t('close')}

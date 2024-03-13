@@ -11,6 +11,7 @@ import DefaultLayout from '@/components/layouts/default';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Button } from '@/components/UI/shadcn/Button';
 import { OnboardingContext, useOnboarding } from '@/components/onboarding/onboardingContext';
+import { useMatrix } from '@/lib/Matrix';
 
 const IntroSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to
@@ -28,7 +29,9 @@ const IntroSection = styled(DefaultLayout.LameColumn)`
 export default function Intro() {
     const { t } = useTranslation('intro');
 
-    const onboading = useOnboarding();
+    const onboarding = useOnboarding();
+    const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -88,7 +91,12 @@ export default function Intro() {
                         disabled={!termsAccepted}
                         variant="onboarding"
                         onClick={() => {
-                            onboading.startTour();
+                            onboarding.startTour();
+                            onboarding.writeOnboardStateToAccountData(matrixClient, {
+                                completed: false,
+                                active: true,
+                                currentRouteIndex: 0,
+                            });
                         }}
                     >
                         Start Onboarding
