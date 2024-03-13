@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
@@ -37,6 +37,7 @@ import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
+import { useGetSpaceChildren } from './useGetSpaceChildren';
 import { Progress } from '@/components/UI/shadcn/Progress';
 
 /**
@@ -54,10 +55,8 @@ export default function Explore() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
-    const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
-    const [progress, setProgress] = useState(0);
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -80,6 +79,13 @@ export default function Explore() {
         ['users', matrixClient.getUserId()],
     );
     /** @type {string|undefined} */
+
+    const cachedSpace = matrix.spaces.get(roomId);
+    const allChatRooms = Array.from(matrix.rooms.values())
+        .filter((room) => !room.meta)
+        .filter((room) => !matrix.directMessages.has(room.roomId));
+
+    const { progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(auth, matrix, matrixClient, cachedSpace);
     const currentTemplate =
         iframeRoomId &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
@@ -87,11 +93,6 @@ export default function Explore() {
 
             return roomId === iframeRoomId;
         }).meta?.template;
-    const cachedSpace = matrix.spaces.get(roomId);
-    const allChatRooms = Array.from(matrix.rooms.values())
-        .filter((room) => !room.meta)
-        .filter((room) => !matrix.directMessages.has(room.roomId));
-
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -114,151 +115,6 @@ export default function Explore() {
 
         return () => controller.abort();
     }, [iframeRoomId, matrix]);
-
-    // Call API to fetch and add room hierarchy to selectedSpaceChildren
-    const getSpaceChildren = useCallback(
-        async (e, roomId) => {
-            if (!selectedSpaceChildren) return;
-            e && e.preventDefault();
-            logger.debug('Fetch the room hierarchy for ' + roomId);
-            setProgress(10);
-
-            const getHierarchyFromServer = async (roomId) => {
-                const roomHierarchyFromServer = await matrix.roomHierarchy(roomId, null, 1).catch(async (error) => {
-                    if (error.data?.error.includes('not in room')) {
-                        // If the error indicates the user is not in the room and previews are disabled
-                        // We prompt the user to join the room.
-                        if (
-                            confirm(
-                                t('You are currently not in room {{roomId}}, and previews are disabled. Do you want to join the room?', {
-                                    roomId: roomId,
-                                }),
-                            )
-                        ) {
-                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => {
-                                toast.error(error.message);
-                            });
-
-                            // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                            if (joinRoom) return await getHierarchyFromServer(roomId);
-                        }
-                    } else {
-                        return matrix
-                            .handleRateLimit(error, () => getHierarchyFromServer(roomId))
-                            .catch((error) => {
-                                // we don't want to display unnecessary error messages.
-                                if (error.message === 'Event not found.') return;
-                                if (error.message.includes('not in room')) return;
-                                toast.error(error.message);
-                            }); // Handle other errors by setting an error message.
-                    }
-                });
-                if (!roomHierarchyFromServer) return;
-                const parent = roomHierarchyFromServer[0];
-
-                const getMetaEvent = async (obj) => {
-                    logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
-                    const metaEvent = await auth
-                        .getAuthenticationProvider('matrix')
-                        .getMatrixClient()
-                        .getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
-
-                    if (metaEvent) obj.meta = metaEvent;
-                };
-
-                for (const space of roomHierarchyFromServer) {
-                    // update the progress bar for each space up to 90% depending on the amount of spaces
-                    setProgress((prevState) => {
-                        if (prevState < 90) return Math.ceil(prevState + 90 / roomHierarchyFromServer.length);
-
-                        return prevState;
-                    });
-
-                    if (space.room_id !== roomHierarchyFromServer[0].room_id) {
-                        space.parent = parent;
-                    }
-
-                    await getMetaEvent(space).catch((error) => {
-                        logger.debug(error);
-
-                        return matrix
-                            .handleRateLimit(error, () => getMetaEvent(space))
-                            .catch((error) => {
-                                // we don't want to display unnecessary error messages.
-                                if (error.message === 'Event not found.') return;
-                                if (error.message.includes('not in room')) return;
-
-                                toast.error(error.message);
-                            });
-                    });
-                }
-
-                return roomHierarchyFromServer;
-            };
-
-            // initialise the spaceHierarchy array which is either filled by our cache or the server
-            let spaceHierarchy = [];
-
-            // if a cached space exists, we can use it to get the children
-            if (cachedSpace) {
-                if (cachedSpace.children) {
-                    for await (const roomId of cachedSpace.children) {
-                        // update the progress bar for each space up to 90% depending on the amount of spaces
-                        setProgress((prevState) => {
-                            if (prevState < 90) return Math.ceil(prevState + 90 / cachedSpace.children.length);
-
-                            return prevState;
-                        });
-
-                        const cachedChild = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
-
-                        if (!_.isEmpty(cachedChild)) {
-                            const copy = { ...cachedChild };
-                            copy.parent = cachedSpace;
-                            spaceHierarchy.push(copy);
-                        } else {
-                            const getChildFromServer = await getHierarchyFromServer(roomId);
-                            if (!getChildFromServer) return;
-                            getChildFromServer[0].parent = cachedSpace;
-                            spaceHierarchy.push(getChildFromServer[0]);
-                        }
-                    }
-
-                    // insert the cached space at the beginning of the array to mimic the behaviour of matrix.getRoomHierarchy
-                    spaceHierarchy.splice(0, 0, cachedSpace);
-                }
-            } else {
-                spaceHierarchy = await getHierarchyFromServer(roomId);
-            }
-
-            setSelectedSpaceChildren((prevState) => {
-                // Check if the selected roomId is already inside the array
-                let indexOfParent = null;
-
-                for (const [index, children] of prevState.entries()) {
-                    const childRoomId = children[0].room_id || children[0].roomId || children[0].id;
-
-                    if (childRoomId === roomId) {
-                        // If there is a match, return the position and exit the loop
-                        indexOfParent = index;
-                        break;
-                    }
-                }
-
-                // If indexOfParent is 0 or the context root ID defined in the config, return the new spaceHierarchy
-                if (indexOfParent === 0 || roomId === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return [spaceHierarchy];
-                // Otherwise, delete all entries starting with the found index
-                if (indexOfParent) prevState.splice(indexOfParent);
-
-                // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
-                return [...prevState, spaceHierarchy];
-            });
-            setProgress(100);
-            // actually give the progress bar some time to animate then reset
-            _.delay(() => setProgress(0), 200);
-        },
-        [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
-    );
 
     // Handle route changes and fetch room content
     useEffect(() => {
