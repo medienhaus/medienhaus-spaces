@@ -8,12 +8,14 @@ import logger from '@/lib/Logging';
 
 export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
+    const [isFetchingSpaceChildren, setIsFetchingSpaceChildren] = useState('');
     const [progress, setProgress] = useState(0);
     const { t } = useTranslation('explore');
     // Call API to fetch and add room hierarchy to selectedSpaceChildren
     const getSpaceChildren = useCallback(
         async (e, roomId) => {
             if (!selectedSpaceChildren) return;
+            setIsFetchingSpaceChildren(roomId);
             e && e.preventDefault();
             logger.debug('Fetch the room hierarchy for ' + roomId);
             setProgress(10);
@@ -149,11 +151,12 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
                 return [...prevState, spaceHierarchy];
             });
             setProgress(100);
+            setIsFetchingSpaceChildren('');
             // actually give the progress bar some time to animate then reset
-            _.delay(() => setProgress(0), 200);
+            _.delay(() => setProgress(0), 100);
         },
         [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
     );
 
-    return { progress, selectedSpaceChildren, getSpaceChildren };
+    return { isFetchingSpaceChildren, progress, selectedSpaceChildren, getSpaceChildren };
 };

@@ -56,7 +56,6 @@ export default function Explore() {
     const matrix = useMatrix();
 
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
-    const [isFetchingContent, setIsFetchingContent] = useState(false);
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
@@ -83,7 +82,12 @@ export default function Explore() {
         .filter((room) => !room.meta)
         .filter((room) => !matrix.directMessages.has(room.roomId));
 
-    const { progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(auth, matrix, matrixClient, cachedSpace);
+    const { isFetchingSpaceChildren, progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(
+        auth,
+        matrix,
+        matrixClient,
+        cachedSpace,
+    );
     const currentTemplate =
         iframeRoomId &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
@@ -119,10 +123,8 @@ export default function Explore() {
         let cancelled = false;
 
         const onRouterChange = async () => {
-            setIsFetchingContent(roomId);
             !myPowerLevel && setManageContextActionToggle(false);
             await getSpaceChildren(null, roomId);
-            setIsFetchingContent(false);
         };
 
         if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
@@ -275,7 +277,7 @@ export default function Explore() {
                     {!_.isEmpty(selectedSpaceChildren) && (
                         <TreePath
                             selectedSpaceChildren={selectedSpaceChildren}
-                            isFetchingContent={isFetchingContent}
+                            isFetchingContent={isFetchingSpaceChildren}
                             iframeRoomId={iframeRoomId}
                         />
                     )}
@@ -362,7 +364,8 @@ export default function Explore() {
                                         {!manageContextActionToggle &&
                                             matrixClient
                                                 .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
+                                            !isFetchingSpaceChildren && (
                                                 <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     <QuickAddExplore
                                                         currentId={roomId}
