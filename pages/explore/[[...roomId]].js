@@ -496,17 +496,6 @@ export default function Explore() {
                                         <ExploreMatrixActions
                                             currentId={roomId}
                                             myPowerLevel={myPowerLevel}
-                                            // settingsTabValue="settings"
-                                            // trigger={
-                                            //     <TextButton
-                                            //         variant="ghost"
-                                            //         title={t('Show settings of {{name}}', { name: matrix.spaces.get(roomId).name })}
-                                            //     >
-                                            //         <Icon>
-                                            //             <RiListSettingsLine />
-                                            //         </Icon>
-                                            //     </TextButton>
-                                            // }
                                         />
                                     </TabsContent>
                                 </Tabs>
