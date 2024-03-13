@@ -28,7 +28,6 @@ import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Button } from '@/components/UI/shadcn/Button';
@@ -39,6 +38,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
 import { useGetSpaceChildren } from './useGetSpaceChildren';
+import { Progress } from '@/components/UI/shadcn/Progress';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -79,6 +79,13 @@ export default function Explore() {
         ['users', matrixClient.getUserId()],
     );
     /** @type {string|undefined} */
+
+    const cachedSpace = matrix.spaces.get(roomId);
+    const allChatRooms = Array.from(matrix.rooms.values())
+        .filter((room) => !room.meta)
+        .filter((room) => !matrix.directMessages.has(room.roomId));
+
+    const { progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(auth, matrix, matrixClient, cachedSpace);
     const currentTemplate =
         iframeRoomId &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
@@ -86,13 +93,6 @@ export default function Explore() {
 
             return roomId === iframeRoomId;
         }).meta?.template;
-    const cachedSpace = matrix.spaces.get(roomId);
-    const allChatRooms = Array.from(matrix.rooms.values())
-        .filter((room) => !room.meta)
-        .filter((room) => !matrix.directMessages.has(room.roomId));
-
-    const { getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(auth, matrix, matrixClient, cachedSpace);
-
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -266,8 +266,13 @@ export default function Explore() {
 
     return (
         <>
+            {progress !== 0 && (
+                <div className="absolute left-0 top-0 w-full">
+                    <Progress value={progress} />
+                </div>
+            )}
             <DefaultLayout.Sidebar>
-                <h2>/explore {_.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline />}</h2>
+                <h2>/explore</h2>
                 <div className="w-full overflow-auto">
                     {!_.isEmpty(selectedSpaceChildren) && (
                         <TreePath
@@ -301,10 +306,7 @@ export default function Explore() {
                                 manageContextActionToggle={manageContextActionToggle}
                                 myPowerLevel={myPowerLevel}
                                 setManageContextActionToggle={setManageContextActionToggle}
-                                // isInviteUsersOpen={isInviteUsersOpen}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                                // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                // setSettingsTabValue={setSettingsTabValue}
                             />
                             <div className="flex h-full w-full flex-col overflow-auto">
                                 {manageContextActionToggle ? (

@@ -5,7 +5,6 @@ import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { RiBrush2Line, RiBrushLine, RiChat1Line, RiEditLine, RiFolderLine, RiFolderUnknowLine, RiLink } from '@remixicon/react';
 import { useRouter } from 'next/router';
 
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import { ServiceTable } from '@/components/UI/ServiceTable';
 import TreeLeaves from './TreeLeaves';
 import Icon from '@/components/UI/Icon';
@@ -123,7 +122,6 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                                 <Link disabled href={`/explore/${roomId}`}>
                                     {index > 0 && '↳ '}
                                     {path[0].name}
-                                    {isFetchingContent === roomId && <LoadingSpinnerInline />}
                                 </Link>
                             </Leaf>
                         </ServiceTable.Row>

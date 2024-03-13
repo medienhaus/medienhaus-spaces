@@ -8,6 +8,7 @@ import logger from '@/lib/Logging';
 
 export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
+    const [progress, setProgress] = useState(0);
     const { t } = useTranslation('explore');
     // Call API to fetch and add room hierarchy to selectedSpaceChildren
     const getSpaceChildren = useCallback(
@@ -15,6 +16,7 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
             if (!selectedSpaceChildren) return;
             e && e.preventDefault();
             logger.debug('Fetch the room hierarchy for ' + roomId);
+            setProgress(10);
 
             const getHierarchyFromServer = async (roomId) => {
                 const roomHierarchyFromServer = await matrix.roomHierarchy(roomId, null, 1).catch(async (error) => {
@@ -60,6 +62,13 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
                 };
 
                 for (const space of roomHierarchyFromServer) {
+                    // update the progress bar for each space up to 90% depending on the amount of spaces
+                    setProgress((prevState) => {
+                        if (prevState < 90) return Math.ceil(prevState + 90 / roomHierarchyFromServer.length);
+
+                        return prevState;
+                    });
+
                     if (space.room_id !== roomHierarchyFromServer[0].room_id) {
                         space.parent = parent;
                     }
@@ -89,6 +98,13 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
             if (cachedSpace) {
                 if (cachedSpace.children) {
                     for await (const roomId of cachedSpace.children) {
+                        // update the progress bar for each space up to 90% depending on the amount of spaces
+                        setProgress((prevState) => {
+                            if (prevState < 90) return Math.ceil(prevState + 90 / cachedSpace.children.length);
+
+                            return prevState;
+                        });
+
                         const cachedChild = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
 
                         if (!_.isEmpty(cachedChild)) {
@@ -132,9 +148,12 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
                 // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
                 return [...prevState, spaceHierarchy];
             });
+            setProgress(100);
+            // actually give the progress bar some time to animate then reset
+            _.delay(() => setProgress(0), 200);
         },
         [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
     );
 
-    return { selectedSpaceChildren, getSpaceChildren };
+    return { progress, selectedSpaceChildren, getSpaceChildren };
 };
