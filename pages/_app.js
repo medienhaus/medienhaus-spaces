@@ -38,6 +38,9 @@ export default function App({ Component, pageProps }) {
         router.push('/login');
 
         return null;
+    } else if (router.route !== '/intro' && authData.user && !onboarding.active && Object.keys(matrixData.onboardingData).length === 0) {
+        // If the user is logged in and the onboarding is not active, we need to check if this is the first time the user logs in. this is achieved by checking if the onboardingData stored in the matrix accountData object is empty
+        router.push('/intro');
     }
 
     return (
