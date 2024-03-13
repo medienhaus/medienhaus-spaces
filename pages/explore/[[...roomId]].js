@@ -14,6 +14,7 @@ import {
     RiFolderSettingsLine,
     RiFolderUnknowLine,
     RiLink,
+    // RiListSettingsLine,
     RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
@@ -38,6 +39,7 @@ import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
+import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -55,7 +57,7 @@ export default function Explore() {
     const matrix = useMatrix();
 
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
-    const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
+    const [manageContextActionToggle, setManageContextActionToggle] = useState('content');
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
@@ -247,7 +249,7 @@ export default function Explore() {
 
         const onRouterChange = async () => {
             setIsFetchingContent(roomId);
-            !myPowerLevel && setManageContextActionToggle(false);
+            !myPowerLevel && setManageContextActionToggle('content');
             await getSpaceChildren(null, roomId);
             setIsFetchingContent(false);
         };
@@ -431,16 +433,9 @@ export default function Explore() {
                                 // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
                                 // setSettingsTabValue={setSettingsTabValue}
                             />
+
                             <div className="flex h-full w-full flex-col overflow-auto">
-                                {manageContextActionToggle ? (
-                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
-                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
-                                            <Icon>
-                                                <RiUserLine />
-                                            </Icon>
-                                        </TextButton>
-                                    </UserManagement>
-                                ) : (
+                                {manageContextActionToggle === 'content' && (
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
@@ -484,33 +479,66 @@ export default function Explore() {
                                                 </TableBody>
                                             </Table>
                                         )}
-                                        {!manageContextActionToggle &&
-                                            matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                    <QuickAddExplore
-                                                        currentId={roomId}
-                                                        roomName={matrix.spaces.get(roomId).name}
-                                                        getSpaceChildren={getSpaceChildren}
-                                                        allChatRooms={allChatRooms}
-                                                        trigger={
-                                                            <Button
-                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                variant="ghost"
-                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                            >
-                                                                {t('Add more …')}
-                                                                <Icon>
-                                                                    <RiAddLine />
-                                                                </Icon>
-                                                            </Button>
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
 
-                                        {/* @NOTE: pagination component which we are currently not using, but might in the future
+                                        {matrixClient
+                                            .getRoom(roomId)
+                                            ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                <QuickAddExplore
+                                                    currentId={roomId}
+                                                    roomName={matrix.spaces.get(roomId).name}
+                                                    getSpaceChildren={getSpaceChildren}
+                                                    allChatRooms={allChatRooms}
+                                                    trigger={
+                                                        <Button
+                                                            className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                            variant="ghost"
+                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                        >
+                                                            {t('Add more …')}
+                                                            <Icon>
+                                                                <RiAddLine />
+                                                            </Icon>
+                                                        </Button>
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                {manageContextActionToggle === 'members' && (
+                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
+                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+                                            <Icon>
+                                                <RiUserLine />
+                                            </Icon>
+                                        </TextButton>
+                                    </UserManagement>
+                                )}
+
+                                {manageContextActionToggle === 'settings' &&
+                                    matrixClient
+                                        .getRoom(roomId)
+                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                        <ExploreMatrixActions
+                                            currentId={roomId}
+                                            myPowerLevel={myPowerLevel}
+                                            // settingsTabValue="settings"
+                                            // trigger={
+                                            //     <TextButton
+                                            //         variant="ghost"
+                                            //         title={t('Show settings of {{name}}', { name: matrix.spaces.get(roomId).name })}
+                                            //     >
+                                            //         <Icon>
+                                            //             <RiListSettingsLine />
+                                            //         </Icon>
+                                            //     </TextButton>
+                                            // }
+                                        />
+                                    )}
+
+                                {/* @NOTE: pagination component which we are currently not using, but might in the future
                                         {table.getRowModel().rows?.length > 1 && (
                                             <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
                                                 <div className="flex-1 text-sm text-muted-foreground">
@@ -537,8 +565,6 @@ export default function Explore() {
                                             </div>
                                         )}
                                         */}
-                                    </>
-                                )}
                             </div>
                         </DefaultLayout.Wrapper>
                     </>

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 // import React, { useState } from 'react';
-import { RiDeleteBinLine, RiFolderLine, RiGroupLine, RiListSettingsLine, RiUserAddLine } from '@remixicon/react';
+import { RiDeleteBinLine, RiFolderLine, RiGroupLine, RiListSettingsLine } from '@remixicon/react';
 
 import CopyToClipboard from '../../components/UI/CopyToClipboard';
 import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
@@ -12,7 +12,6 @@ import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
 import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixActions';
 import { Separator } from '@/components/UI/shadcn/Separator';
-import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 
 /*
 const ToggleButton = styled.button`
@@ -33,7 +32,7 @@ const ServiceIframeHeader = ({
     myPadsObject,
     content,
     myPowerLevel,
-    manageContextActionToggle,
+    // manageContextActionToggle,
     setManageContextActionToggle,
     joinRule,
     // isInviteUsersOpen,
@@ -49,7 +48,9 @@ const ServiceIframeHeader = ({
             <h2>{title}</h2>
             <DefaultLayout.IframeHeaderButtonWrapper>
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
+
                 <CopyToClipboard content={content} />
+
                 {deleteContent && (
                     <TextButton
                         title={myPadsObject ? t('Delete pad', { ns: 'etherpad' }) : t('Remove pad from my library', { ns: 'etherpad' })}
@@ -64,12 +65,15 @@ const ServiceIframeHeader = ({
                         )}
                     </TextButton>
                 )}
+
                 <AddFavourite roomId={roomId} />
+
                 {myPowerLevel && (
                     <>
                         <Separator orientation="vertical" />
 
                         {/* @NOTE: this switches between the contexts/items and members lists in the service table wrapper */}
+                        {/*
                         <TextButton
                             onClick={() => {
                                 setManageContextActionToggle(!manageContextActionToggle);
@@ -84,10 +88,36 @@ const ServiceIframeHeader = ({
                         >
                             <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiGroupLine />}</Icon>
                         </TextButton>
+                        */}
 
-                        <Separator orientation="vertical" />
+                        <TextButton
+                            onClick={() => {
+                                setManageContextActionToggle('content');
+                                // setIsInviteUsersOpen(!isInviteUsersOpen);
+                                // setSettingsTabValue('content');
+                            }}
+                            title={t('Show contexts and items of {{name}}', { name: title })}
+                        >
+                            <Icon>
+                                <RiFolderLine />
+                            </Icon>
+                        </TextButton>
+
+                        <TextButton
+                            onClick={() => {
+                                setManageContextActionToggle('members');
+                                // setIsInviteUsersOpen(!isInviteUsersOpen);
+                                // setSettingsTabValue('members');
+                            }}
+                            title={t('Show members of {{name}}', { name: title })}
+                        >
+                            <Icon>
+                                <RiGroupLine />
+                            </Icon>
+                        </TextButton>
 
                         {/* @NOTE: this opens the invitation modal in dialog/drawer */}
+                        {/*
                         <InviteUserToMatrixRoom
                             roomId={roomId}
                             myPowerLevel={myPowerLevel}
@@ -99,6 +129,7 @@ const ServiceIframeHeader = ({
                                 </TextButton>
                             }
                         />
+                        */}
 
                         {/* @NOTE: we do not want the members list to open in the tabbed dialog/drawer */}
                         {/*
@@ -120,6 +151,7 @@ const ServiceIframeHeader = ({
                         */}
 
                         {/* @NOTE: this opens the settings modal in the tabbed dialog/drawer */}
+                        {/*
                         <ExploreMatrixActions
                             currentId={roomId}
                             myPowerLevel={myPowerLevel}
@@ -132,6 +164,20 @@ const ServiceIframeHeader = ({
                                 </TextButton>
                             }
                         />
+                        */}
+
+                        <TextButton
+                            onClick={() => {
+                                setManageContextActionToggle('settings');
+                                // setIsInviteUsersOpen(!isInviteUsersOpen);
+                                // setSettingsTabValue('settings');
+                            }}
+                            title={t('Show settings of {{name}}', { name: title })}
+                        >
+                            <Icon>
+                                <RiListSettingsLine />
+                            </Icon>
+                        </TextButton>
                     </>
                 )}
             </DefaultLayout.IframeHeaderButtonWrapper>

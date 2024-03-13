@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RiCloseLine } from '@remixicon/react';
+// import { RiCloseLine } from '@remixicon/react';
 
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
 // import UserManagement from './UserManagement';
@@ -10,7 +10,7 @@ import ChangeAvatar from './ChangeAvatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useAuth } from '@/lib/Auth';
-import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
+// import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
 // import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
 // import { Button } from '@/components/UI/shadcn/Button';
 
@@ -30,12 +30,12 @@ const ExploreMatrixActions = ({
     myPowerLevel,
     // @TODO: do we still need the following ?
     setManageContextActionToggle,
-    trigger,
+    // trigger,
 }) => {
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
-    const [isOpen, setIsOpen] = useState(false);
+    // const [isOpen, setIsOpen] = useState(false);
     const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
@@ -44,6 +44,7 @@ const ExploreMatrixActions = ({
 
     return (
         <>
+            {/*
             {React.cloneElement(trigger, {
                 onClick: () => {
                     setIsOpen(true);
@@ -56,12 +57,14 @@ const ExploreMatrixActions = ({
                 }}
             >
                 <DialogContent>
+                */}
                     <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
                         <aside className="sticky top-0 z-10 translate-y-[-1.5rem] bg-background pt-6">
+                            {/*
                             <DialogHeader>
                                 <h3>{room.name}</h3>
-                                {/* <h3>{room.name} {t('settings')}</h3> */}
                             </DialogHeader>
+                            */}
 
                             <br />
 
@@ -96,15 +99,19 @@ const ExploreMatrixActions = ({
                                 </TabsTrigger>
                             </TabsList>
 
+                            {/*
                             <DialogClose className="absolute right-[-0.5rem] top-4 z-10 rounded border text-muted ring-offset-background transition-opacity hover:border-destructive hover:text-destructive focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                                 <RiCloseLine className="h-6 w-6" />
                                 <span className="sr-only">Close</span>
                             </DialogClose>
+                            *}/
 
                             {/* @NOTE: needs two <br /> elements before <hr />, as <TabsList /> is display:inline; */}
+                            {/*
                             <br />
                             <br />
                             <hr />
+                            */}
                         </aside>
 
                         {/*
@@ -167,8 +174,10 @@ const ExploreMatrixActions = ({
                         </DialogFooter>
                         */}
                     </Tabs>
+            {/*
                 </DialogContent>
             </Dialog>
+            */}
         </>
     );
 };
