@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// import { RiCloseLine } from '@remixicon/react';
 
 import LoadingSpinner from '../../../components/UI/LoadingSpinner';
-// import UserManagement from './UserManagement';
 import LeaveRoom from './LeaveRoom';
 import ChangeTopic from './ChangeTopic';
 import ChangeAvatar from './ChangeAvatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useAuth } from '@/lib/Auth';
-// import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
-// import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
-// import { Button } from '@/components/UI/shadcn/Button';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -28,14 +23,10 @@ const ExploreMatrixActions = ({
     currentId,
     parentId,
     myPowerLevel,
-    // @TODO: do we still need the following ?
-    setManageContextActionToggle,
-    // trigger,
 }) => {
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
-    // const [isOpen, setIsOpen] = useState(false);
     const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
@@ -54,6 +45,7 @@ const ExploreMatrixActions = ({
                     >
                         {t('Settings')}
                     </TabsTrigger>
+
                     <TabsTrigger
                         onClick={() => {
                             setSettingsTabValue('advanced');
@@ -78,8 +70,6 @@ const ExploreMatrixActions = ({
                                 <h3>{t('Avatar')}</h3>
                                 <ChangeAvatar
                                     roomId={currentId}
-                                    /* @TODO: do we still need the following ? */
-                                    // onCancel={() => setManageContextActionToggle('settings')}
                                 />
                             </div>
                         )}
@@ -92,8 +82,6 @@ const ExploreMatrixActions = ({
                             <ChangeJoinRule
                                 roomId={currentId}
                                 roomName={room.name}
-                                /* @TODO: do we still need the following ? */
-                                // onCancel={() => setManageContextActionToggle('advanced')}
                             />
                         </div>
                     )}
