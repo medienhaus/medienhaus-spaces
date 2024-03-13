@@ -57,8 +57,6 @@ export default function Explore() {
 
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
-    // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
