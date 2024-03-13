@@ -44,7 +44,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
     return (
         <DefaultLayout.Wrapper>
             <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
-            <DefaultLayout.IframeWrapper>
+            <DefaultLayout.ExploreWrapper>
                 <DefaultLayout.Sidebar>
                     {!_.isEmpty(selectedSpaceChildren) && (
                         <TreePath
@@ -86,7 +86,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
                             );
                     }
                 })()}
-            </DefaultLayout.IframeWrapper>
+            </DefaultLayout.ExploreWrapper>
         </DefaultLayout.Wrapper>
     );
 };
