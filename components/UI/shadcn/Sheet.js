@@ -36,7 +36,7 @@ const sheetVariants = cva(
                 right: 'inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
                 onboardingBottomRight: 'fixed md:right-8 md:bottom-8 bottom-0  md:w-1/4 rounded-lg bg-onboarding w-full md:p-8 p-3',
                 onboardingMinimized:
-                    'fixed md:right-8 md:bottom-8 md:w-20 md:h-16 rounded-lg bg-onboarding overflow-hidden md:p-3 right-0 bottom-0 h-8 p-0',
+                    'fixed md:right-8 md:bottom-8 md:w-20 md:h-16 rounded-lg bg-onboarding overflow-hidden md:p-3 w-full right-0 bottom-0 h-8 p-0',
             },
         },
         defaultVariants: {

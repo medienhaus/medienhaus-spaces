@@ -49,13 +49,14 @@ const OnboardingPilot = () => {
                     >
                         <SheetHeader>
                             <Button
+                                className=" rounded-lg bg-onboarding p-0"
                                 onClick={() => {
                                     setSide((prevState) =>
                                         prevState === 'onboardingBottomRight' ? 'onboardingMinimized' : 'onboardingBottomRight',
                                     );
                                 }}
                             >
-                                {side === 'onboardingBottomRight' ? '\u035F' : '⌅'}
+                                {side === 'onboardingBottomRight' ? '⌄' : '⌅'}
                             </Button>
                             <SheetTitle>
                                 {onboarding.currentRoute} — {onboarding.currentStepTitle}

@@ -17,8 +17,8 @@
 .driver-active-element::before {
     content: '•';
     position: absolute;
-    margin-left: -35px;
-    margin-top: -25px;
+    margin-left: -0.35em;
+    margin-top: -0.5em;
     font-weight: 900;
     font-size: 3em;
     color: hsl(var(--onboarding));
