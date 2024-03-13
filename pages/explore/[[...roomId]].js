@@ -324,7 +324,7 @@ export default function Explore() {
                                     */}
                             {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) ? (
                                 <Tabs
-                                    className="w-full overflow-auto [&>[role=tabpanel]]:pt-2"
+                                    className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
                                     onValueChange={setActiveContentView}
                                     value={activeContentView}
                                 >
