@@ -9,7 +9,7 @@ import { useOnboarding } from './onboardingContext';
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
 
-    const { t } = useTranslation('onboarding');
+    const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
     const [side, setSide] = useState('onboardingBottomRight');
     const [isOpen, setIsOpen] = useState(true);
 

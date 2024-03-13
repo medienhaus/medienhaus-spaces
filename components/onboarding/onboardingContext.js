@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, use, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
 
 import 'driver.js/dist/driver.css'; //import css
-import onboadingScript from './onboardingScript.json';
+import onboadingScriptGeneric from './onboardingScriptGeneric.json';
+import onboadingScriptCustom from './onboardingScriptCustom.json';
 
 const OnboardingContext = createContext(undefined);
 
@@ -29,6 +30,10 @@ function useOnboardingProvider() {
     const [driverJsConfig, setDriverJsConfig] = useState(null);
 
     const [tourInstance, setTourInstance] = useState(null);
+
+    const onboadingScript = onboadingScriptCustom?.length > 0 ? onboadingScriptCustom : onboadingScriptGeneric;
+
+    const isScriptCustom = onboadingScriptCustom?.length > 0;
 
     const startTour = () => {
         // start the tour with the first route and its steps. reset everything to the initial state
@@ -80,7 +85,7 @@ function useOnboardingProvider() {
         } else {
             setNextRouteName('');
         }
-    }, [currentRouteIndex, hasNext]);
+    }, [currentRouteIndex, hasNext, onboadingScript]);
 
     const nextRoute = () => {
         // if there are more routes in the onboarding script, move to the next route
@@ -101,6 +106,7 @@ function useOnboardingProvider() {
             setCurrentRoute(onboadingScript[newIndex].route);
             setCurrentSteps(onboadingScript[newIndex].steps);
             router.push(onboadingScript[newIndex].route);
+
             if (newIndex > 0) {
                 setPrevRouteName(onboadingScript[newIndex - 1].route);
             } else {
@@ -159,6 +165,7 @@ function useOnboardingProvider() {
         prevRouteName,
         nextRouteName,
         exit,
+        isScriptCustom,
     };
 }
 
