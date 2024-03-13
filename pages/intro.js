@@ -40,8 +40,17 @@ export default function Intro() {
             <IntroSection>
                 <div>
                     <h2>/intro</h2>
-                    <p> {t('Hello User,')}</p>
-                    <p>{t("This is an introduction to the app. <bold>It's a great app!</bold>")}</p>
+                    <p>
+                        {t('Hello')} {auth?.user?.displayname}{' '}
+                    </p>
+                    <p>
+                        <Trans
+                            t={t}
+                            i18nKey="intro"
+                            defaults="This is an introduction to the app. <bold>It's a great app!</bold>"
+                            components={{ bold: <strong /> }}
+                        />
+                    </p>
 
                     <p>
                         {t(
@@ -83,9 +92,12 @@ export default function Intro() {
                 <h3>{t('How to start')}</h3>
                 <div>
                     <p>
-                        {t(
-                            "To get started, simply click on the <strong>Start Onboarding</strong> button below. You'll be guided through the setup process, and you'll be ready to use the app in no time.",
-                        )}
+                        <Trans
+                            t={t}
+                            i18nKey="intro"
+                            defaults="To get started, simply click on the <strong>Start Onboarding</strong> button below. You'll be guided through the setup process, and you'll be ready to use the app in no time."
+                            components={{ bold: <strong /> }}
+                        />
                     </p>
                     <Button
                         disabled={!termsAccepted}
@@ -105,9 +117,12 @@ export default function Intro() {
 
                 <h3>{t('Learn')}</h3>
                 <p>
-                    {t(
-                        ' To learn more about the app, visit our <a href="/help">Help Center</a>. You\'ll find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.',
-                    )}
+                    <Trans
+                        t={t}
+                        i18nKey="intro"
+                        defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
+                        components={{ a: <a href /> }}
+                    />
                 </p>
             </IntroSection>
         </>
