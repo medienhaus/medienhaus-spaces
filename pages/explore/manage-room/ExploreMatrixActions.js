@@ -10,8 +10,6 @@ import ChangeAvatar from './ChangeAvatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useAuth } from '@/lib/Auth';
-import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/UI/shadcn/Dialog';
-// import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader } from '@/components/UI/shadcn/Dialog';
 // import { Button } from '@/components/UI/shadcn/Button';
 
 /**
@@ -35,7 +33,6 @@ const ExploreMatrixActions = ({
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
-    const [isOpen, setIsOpen] = useState(false);
     const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
@@ -44,30 +41,10 @@ const ExploreMatrixActions = ({
 
     return (
         <>
-            {React.cloneElement(trigger, {
-                onClick: () => {
-                    setIsOpen(true);
-                },
-            })}
-            <Dialog
-                open={isOpen}
-                onOpenChange={(newState) => {
-                    setIsOpen(newState);
-                }}
-            >
-                <DialogContent>
-                    <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
-                        <aside className="sticky top-0 z-10 translate-y-[-1.5rem] bg-background pt-6">
-                            <DialogHeader>
-                                <h3>{room.name}</h3>
-                                {/* <h3>{room.name} {t('settings')}</h3> */}
-                            </DialogHeader>
-
-                            <br />
-
-                            <TabsList>
-                                {/* @NOTE: we do not want the members list as a tab in dialog */}
-                                {/*
+            <Tabs onValueChange={setSettingsTabValue} value={settingsTabValue}>
+                <TabsList>
+                    {/* @NOTE: we do not want the members list as a tab in dialog */}
+                    {/*
                                 <TabsTrigger
                                     onClick={() => {
                                         setSettingsTabValue('members');
@@ -78,97 +55,63 @@ const ExploreMatrixActions = ({
                                 </TabsTrigger>
                                 */}
 
-                                <TabsTrigger
-                                    onClick={() => {
-                                        setSettingsTabValue('settings');
-                                    }}
-                                    value="settings"
-                                >
-                                    {t('Settings')}
-                                </TabsTrigger>
-                                <TabsTrigger
-                                    onClick={() => {
-                                        setSettingsTabValue('advanced');
-                                    }}
-                                    value="advanced"
-                                >
-                                    {t('Advanced')}
-                                </TabsTrigger>
-                            </TabsList>
+                    <TabsTrigger
+                        onClick={() => {
+                            setSettingsTabValue('settings');
+                        }}
+                        value="settings"
+                    >
+                        {t('Settings')}
+                    </TabsTrigger>
+                    <TabsTrigger
+                        onClick={() => {
+                            setSettingsTabValue('advanced');
+                        }}
+                        value="advanced"
+                    >
+                        {t('Advanced')}
+                    </TabsTrigger>
+                </TabsList>
 
-                            <DialogClose className="absolute right-[-0.5rem] top-4 z-10 rounded border text-muted ring-offset-background transition-opacity hover:border-destructive hover:text-destructive focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-                                <RiCloseLine className="h-6 w-6" />
-                                <span className="sr-only">Close</span>
-                            </DialogClose>
+                <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
+                    <>
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
+                            <div className="[&>*+*]:mt-4">
+                                <h3>{t('Topic')}</h3>
+                                <ChangeTopic roomId={currentId} roomName={room.name} />
+                            </div>
+                        )}
 
-                            {/* @NOTE: needs two <br /> elements before <hr />, as <TabsList /> is display:inline; */}
-                            <br />
-                            <br />
-                            <hr />
-                        </aside>
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
+                            <div className="[&>*+*]:mt-4">
+                                <h3>{t('Avatar')}</h3>
+                                <ChangeAvatar
+                                    roomId={currentId}
+                                    /* @TODO: do we still need the following ? */
+                                    onCancel={() => setManageContextActionToggle(false)}
+                                />
+                            </div>
+                        )}
+                    </>
+                </TabsContent>
 
-                        {/*
-                        <TabsContent className="overflow-y-auto" value="members">
-                            <UserManagement
-                                myPowerLevel={myPowerLevel}
+                <TabsContent className="pb-6 [&>*+*]:mt-8" value="advanced">
+                    {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
+                        <div>
+                            <ChangeJoinRule
                                 roomId={currentId}
                                 roomName={room.name}
-                                // @TODO: do we still need the following ?
+                                /* @TODO: do we still need the following ? */
                                 onCancel={() => setManageContextActionToggle(false)}
                             />
-                        </TabsContent>
-                        */}
+                        </div>
+                    )}
 
-                        <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
-                            <>
-                                {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                                    <div className="[&>*+*]:mt-4">
-                                        <h3>{t('Topic')}</h3>
-                                        <ChangeTopic roomId={currentId} roomName={room.name} />
-                                    </div>
-                                )}
-
-                                {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                                    <div className="[&>*+*]:mt-4">
-                                        <h3>{t('Avatar')}</h3>
-                                        <ChangeAvatar
-                                            roomId={currentId}
-                                            /* @TODO: do we still need the following ? */
-                                            onCancel={() => setManageContextActionToggle(false)}
-                                        />
-                                    </div>
-                                )}
-                            </>
-                        </TabsContent>
-
-                        <TabsContent className="pb-6 [&>*+*]:mt-8" value="advanced">
-                            {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
-                                <div>
-                                    <ChangeJoinRule
-                                        roomId={currentId}
-                                        roomName={room.name}
-                                        /* @TODO: do we still need the following ? */
-                                        onCancel={() => setManageContextActionToggle(false)}
-                                    />
-                                </div>
-                            )}
-
-                            <div>
-                                <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
-                            </div>
-                        </TabsContent>
-
-                        {/* @NOTE: we do not want the bottom-aligned close button in this tabbed dialog */}
-                        {/*
-                        <DialogFooter className="pt-4 pb-8">
-                            <DialogClose asChild props>
-                                <Button variant="outline">{t('Cancel')}</Button>
-                            </DialogClose>
-                        </DialogFooter>
-                        */}
-                    </Tabs>
-                </DialogContent>
-            </Dialog>
+                    <div>
+                        <LeaveRoom roomId={currentId} roomName={room.name} parentId={parentId} />
+                    </div>
+                </TabsContent>
+            </Tabs>
         </>
     );
 };

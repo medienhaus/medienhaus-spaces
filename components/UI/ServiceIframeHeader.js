@@ -10,7 +10,7 @@ import DefaultLayout from '../layouts/default';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
-import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixActions';
+// import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixActions';
 import { Separator } from '@/components/UI/shadcn/Separator';
 import { InviteUserToMatrixRoom } from './InviteUsersToMatrixRoom';
 
@@ -65,75 +65,6 @@ const ServiceIframeHeader = ({
                     </TextButton>
                 )}
                 <AddFavourite roomId={roomId} />
-                {myPowerLevel && (
-                    <>
-                        <Separator orientation="vertical" />
-
-                        {/* @NOTE: this switches between the contexts/items and members lists in the service table wrapper */}
-                        <TextButton
-                            onClick={() => {
-                                setManageContextActionToggle(!manageContextActionToggle);
-                                // setIsInviteUsersOpen(!isInviteUsersOpen);
-                                // setSettingsTabValue('members');
-                            }}
-                            title={
-                                manageContextActionToggle
-                                    ? t('Show contexts and items of {{name}}', { name: title })
-                                    : t('Show members of {{name}}', { name: title })
-                            }
-                        >
-                            <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiGroupLine />}</Icon>
-                        </TextButton>
-
-                        <Separator orientation="vertical" />
-
-                        {/* @NOTE: this opens the invitation modal in dialog/drawer */}
-                        <InviteUserToMatrixRoom
-                            roomId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            trigger={
-                                <TextButton variant="ghost" title={t('Show members of {{name}}', { name: title })}>
-                                    <Icon>
-                                        <RiUserAddLine />
-                                    </Icon>
-                                </TextButton>
-                            }
-                        />
-
-                        {/* @NOTE: we do not want the members list to open in the tabbed dialog/drawer */}
-                        {/*
-                        <ExploreMatrixActions
-                            currentId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            settingsTabValue='members'
-                            trigger={
-                                <TextButton
-                                    variant="ghost"
-                                    title={t('Show members of {{name}}', { name: title })}
-                                >
-                                    <Icon>
-                                        <RiUserLine />
-                                    </Icon>
-                                </TextButton>
-                            }
-                        />
-                        */}
-
-                        {/* @NOTE: this opens the settings modal in the tabbed dialog/drawer */}
-                        <ExploreMatrixActions
-                            currentId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            settingsTabValue="settings"
-                            trigger={
-                                <TextButton variant="ghost" title={t('Show settings of {{name}}', { name: title })}>
-                                    <Icon>
-                                        <RiListSettingsLine />
-                                    </Icon>
-                                </TextButton>
-                            }
-                        />
-                    </>
-                )}
             </DefaultLayout.IframeHeaderButtonWrapper>
         </DefaultLayout.IframeHeader>
     );
