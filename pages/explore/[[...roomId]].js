@@ -493,10 +493,7 @@ export default function Explore() {
                                     </TabsContent>
 
                                     <TabsContent value="settings">
-                                        <ExploreMatrixActions
-                                            currentId={roomId}
-                                            myPowerLevel={myPowerLevel}
-                                        />
+                                        <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
                                     </TabsContent>
                                 </Tabs>
                             ) : (
