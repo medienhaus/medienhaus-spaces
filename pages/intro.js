@@ -76,8 +76,12 @@ export default function Intro() {
                 <h3>{t('Terms & Conditions / Community Guidlines')}</h3>
                 <div>
                     <p>
-                        By using this app, you agree to our <a href="/terms">Terms & Conditions</a> and{' '}
-                        <a href="/guidelines">Community Guidelines</a>.
+                        <Trans
+                            t={t}
+                            i18nKey="intro"
+                            defaults='By using this app, you agree to the <a href="/terms">Terms & Conditions</a> and <a href="/guidelines">Community Guidelines</a>.'
+                            components={{ a: <a href /> }}
+                        />
                     </p>
 
                     <Button
@@ -85,7 +89,7 @@ export default function Intro() {
                             setTermsAccepted(true);
                         }}
                     >
-                        Accept
+                        {t('Accept')}
                     </Button>
                 </div>
 
@@ -111,7 +115,7 @@ export default function Intro() {
                             });
                         }}
                     >
-                        Start Onboarding
+                        {t('Start Onboarding')}
                     </Button>
                 </div>
 
