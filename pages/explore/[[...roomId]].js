@@ -411,7 +411,7 @@ export default function Explore() {
     return (
         <>
             {progress !== 0 && (
-                <div className="absolute top-0 w-full">
+                <div className="absolute left-0 top-0 w-full">
                     <Progress value={progress} />
                 </div>
             )}
