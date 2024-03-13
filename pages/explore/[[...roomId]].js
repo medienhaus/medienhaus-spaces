@@ -28,7 +28,6 @@ import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
-import LoadingSpinnerInline from '../../components/UI/LoadingSpinnerInline';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Button } from '@/components/UI/shadcn/Button';
@@ -38,6 +37,7 @@ import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
+import { Progress } from '@/components/UI/shadcn/Progress';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -57,6 +57,7 @@ export default function Explore() {
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
     const [isFetchingContent, setIsFetchingContent] = useState(false);
+    const [progress, setProgress] = useState(0);
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
 
@@ -120,6 +121,7 @@ export default function Explore() {
             if (!selectedSpaceChildren) return;
             e && e.preventDefault();
             logger.debug('Fetch the room hierarchy for ' + roomId);
+            setProgress(10);
 
             const getHierarchyFromServer = async (roomId) => {
                 const roomHierarchyFromServer = await matrix.roomHierarchy(roomId, null, 1).catch(async (error) => {
@@ -165,6 +167,13 @@ export default function Explore() {
                 };
 
                 for (const space of roomHierarchyFromServer) {
+                    // update the progress bar for each space up to 90% depending on the amount of spaces
+                    setProgress((prevState) => {
+                        if (prevState < 90) return Math.ceil(prevState + 90 / roomHierarchyFromServer.length);
+
+                        return prevState;
+                    });
+
                     if (space.room_id !== roomHierarchyFromServer[0].room_id) {
                         space.parent = parent;
                     }
@@ -194,6 +203,13 @@ export default function Explore() {
             if (cachedSpace) {
                 if (cachedSpace.children) {
                     for await (const roomId of cachedSpace.children) {
+                        // update the progress bar for each space up to 90% depending on the amount of spaces
+                        setProgress((prevState) => {
+                            if (prevState < 90) return Math.ceil(prevState + 90 / cachedSpace.children.length);
+
+                            return prevState;
+                        });
+
                         const cachedChild = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
 
                         if (!_.isEmpty(cachedChild)) {
@@ -237,6 +253,9 @@ export default function Explore() {
                 // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
                 return [...prevState, spaceHierarchy];
             });
+            setProgress(100);
+            // actually give the progress bar some time to animate then reset
+            _.delay(() => setProgress(0), 200);
         },
         [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
     );
@@ -391,8 +410,13 @@ export default function Explore() {
 
     return (
         <>
+            {progress !== 0 && (
+                <div className="absolute left-0 top-0 w-full">
+                    <Progress value={progress} />
+                </div>
+            )}
             <DefaultLayout.Sidebar>
-                <h2>/explore {_.isEmpty(selectedSpaceChildren) && isFetchingContent && <LoadingSpinnerInline />}</h2>
+                <h2>/explore</h2>
                 <div className="w-full overflow-auto">
                     {!_.isEmpty(selectedSpaceChildren) && (
                         <TreePath
@@ -426,10 +450,7 @@ export default function Explore() {
                                 manageContextActionToggle={manageContextActionToggle}
                                 myPowerLevel={myPowerLevel}
                                 setManageContextActionToggle={setManageContextActionToggle}
-                                // isInviteUsersOpen={isInviteUsersOpen}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                                // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                // setSettingsTabValue={setSettingsTabValue}
                             />
                             <div className="flex h-full w-full flex-col overflow-auto">
                                 {manageContextActionToggle ? (
