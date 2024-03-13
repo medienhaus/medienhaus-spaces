@@ -169,7 +169,8 @@ export default function Etherpad() {
      */
 
     const createPadAndOpen = async (name, visibility, password) => {
-        const padObject = await etherpad.createPad(name, visibility, password);
+        // truncate the name to a maximum of 40 characters to avoid errors
+        const padObject = await etherpad.createPad(name.substring(0, 40), visibility, password);
         if (!padObject || !padObject.success) throw new Error('The following error occurred', { cause: padObject });
 
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
