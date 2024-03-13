@@ -131,8 +131,8 @@ export default function Explore() {
         let cancelled = false;
 
         const onRouterChange = async () => {
-            // @TODO: was `setManageContextActionToggle(false)` below
-            !myPowerLevel && setActiveContentView('content');
+            setActiveContentView('content');
+            // !myPowerLevel && setActiveContentView('content');
             await getSpaceChildren(null, roomId);
         };
 
@@ -322,43 +322,44 @@ export default function Explore() {
                                       @TODO: check this condition; is it really the same as for settings?
                                       @NOTE: also see further below
                                     */}
-                            {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) ? (
-                                <Tabs
-                                    className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
-                                    onValueChange={setActiveContentView}
-                                    value={activeContentView}
-                                >
-                                    <TabsList className="[&>[role=tab]]:gap-2">
-                                        <TabsTrigger
-                                            onClick={() => {
-                                                setActiveContentView('content');
-                                            }}
-                                            title={t('Show contexts and items of {{name}}', {
-                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
-                                            })}
-                                            value="content"
-                                        >
-                                            <Icon>
-                                                <RiFolderLine />
-                                            </Icon>
-                                            {isDesktop && t('Content')}
-                                        </TabsTrigger>
+                            <Tabs
+                                className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
+                                onValueChange={setActiveContentView}
+                                value={activeContentView}
+                            >
+                                <TabsList className="[&>[role=tab]]:gap-2">
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('content');
+                                        }}
+                                        title={t('Show contexts and items of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="content"
+                                    >
+                                        <Icon>
+                                            <RiFolderLine />
+                                        </Icon>
+                                        {isDesktop && t('Content')}
+                                    </TabsTrigger>
 
-                                        <TabsTrigger
-                                            onClick={() => {
-                                                setActiveContentView('members');
-                                            }}
-                                            title={t('Show members of {{name}}', {
-                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
-                                            })}
-                                            value="members"
-                                        >
-                                            <Icon>
-                                                <RiGroupLine />
-                                            </Icon>
-                                            {isDesktop && t('Members')}
-                                        </TabsTrigger>
-
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('members');
+                                        }}
+                                        title={t('Show members of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="members"
+                                    >
+                                        <Icon>
+                                            <RiGroupLine />
+                                        </Icon>
+                                        {isDesktop && t('Members')}
+                                    </TabsTrigger>
+                                    {matrixClient
+                                        .getRoom(roomId)
+                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
                                         <TabsTrigger
                                             onClick={() => {
                                                 setActiveContentView('settings');
@@ -373,82 +374,81 @@ export default function Explore() {
                                             </Icon>
                                             {isDesktop && t('Settings')}
                                         </TabsTrigger>
-                                    </TabsList>
-
-                                    <TabsContent value="content">
-                                        <>
-                                            {table.getRowModel().rows?.length > 1 && (
-                                                <Table>
-                                                    {/*
+                                    )}
+                                </TabsList>
+                                <TabsContent value="content">
+                                    <>
+                                        {table.getRowModel().rows?.length > 1 && (
+                                            <Table>
+                                                {/*
                                                   @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
                                                   fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
                                                   from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
                                                 */}
-                                                    <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                        {table.getHeaderGroups().map((headerGroup) => (
-                                                            <TableRow key={headerGroup.id}>
-                                                                {headerGroup.headers.map((header) => {
-                                                                    return (
-                                                                        <TableHead key={header.id}>
-                                                                            {header.isPlaceholder
-                                                                                ? null
-                                                                                : flexRender(
-                                                                                      header.column.columnDef.header,
-                                                                                      header.getContext(),
-                                                                                  )}
-                                                                        </TableHead>
-                                                                    );
-                                                                })}
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableHeader>
+                                                <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                    {table.getHeaderGroups().map((headerGroup) => (
+                                                        <TableRow key={headerGroup.id}>
+                                                            {headerGroup.headers.map((header) => {
+                                                                return (
+                                                                    <TableHead key={header.id}>
+                                                                        {header.isPlaceholder
+                                                                            ? null
+                                                                            : flexRender(
+                                                                                  header.column.columnDef.header,
+                                                                                  header.getContext(),
+                                                                              )}
+                                                                    </TableHead>
+                                                                );
+                                                            })}
+                                                        </TableRow>
+                                                    ))}
+                                                </TableHeader>
 
-                                                    <TableBody>
-                                                        {table.getRowModel().rows?.length ? (
-                                                            table.getRowModel().rows.map((row, index) => {
-                                                                if (index === 0) return null;
+                                                <TableBody>
+                                                    {table.getRowModel().rows?.length ? (
+                                                        table.getRowModel().rows.map((row, index) => {
+                                                            if (index === 0) return null;
 
-                                                                return <TreeLeaves key={row.id} row={row} />;
-                                                            })
-                                                        ) : (
-                                                            <TableRow>
-                                                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                                                    Thank you, {auth.user.displayname}! But our item is in another context!
-                                                                    🍄
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )}
-                                                    </TableBody>
-                                                </Table>
+                                                            return <TreeLeaves key={row.id} row={row} />;
+                                                        })
+                                                    ) : (
+                                                        <TableRow>
+                                                            <TableCell colSpan={columns.length} className="h-24 text-center">
+                                                                Thank you, {auth.user.displayname}! But our item is in another context! 🍄
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </TableBody>
+                                            </Table>
+                                        )}
+
+                                        {matrixClient
+                                            .getRoom(roomId)
+                                            ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
+                                            !isFetchingSpaceChildren && (
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                    <QuickAddExplore
+                                                        currentId={roomId}
+                                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                                        getSpaceChildren={getSpaceChildren}
+                                                        allChatRooms={allChatRooms}
+                                                        trigger={
+                                                            <Button
+                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                                variant="ghost"
+                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                            >
+                                                                {t('Add more …')}
+                                                                <Icon>
+                                                                    <RiAddLine />
+                                                                </Icon>
+                                                            </Button>
+                                                        }
+                                                    />
+                                                </div>
                                             )}
 
-                                            {matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
-                                                !isFetchingSpaceChildren && (
-                                                    <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                        <QuickAddExplore
-                                                            currentId={roomId}
-                                                            roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                                                            getSpaceChildren={getSpaceChildren}
-                                                            allChatRooms={allChatRooms}
-                                                            trigger={
-                                                                <Button
-                                                                    className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                    variant="ghost"
-                                                                    // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                                >
-                                                                    {t('Add more …')}
-                                                                    <Icon>
-                                                                        <RiAddLine />
-                                                                    </Icon>
-                                                                </Button>
-                                                            }
-                                                        />
-                                                    </div>
-                                                )}
-
-                                            {/* @NOTE: pagination component which we are currently not using, but might in the future
+                                        {/* @NOTE: pagination component which we are currently not using, but might in the future
                                             {table.getRowModel().rows?.length > 1 && (
                                                 <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
                                                     <div className="flex-1 text-sm text-muted-foreground">
@@ -475,69 +475,27 @@ export default function Explore() {
                                                 </div>
                                             )}
                                             */}
-                                        </>
-                                    </TabsContent>
+                                    </>
+                                </TabsContent>
 
-                                    <TabsContent value="members">
-                                        <UserManagement
-                                            roomId={roomId}
-                                            roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                                            myPowerLevel={myPowerLevel}
-                                        >
-                                            <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
-                                                <Icon>
-                                                    <RiUserLine />
-                                                </Icon>
-                                            </TextButton>
-                                        </UserManagement>
-                                    </TabsContent>
+                                <TabsContent value="members">
+                                    <UserManagement
+                                        roomId={roomId}
+                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                        myPowerLevel={myPowerLevel}
+                                    >
+                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+                                            <Icon>
+                                                <RiUserLine />
+                                            </Icon>
+                                        </TextButton>
+                                    </UserManagement>
+                                </TabsContent>
 
-                                    <TabsContent value="settings">
-                                        <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
-                                    </TabsContent>
-                                </Tabs>
-                            ) : (
-                                table.getRowModel().rows?.length > 1 && (
-                                    <Table>
-                                        {/*
-                                          @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
-                                          fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
-                                          from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
-                                        */}
-                                        <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                            {table.getHeaderGroups().map((headerGroup) => (
-                                                <TableRow key={headerGroup.id}>
-                                                    {headerGroup.headers.map((header) => {
-                                                        return (
-                                                            <TableHead key={header.id}>
-                                                                {header.isPlaceholder
-                                                                    ? null
-                                                                    : flexRender(header.column.columnDef.header, header.getContext())}
-                                                            </TableHead>
-                                                        );
-                                                    })}
-                                                </TableRow>
-                                            ))}
-                                        </TableHeader>
-
-                                        <TableBody>
-                                            {table.getRowModel().rows?.length ? (
-                                                table.getRowModel().rows.map((row, index) => {
-                                                    if (index === 0) return null;
-
-                                                    return <TreeLeaves key={row.id} row={row} />;
-                                                })
-                                            ) : (
-                                                <TableRow>
-                                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                                        Thank you, {auth.user.displayname}! But our item is in another context! 🍄
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                )
-                            )}
+                                <TabsContent value="settings">
+                                    <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
+                                </TabsContent>
+                            </Tabs>
                         </DefaultLayout.Wrapper>
                     </>
                 )
