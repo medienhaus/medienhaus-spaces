@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import { toast } from 'sonner';
@@ -48,18 +47,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
 
         // create the new context space
         const createNewSubContext = await matrix
-            .createRoom(
-                name,
-                true,
-                topic,
-                'public',
-                'context',
-                template,
-                getConfig().publicRuntimeConfig.name,
-                'public',
-                'world_readable',
-                'public_chat',
-            )
+            .createRoom(name, true, topic, 'public', 'context', template, currentId, 'restricted_knock', 'world_readable')
             .catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
                 _.delay(() => setCreateNewContextErrorMessage(''), 2500);
@@ -75,16 +63,18 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
                 .catch(async (err) => {
                     setCreateNewContextErrorMessage(err.message);
                     _.delay(() => setCreateNewContextErrorMessage(''), 2500);
+
+                    return;
                 });
+            await getSpaceChildren(null, currentId);
+            setName('');
+            setTopic('');
+            setTemplate('');
+            toast.success(t('Context {{name}} succesfully created', { name: name }));
+            onCancel();
         }
 
-        await getSpaceChildren(null, currentId);
-        setName('');
-        setTopic('');
-        setTemplate('');
         setIsLoading(false);
-        toast.success(t('Context {{name}} succesfully created', { name: name }));
-        onCancel();
     };
 
     return (
