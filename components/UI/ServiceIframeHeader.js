@@ -10,8 +10,10 @@ import DefaultLayout from '../layouts/default';
 import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
-import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixActions';
+// import ExploreMatrixActions from '../../pages/explore/manage-room/ExploreMatrixActions';
 import { Separator } from '@/components/UI/shadcn/Separator';
+import { Tabs, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 
 /*
 const ToggleButton = styled.button`
@@ -32,7 +34,7 @@ const ServiceIframeHeader = ({
     myPadsObject,
     content,
     myPowerLevel,
-    // activeContentView,
+    activeContentView,
     setActiveContentView,
     joinRule,
     // isInviteUsersOpen,
@@ -72,112 +74,59 @@ const ServiceIframeHeader = ({
                     <>
                         <Separator orientation="vertical" />
 
-                        {/* @NOTE: this switches between the contexts/items and members lists in the service table wrapper */}
-                        {/*
-                        <TextButton
-                            onClick={() => {
-                                setActiveContentView(!activeContentView);
-                                // setIsInviteUsersOpen(!isInviteUsersOpen);
-                                // setSettingsTabValue('members');
-                            }}
-                            title={
-                                activeContentView
-                                    ? t('Show contexts and items of {{name}}', { name: title })
-                                    : t('Show members of {{name}}', { name: title })
-                            }
-                        >
-                            <Icon>{activeContentView ? <RiFolderLine /> : <RiGroupLine />}</Icon>
-                        </TextButton>
-                        */}
-
-                        <TextButton
-                            onClick={() => {
-                                setActiveContentView('content');
-                                // setIsInviteUsersOpen(!isInviteUsersOpen);
-                                // setSettingsTabValue('content');
-                            }}
-                            title={t('Show contexts and items of {{name}}', { name: title })}
-                        >
-                            <Icon>
-                                <RiFolderLine />
-                            </Icon>
-                        </TextButton>
-
-                        <TextButton
-                            onClick={() => {
-                                setActiveContentView('members');
-                                // setIsInviteUsersOpen(!isInviteUsersOpen);
-                                // setSettingsTabValue('members');
-                            }}
-                            title={t('Show members of {{name}}', { name: title })}
-                        >
-                            <Icon>
-                                <RiGroupLine />
-                            </Icon>
-                        </TextButton>
-
-                        {/* @NOTE: this opens the invitation modal in dialog/drawer */}
-                        {/*
-                        <InviteUserToMatrixRoom
-                            roomId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            trigger={
-                                <TextButton variant="ghost" title={t('Show members of {{name}}', { name: title })}>
-                                    <Icon>
-                                        <RiUserAddLine />
-                                    </Icon>
-                                </TextButton>
-                            }
-                        />
-                        */}
-
-                        {/* @NOTE: we do not want the members list to open in the tabbed dialog/drawer */}
-                        {/*
-                        <ExploreMatrixActions
-                            currentId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            settingsTabValue='members'
-                            trigger={
-                                <TextButton
-                                    variant="ghost"
-                                    title={t('Show members of {{name}}', { name: title })}
+                        <Tabs className="[&>[role=tabpanel]]:pt-6" onValueChange={setActiveContentView} value={activeContentView}>
+                            <TabsList>
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setActiveContentView('content');
+                                    }}
+                                    title={t('Show contexts and items of {{name}}', { name: title })}
+                                    value="content"
                                 >
                                     <Icon>
-                                        <RiUserLine />
+                                        <RiFolderLine />
                                     </Icon>
-                                </TextButton>
-                            }
-                        />
-                        */}
+                                </TabsTrigger>
 
-                        {/* @NOTE: this opens the settings modal in the tabbed dialog/drawer */}
-                        {/*
-                        <ExploreMatrixActions
-                            currentId={roomId}
-                            myPowerLevel={myPowerLevel}
-                            settingsTabValue="settings"
-                            trigger={
-                                <TextButton variant="ghost" title={t('Show settings of {{name}}', { name: title })}>
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setActiveContentView('members');
+                                    }}
+                                    title={t('Show members of {{name}}', { name: title })}
+                                    value="members"
+                                >
+                                    <Icon>
+                                        <RiGroupLine />
+                                    </Icon>
+                                </TabsTrigger>
+
+                                <TabsTrigger
+                                    onClick={() => {
+                                        setActiveContentView('settings');
+                                    }}
+                                    title={t('Show settings of {{name}}', { name: title })}
+                                    value="advanced"
+                                >
                                     <Icon>
                                         <RiListSettingsLine />
                                     </Icon>
-                                </TextButton>
-                            }
-                        />
-                        */}
+                                </TabsTrigger>
+                            </TabsList>
 
-                        <TextButton
-                            onClick={() => {
-                                setActiveContentView('settings');
-                                // setIsInviteUsersOpen(!isInviteUsersOpen);
-                                // setSettingsTabValue('settings');
-                            }}
-                            title={t('Show settings of {{name}}', { name: title })}
-                        >
-                            <Icon>
-                                <RiListSettingsLine />
-                            </Icon>
-                        </TextButton>
+                            {/*
+                            <TabsContent className="pb-6 [&>*+*]:mt-8" value="content">
+                                foo
+                            </TabsContent>
+
+                            <TabsContent className="pb-6 [&>*+*]:mt-8" value="members">
+                                bar
+                            </TabsContent>
+
+                            <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
+                                bar
+                            </TabsContent>
+                            */}
+                        </Tabs>
                     </>
                 )}
             </DefaultLayout.IframeHeaderButtonWrapper>
