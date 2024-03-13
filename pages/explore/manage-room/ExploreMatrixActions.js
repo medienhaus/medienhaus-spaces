@@ -27,7 +27,7 @@ const ExploreMatrixActions = ({
     const { t } = useTranslation('explore');
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
-    const [settingsTabValue, setSettingsTabValue] = useState('settings');
+    const [settingsTabValue, setSettingsTabValue] = useState('general');
 
     if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
     const room = matrixClient.getRoom(currentId);
@@ -39,11 +39,11 @@ const ExploreMatrixActions = ({
                 <TabsList>
                     <TabsTrigger
                         onClick={() => {
-                            setSettingsTabValue('settings');
+                            setSettingsTabValue('general');
                         }}
-                        value="settings"
+                        value="general"
                     >
-                        {t('Settings')}
+                        {t('General')}
                     </TabsTrigger>
 
                     <TabsTrigger
@@ -56,7 +56,7 @@ const ExploreMatrixActions = ({
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
+                <TabsContent className="pb-6 [&>*+*]:mt-8" value="general">
                     <>
                         {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
                             <div className="[&>*+*]:mt-4">
