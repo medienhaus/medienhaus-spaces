@@ -47,7 +47,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
 
         // create the new context space
         const createNewSubContext = await matrix
-            .createRoom(name, true, topic, 'public', 'context', template, currentId, 'restricted_knock', 'world_readable')
+            .createRoom(name, true, topic, 'knock_restricted', 'context', template, currentId, 'public', 'world_readable')
             .catch(async (err) => {
                 setCreateNewContextErrorMessage(err.message);
                 _.delay(() => setCreateNewContextErrorMessage(''), 2500);
