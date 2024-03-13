@@ -133,7 +133,9 @@ export default function Explore() {
                                 }),
                             )
                         ) {
-                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => toast.error(error.data?.error));
+                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => {
+                                toast.error(error.message);
+                            });
 
                             // If successfully joined, recursively call 'getSpaceHierarchy' again.
                             if (joinRoom) return await getHierarchyFromServer(roomId);
@@ -145,7 +147,6 @@ export default function Explore() {
                                 // we don't want to display unnecessary error messages.
                                 if (error.message === 'Event not found.') return;
                                 if (error.message.includes('not in room')) return;
-                                console.log(error);
                                 toast.error(error.message);
                             }); // Handle other errors by setting an error message.
                     }
@@ -201,7 +202,7 @@ export default function Explore() {
                             spaceHierarchy.push(copy);
                         } else {
                             const getChildFromServer = await getHierarchyFromServer(roomId);
-
+                            if (!getChildFromServer) return;
                             getChildFromServer[0].parent = cachedSpace;
                             spaceHierarchy.push(getChildFromServer[0]);
                         }
@@ -487,7 +488,7 @@ export default function Explore() {
                                             matrixClient
                                                 .getRoom(roomId)
                                                 ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)] bg-background">
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     <QuickAddExplore
                                                         currentId={roomId}
                                                         roomName={matrix.spaces.get(roomId).name}
