@@ -32,8 +32,8 @@ const ServiceIframeHeader = ({
     myPadsObject,
     content,
     myPowerLevel,
-    // manageContextActionToggle,
-    setManageContextActionToggle,
+    // activeContentView,
+    setActiveContentView,
     joinRule,
     // isInviteUsersOpen,
     // setIsInviteUsersOpen,
@@ -76,23 +76,23 @@ const ServiceIframeHeader = ({
                         {/*
                         <TextButton
                             onClick={() => {
-                                setManageContextActionToggle(!manageContextActionToggle);
+                                setActiveContentView(!activeContentView);
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
                                 // setSettingsTabValue('members');
                             }}
                             title={
-                                manageContextActionToggle
+                                activeContentView
                                     ? t('Show contexts and items of {{name}}', { name: title })
                                     : t('Show members of {{name}}', { name: title })
                             }
                         >
-                            <Icon>{manageContextActionToggle ? <RiFolderLine /> : <RiGroupLine />}</Icon>
+                            <Icon>{activeContentView ? <RiFolderLine /> : <RiGroupLine />}</Icon>
                         </TextButton>
                         */}
 
                         <TextButton
                             onClick={() => {
-                                setManageContextActionToggle('content');
+                                setActiveContentView('content');
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
                                 // setSettingsTabValue('content');
                             }}
@@ -105,7 +105,7 @@ const ServiceIframeHeader = ({
 
                         <TextButton
                             onClick={() => {
-                                setManageContextActionToggle('members');
+                                setActiveContentView('members');
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
                                 // setSettingsTabValue('members');
                             }}
@@ -168,7 +168,7 @@ const ServiceIframeHeader = ({
 
                         <TextButton
                             onClick={() => {
-                                setManageContextActionToggle('settings');
+                                setActiveContentView('settings');
                                 // setIsInviteUsersOpen(!isInviteUsersOpen);
                                 // setSettingsTabValue('settings');
                             }}

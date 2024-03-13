@@ -57,7 +57,7 @@ export default function Explore() {
     const matrix = useMatrix();
 
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
-    const [manageContextActionToggle, setManageContextActionToggle] = useState('content');
+    const [activeContentView, setActiveContentView] = useState('content');
     const [isFetchingContent, setIsFetchingContent] = useState(false);
     // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
     // const [settingsTabValue, setSettingsTabValue] = useState('settings');
@@ -249,7 +249,7 @@ export default function Explore() {
 
         const onRouterChange = async () => {
             setIsFetchingContent(roomId);
-            !myPowerLevel && setManageContextActionToggle('content');
+            !myPowerLevel && setActiveContentView('content');
             await getSpaceChildren(null, roomId);
             setIsFetchingContent(false);
         };
@@ -425,9 +425,9 @@ export default function Explore() {
                                 title={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                 removingLink={false}
                                 roomId={roomId}
-                                manageContextActionToggle={manageContextActionToggle}
+                                activeContentView={activeContentView}
                                 myPowerLevel={myPowerLevel}
-                                setManageContextActionToggle={setManageContextActionToggle}
+                                setActiveContentView={setActiveContentView}
                                 // isInviteUsersOpen={isInviteUsersOpen}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                                 // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
@@ -435,7 +435,7 @@ export default function Explore() {
                             />
 
                             <div className="flex h-full w-full flex-col overflow-auto">
-                                {manageContextActionToggle === 'content' && (
+                                {activeContentView === 'content' && (
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
@@ -507,7 +507,7 @@ export default function Explore() {
                                     </>
                                 )}
 
-                                {manageContextActionToggle === 'members' && (
+                                {activeContentView === 'members' && (
                                     <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
                                         <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
                                             <Icon>
@@ -517,7 +517,7 @@ export default function Explore() {
                                     </UserManagement>
                                 )}
 
-                                {manageContextActionToggle === 'settings' &&
+                                {activeContentView === 'settings' &&
                                     matrixClient
                                         .getRoom(roomId)
                                         ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
