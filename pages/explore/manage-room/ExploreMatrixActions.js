@@ -122,14 +122,14 @@ const ExploreMatrixActions = ({
                         <TabsContent className="pb-6 [&>*+*]:mt-8" value="settings">
                             <>
                                 {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
-                                    <div>
+                                    <div className="[&>*+*]:mt-4">
                                         <h3>{t('Topic')}</h3>
                                         <ChangeTopic roomId={currentId} roomName={room.name} />
                                     </div>
                                 )}
 
                                 {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
-                                    <div>
+                                    <div className="[&>*+*]:mt-4">
                                         <h3>{t('Avatar')}</h3>
                                         <ChangeAvatar
                                             roomId={currentId}

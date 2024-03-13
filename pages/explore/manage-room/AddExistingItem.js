@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
-import { useMatrix } from '../../../lib/Matrix';
+import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
 import CachedContextMultiLevelSelect from '../../../components/CachedContextMultiLevelSelect';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
 import PreviousNextButtons from '../../../components/UI/PreviousNextButtons';
-import Form from '@/components/UI/Form';
 
 /**
  * Component for adding an existing item to a context.
  *
  * @param {String} currentId - The id of the current observed explore room.
  * @param {Function} onCancel - Callback function to cancel the operation.
+ * @param {Function} onPreviousAction - Callback function to go back to the previous step.
  *
  * @returns {JSX.Element} JSX element representing the "Add Existing Item" component.
  */
@@ -34,7 +35,7 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
     const onLevelSelect = (levels) => {
         setSelectedLevels(levels);
         const item = matrix.rooms.get(levels[levels.length - 1]);
-        setIsItem(!!item);
+        setIsItem(item?.meta.type === 'content');
         // if (isLeaf && getConfig().publicRuntimeConfig.templates.item.includes(item?.meta.template)) setIsItem(true);
         // else setIsItem(false);
     };
@@ -51,18 +52,23 @@ const AddExistingItem = ({ currentId, onPreviousAction, onCancel }) => {
         if (addChildToParent?.event_id) {
             setSelectedLevels([applicationsFolder]);
             setErrorMessage('');
+            toast.success(t('Item added to context'));
             onCancel();
         }
     };
 
     return (
-        <Form onSubmit={addItemToContext}>
+        <form className="[&>*+*]:mt-4" onSubmit={addItemToContext}>
             <CachedContextMultiLevelSelect onChange={onLevelSelect} activeContexts={selectedLevels} rootId={currentId} />
-            <PreviousNextButtons disableNext={isAddingContext || !isItem} onCancel={onPreviousAction}>
-                {isAddingContext ? <LoadingSpinnerInline inverted /> : t('add')}
-            </PreviousNextButtons>
+            <PreviousNextButtons
+                className="mt-4"
+                previousLabel={t('Back')}
+                nextLabel={isAddingContext ? <LoadingSpinnerInline inverted /> : t('Add')}
+                disableNext={isAddingContext || !isItem}
+                onCancel={onPreviousAction}
+            />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        </Form>
+        </form>
     );
 };
 

@@ -3,16 +3,17 @@ import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
 import styled from 'styled-components';
 import { MatrixEvent } from 'matrix-js-sdk';
-import { RiAddLine, RiCloseLine, RiDeleteBinLine } from '@remixicon/react';
+import { RiAddLine, RiUserUnfollowLine } from '@remixicon/react';
 
-import { ServiceTable } from '../../../components/UI/ServiceTable';
-import { useAuth } from '../../../lib/Auth';
+import { ServiceTable } from '@/components/UI/ServiceTable';
+import { useAuth } from '@/lib/Auth';
 import TextButton from '../../../components/UI/TextButton';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import LoadingSpinnerInline from '../../../components/UI/LoadingSpinnerInline';
-import presets from '../presets';
+import presets from '@/lib/matrixPresets';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import { Button } from '@/components/UI/shadcn/Button';
+import Icon from '@/components/UI/Icon';
 
 //@TODO refine styled component
 const RoleSelect = styled.select`
@@ -31,7 +32,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     // get the current members of the room and sort them first from highest to lowest power level and then alphabetically
     const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const handleKick = async (userId, name) => {
         if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
@@ -59,9 +60,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
             @TODO: remove caption? negative margin for caption/table?
             */}
             <ServiceTable>
-                <ServiceTable.Caption>
-                    {t('All members of {{room}}', { room: roomName })}
-                </ServiceTable.Caption>
+                <ServiceTable.Caption>{t('All members of {{room}}', { room: roomName })}</ServiceTable.Caption>
                 <ServiceTable.Head>
                     <ServiceTable.Row>
                         <ServiceTable.Header align="left">{t('Name')}</ServiceTable.Header>
@@ -98,12 +97,11 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                     <InviteUserToMatrixRoom
                         roomId={roomId}
                         trigger={
-                            <Button
-                                className="w-full justify-between px-0 pr-1.5 hover:text-accent"
-                                variant="ghost"
-                            >
-                                {t('Invite people to {{name}} …', { name: roomName })}
-                                <RiAddLine />
+                            <Button className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent" variant="ghost">
+                                {t('Invite to {{name}} …', { name: roomName })}
+                                <Icon>
+                                    <RiAddLine />
+                                </Icon>
                             </Button>
                         }
                     />
@@ -120,7 +118,7 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
     const hasHigherPowerLevel = powerLevel < selfPowerLevel;
     const [isKicking, setIsKicking] = useState(false);
     const [isChangingPowerLevel, setIsChangingPowerLevel] = useState(false);
-    const { t } = useTranslation();
+    const { t } = useTranslation('explore');
 
     const onKickClick = async (e) => {
         e.preventDefault();
@@ -169,7 +167,9 @@ function UserTableRow({ displayName, userId, roomName, powerLevel, selfPowerLeve
                     {isKicking ? (
                         <LoadingSpinnerInline />
                     ) : (
-                        <RiDeleteBinLine width="var(--icon-size)" height="var(--icon-size)" fill="var(--color-foreground)" />
+                        <Icon>
+                            <RiUserUnfollowLine />
+                        </Icon>
                     )}
                 </TextButton>
             </ServiceTable.Cell>

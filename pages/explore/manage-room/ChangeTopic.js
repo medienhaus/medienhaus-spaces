@@ -1,26 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { styled } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { RiCheckLine } from '@remixicon/react';
 
 import { useAuth } from '../../../lib/Auth';
-import Form from '../../../components/UI/Form';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import { Textarea } from '@/components/UI/shadcn/Textarea';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
-
-const TopicInput = styled.textarea`
-    width: 100%;
-    padding: 0 calc(var(--margin) * 0.2);
-    font-weight: 500;
-    color: var(--color-foreground);
-    background-color: var(--color-background);
-    border-color: var(--color-foreground);
-    border-style: solid;
-    border-width: calc(var(--margin) * 0.2);
-    border-radius: unset;
-    appearance: none;
-`;
 
 const ChangeTopic = ({ roomId, roomName }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
@@ -81,15 +66,15 @@ const ChangeTopic = ({ roomId, roomName }) => {
 
     return (
         <>
-            <Form onSubmit={updateTopic} onReset={() => setNewTopic(currentTopic)}>
+            <form className="[&>*+*]:mt-4" onSubmit={updateTopic} onReset={() => setNewTopic(currentTopic)}>
                 <Textarea
-                    placeholder={t('Enter a new topic, for example a short description of ') + roomName}
+                    placeholder={t('Enter a new topic, for example a short description of {{name}}', { name: roomName })}
                     value={newTopic}
                     onChange={handleTopicChange}
                 />
                 {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
                 <ConfirmCancelButtons disabled={isUpdating || currentTopic === newTopic} />
-            </Form>
+            </form>
             {successMessage && (
                 <p>
                     {t(successMessage)} <RiCheckLine />

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/UI/shadcn/Button';
 
 /**
@@ -13,7 +14,7 @@ import { Button } from '@/components/UI/shadcn/Button';
  * @returns {React.JSX} two inline buttons.  'previous' and 'next'
  *
  */
-const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disablePrev, warning }) => {
+const PreviousNextButtons = ({ className, disabled, onCancel, disableNext, disablePrev, previousLabel, nextLabel, warning }) => {
     const { t } = useTranslation();
 
     const handlePrevious = (e) => {
@@ -23,12 +24,12 @@ const PreviousNextButtons = ({ children, disabled, onCancel, disableNext, disabl
     };
 
     return (
-        <div className="grid grid-cols-2 gap-4">
+        <div className={cn('grid grid-cols-2 gap-4', className)}>
             <Button variant="outline" type="reset" disabled={disabled || disablePrev} onClick={handlePrevious}>
-                {t('Previous')}
+                {previousLabel || t('Previous')}
             </Button>
             <Button type="submit" variant={warning ? 'destructive' : 'default'} disabled={disabled || disableNext}>
-                {children || t('Next')}
+                {nextLabel || t('Next')}
             </Button>
         </div>
     );

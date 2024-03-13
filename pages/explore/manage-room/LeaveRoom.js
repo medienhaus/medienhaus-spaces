@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { router } from 'next/router';
 import { RiErrorWarningLine } from '@remixicon/react';
+import { toast } from 'sonner';
 
-import { useAuth } from '../../../lib/Auth';
+import { useAuth } from '@/lib/Auth';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 import { Button } from '@/components/UI/shadcn/Button';
 import {
@@ -51,6 +52,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
         });
 
         setIsLeaving(false);
+        toast.success(t('You have left {{name}}.', { name: roomName }));
         setErrorMessage('');
         parentId && router.push(parentId);
     };
@@ -64,7 +66,7 @@ const LeaveRoom = ({ roomId, parentId, roomName, onCancel }) => {
             </Alert>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="destructive" disabled={isLeaving}>
+                    <Button className="w-full" variant="destructive" disabled={isLeaving}>
                         {t('Leave')}
                     </Button>
                 </DialogTrigger>
