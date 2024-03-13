@@ -14,6 +14,8 @@ function useOnboardingProvider() {
     const [currentRoute, setCurrentRoute] = useState('');
     const [nextRouteName, setNextRouteName] = useState('');
 
+    const [prevRouteName, setPrevRouteName] = useState('');
+
     const [currentRouteIndex, setCurrentRouteIndex] = useState(0);
 
     const [currentSteps, setCurrentSteps] = useState([]);
@@ -83,11 +85,27 @@ function useOnboardingProvider() {
     const nextRoute = () => {
         // if there are more routes in the onboarding script, move to the next route
         if (currentRouteIndex + 1 < onboadingScript.length) {
+            setPrevRouteName(currentRoute);
             const newIndex = currentRouteIndex + 1;
             setCurrentRouteIndex(newIndex);
             setCurrentRoute(onboadingScript[newIndex].route);
             setCurrentSteps(onboadingScript[newIndex].steps);
             router.push(onboadingScript[newIndex].route);
+        }
+    };
+
+    const prevRoute = () => {
+        if (currentRouteIndex - 1 >= 0) {
+            const newIndex = currentRouteIndex - 1;
+            setCurrentRouteIndex(newIndex);
+            setCurrentRoute(onboadingScript[newIndex].route);
+            setCurrentSteps(onboadingScript[newIndex].steps);
+            router.push(onboadingScript[newIndex].route);
+            if (newIndex > 0) {
+                setPrevRouteName(onboadingScript[newIndex - 1].route);
+            } else {
+                setPrevRouteName('');
+            }
         }
     };
 
@@ -136,7 +154,9 @@ function useOnboardingProvider() {
         tourInstance,
         startTour,
         processStep,
+        prevRoute,
         nextRoute,
+        prevRouteName,
         nextRouteName,
         exit,
     };

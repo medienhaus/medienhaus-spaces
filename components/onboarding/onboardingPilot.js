@@ -42,14 +42,25 @@ const OnboardingPilot = () => {
                         </SheetHeader>
 
                         <SheetFooter className="mt-8 grid grid-cols-2 gap-4">
-                            <Button
-                                disabled={!onboarding.hasPrev}
-                                onClick={() => {
-                                    onboarding.processStep(-1);
-                                }}
-                            >
-                                {t('prev')}
-                            </Button>
+                            {onboarding.active && onboarding.hasPrev && (
+                                <Button
+                                    disabled={!onboarding.hasPrev}
+                                    onClick={() => {
+                                        onboarding.processStep(-1);
+                                    }}
+                                >
+                                    {t('prev')}
+                                </Button>
+                            )}
+                            {onboarding.active && !onboarding.hasPrev && onboarding.prevRouteName && (
+                                <Button
+                                    onClick={() => {
+                                        onboarding.prevRoute();
+                                    }}
+                                >
+                                    {'\uE1D3'} {onboarding.prevRouteName}
+                                </Button>
+                            )}
                             {onboarding.active && onboarding.hasNext && (
                                 <Button
                                     disabled={!onboarding.hasNext}
