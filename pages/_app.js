@@ -9,15 +9,11 @@ import DefaultLayout from '@/components/layouts/default';
 import LostConnection from '@/components/UI/LostConnection';
 import { AuthContext, useAuthProvider } from '@/lib/Auth';
 import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
-
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
-
 import '../assets/driverJsCustom.css';
-
 import { useOnboardingProvider, OnboardingContext } from '@/components/onboarding/onboardingContext';
 import OnboardingPilot from '@/components/onboarding/onboardingPilot';
-
 import { Toaster } from '@/components/UI/shadcn/Sonner';
 
 // Enable immer support for Map() and Set()

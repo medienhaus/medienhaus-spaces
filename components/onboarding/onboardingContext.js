@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
 
 import 'driver.js/dist/driver.css'; //import css
-import onboadingScriptGeneric from './onboardingScriptGeneric.json';
-import onboadingScriptCustom from './onboardingScriptCustom.json';
+import onboardingScriptGeneric from './onboardingScriptGeneric.json';
+import onboardingScriptCustom from './onboardingScriptCustom.json';
 
 const OnboardingContext = createContext(undefined);
 
@@ -31,27 +31,27 @@ function useOnboardingProvider() {
 
     const [tourInstance, setTourInstance] = useState(null);
 
-    const onboadingScript = onboadingScriptCustom?.length > 0 ? onboadingScriptCustom : onboadingScriptGeneric;
+    const onboardingScript = onboardingScriptCustom?.length > 0 ? onboardingScriptCustom : onboardingScriptGeneric;
 
-    const isScriptCustom = onboadingScriptCustom?.length > 0;
+    const isScriptCustom = onboardingScriptCustom?.length > 0;
 
     const startTour = (position = 0) => {
-        if (position > onboadingScript.length - 1) {
+        if (position > onboardingScript.length - 1) {
             position = 0;
         }
 
         // start the tour with the first route and its steps. reset everything to the initial state
-        setCurrentRoute(onboadingScript[position].route);
-        setCurrentSteps(onboadingScript[position].steps);
+        setCurrentRoute(onboardingScript[position].route);
+        setCurrentSteps(onboardingScript[position].steps);
         setCurrentRouteIndex(position);
         setCurrentStep(0);
         setActive(true);
 
         if (position > 0) {
-            setPrevRouteName(onboadingScript[position - 1].route);
+            setPrevRouteName(onboardingScript[position - 1].route);
         }
 
-        router.push(onboadingScript[position].route);
+        router.push(onboardingScript[position].route);
     };
 
     useEffect(() => {
@@ -80,8 +80,8 @@ function useOnboardingProvider() {
         // start the tour if the instance is created, which is the case after a route change
         if (tourInstance) {
             tourInstance.drive();
-            setCurrentStepDescription(tourInstance?.getActiveStep()?.popover?.description);
-            setCurrentStepTitle(tourInstance?.getActiveStep()?.popover?.title);
+            setCurrentStepDescription(tourInstance.getActiveStep()?.popover?.description);
+            setCurrentStepTitle(tourInstance.getActiveStep()?.popover?.title);
             tourInstance.refresh();
             setHasPrev(!tourInstance.isFirstStep());
             setHasNext(!tourInstance.isLastStep());
@@ -90,22 +90,22 @@ function useOnboardingProvider() {
 
     useEffect(() => {
         // set the next route name if there are more routes in the onboarding script. the nextRoutName is used in the onboarding Pilot component to display the next route name if the last step of the current route is reached
-        if (!hasNext && currentRouteIndex + 1 < onboadingScript.length) {
-            setNextRouteName(onboadingScript[currentRouteIndex + 1].route);
+        if (!hasNext && currentRouteIndex + 1 < onboardingScript.length) {
+            setNextRouteName(onboardingScript[currentRouteIndex + 1].route);
         } else {
             setNextRouteName('');
         }
-    }, [currentRouteIndex, hasNext, onboadingScript]);
+    }, [currentRouteIndex, hasNext, onboardingScript]);
 
     const nextRoute = () => {
         // if there are more routes in the onboarding script, move to the next route
-        if (currentRouteIndex + 1 < onboadingScript.length) {
+        if (currentRouteIndex + 1 < onboardingScript.length) {
             setPrevRouteName(currentRoute);
             const newIndex = currentRouteIndex + 1;
             setCurrentRouteIndex(newIndex);
-            setCurrentRoute(onboadingScript[newIndex].route);
-            setCurrentSteps(onboadingScript[newIndex].steps);
-            router.push(onboadingScript[newIndex].route);
+            setCurrentRoute(onboardingScript[newIndex].route);
+            setCurrentSteps(onboardingScript[newIndex].steps);
+            router.push(onboardingScript[newIndex].route);
         }
     };
 
@@ -113,12 +113,12 @@ function useOnboardingProvider() {
         if (currentRouteIndex - 1 >= 0) {
             const newIndex = currentRouteIndex - 1;
             setCurrentRouteIndex(newIndex);
-            setCurrentRoute(onboadingScript[newIndex].route);
-            setCurrentSteps(onboadingScript[newIndex].steps);
-            router.push(onboadingScript[newIndex].route);
+            setCurrentRoute(onboardingScript[newIndex].route);
+            setCurrentSteps(onboardingScript[newIndex].steps);
+            router.push(onboardingScript[newIndex].route);
 
             if (newIndex > 0) {
-                setPrevRouteName(onboadingScript[newIndex - 1].route);
+                setPrevRouteName(onboardingScript[newIndex - 1].route);
             } else {
                 setPrevRouteName('');
             }
