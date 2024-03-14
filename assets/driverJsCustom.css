@@ -1,8 +1,9 @@
-.driver-active * {
-    pointer-events: unset !important;
-}
 .driver-active {
     pointer-events: unset;
+}
+
+.driver-active * {
+    pointer-events: unset !important;
 }
 
 .driver-overlay {
@@ -15,14 +16,16 @@
 }
 
 .driver-active-element::before {
-    content: '•';
+    color: hsl(var(--accent-foreground));
+    content: '\21aa';
+    font-weight: 500;
     position: absolute;
-    margin-left: -0.35em;
-    margin-top: -0.5em;
-    font-weight: 900;
-    font-size: 3em;
-    color: hsl(var(--onboarding));
+    transform: translateX(-1.2rem);
     animation: blink 1s infinite;
+}
+
+.driver-active-element {
+    color: hsl(var(--accent-foreground));
 }
 
 @keyframes blink {
