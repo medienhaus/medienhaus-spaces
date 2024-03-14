@@ -38,10 +38,6 @@ module.exports = {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
-                onboarding: {
-                    DEFAULT: 'hsl(var(--onboarding))',
-                    foreground: 'hsl(var(--onboarding-foreground))',
-                },
             },
         },
     },
