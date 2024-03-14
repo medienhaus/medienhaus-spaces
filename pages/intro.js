@@ -1,30 +1,10 @@
-import { use, useCallback, useEffect, useRef, useContext, useState } from 'react';
-import { useRouter } from 'next/router';
-import getConfig from 'next/config';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { filter, map, set } from 'lodash';
-import { styled } from 'styled-components';
 
-import { useAuth } from '@/lib/Auth';
-import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
-import { Input } from '@/components/UI/shadcn/Input';
+import { useAuth } from '@/lib/Auth';
 import { Button } from '@/components/UI/shadcn/Button';
-import { OnboardingContext, useOnboarding } from '@/components/onboarding/onboardingContext';
-import { useMatrix } from '@/lib/Matrix';
-
-const IntroSection = styled(DefaultLayout.LameColumn)`
-    /* TODO: these kind of layout spacings probably need to
-   * be refined across all pages once merged into main */
-
-    > * + * {
-        margin-top: calc(var(--margin) * var(--line-height) * 2);
-    }
-
-    > * > * + * {
-        margin-top: calc(var(--margin) * var(--line-height));
-    }
-`;
+import { useOnboarding } from '@/components/onboarding/onboardingContext';
 
 export default function Intro() {
     const { t } = useTranslation('intro');
@@ -37,11 +17,11 @@ export default function Intro() {
 
     return (
         <>
-            <IntroSection>
+            <DefaultLayout.LameColumn className="[&>*+*]:mt-4 [&>div>*+*]:mt-4">
                 <div>
                     <h2>/intro</h2>
                     <p>
-                        {t('Hello')} {auth?.user?.displayname}{' '}
+                        {t('Hello')} <strong>{auth?.user?.displayname}</strong>.
                     </p>
                     <p>
                         <Trans
@@ -61,8 +41,8 @@ export default function Intro() {
 
                 <hr />
 
-                <h3> {t('Features')}</h3>
                 <div>
+                    <h3>{t('Features')}</h3>
                     <ul>
                         <li>{t('Real-time messaging')}</li>
                         <li>{t('Video conferencing')}</li>
@@ -73,8 +53,10 @@ export default function Intro() {
                     </ul>
                 </div>
 
-                <h3>{t('Terms & Conditions / Community Guidlines')}</h3>
+                <hr />
+
                 <div>
+                    <h3>{t('Terms & Conditions / Community Guidlines')}</h3>
                     <p>
                         <Trans
                             t={t}
@@ -93,8 +75,10 @@ export default function Intro() {
                     </Button>
                 </div>
 
-                <h3>{t('How to start')}</h3>
+                <hr />
+
                 <div>
+                    <h3>{t('How to start')}</h3>
                     <p>
                         <Trans
                             t={t}
@@ -104,8 +88,8 @@ export default function Intro() {
                         />
                     </p>
                     <Button
+                        className="bg-accent-foreground text-white hover:bg-accent disabled:bg-muted"
                         disabled={!termsAccepted}
-                        variant="onboarding"
                         onClick={() => {
                             onboarding.startTour();
                             onboarding.writeOnboardStateToAccountData(matrixClient, {
@@ -119,16 +103,20 @@ export default function Intro() {
                     </Button>
                 </div>
 
-                <h3>{t('Learn')}</h3>
-                <p>
-                    <Trans
-                        t={t}
-                        i18nKey="intro"
-                        defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
-                        components={{ a: <a href /> }}
-                    />
-                </p>
-            </IntroSection>
+                <hr />
+
+                <div>
+                    <h3>{t('Learn')}</h3>
+                    <p>
+                        <Trans
+                            t={t}
+                            i18nKey="intro"
+                            defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
+                            components={{ a: <a href /> }}
+                        />
+                    </p>
+                </div>
+            </DefaultLayout.LameColumn>
         </>
     );
 }

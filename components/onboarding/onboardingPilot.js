@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { RiSkipDownLine, RiSkipUpLine } from '@remixicon/react';
 
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
@@ -15,7 +16,7 @@ const OnboardingPilot = () => {
     const matrix = useMatrix();
 
     const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
-    const [side, setSide] = useState('onboardingBottomRight');
+    const [side, setSide] = useState('float');
     const [isOpen, setIsOpen] = useState(true);
 
     //no clue why it is not possible to use the matrix.onboardingData object directly in the context file. therefore we have to use it here and pass it to the context – schade…
@@ -46,25 +47,42 @@ const OnboardingPilot = () => {
                         onInteractOutside={(e) => {
                             e.preventDefault();
                         }}
+                        onOpenAutoFocus={(e) => {
+                            e.preventDefault();
+                        }}
                     >
+                        <Button
+                            className="text-white hover:text-accent"
+                            variant="ghost"
+                            size="icon"
+                            onClick={(event) => {
+                                event.preventDefault;
+                                setSide((prevState) =>
+                                    prevState === 'float' ? 'minified' : 'float',
+                                );
+                            }}
+                        >
+                            {side === 'float' ? (
+                                <>
+                                    <RiSkipDownLine />
+                                    <span className="sr-only">{t('Minimise')}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <RiSkipUpLine />
+                                    <span className="sr-only">{t('Maximise')}</span>
+                                </>
+                            )}
+                        </Button>
+
                         <SheetHeader>
-                            <Button
-                                className=" rounded-lg bg-onboarding p-0"
-                                onClick={() => {
-                                    setSide((prevState) =>
-                                        prevState === 'onboardingBottomRight' ? 'onboardingMinimized' : 'onboardingBottomRight',
-                                    );
-                                }}
-                            >
-                                {side === 'onboardingBottomRight' ? '⌄' : '⌅'}
-                            </Button>
                             <SheetTitle>
                                 {onboarding.currentRoute} — {onboarding.currentStepTitle}
                             </SheetTitle>
                             <SheetDescription>{onboarding.currentStepDescription}</SheetDescription>
                         </SheetHeader>
 
-                        <SheetFooter className="mt-8 grid grid-cols-2 gap-4">
+                        <SheetFooter className="mt-6 grid grid-cols-2 gap-4 [&>button:only-child]:[grid-column:2]">
                             {onboarding.active && onboarding.hasPrev && (
                                 <Button
                                     disabled={!onboarding.hasPrev}
@@ -72,9 +90,10 @@ const OnboardingPilot = () => {
                                         onboarding.processStep(-1);
                                     }}
                                 >
-                                    {t('prev')}
+                                    {t('Prev')}
                                 </Button>
                             )}
+
                             {onboarding.active && !onboarding.hasPrev && onboarding.prevRouteName && (
                                 <Button
                                     onClick={async () => {
@@ -87,6 +106,7 @@ const OnboardingPilot = () => {
                                     {'\uE1D3'} {onboarding.prevRouteName}
                                 </Button>
                             )}
+
                             {onboarding.active && onboarding.hasNext && (
                                 <Button
                                     disabled={!onboarding.hasNext}
@@ -94,7 +114,7 @@ const OnboardingPilot = () => {
                                         onboarding.processStep(1);
                                     }}
                                 >
-                                    {t('next')}
+                                    {t('Next')}
                                 </Button>
                             )}
 
@@ -110,6 +130,7 @@ const OnboardingPilot = () => {
                                     {'\uE1D8'} {onboarding.nextRouteName}
                                 </Button>
                             )}
+
                             {onboarding.active && !onboarding.hasNext && !onboarding.nextRouteName.length > 0 && (
                                 <Button
                                     onClick={async () => {
@@ -117,7 +138,7 @@ const OnboardingPilot = () => {
                                         await onboarding.writeOnboardStateToAccountData(matrixClient, { completed: true, active: false });
                                     }}
                                 >
-                                    {t('close')}
+                                    {t('Close')}
                                 </Button>
                             )}
                         </SheetFooter>
