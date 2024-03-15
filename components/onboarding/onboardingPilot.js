@@ -16,7 +16,7 @@ const OnboardingPilot = () => {
     const matrix = useMatrix();
 
     const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
-    const [side, setSide] = useState('float');
+    const [side, setSide] = useState('floating');
     const [isOpen, setIsOpen] = useState(true);
 
     //no clue why it is not possible to use the matrix.onboardingData object directly in the context file. therefore we have to use it here and pass it to the context – schade…
@@ -58,11 +58,11 @@ const OnboardingPilot = () => {
                             onClick={(event) => {
                                 event.preventDefault;
                                 setSide((prevState) =>
-                                    prevState === 'float' ? 'minified' : 'float',
+                                    prevState === 'floating' ? 'minified' : 'floating',
                                 );
                             }}
                         >
-                            {side === 'float' ? (
+                            {side === 'floating' ? (
                                 <>
                                     <RiSkipDownLine />
                                     <span className="sr-only">{t('Minimise')}</span>
