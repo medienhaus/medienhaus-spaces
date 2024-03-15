@@ -55,14 +55,16 @@ export default function App({ Component, pageProps }) {
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     {!matrixData.isConnectedToServer && <LostConnection />}
-                    <DefaultLayout.Layout>
-                        {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
-                            <OnboardingContext.Provider value={onboarding}>
-                                <OnboardingPilot />
-                                <Component {...pageProps} />
-                            </OnboardingContext.Provider>
-                        )}
-                    </DefaultLayout.Layout>
+                    <OnboardingContext.Provider value={onboarding}>
+                        <DefaultLayout.Layout>
+                            {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
+                                <>
+                                    <OnboardingPilot />
+                                    <Component {...pageProps} />
+                                </>
+                            )}
+                        </DefaultLayout.Layout>
+                    </OnboardingContext.Provider>
                     <Toaster
                         visibleToasts={10}
                         toastOptions={{
