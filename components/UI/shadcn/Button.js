@@ -10,17 +10,18 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default: 'bg-primary text-primary-foreground hover:bg-accent hover:text-white',
-                destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                destructive: 'bg-destructive text-white hover:bg-destructive/90',
                 outline: 'border border-input bg-background hover:bg-accent hover:border-accent hover:text-white',
                 secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-                ghost: 'hover:bg-accent hover:text-accent-foreground',
+                ghost: 'hover:text-white',
                 link: 'text-primary underline-offset-4 hover:underline',
             },
             size: {
                 default: 'h-10 px-4 py-2',
-                sm: 'h-9 rounded px-3',
-                lg: 'h-11 rounded px-8',
-                icon: 'h-10 w-10',
+                sm: 'h-8 px-2 text-sm',
+                // @NOTE: variant="ghost" && size="icon" should now be the same as <TextButton /> styled component;
+                // @TODO: needs to be universally verified, and then <TextButton /> could be replaced by <Button />
+                icon: 'h-[unset] min-w-[24px]'
             },
         },
         defaultVariants: {

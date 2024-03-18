@@ -8,21 +8,30 @@ export const Main = styled.main`
     display: flex;
     flex: 1 0;
     flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 
     @media ${breakpoints.tabletAndAbove} {
         flex-direction: row;
-        grid-row: 1/4;
-        grid-column: 2;
-        overflow-y: auto;
+        grid-row: 2;
+        // grid-row: 1/4;
+        // grid-column: 2;
+        // overflow-y: auto;
     }
 `;
 
 const LameColumn = styled.div`
+    height: 100%;
     padding: var(--margin);
+    overflow: auto;
+
+    h2 + * {
+        margin-top: var(--margin);
+    }
 
     @media ${breakpoints.tabletAndAbove} {
         width: 100%;
-        max-width: 55ch;
+        // max-width: 55ch;
         padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     }
 
@@ -36,6 +45,11 @@ const Sidebar = styled.div`
     height: 100%;
     padding: var(--margin);
     background: var(--color-background-alpha);
+
+    header + table,
+    h2 + table {
+        margin-top: calc(var(--margin) * 2);
+    }
 
     // On small viewports we want to hide the sidebar if there is an element (alas the iframe) next to us
     @media ${breakpoints.phoneOnly} {

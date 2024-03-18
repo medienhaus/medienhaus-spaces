@@ -1,13 +1,29 @@
 import { default as NextLink } from 'next/link';
-import { styled } from 'styled-components';
+// import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import _ from 'lodash';
+// import { breakpoints } from '../../_breakpoints';
+import { RiLogoutBoxRLine } from '@remixicon/react';
 
-import { breakpoints } from '../../_breakpoints';
-import NotificationBubble from '../../UI/NotificationBubble';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import { useMediaQuery } from '@/lib/utils';
+import {
+    NavigationMenu,
+    // NavigationMenuContent,
+    // NavigationMenuIndicator,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    // NavigationMenuTrigger,
+    // NavigationMenuViewport,
+    navigationMenuTriggerStyle,
+} from '@/components/UI/shadcn/NavigationMenu';
+import NotificationBubble from '../../UI/NotificationBubble';
 
+const isDesktopMediaQuery = '(min-width: 768px)';
+
+/*
 const List = styled.ul`
     padding: 0;
     margin: 0 0 calc(var(--margin) * 3);
@@ -25,10 +41,13 @@ const List = styled.ul`
         }
     }
 `;
+*/
 
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
     const matrix = useMatrix();
+
+    const isDesktop = useMediaQuery(isDesktopMediaQuery);
 
     const Link = ({ href, children }) => (
         <NextLink href={href} onClick={closeNavigation}>
@@ -44,53 +63,86 @@ export default function Navigation({ closeNavigation }) {
     // Guests should only see the /login entry
     if (auth.user === false) {
         return (
-            <List>
-                <li>
-                    <Link href="/login">/login</Link>
-                </li>
-            </List>
+            /* @NOTE: we need to override the max-w-max class here */
+            <NavigationMenu className="max-w-none justify-end">
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <Link href="/login" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>/login</NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
         );
     }
 
     return (
         <>
-            <List>
-                <li>
-                    <Link href="/dashboard">
-                        /dashboard{(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble />}
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/account">/account</Link>
-                </li>
-                <li>
-                    <Link href="/explore">/explore</Link>
-                </li>
-            </List>
-            <List>
-                <li>
-                    <Link href="/chat">/chat</Link>
-                </li>
-                {_.get(getConfig(), 'publicRuntimeConfig.authProviders.etherpad.path') && (
-                    <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>
-                            {getConfig().publicRuntimeConfig.authProviders.etherpad.path}
+            {/* @NOTE: we need to override the max-w-max class here */}
+            <NavigationMenu className="max-w-none justify-between [&_a:hover]:bg-transparent">
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <Link href="/dashboard" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>/dashboard</NavigationMenuLink>
+                            {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
+                                <NotificationBubble className="translate-x-[-1rem]" />
+                            )}
                         </Link>
-                    </li>
-                )}
-                {_.get(getConfig(), 'publicRuntimeConfig.authProviders.spacedeck.path') && (
-                    <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>
-                            {getConfig().publicRuntimeConfig.authProviders.spacedeck.path}
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/account" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>/account</NavigationMenuLink>
                         </Link>
-                    </li>
-                )}
-            </List>
-            <List>
-                <li>
-                    <Link href="/logout">/logout</Link>
-                </li>
-            </List>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/explore" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>/explore</NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/chat" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>/chat</NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    {_.get(getConfig(), 'publicRuntimeConfig.authProviders.etherpad.path') && (
+                        <NavigationMenuItem>
+                            <Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path} legacyBehavior passHref>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    {getConfig().publicRuntimeConfig.authProviders.etherpad.path}
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+                    )}
+                    {_.get(getConfig(), 'publicRuntimeConfig.authProviders.spacedeck.path') && (
+                        <NavigationMenuItem>
+                            <Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path} legacyBehavior passHref>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    {getConfig().publicRuntimeConfig.authProviders.spacedeck.path}
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+                    )}
+                </NavigationMenuList>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <Link href="/logout" className="justify-self-end" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                /logout
+                                {/*
+                                {isDesktop ? (
+                                    <>
+                                        <RiLogoutBoxRLine />
+                                        <span className="sr-only">Logout</span>
+                                    </>
+                                ) : (
+                                    '/logout'
+                                )}
+                                */}
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
         </>
     );
 }

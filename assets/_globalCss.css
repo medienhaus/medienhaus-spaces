@@ -79,6 +79,12 @@
     }
 }
 
+html,
+body,
+#__next {
+    height: 100%;
+}
+
 body {
     font-family:
         Inter,
