@@ -149,7 +149,6 @@ const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren, breadcrumbs
                     <DefaultLayout.IframeHeaderButtonWrapper>
                         {matrix?.rooms?.get(roomId) && (
                             <>
-                                {' '}
                                 <InviteUserToMatrixRoom
                                     roomId={roomId}
                                     trigger={
