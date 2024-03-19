@@ -100,6 +100,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
         <>
             <Breadcrumb>
                 <BreadcrumbList>
+                    {/*
                     {selectedSpaceChildren.map((path, index) => {
                         if (!path[0]) return null;
                         const roomId = path[0].id || path[0].room_id || path[0].roomId;
@@ -117,10 +118,13 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                             );
                         }
                     })}
+                    */}
 
                     {selectedSpaceChildren.length > 2 && (
                         <>
+                            {/*
                             <BreadcrumbSeparator />
+                            */}
                             <BreadcrumbItem>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex items-center gap-1">
@@ -171,24 +175,22 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent, iframeRoomId }) =>
                     })}
                 </BreadcrumbList>
             </Breadcrumb>
-            <Table>
-                <TableBody>
-                    {iframeRoomId && table.getRowModel().rows?.length
-                        ? table.getRowModel().rows.map((row, index) => {
-                              const roomId = row.original.room_id || row.original.roomId || row.original.id;
-                              if (index === 0) return null;
-
+            {iframeRoomId && table.getRowModel().rows?.length
+                ? table.getRowModel().rows.map((row, index) => {
+                      <Table>
+                          <TableBody>
+                              const roomId = row.original.room_id || row.original.roomId || row.original.id; if (index === 0) return null;
                               return (
-                                  <TreeLeaves
-                                      key={row.id}
-                                      row={row}
-                                      selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
-                                  />
+                              <TreeLeaves
+                                  key={row.id}
+                                  row={row}
+                                  selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
+                              />
                               );
-                          })
-                        : null}
-                </TableBody>
-            </Table>
+                          </TableBody>
+                      </Table>;
+                  })
+                : null}
         </>
     );
 };

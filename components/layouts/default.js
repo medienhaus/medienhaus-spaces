@@ -86,11 +86,13 @@ const IframeWrapper = styled(Wrapper)`
 
 const IframeHeader = styled.header`
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-auto-flow: row;
+    grid-gap: var(--margin);
     width: 100%;
     padding: var(--margin);
 
     @media ${breakpoints.tabletAndAbove} {
+    grid-template-columns: 1fr auto;
         padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     }
 
