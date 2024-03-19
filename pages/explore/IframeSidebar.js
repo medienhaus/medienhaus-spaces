@@ -1,15 +1,34 @@
 import { useRouter } from 'next/router';
-import { RiBrush2Line, RiBrushLine, RiChat1Line, RiEditLine, RiFolderLine, RiFolderUnknowLine, RiLink } from '@remixicon/react';
+import {
+    RiBrush2Line,
+    RiBrushLine,
+    RiChat1Line,
+    RiEditLine,
+    RiFolderLine,
+    RiFolderUnknowLine,
+    RiLink,
+    RiMenuAddLine,
+} from '@remixicon/react';
 import Link from 'next/link';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import React from 'react';
 
 import Icon from '@/components/UI/Icon';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import { Table, TableBody } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
+import { Button } from '@/components/UI/shadcn/Button';
+import QuickAddExplore from './manage-room/QuickAddExplore';
+import { useAuth } from '@/lib/Auth';
 
-const IframeSidebar = ({ selectedSpaceChildren }) => {
+const IframeSidebar = ({ selectedSpaceChildren, breadcrumbs, allChatRooms, getSpaceChildren }) => {
     const router = useRouter();
+    const auth = useAuth();
+    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
+    const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
+    const roomId = data?.[0].id || data?.[0].room_id || data?.[0].roomId;
+    const myPowerLevel = matrixClient.getRoom(roomId)?.currentState.getMember(matrixClient.getUserId())?.powerLevel;
+
     const columns = [
         {
             accessorKey: 'icon',
@@ -78,7 +97,6 @@ const IframeSidebar = ({ selectedSpaceChildren }) => {
             ),
         },
     ];
-    const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
 
     const table = useReactTable({
         data,
@@ -89,22 +107,42 @@ const IframeSidebar = ({ selectedSpaceChildren }) => {
     if (!data) return <LoadingSpinner />;
 
     return (
-        <Table>
-            <TableBody>
-                {table.getRowModel().rows.map((row, index) => {
-                    const roomId = row.original.room_id || row.original.roomId || row.original.id;
-                    if (index === 0) return null;
+        <>
+            <header className="mb-8 grid grid-cols-[1fr_auto]">
+                {breadcrumbs}
+                {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                    <QuickAddExplore
+                        currentId={roomId}
+                        roomName={data[0].name}
+                        getSpaceChildren={getSpaceChildren}
+                        allChatRooms={allChatRooms}
+                        trigger={
+                            <Button variant="ghost" size="icon" onClick={() => console.log((prevState) => !prevState)}>
+                                <Icon>
+                                    <RiMenuAddLine />
+                                </Icon>
+                            </Button>
+                        }
+                    />
+                )}
+            </header>
+            <Table>
+                <TableBody>
+                    {table.getRowModel().rows.map((row, index) => {
+                        const roomId = row.original.room_id || row.original.roomId || row.original.id;
+                        if (index === 0) return null;
 
-                    return (
-                        <TreeLeaves
-                            key={row.id}
-                            row={row}
-                            selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
-                        />
-                    );
-                })}
-            </TableBody>
-        </Table>
+                        return (
+                            <TreeLeaves
+                                key={row.id}
+                                row={row}
+                                selected={router.query.roomId[1] === roomId || router.query.roomId[0] === roomId}
+                            />
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </>
     );
 };
 

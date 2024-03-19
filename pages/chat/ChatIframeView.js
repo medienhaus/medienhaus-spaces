@@ -11,7 +11,7 @@ import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import IframeSidebar from '../explore/IframeSidebar';
 
-const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren }) => {
+const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren, breadcrumbs }) => {
     const iframe = useRef();
     const matrix = useMatrix();
     const router = useRouter();
@@ -141,7 +141,7 @@ const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren }) => {
     return (
         <>
             <DefaultLayout.Sidebar>
-                <IframeSidebar selectedSpaceChildren={selectedSpaceChildren} />
+                <IframeSidebar breadcrumbs={breadcrumbs} selectedSpaceChildren={selectedSpaceChildren} />
             </DefaultLayout.Sidebar>
             <DefaultLayout.IframeWrapper>
                 <DefaultLayout.IframeHeader>

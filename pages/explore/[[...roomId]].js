@@ -392,9 +392,11 @@ export default function Explore() {
             {iframeRoomId ? (
                 <ExploreIframeViews
                     selectedSpaceChildren={selectedSpaceChildren}
+                    allChatRooms={allChatRooms}
+                    getSpaceChildren={getSpaceChildren}
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
-                    title={
+                    breadcrumbs={
                         !_.isEmpty(selectedSpaceChildren) && (
                             <TreePath
                                 selectedSpaceChildren={selectedSpaceChildren}
@@ -403,6 +405,7 @@ export default function Explore() {
                             />
                         )
                     }
+                    title={name}
                 />
             ) : (
                 !_.isEmpty(selectedSpaceChildren) && (

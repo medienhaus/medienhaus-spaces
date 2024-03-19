@@ -9,7 +9,15 @@ import { useMatrix } from '@/lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
 import IframeSidebar from './IframeSidebar';
 
-const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle, selectedSpaceChildren }) => {
+const ExploreIframeViews = ({
+    currentTemplate,
+    iframeRoomId,
+    title: parsedTitle,
+    breadcrumbs,
+    selectedSpaceChildren,
+    allChatRooms,
+    getSpaceChildren,
+}) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -45,7 +53,14 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
             {currentTemplate && (
                 <>
                     <DefaultLayout.Sidebar>
-                        {iframeRoomId && <IframeSidebar selectedSpaceChildren={selectedSpaceChildren} />}
+                        {iframeRoomId && (
+                            <IframeSidebar
+                                breadcrumbs={breadcrumbs}
+                                selectedSpaceChildren={selectedSpaceChildren}
+                                allChatRooms={allChatRooms}
+                                getSpaceChildren={getSpaceChildren}
+                            />
+                        )}
                     </DefaultLayout.Sidebar>
                     <DefaultLayout.IframeWrapper>
                         <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
@@ -79,6 +94,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
             )}
             {!currentTemplate && (
                 <ChatIframeView
+                    breadcrumbs={breadcrumbs}
                     title={title}
                     src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
                     roomId={iframeRoomId}
