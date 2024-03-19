@@ -162,7 +162,6 @@ function useOnboardingProvider() {
         const data = {
             active: active,
             currentRouteIndex: currentRouteIndex,
-            completed: false,
         };
 
         Object.keys(overwrittenData).forEach((key) => {

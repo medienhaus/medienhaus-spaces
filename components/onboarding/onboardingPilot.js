@@ -21,16 +21,10 @@ const OnboardingPilot = () => {
 
     //no clue why it is not possible to use the matrix.onboardingData object directly in the context file. therefore we have to use it here and pass it to the context – schade…
     useEffect(() => {
-        if (matrix?.onboardingData?.hasOwnProperty('completed') && matrix.onboardingData.completed && onboarding.active) {
-            onboarding.exit();
-        } else if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active !== onboarding.active) {
-            if (matrix?.onboardingData?.active) {
-                if (matrix?.onboardingData?.hasOwnProperty('completed') && matrix.onboardingData.completed === false) {
-                    onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
-                }
-            } else {
-                onboarding.setActive(false);
-            }
+        if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active && onboarding.active === false) {
+            onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
+        } else if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active === false) {
+            onboarding.setActive(false);
         }
     }, [matrix.onboardingData, onboarding]);
 
@@ -120,6 +114,7 @@ const OnboardingPilot = () => {
                                 <Button
                                     onClick={async () => {
                                         await onboarding.writeOnboardStateToAccountData(matrixClient, {
+                                            active: true,
                                             currentRouteIndex: onboarding.currentRouteIndex + 1,
                                         });
                                         onboarding.nextRoute();
@@ -133,7 +128,7 @@ const OnboardingPilot = () => {
                                 <Button
                                     onClick={async () => {
                                         onboarding.exit();
-                                        await onboarding.writeOnboardStateToAccountData(matrixClient, { completed: true, active: false });
+                                        await onboarding.writeOnboardStateToAccountData(matrixClient, { active: false });
                                     }}
                                 >
                                     {t('Close')}
