@@ -33,9 +33,9 @@ export default function Navigation({ closeNavigation }) {
     const router = useRouter();
     const onboarding = useOnboarding();
 
-    const Link = ({ href, children, highlighted }) => (
+    const Link = ({ href, children, active }) => (
         <NextLink
-            style={highlighted && router.route === href ? { color: 'hsl(var(--accent-foreground))' } : {}}
+            className={active && router.route === href && 'driver-active-element [&:link]:text-accent-foreground'}
             href={href}
             onClick={closeNavigation}
         >
@@ -63,18 +63,18 @@ export default function Navigation({ closeNavigation }) {
         <>
             <List>
                 <li>
-                    <Link highlighted={onboarding?.active} href="/dashboard">
+                    <Link active={onboarding?.active} href="/dashboard">
                         /dashboard{(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble />}
                     </Link>
                 </li>
                 <li>
-                    <Link highlighted={onboarding?.active} href="/account">
+                    <Link active={onboarding?.active} href="/account">
                         /account
                     </Link>
                 </li>
                 {getConfig().publicRuntimeConfig.contextRootSpaceRoomId && (
                     <li>
-                        <Link highlighted={onboarding?.active} href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>
+                        <Link active={onboarding?.active} href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>
                             /explore
                         </Link>
                     </li>
@@ -82,7 +82,7 @@ export default function Navigation({ closeNavigation }) {
             </List>
             <List>
                 <li>
-                    <Link highlighted={onboarding?.active} href="/chat">
+                    <Link active={onboarding?.active} href="/chat">
                         /chat
                     </Link>
                 </li>
@@ -94,7 +94,7 @@ export default function Navigation({ closeNavigation }) {
 
                     return (
                         <li key={path}>
-                            <Link highlighted={onboarding?.active} href={path}>
+                            <Link active={onboarding?.active} href={path}>
                                 {path}
                             </Link>
                         </li>
