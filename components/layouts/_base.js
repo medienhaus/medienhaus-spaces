@@ -25,7 +25,7 @@ const Wrapper = styled.div`
     // }
 
     & > main {
-        filter: ${(props) => (props.$isNavigationOpen && 'blur(3px)')};
+        filter: ${(props) => props.$isNavigationOpen && 'blur(3px)'};
     }
 
     // This will add a bottom margin to all page-level headings (h2) that is in line with the
