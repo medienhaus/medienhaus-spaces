@@ -9,8 +9,9 @@ import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom'
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
+import IframeSidebar from '../explore/IframeSidebar';
 
-const ChatIframeView = ({ src, roomId, title }) => {
+const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren }) => {
     const iframe = useRef();
     const matrix = useMatrix();
     const router = useRouter();
@@ -178,7 +179,10 @@ const ChatIframeView = ({ src, roomId, title }) => {
                     )}
                 </DefaultLayout.IframeHeaderButtonWrapper>
             </DefaultLayout.IframeHeader>
-            <iframe ref={iframe} title="/chat" src={src} />
+            <DefaultLayout.ExploreWrapper>
+                <IframeSidebar selectedSpaceChildren={selectedSpaceChildren} />
+                <iframe ref={iframe} title="/chat" src={src} />
+            </DefaultLayout.ExploreWrapper>
         </>
     );
 };
