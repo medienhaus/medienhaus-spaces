@@ -37,7 +37,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                     })}
                     */}
 
-                    {selectedSpaceChildren.length > 2 && (
+                    {selectedSpaceChildren.length > 1 && (
                         <>
                             {/*
                             <BreadcrumbSeparator />
@@ -53,7 +53,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                                             if (!path[0]) return null;
                                             const roomId = path[0].id || path[0].room_id || path[0].roomId;
 
-                                            if (index > 0 && index < selectedSpaceChildren.length - 1) {
+                                            if (index < selectedSpaceChildren.length - 1) {
                                                 return (
                                                     <DropdownMenuItem key={index} className="grid w-full grid-flow-col justify-start gap-2">
                                                         <Link href={`/explore/${roomId}`}>
@@ -74,7 +74,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                         if (!path[0]) return null;
                         const roomId = path[0].id || path[0].room_id || path[0].roomId;
 
-                        if (index === selectedSpaceChildren.length - 1 && selectedSpaceChildren.length > 1) {
+                        if (index === selectedSpaceChildren.length - 1) {
                             return (
                                 <>
                                     <BreadcrumbSeparator />
