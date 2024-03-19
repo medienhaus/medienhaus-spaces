@@ -396,9 +396,13 @@ export default function Explore() {
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
                     title={
-                        matrix.spaces.get(router.query.roomId[0])?.name ||
-                        matrix.rooms.get(router.query.roomId[0])?.name ||
-                        selectedSpaceChildren[selectedSpaceChildren.length - 1].filter((child) => child.room_id === iframeRoomId)[0]?.name
+                        !_.isEmpty(selectedSpaceChildren) && (
+                            <TreePath
+                                selectedSpaceChildren={selectedSpaceChildren}
+                                isFetchingContent={isFetchingContent}
+                                iframeRoomId={iframeRoomId}
+                            />
+                        )
                     }
                 />
             ) : (
@@ -483,7 +487,7 @@ export default function Explore() {
                                             matrixClient
                                                 .getRoom(roomId)
                                                 ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)] bg-background">
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     <QuickAddExplore
                                                         currentId={roomId}
                                                         roomName={matrix.spaces.get(roomId).name}
