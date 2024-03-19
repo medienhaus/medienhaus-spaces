@@ -51,7 +51,7 @@ function useOnboardingProvider() {
             setPrevRouteName(onboardingScript[position - 1].route);
         }
 
-        router.push(onboardingScript[position].route);
+        if (onboardingScript[position].route) router.push(onboardingScript[position].route);
     };
 
     useEffect(() => {
@@ -105,7 +105,7 @@ function useOnboardingProvider() {
             setCurrentRouteIndex(newIndex);
             setCurrentRoute(onboardingScript[newIndex].route);
             setCurrentSteps(onboardingScript[newIndex].steps);
-            router.push(onboardingScript[newIndex].route);
+            if (onboardingScript[newIndex].route) router.push(onboardingScript[newIndex].route);
         }
     };
 
@@ -115,7 +115,7 @@ function useOnboardingProvider() {
             setCurrentRouteIndex(newIndex);
             setCurrentRoute(onboardingScript[newIndex].route);
             setCurrentSteps(onboardingScript[newIndex].steps);
-            router.push(onboardingScript[newIndex].route);
+            if (onboardingScript[newIndex].route) router.push(onboardingScript[newIndex].route);
 
             if (newIndex > 0) {
                 setPrevRouteName(onboardingScript[newIndex - 1].route);
