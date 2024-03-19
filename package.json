@@ -14,7 +14,6 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@remixicon/react": "^4.1.1",
-    "@tldraw/tldraw": "^2.0.0-beta.4",
     "i18next": "^23.8.2",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
@@ -29,6 +28,7 @@
     "react-i18next": "^14.0.5",
     "styled-components": "^6.1.8",
     "tailwindcss-animate": "^1.0.7",
+    "tldraw": "^2.0.2",
     "use-immer": "^0.9.0",
     "vaul": "^0.9.0"
   },

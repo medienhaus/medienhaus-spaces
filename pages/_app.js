@@ -12,7 +12,7 @@ import '../lib/Internationalization';
 
 import '../assets/_globalCss.css';
 
-import '@tldraw/tldraw/tldraw.css';
+import 'tldraw/tldraw.css';
 import '../assets/_tldrawOverrides.css';
 
 // Enable immer support for Map() and Set()
