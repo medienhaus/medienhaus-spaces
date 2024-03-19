@@ -77,7 +77,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                         if (index === selectedSpaceChildren.length - 1) {
                             return (
                                 <>
-                                    <BreadcrumbSeparator />
+                                    {selectedSpaceChildren.length > 1 && <BreadcrumbSeparator />}
                                     <BreadcrumbItem>
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
