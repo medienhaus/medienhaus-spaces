@@ -46,7 +46,7 @@ const ServiceIframeHeader = ({
 
     return (
         <DefaultLayout.IframeHeader>
-            <>{title}</>
+            <h3>{title}</h3>
             <DefaultLayout.IframeHeaderButtonWrapper>
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
                 <CopyToClipboard content={content} />
