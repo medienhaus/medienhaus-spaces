@@ -392,7 +392,6 @@ export default function Explore() {
             {iframeRoomId ? (
                 <ExploreIframeViews
                     selectedSpaceChildren={selectedSpaceChildren}
-                    isFetchtingContent={isFetchingContent}
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
                     title={
