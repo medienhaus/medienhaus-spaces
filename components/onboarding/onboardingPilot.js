@@ -57,9 +57,7 @@ const OnboardingPilot = () => {
                             size="icon"
                             onClick={(event) => {
                                 event.preventDefault;
-                                setSide((prevState) =>
-                                    prevState === 'floating' ? 'minified' : 'floating',
-                                );
+                                setSide((prevState) => (prevState === 'floating' ? 'minified' : 'floating'));
                             }}
                         >
                             {side === 'floating' ? (
@@ -77,9 +75,9 @@ const OnboardingPilot = () => {
 
                         <SheetHeader>
                             <SheetTitle>
-                                {onboarding.currentRoute} — {onboarding.currentStepTitle}
+                                {onboarding.currentRoute} — {t(onboarding.currentStepTitle)}
                             </SheetTitle>
-                            <SheetDescription>{onboarding.currentStepDescription}</SheetDescription>
+                            <SheetDescription>{t(onboarding.currentStepDescription)}</SheetDescription>
                         </SheetHeader>
 
                         <SheetFooter className="mt-6 grid grid-cols-2 gap-4 [&>button:only-child]:[grid-column:2]">

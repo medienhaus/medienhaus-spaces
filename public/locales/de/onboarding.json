@@ -1,6 +1,7 @@
 {
-    "prev": "zurück",
-    "next": "nächstes",
-    "onboarding": "Einführung",
-    "close": "beenden"
+    "Prev": "Zurück",
+    "Next": "Nächstes",
+    "Onboarding": "Einführung",
+    "Close": "beenden",
+    "This is the first step of the tour.": "Dies ist der erste Schritt der Tour."
 }
