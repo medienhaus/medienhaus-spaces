@@ -41,12 +41,15 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
     }, [iframeRoomId, matrixClient, parsedTitle]);
 
     return (
-        <DefaultLayout.Wrapper>
+        <>
             {currentTemplate && (
                 <>
-                    <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
-                    <DefaultLayout.ExploreWrapper>
+                    <DefaultLayout.Sidebar>
                         {iframeRoomId && <IframeSidebar selectedSpaceChildren={selectedSpaceChildren} />}
+                    </DefaultLayout.Sidebar>
+                    <DefaultLayout.IframeWrapper>
+                        <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
+
                         {(() => {
                             switch (currentTemplate) {
                                 case 'studentproject':
@@ -71,7 +74,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
                                     );
                             }
                         })()}
-                    </DefaultLayout.ExploreWrapper>
+                    </DefaultLayout.IframeWrapper>
                 </>
             )}
             {!currentTemplate && (
@@ -82,7 +85,7 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle,
                     selectedSpaceChildren={selectedSpaceChildren}
                 />
             )}
-        </DefaultLayout.Wrapper>
+        </>
     );
 };
 
