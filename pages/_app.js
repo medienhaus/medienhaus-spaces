@@ -29,20 +29,6 @@ export default function App({ Component, pageProps }) {
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData);
 
-    useEffect(() => {
-        // If the user is logged in and the onboarding is not active, we need to check if this is the first time the user logs in. this is achieved by checking if the onboardingData stored in the matrix accountData object is empty
-        // we have to use a Effect to listen to the matrixData object, if the initialSync is done
-        if (
-            matrixData.initialSyncDone &&
-            router.route !== '/intro' &&
-            authData.user &&
-            !onboarding.active &&
-            Object.keys(matrixData.onboardingData).length === 0
-        ) {
-            router.push('/intro');
-        }
-    }, [matrixData, router, authData, onboarding]);
-
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {
         router.push('/login');

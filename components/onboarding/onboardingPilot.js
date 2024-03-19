@@ -8,10 +8,12 @@ import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
+import { useRouter } from 'next/router';
 
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
     const auth = useAuth();
+    const router = useRouter();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
@@ -27,6 +29,20 @@ const OnboardingPilot = () => {
             onboarding.setActive(false);
         }
     }, [matrix.onboardingData, onboarding]);
+
+    useEffect(() => {
+        // If the user is logged in and the onboarding is not active, we need to check if this is the first time the user logs in. this is achieved by checking if the onboardingData stored in the matrix accountData object is empty
+        // we have to use a Effect to listen to the matrixData object, if the initialSync is done
+        if (
+            matrix.initialSyncDone &&
+            router.route !== '/intro' &&
+            auth.user &&
+            !onboarding.active &&
+            Object.keys(matrix.onboardingData).length === 0
+        ) {
+            router.push('/intro');
+        }
+    }, [matrix, router, auth, onboarding]);
 
     if (!auth?.user) return null;
 
