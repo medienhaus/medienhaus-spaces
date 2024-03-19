@@ -11,7 +11,10 @@ const List = styled.ul`
     padding: 0;
     margin: 0 0 calc(var(--margin) * 3);
     list-style: none;
-    border-top: 1px solid var(--color-foreground-alpha);
+
+    &:not(:first-child) {
+        border-top: 1px solid var(--color-foreground-alpha);
+    }
 
     li {
         line-height: calc(var(--margin) * 3);

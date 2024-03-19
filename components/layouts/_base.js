@@ -14,13 +14,17 @@ const Wrapper = styled.div`
     width: 100vw;
     max-width: 100%;
     height: 100vh;
-    overflow: ${(props) => (props.$isNavigationOpen ? 'hidden' : 'unset')};
+    // overflow: ${(props) => (props.$isNavigationOpen ? 'hidden' : 'unset')};
 
-    @media ${breakpoints.tabletAndAbove} {
-        display: grid;
-        grid-template-rows: min-content 1fr min-content;
-        grid-template-columns: min-content 1fr;
-        padding: unset;
+    // @media ${breakpoints.tabletAndAbove} {
+    //     display: grid;
+    //     grid-template-rows: min-content 1fr min-content;
+    //     grid-template-columns: min-content 1fr;
+    //     padding: unset;
+    // }
+
+    & > main {
+        filter: ${(props) => (props.$isNavigationOpen && 'blur(3px)')};
     }
 
     // This will add a bottom margin to all page-level headings (h2) that is in line with the
@@ -28,29 +32,30 @@ const Wrapper = styled.div`
     & > main h2:first-child {
         margin-bottom: var(--margin);
 
-        @media ${breakpoints.tabletAndAbove} {
+        // @media ${breakpoints.tabletAndAbove} {
             margin-bottom: calc(var(--margin) * 2);
-        }
+        // }
     }
 `;
 
 const Header = styled.header`
-    background: var(--color-background-beta);
+    // background: var(--color-background-beta);
+    border-bottom: 1px solid hsl(var(--muted-foreground) / 0.2);
 
-    @media ${breakpoints.phoneOnly} {
+    // @media ${breakpoints.phoneOnly} {
         display: flex;
         flex: 0 0;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         padding: var(--margin);
-    }
+    // }
 
-    @media ${breakpoints.tabletAndAbove} {
-        grid-row: 1;
-        grid-column: 1;
-        padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
-    }
+    // @media ${breakpoints.tabletAndAbove} {
+    //     grid-row: 1;
+    //     grid-column: 1;
+    //     padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
+    // }
 `;
 
 const ToggleButton = styled.button`
@@ -61,9 +66,9 @@ const ToggleButton = styled.button`
     background-color: unset;
     border: unset;
 
-    @media ${breakpoints.tabletAndAbove} {
-        display: none;
-    }
+    // @media ${breakpoints.tabletAndAbove} {
+    //     display: none;
+    // }
 `;
 
 const Sidebar = styled.aside`
@@ -74,22 +79,28 @@ const Sidebar = styled.aside`
     overflow: hidden;
     overflow-y: auto;
     background: var(--color-background-beta);
+    border-left: 1px solid hsl(var(--muted-foreground) / 0.2);
 
-    @media ${breakpoints.phoneOnly} {
+    // @media ${breakpoints.phoneOnly} {
         position: fixed;
-        top: calc(var(--margin) * 3.3);
+        // top: calc(var(--margin) * 3.3);
+        top: calc(var(--margin) * 3.3 + 1px);
         right: 0;
         bottom: 0;
-        left: 0;
+        // left: 0;
         z-index: 2;
         display: ${(props) => (props.$isNavigationOpen ? 'flex' : 'none')};
-    }
+    // }
 
-    @media ${breakpoints.tabletAndAbove} {
-        row-gap: calc(var(--margin) * 1.5);
-        min-width: 21ch;
-        padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
-    }
+    // @media ${breakpoints.phoneOnly} {
+    //     left: 0;
+    // }
+
+    // @media ${breakpoints.tabletAndAbove} {
+    //     row-gap: calc(var(--margin) * 1.5);
+    //     min-width: 21ch;
+    //     padding: 0 calc(var(--margin) * 1.5) calc(var(--margin) * 1.5);
+    // }
 `;
 
 const Nav = styled.nav`
