@@ -1,13 +1,13 @@
-import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
-import { useMatrix } from '@/lib/Matrix';
+import { styled } from 'styled-components';
 import { RiCircleFill, RiCloseLine, RiMenuLine } from '@remixicon/react';
 
+import { useMatrix } from '@/lib/Matrix';
+import { breakpoints } from '../_breakpoints';
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
-import { breakpoints } from '../_breakpoints';
 
 const Wrapper = styled.div`
     display: flex;
