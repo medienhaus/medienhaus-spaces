@@ -86,7 +86,7 @@ const IframeWrapper = styled(Wrapper)`
 
 const IframeHeader = styled.header`
     display: grid;
-    grid-auto-flow: row;
+    grid-template-columns: 1fr auto;
     grid-gap: var(--margin);
     width: 100%;
     padding: var(--margin);

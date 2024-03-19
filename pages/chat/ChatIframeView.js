@@ -145,7 +145,7 @@ const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren, breadcrumbs
             </DefaultLayout.Sidebar>
             <DefaultLayout.IframeWrapper>
                 <DefaultLayout.IframeHeader>
-                    {title}
+                    <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">{title}</h3>
                     <DefaultLayout.IframeHeaderButtonWrapper>
                         {matrix?.rooms?.get(roomId) && (
                             <>
