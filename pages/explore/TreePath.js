@@ -15,7 +15,7 @@ import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
     return (
         <>
-            <Breadcrumb>
+            <Breadcrumb className="overflow-hidden">
                 <BreadcrumbList>
                     {/*
                     {selectedSpaceChildren.map((path, index) => {
@@ -42,7 +42,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                             {/*
                             <BreadcrumbSeparator />
                             */}
-                            <BreadcrumbItem>
+                            <BreadcrumbItem className="inline overflow-hidden text-ellipsis whitespace-nowrap">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex items-center gap-1">
                                         <BreadcrumbEllipsis className="h-4 w-4" />
@@ -78,7 +78,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                             return (
                                 <>
                                     {selectedSpaceChildren.length > 1 && <BreadcrumbSeparator />}
-                                    <BreadcrumbItem>
+                                    <BreadcrumbItem className="inline overflow-hidden text-ellipsis whitespace-nowrap">
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
                                                 {path[0].name}
