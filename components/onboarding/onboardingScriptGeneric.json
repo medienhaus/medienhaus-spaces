@@ -99,7 +99,7 @@
                 }
             },
             {
-                "element": "main button[type]:first-of-type",
+                "element": "main h3:first-of-type",
                 "popover": {
                     "title": "profile picture",
                     "description": "how about adding a photo? it will be visible to others for example in the chat."
