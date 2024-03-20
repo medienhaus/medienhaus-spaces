@@ -33,7 +33,7 @@ import logger from '@/lib/Logging';
 
 const TldrawEditor = dynamic(() => import('@/components/TldrawEditor'), { ssr: false });
 
-export default function Tldraw(callback, deps) {
+export default function Tldraw() {
     const auth = useAuth();
     const matrix = useMatrix();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -46,6 +46,7 @@ export default function Tldraw(callback, deps) {
 
     const [editor, setEditor] = useState();
     const [initialSyncDone, setInitialSyncDone] = useState(false);
+    const [shapesWithPendingChanges, setShapesWithPendingChanges] = useImmer(new Set());
 
     /** @type {MatrixClient} */
     const roomSpecificMatrixClient = useMemo(() => {
@@ -102,28 +103,15 @@ export default function Tldraw(callback, deps) {
                     // @TODO Handle pages
                 } else if (from.id.startsWith('shape') && to.id.startsWith('shape')) {
                     if (roomSpecificMatrixClient.getRoom(roomId).findEventById(from.meta.eventId)) {
-                        /** @type {MatrixEvent | undefined} */
-                        const lastEventInThread = roomSpecificMatrixClient.getRoom(roomId).getThread(from.meta.eventId)?.replyToEvent;
-
-                        if (lastEventInThread) {
-                            await roomSpecificMatrixClient.sendMessage(roomId, {
-                                'msgtype': 'dev.medienhaus.tldraw.store.store',
-                                'body': JSON.stringify({ [from.id]: to }),
-                                'm.relates_to': {
-                                    'rel_type': 'm.thread',
-                                    'event_id': from.meta.eventId,
-                                    'is_falling_back': true,
-                                    'm.in_reply_to': {
-                                        event_id: lastEventInThread.getId(),
-                                    },
-                                },
-                            });
-                        } else {
-                            await roomSpecificMatrixClient.sendMessage(roomId, from.meta.eventId, {
-                                msgtype: 'dev.medienhaus.tldraw.store.store',
-                                body: JSON.stringify({ [from.id]: to }),
-                            });
-                        }
+                        // This is a type of change that happens so often, that we'd spam the Matrix if we were to just
+                        // send them off. Instead we have add this change to our own state `shapesWithPendingChanges`
+                        // which we will periodically check for new entries, to then send updates to the Matrix.
+                        setShapesWithPendingChanges(
+                            /** @param {Set} draft */
+                            (draft) => {
+                                draft.add(from.id);
+                            },
+                        );
                     } else if (_.has(to, 'props.isComplete')) {
                         // This is a type of shape that supports the "isComplete" property
                         // If the user is still messing with this shape, then we ignore the changes ...
@@ -151,7 +139,7 @@ export default function Tldraw(callback, deps) {
                 }
             }
         },
-        [roomId, roomSpecificMatrixClient],
+        [roomId, roomSpecificMatrixClient, setShapesWithPendingChanges],
     );
 
     const SyncEvent = useCallback(
@@ -270,11 +258,60 @@ export default function Tldraw(callback, deps) {
         [roomId, editor],
     );
 
+    const updateShapeInMatrix = useCallback(
+        async (shape) => {
+            /** @type {MatrixEvent | undefined} */
+            const lastEventInThread = roomSpecificMatrixClient.getRoom(roomId).getThread(shape.meta.eventId)?.replyToEvent;
+
+            if (lastEventInThread) {
+                await roomSpecificMatrixClient.sendMessage(roomId, {
+                    'msgtype': 'dev.medienhaus.tldraw.store.store',
+                    'body': JSON.stringify({ [shape.id]: shape }),
+                    'm.relates_to': {
+                        'rel_type': 'm.thread',
+                        'event_id': shape.meta.eventId,
+                        'is_falling_back': true,
+                        'm.in_reply_to': {
+                            event_id: lastEventInThread.getId(),
+                        },
+                    },
+                });
+            } else {
+                await roomSpecificMatrixClient.sendMessage(roomId, shape.meta.eventId, {
+                    msgtype: 'dev.medienhaus.tldraw.store.store',
+                    body: JSON.stringify({ [shape.id]: shape }),
+                });
+            }
+        },
+        [roomId, roomSpecificMatrixClient],
+    );
+
+    const sendPendingUpdatesToMatrix = useCallback(async () => {
+        if (shapesWithPendingChanges.size < 1) return;
+
+        logger.debug(`Send pending changes for ${shapesWithPendingChanges.size} shape(s) to Matrix ...`);
+
+        shapesWithPendingChanges.forEach(async (shapeId) => {
+            const shape = editor.store.get(shapeId);
+
+            if (!shape) {
+                // The shape that was recently changed seems to not exist anymore...
+                // It's most likely that it was deleted in the meantime.
+                logger.debug(`Skipping changes for ${shapeId} because it looks like it's gone`);
+            }
+
+            updateShapeInMatrix(shape);
+        });
+
+        // Clear the list of shapes with pending changes again
+        setShapesWithPendingChanges((draft) => new Set());
+    }, [editor, setShapesWithPendingChanges, shapesWithPendingChanges, updateShapeInMatrix]);
+
     useEffect(() => {
         if (!editor) return;
 
-        // @TODO This fires too often when moving (dragging) shapes across the board...
         const cleanupFunction = editor.store.listen(handleChangeInTldrawEditor, { source: 'user', scope: 'document' });
+        const sendUpdatesToMatrix = setInterval(sendPendingUpdatesToMatrix, 2500);
         const cleanupFunctionDebugging = editor.store.listen((change) => {
             // New selected
             if (editor.getOnlySelectedShape()) {
@@ -289,9 +326,10 @@ export default function Tldraw(callback, deps) {
 
         return () => {
             cleanupFunction();
+            clearInterval(sendUpdatesToMatrix);
             cleanupFunctionDebugging();
         };
-    }, [editor, handleChangeInTldrawEditor, setSelectedShapeMeta]);
+    }, [editor, handleChangeInTldrawEditor, sendPendingUpdatesToMatrix, setSelectedShapeMeta]);
 
     useEffect(() => {
         if (!roomSpecificMatrixClient) return;
