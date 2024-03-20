@@ -35,7 +35,7 @@ export default function Navigation({ closeNavigation }) {
 
     const Link = ({ href, children, active }) => (
         <NextLink
-            className={active && router.asPath === href && 'driver-active-element [&:link]:text-accent-foreground'}
+            className={active && router.asPath === href && 'driver-active-element [&:before]:!animate-none'}
             href={href}
             onClick={closeNavigation}
         >
