@@ -391,9 +391,15 @@ export default function Tldraw() {
 
             console.warn('fnwbr matrix-client INITIAL SYNC DONE');
 
-            console.log('fnwbr', roomSpecificMatrixClient.getRoom(roomId).getUnfilteredTimelineSet());
+            const room = roomSpecificMatrixClient.getRoom(roomId);
 
-            const x = new TimelineWindow(roomSpecificMatrixClient, roomSpecificMatrixClient.getRoom(roomId).getUnfilteredTimelineSet());
+            // Check if we have permission to send messages in this Matrix room; because otherwise
+            // we're in a read-only-mode and need to tell tldraw about it.
+            editor.updateInstanceState({
+                isReadonly: !room.getLiveTimeline().getState(EventTimeline.FORWARDS).maySendMessage(roomSpecificMatrixClient.getUserId()),
+            });
+
+            const x = new TimelineWindow(roomSpecificMatrixClient, room.getUnfilteredTimelineSet());
             x.load();
 
             console.log('fnwbr', x);
