@@ -252,8 +252,7 @@ export default function Tldraw(callback, deps) {
                     newStoreEntry = {
                         [shapeIdentifier]: {
                             ...newContent[shapeIdentifier],
-                            // In this case getAssociatedId() returns the event ID of the thread root
-                            ...{ meta: { eventId: event.getAssociatedId(), ts: event.getTs() } },
+                            ...{ meta: { eventId: event.threadRootId, ts: event.getTs() } },
                         },
                     };
                 }
