@@ -414,7 +414,7 @@ export default function Tldraw() {
         };
 
         getAllEvents();
-    }, [initialSyncDone, roomId, roomSpecificMatrixClient]);
+    }, [editor, initialSyncDone, roomId, roomSpecificMatrixClient]);
 
     // based on the createWriteRoom in etherpad. there was a @TODO mentioned with 'function creates infinite loop in useEffect below' dont know if this applies here as well.
     const createSketchRoom = useCallback(
