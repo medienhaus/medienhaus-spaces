@@ -467,7 +467,7 @@ export default function Tldraw(callback, deps) {
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
                     <div className="h-full w-full">
-                        <TldrawEditor onMount={setEditor} inferDarkMode>
+                        <TldrawEditor onMount={setEditor} inferDarkMode key={roomId}>
                             {/* Debugging */}
                             <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
                                 <pre style={{ margin: '0 0 16px 0' }}>
