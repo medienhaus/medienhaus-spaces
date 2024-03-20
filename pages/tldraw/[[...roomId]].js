@@ -347,7 +347,7 @@ export default function Tldraw() {
                 schema: stateStoreSchema,
             });
 
-            // Attaching event listeners
+            logger.debug('Attaching event listeners to room-specific Matrix client', roomId);
             roomSpecificMatrixClient.on(RoomEvent.LocalEchoUpdated, LocalEchoUpdatedEvent);
             roomSpecificMatrixClient.on(RoomEvent.Timeline, RoomTimelineEvent);
             roomSpecificMatrixClient.on(RoomEvent.Redaction, RoomRedactionEvent);
@@ -366,6 +366,7 @@ export default function Tldraw() {
                 },
             });
 
+            logger.debug('Starting /sync call for room-specific Matrix client', roomId);
             roomSpecificMatrixClient.startClient({
                 lazyLoadMembers: true,
                 threadSupport: true,
