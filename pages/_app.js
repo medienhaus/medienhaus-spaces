@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -11,6 +11,9 @@ import { AuthContext, useAuthProvider } from '@/lib/Auth';
 import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
+import '../assets/driverJsCustom.css';
+import { useOnboardingProvider, OnboardingContext } from '@/components/onboarding/onboardingContext';
+import OnboardingPilot from '@/components/onboarding/onboardingPilot';
 import { Toaster } from '@/components/UI/shadcn/Sonner';
 
 // Enable immer support for Map() and Set()
@@ -20,6 +23,8 @@ const guestRoutes = ['/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
+
+    const onboarding = useOnboardingProvider();
 
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData);
@@ -47,11 +52,16 @@ export default function App({ Component, pageProps }) {
             <AuthContext.Provider value={authData}>
                 <MatrixContext.Provider value={matrixData}>
                     {!matrixData.isConnectedToServer && <LostConnection />}
-                    <DefaultLayout.Layout>
-                        {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
-                            <Component {...pageProps} />
-                        )}
-                    </DefaultLayout.Layout>
+                    <OnboardingContext.Provider value={onboarding}>
+                        <DefaultLayout.Layout>
+                            {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
+                                <>
+                                    <OnboardingPilot />
+                                    <Component {...pageProps} />
+                                </>
+                            )}
+                        </DefaultLayout.Layout>
+                    </OnboardingContext.Provider>
                     <Toaster
                         visibleToasts={10}
                         toastOptions={{

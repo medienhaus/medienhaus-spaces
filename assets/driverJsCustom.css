@@ -1,0 +1,47 @@
+.driver-active {
+    pointer-events: unset;
+}
+
+.driver-active * {
+    pointer-events: unset !important;
+}
+
+.driver-overlay {
+    pointer-events: none !important;
+    z-index: 30 !important;
+}
+
+.driverJsPopOver {
+    display: none !important ;
+}
+
+.driver-active-element::before {
+    color: hsl(var(--accent-foreground));
+    content: '\21aa';
+    font-weight: 500;
+    position: absolute;
+    transform: translateX(-1.2rem);
+    animation: blink 1s infinite;
+}
+
+.driver-active-element {
+    color: hsl(var(--accent-foreground));
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    49% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    99% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
