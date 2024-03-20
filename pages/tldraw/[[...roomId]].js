@@ -329,6 +329,7 @@ export default function Tldraw() {
             clearInterval(sendUpdatesToMatrix);
             cleanupFunctionDebugging();
         };
+        // @TODO This seems to trigger way too often... did I add too many dependencies?
     }, [editor, handleChangeInTldrawEditor, sendPendingUpdatesToMatrix, setSelectedShapeMeta]);
 
     useEffect(() => {
