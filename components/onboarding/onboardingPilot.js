@@ -28,9 +28,9 @@ const OnboardingPilot = () => {
 
         if (cancelled) return;
 
-        if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active && onboarding.active === false) {
+        if (matrix?.onboardingData?.active && onboarding.active === false) {
             onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
-        } else if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active === false) {
+        } else if (matrix?.onboardingData?.active === false) {
             onboarding.setActive(false);
         }
 
