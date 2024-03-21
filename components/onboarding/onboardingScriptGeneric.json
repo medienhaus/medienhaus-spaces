@@ -3,55 +3,61 @@
         "steps": [
             {
                 "popover": {
-                    "title": "0:0",
+                    "title": "Welcome",
                     "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
                 }
             },
             {
-                "element": "h3:first-of-type",
                 "popover": {
-                    "title": "0:1",
-                    "description": "There is an indicator as a blinking ◯ next to the element that you need to focus on."
+                    "title": "Welcome",
+                    "description": "This should not get to tiering, so we will keep it short with just a rough overview of some main functions."
                 }
             },
             {
-                "element": "h3:nth-of-type(2)",
                 "popover": {
-                    "title": "0:2",
-                    "description": "This is the third step of the tour."
+                    "title": "Welcome",
+                    "description": "If a blinking arrow shows up, it is needed to excecute a click or touch from your side."
                 }
             },
             {
-                "element": "h3:last-of-type",
                 "popover": {
-                    "title": "0:3",
-                    "description": "This is the last step of the tour."
+                    "title": "Welcome",
+                    "description": "Lets dont waste any time and start with the first section…"
                 }
             }
         ]
     },
     {
-        "route": "/account",
+        "route": "/dashboard",
         "steps": [
             {
-                "element": "h3:first-of-type",
                 "popover": {
-                    "title": "1:0",
-                    "description": "This is the first step of the tour."
+                    "title": "abc",
+                    "description": "asbx"
+                }
+            }
+        ]
+    },
+    {
+        "route": "/explore",
+        "steps": [
+            {
+                "popover": {
+                    "title": "…your spaces",
+                    "description": "First of all we will start with the explore page. This is where you can find all the spaces structured by their context."
                 }
             },
             {
-                "element": "p:first-of-type",
                 "popover": {
-                    "title": "1:1",
-                    "description": "This is the first step of the tour."
+                    "title": "…your spaces",
+                    "description": "You can navigate from level to level and see what is going on in the different contexts."
                 }
             },
             {
-                "element": "h3:first-of-type",
                 "popover": {
-                    "title": "1:2",
-                    "description": "This is the second step of the tour."
+                    "element": "main table tr:first-of-type",
+                    "title": "…your spaces",
+                    "description": "Lets click on the entry level and tickle down the tree."
                 }
             }
         ]
@@ -60,24 +66,120 @@
         "route": "/chat",
         "steps": [
             {
-                "element": "h3:first-of-type",
                 "popover": {
-                    "title": "2:0",
-                    "description": "abc"
+                    "title": "lore",
+                    "description": "ipsum"
+                }
+            }
+        ]
+    },
+    {
+        "route": "/write",
+        "steps": [
+            {
+                "popover": {
+                    "title": "lets create some items.",
+                    "description": "with the /write tool you can create some collaborative text documents."
                 }
             },
             {
-                "element": "p:first-of-type",
+                "element": "main header button:first-of-type",
                 "popover": {
-                    "title": "2:1",
-                    "description": "def"
+                    "title": "create!",
+                    "description": "lets create one just as an example as for now it looks quite empty here. Just press on the add button."
                 }
             },
             {
-                "element": "h3:first-of-type",
+                "element": "main form h3:first-of-type",
                 "popover": {
-                    "title": "2:2",
-                    "description": "gih"
+                    "title": "name it",
+                    "description": "first of all give the document a name. it will be visible to others."
+                }
+            },
+            {
+                "element": "main form label:first-of-type",
+                "popover": {
+                    "title": "protect it",
+                    "description": "if you want to protect it from being seen by others, which knows the document address, you can set a password."
+                }
+            },
+            {
+                "element": "main form button[type=submit]",
+                "popover": {
+                    "title": "create it",
+                    "description": "press the button and tada you have created a document. you can now edit it and invite others to join."
+                }
+            },
+            {
+                "popover": {
+                    "title": "library",
+                    "description": "from now on you can find all yoru documents which you created in /write. Quite handy, isn't it?"
+                }
+            },
+            {
+                "popover": {
+                    "title": "contextualize",
+                    "description": "dont forget you can also add your documents to the /explore to make them visible to others in the specfic contexts."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/account",
+        "steps": [
+            {
+                "popover": {
+                    "title": "show yourself",
+                    "description": "Next stop: Your Account. This is where you can personalize your profile how it will be seen by others."
+                }
+            },
+            {
+                "element": "main form:first-of-type",
+                "popover": {
+                    "title": "whats your name?",
+                    "description": "you can change your display name to anything you want to. but be aware, that your official name will still be visible to others."
+                }
+            },
+            {
+                "element": "main h3:first-of-type",
+                "popover": {
+                    "title": "profile picture",
+                    "description": "how about adding a photo? it will be visible to others for example in the chat."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/explore",
+        "steps": [
+            {
+                "popover": {
+                    "title": "",
+                    "description": "we are heding towards the end of this onboarding. lets go back to explore once more."
+                }
+            },
+            {
+                "popover": {
+                    "title": "browse and add",
+                    "description": "browse around the strucutre, request acces or add things on your own in the contexts you are interested in."
+                }
+            },
+            {
+                "popover": {
+                    "title": "missing something?",
+                    "description": "if thtere isnt that much of a content yet, tell others of your institution to join and contribute."
+                }
+            },
+            {
+                "popover": {
+                    "title": "more?",
+                    "description": "there are many other functions to use. Just have a look around and try them out."
+                }
+            },
+            {
+                "popover": {
+                    "title": "finished",
+                    "description": "thats all for now. You can restart the onboarding at any time on /account. Have fun!"
                 }
             }
         ]
