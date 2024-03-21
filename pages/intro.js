@@ -92,11 +92,6 @@ export default function Intro() {
                         disabled={!termsAccepted}
                         onClick={() => {
                             onboarding.startTour();
-                            onboarding.writeOnboardStateToAccountData(matrixClient, {
-                                completed: false,
-                                active: true,
-                                currentRouteIndex: 0,
-                            });
                         }}
                     >
                         {t('Start Onboarding')}
