@@ -165,7 +165,6 @@ function useOnboardingProvider() {
 
     return {
         active,
-        setActive,
         tourInstance,
         startTour,
         processStep,
