@@ -11,7 +11,6 @@ export default function Intro() {
 
     const onboarding = useOnboarding();
     const auth = useAuth();
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
 
     const [termsAccepted, setTermsAccepted] = useState(false);
 
