@@ -15,7 +15,7 @@ import React from 'react';
 /**
  * Make sure to use NextJS' `dynamic()` helper to import this component.
  *
- * @param props
+ * @param {Object} props
  * @returns {React.ReactElement}
  */
 const TldrawEditor = (props) => {
@@ -23,6 +23,8 @@ const TldrawEditor = (props) => {
         <Tldraw
             inferDarkMode
             components={{
+                MainMenu: null,
+                PageMenu: null,
                 Toolbar: (props) => (
                     /**
                      * Check out https://github.com/tldraw/tldraw/discussions/3229 and the link below on how to use this
