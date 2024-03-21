@@ -161,13 +161,6 @@ function useOnboardingProvider() {
     const exit = () => {
         setActive(false);
         tourInstance?.destroy();
-        setRoute((draft) => {
-            draft.name = '';
-            draft.index = 0;
-            draft.steps = [];
-            draft.description = '';
-            draft.title = '';
-        });
     };
 
     return {

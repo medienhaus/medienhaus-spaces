@@ -30,8 +30,6 @@ const OnboardingPilot = () => {
 
         if (matrix?.onboardingData?.active && onboarding.active === false) {
             onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
-        } else if (matrix?.onboardingData?.active === false) {
-            onboarding.setActive(false);
         }
 
         return () => (cancelled = true);
