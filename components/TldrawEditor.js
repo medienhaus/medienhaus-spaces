@@ -10,6 +10,7 @@ import {
     SelectToolbarItem,
     Tldraw,
 } from 'tldraw';
+import { getAssetUrls } from '@tldraw/assets/selfHosted';
 import React from 'react';
 
 /**
@@ -19,9 +20,12 @@ import React from 'react';
  * @returns {React.ReactElement}
  */
 const TldrawEditor = (props) => {
+    const assetUrls = getAssetUrls({ baseUrl: '/assets/tldraw' });
+
     return (
         <Tldraw
             inferDarkMode
+            assetUrls={assetUrls}
             components={{
                 MainMenu: null,
                 PageMenu: null,
