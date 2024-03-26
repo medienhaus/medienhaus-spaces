@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RiSkipDownLine, RiSkipUpLine } from '@remixicon/react';
 import 'driver.js/dist/driver.css'; //import css
-import _ from 'lodash'; // @TODO write to matrix.onbardingdata on initial start of onboarding and on previous Route.
+import _ from 'lodash';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/UI/shadcn/Button';
