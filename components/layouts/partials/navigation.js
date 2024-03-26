@@ -33,7 +33,7 @@ export default function Navigation({ closeNavigation }) {
 
     const Link = ({ href, children, active }) => (
         <NextLink
-            className={active && onboarding.route.name === href && 'driver-active-element [&:before]:!animate-none'}
+            className={active && href.includes(onboarding.route.name) && 'driver-active-element [&:before]:!animate-none'}
             href={href}
             onClick={closeNavigation}
         >
