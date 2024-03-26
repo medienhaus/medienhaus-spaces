@@ -4,6 +4,7 @@ import { RiSkipDownLine, RiSkipUpLine } from '@remixicon/react';
 import 'driver.js/dist/driver.css'; //import css
 import _ from 'lodash';
 import { toast } from 'sonner';
+import { useRouter } from 'next/router';
 
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
@@ -21,6 +22,7 @@ const OnboardingPilot = () => {
     const [isOpen, setIsOpen] = useState(true);
     const onboardingRoute = onboarding?.route;
     const prevOnboardingDataRef = useRef(null);
+    const router = useRouter();
 
     useEffect(() => {
         let cancelled = false;
@@ -40,6 +42,15 @@ const OnboardingPilot = () => {
 
         return () => (cancelled = true);
     }, [matrix.onboardingData, onboarding, onboarding.active]);
+
+    useEffect(() => {
+        // check if the user has navigated away from the onboarding route and if so redirect them back
+        if (onboarding.active && onboardingRoute?.name !== router.route) {
+            router.push(onboardingRoute.name);
+        }
+        // we want to purposefully ignore router changes, so users can still navigate away from the current onboarding route but are redirected once they engage with the onboarding again.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onboarding.active, onboardingRoute, onboardingRoute?.name]);
 
     const closeOnboarding = async () => {
         await writeOnboardingStateToAccountData(auth.getAuthenticationProvider('matrix').getMatrixClient(), false).catch(() => {
