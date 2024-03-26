@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,18 +14,18 @@ import {
     RiFolderLine,
     RiFolderSettingsLine,
     RiFolderUnknowLine,
+    RiGroupLine,
     RiLink,
+    RiListSettingsLine,
     RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
-// import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
@@ -37,6 +38,11 @@ import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
+import { useGetSpaceChildren } from './useGetSpaceChildren';
+import { Progress } from '@/components/UI/shadcn/Progress';
+import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
+import { useMediaQuery } from '@/lib/utils';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -44,7 +50,9 @@ import EllipsisMenu from './manage-room/EllipsisMenu';
  * @component
  * @returns {JSX.Element} The rendered Explore component.
  */
+
 //@TODO cached spaces do not update after editing
+
 export default function Explore() {
     const router = useRouter();
     const { t } = useTranslation('explore');
@@ -53,11 +61,9 @@ export default function Explore() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
-    const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
-    const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
-    const [isFetchingContent, setIsFetchingContent] = useState(false);
-    // const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
-    // const [settingsTabValue, setSettingsTabValue] = useState('settings');
+    const [activeContentView, setActiveContentView] = useState('content');
+
+    const isDesktop = useMediaQuery('(min-width: 768px)');
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
@@ -78,6 +84,18 @@ export default function Explore() {
         ['users', matrixClient.getUserId()],
     );
     /** @type {string|undefined} */
+
+    const cachedSpace = matrix.spaces.get(roomId);
+    const allChatRooms = Array.from(matrix.rooms.values())
+        .filter((room) => !room.meta)
+        .filter((room) => !matrix.directMessages.has(room.roomId));
+
+    const { isFetchingSpaceChildren, progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(
+        auth,
+        matrix,
+        matrixClient,
+        cachedSpace,
+    );
     const currentTemplate =
         iframeRoomId &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
@@ -85,11 +103,6 @@ export default function Explore() {
 
             return roomId === iframeRoomId;
         }).meta?.template;
-    const cachedSpace = matrix.spaces.get(roomId);
-    const allChatRooms = Array.from(matrix.rooms.values())
-        .filter((room) => !room.meta)
-        .filter((room) => !matrix.directMessages.has(room.roomId));
-
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -113,141 +126,14 @@ export default function Explore() {
         return () => controller.abort();
     }, [iframeRoomId, matrix]);
 
-    // Call API to fetch and add room hierarchy to selectedSpaceChildren
-    const getSpaceChildren = useCallback(
-        async (e, roomId) => {
-            if (!selectedSpaceChildren) return;
-            e && e.preventDefault();
-            logger.debug('Fetch the room hierarchy for ' + roomId);
-
-            const getHierarchyFromServer = async (roomId) => {
-                const roomHierarchyFromServer = await matrix.roomHierarchy(roomId, null, 1).catch(async (error) => {
-                    if (error.data?.error.includes('not in room')) {
-                        // If the error indicates the user is not in the room and previews are disabled
-                        // We prompt the user to join the room.
-                        if (
-                            confirm(
-                                t('You are currently not in room {{roomId}}, and previews are disabled. Do you want to join the room?', {
-                                    roomId: roomId,
-                                }),
-                            )
-                        ) {
-                            const joinRoom = await matrixClient.joinRoom(roomId).catch((error) => toast.error(error.data?.error));
-
-                            // If successfully joined, recursively call 'getSpaceHierarchy' again.
-                            if (joinRoom) return await getHierarchyFromServer(roomId);
-                        }
-                    } else {
-                        return matrix
-                            .handleRateLimit(error, () => getHierarchyFromServer(roomId))
-                            .catch((error) => {
-                                // we don't want to display unnecessary error messages.
-                                if (error.message === 'Event not found.') return;
-                                if (error.message.includes('not in room')) return;
-                                console.log(error);
-                                toast.error(error.message);
-                            }); // Handle other errors by setting an error message.
-                    }
-                });
-                if (!roomHierarchyFromServer) return;
-                const parent = roomHierarchyFromServer[0];
-
-                const getMetaEvent = async (obj) => {
-                    logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
-                    const metaEvent = await auth
-                        .getAuthenticationProvider('matrix')
-                        .getMatrixClient()
-                        .getStateEvent(obj.state_key || obj.room_id, 'dev.medienhaus.meta');
-
-                    if (metaEvent) obj.meta = metaEvent;
-                };
-
-                for (const space of roomHierarchyFromServer) {
-                    if (space.room_id !== roomHierarchyFromServer[0].room_id) {
-                        space.parent = parent;
-                    }
-
-                    await getMetaEvent(space).catch((error) => {
-                        logger.debug(error);
-
-                        return matrix
-                            .handleRateLimit(error, () => getMetaEvent(space))
-                            .catch((error) => {
-                                // we don't want to display unnecessary error messages.
-                                if (error.message === 'Event not found.') return;
-                                if (error.message.includes('not in room')) return;
-
-                                toast.error(error.message);
-                            });
-                    });
-                }
-
-                return roomHierarchyFromServer;
-            };
-
-            // initialise the spaceHierarchy array which is either filled by our cache or the server
-            let spaceHierarchy = [];
-
-            // if a cached space exists, we can use it to get the children
-            if (cachedSpace) {
-                if (cachedSpace.children) {
-                    for await (const roomId of cachedSpace.children) {
-                        const cachedChild = { ...(matrix.spaces.get(roomId) || matrix.rooms.get(roomId)) };
-
-                        if (!_.isEmpty(cachedChild)) {
-                            const copy = { ...cachedChild };
-                            copy.parent = cachedSpace;
-                            spaceHierarchy.push(copy);
-                        } else {
-                            const getChildFromServer = await getHierarchyFromServer(roomId);
-
-                            getChildFromServer[0].parent = cachedSpace;
-                            spaceHierarchy.push(getChildFromServer[0]);
-                        }
-                    }
-
-                    // insert the cached space at the beginning of the array to mimic the behaviour of matrix.getRoomHierarchy
-                    spaceHierarchy.splice(0, 0, cachedSpace);
-                }
-            } else {
-                spaceHierarchy = await getHierarchyFromServer(roomId);
-            }
-
-            setSelectedSpaceChildren((prevState) => {
-                // Check if the selected roomId is already inside the array
-                let indexOfParent = null;
-
-                for (const [index, children] of prevState.entries()) {
-                    const childRoomId = children[0].room_id || children[0].roomId || children[0].id;
-
-                    if (childRoomId === roomId) {
-                        // If there is a match, return the position and exit the loop
-                        indexOfParent = index;
-                        break;
-                    }
-                }
-
-                // If indexOfParent is 0 or the context root ID defined in the config, return the new spaceHierarchy
-                if (indexOfParent === 0 || roomId === getConfig().publicRuntimeConfig.contextRootSpaceRoomId) return [spaceHierarchy];
-                // Otherwise, delete all entries starting with the found index
-                if (indexOfParent) prevState.splice(indexOfParent);
-
-                // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
-                return [...prevState, spaceHierarchy];
-            });
-        },
-        [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
-    );
-
     // Handle route changes and fetch room content
     useEffect(() => {
         let cancelled = false;
 
         const onRouterChange = async () => {
-            setIsFetchingContent(roomId);
-            !myPowerLevel && setManageContextActionToggle(false);
+            setActiveContentView('content');
+            // !myPowerLevel && setActiveContentView('content');
             await getSpaceChildren(null, roomId);
-            setIsFetchingContent(false);
         };
 
         if (!cancelled && matrix.initialSyncDone && router.query?.roomId) {
@@ -389,6 +275,11 @@ export default function Explore() {
 
     return (
         <>
+            {progress !== 0 && (
+                <div className="absolute left-0 top-0 w-full">
+                    <Progress value={progress} />
+                </div>
+            )}
             {iframeRoomId ? (
                 <ExploreIframeViews
                     selectedSpaceChildren={selectedSpaceChildren}
@@ -398,11 +289,7 @@ export default function Explore() {
                     iframeRoomId={iframeRoomId}
                     breadcrumbs={
                         !_.isEmpty(selectedSpaceChildren) && (
-                            <TreePath
-                                selectedSpaceChildren={selectedSpaceChildren}
-                                isFetchingContent={isFetchingContent}
-                                iframeRoomId={iframeRoomId}
-                            />
+                            <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
                         )
                     }
                     title={name}
@@ -415,33 +302,76 @@ export default function Explore() {
                                 content={window.location.href}
                                 title={
                                     !_.isEmpty(selectedSpaceChildren) && (
-                                        <TreePath
-                                            selectedSpaceChildren={selectedSpaceChildren}
-                                            isFetchingContent={isFetchingContent}
-                                            iframeRoomId={iframeRoomId}
-                                        />
+                                        <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
                                     )
                                 }
                                 removingLink={false}
                                 roomId={roomId}
-                                manageContextActionToggle={manageContextActionToggle}
+                                activeContentView={activeContentView}
                                 myPowerLevel={myPowerLevel}
-                                setManageContextActionToggle={setManageContextActionToggle}
-                                // isInviteUsersOpen={isInviteUsersOpen}
+                                setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                                // setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
-                                // setSettingsTabValue={setSettingsTabValue}
                             />
-                            <div className="flex h-full w-full flex-col overflow-auto">
-                                {manageContextActionToggle ? (
-                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
-                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+
+                            {/*
+                                      @TODO: check this condition; is it really the same as for settings?
+                                      @NOTE: also see further below
+                                    */}
+                            <Tabs
+                                className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
+                                onValueChange={setActiveContentView}
+                                value={activeContentView}
+                            >
+                                <TabsList className="[&>[role=tab]]:gap-2">
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('content');
+                                        }}
+                                        title={t('Show contexts and items of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="content"
+                                    >
+                                        <Icon>
+                                            <RiFolderLine />
+                                        </Icon>
+                                        {isDesktop && t('Content')}
+                                    </TabsTrigger>
+
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('members');
+                                        }}
+                                        title={t('Show members of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="members"
+                                    >
+                                        <Icon>
+                                            <RiGroupLine />
+                                        </Icon>
+                                        {isDesktop && t('Members')}
+                                    </TabsTrigger>
+                                    {matrixClient
+                                        .getRoom(roomId)
+                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                        <TabsTrigger
+                                            onClick={() => {
+                                                setActiveContentView('settings');
+                                            }}
+                                            title={t('Show settings of {{name}}', {
+                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                            })}
+                                            value="settings"
+                                        >
                                             <Icon>
-                                                <RiUserLine />
+                                                <RiListSettingsLine />
                                             </Icon>
-                                        </TextButton>
-                                    </UserManagement>
-                                ) : (
+                                            {isDesktop && t('Settings')}
+                                        </TabsTrigger>
+                                    )}
+                                </TabsList>
+                                <TabsContent value="content">
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
@@ -468,6 +398,7 @@ export default function Explore() {
                                                         </TableRow>
                                                     ))}
                                                 </TableHeader>
+
                                                 <TableBody>
                                                     {table.getRowModel().rows?.length ? (
                                                         table.getRowModel().rows.map((row, index) => {
@@ -485,14 +416,15 @@ export default function Explore() {
                                                 </TableBody>
                                             </Table>
                                         )}
-                                        {!manageContextActionToggle &&
-                                            matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+
+                                        {matrixClient
+                                            .getRoom(roomId)
+                                            ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
+                                            !isFetchingSpaceChildren && (
                                                 <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     <QuickAddExplore
                                                         currentId={roomId}
-                                                        roomName={matrix.spaces.get(roomId).name}
+                                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                                         getSpaceChildren={getSpaceChildren}
                                                         allChatRooms={allChatRooms}
                                                         trigger={
@@ -512,35 +444,53 @@ export default function Explore() {
                                             )}
 
                                         {/* @NOTE: pagination component which we are currently not using, but might in the future
-                                        {table.getRowModel().rows?.length > 1 && (
-                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
-                                                <div className="flex-1 text-sm text-muted-foreground">
-                                                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                                            {table.getRowModel().rows?.length > 1 && (
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
+                                                    <div className="flex-1 text-sm text-muted-foreground">
+                                                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                                                    </div>
+                                                    <div className="space-x-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.previousPage()}
+                                                            disabled={!table.getCanPreviousPage()}
+                                                        >
+                                                            Previous
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.nextPage()}
+                                                            disabled={!table.getCanNextPage()}
+                                                        >
+                                                            Next
+                                                        </Button>
+                                                    </div>
                                                 </div>
-                                                <div className="space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.previousPage()}
-                                                        disabled={!table.getCanPreviousPage()}
-                                                    >
-                                                        Previous
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.nextPage()}
-                                                        disabled={!table.getCanNextPage()}
-                                                    >
-                                                        Next
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )}
-                                        */}
+                                            )}
+                                            */}
                                     </>
-                                )}
-                            </div>
+                                </TabsContent>
+
+                                <TabsContent value="members">
+                                    <UserManagement
+                                        roomId={roomId}
+                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                        myPowerLevel={myPowerLevel}
+                                    >
+                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+                                            <Icon>
+                                                <RiUserLine />
+                                            </Icon>
+                                        </TextButton>
+                                    </UserManagement>
+                                </TabsContent>
+
+                                <TabsContent value="settings">
+                                    <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
+                                </TabsContent>
+                            </Tabs>
                         </DefaultLayout.Wrapper>
                     </>
                 )

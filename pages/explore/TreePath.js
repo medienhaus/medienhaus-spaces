@@ -10,9 +10,8 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from '@/components/UI/shadcn/Breadcrumb';
-import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 
-const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
+const TreePath = ({ selectedSpaceChildren }) => {
     return (
         <>
             <Breadcrumb className="overflow-hidden">
@@ -56,10 +55,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                                             if (index < selectedSpaceChildren.length - 1) {
                                                 return (
                                                     <DropdownMenuItem key={index} className="grid w-full grid-flow-col justify-start gap-2">
-                                                        <Link href={`/explore/${roomId}`}>
-                                                            {path[0].name}
-                                                            {isFetchingContent === roomId && <LoadingSpinnerInline />}
-                                                        </Link>
+                                                        <Link href={`/explore/${roomId}`}>{path[0].name}</Link>
                                                     </DropdownMenuItem>
                                                 );
                                             }
@@ -82,7 +78,6 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
                                                 {path[0].name}
-                                                {isFetchingContent === roomId && <LoadingSpinnerInline />}
                                             </Link>
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>
