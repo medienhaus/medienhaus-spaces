@@ -30,7 +30,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const room = matrixClient.getRoom(roomId);
     // get the current members of the room and sort them first from highest to lowest power level and then alphabetically
-    const currentMembers = _.orderBy(room.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
+    const currentMembers = _.orderBy(room?.getMembersWithMembership('join'), ['powerLevel', 'name'], ['desc', 'asc']);
     const selfObject = currentMembers.filter((member) => member.userId === matrixClient.getUserId())[0];
     const { t } = useTranslation('explore');
 
@@ -52,6 +52,8 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
             await matrixClient.setPowerLevel(roomId, userId, level, newStateEvent).catch((error) => setErrorMessage(error.data.error));
         }
     };
+
+    if (!room) return <p>Join the room to see or invite members</p>;
 
     return (
         <>

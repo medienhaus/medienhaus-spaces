@@ -33,23 +33,14 @@ const AccountSection = styled(DefaultLayout.LameColumn)`
 
 const AvatarSection = styled.div`
     display: grid;
-    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
     grid-gap: var(--margin);
-
-    @media (min-width: 40em) {
-        grid-template-columns: 1fr 1fr;
-    }
 `;
 
 const Avatar = styled.img`
-    width: 50%;
-
     &.placeholder {
         backdrop-filter: invert(100%);
-    }
-
-    @media (min-width: 40em) {
-        width: 70%;
+        height: 6rem;
     }
 `;
 
@@ -276,7 +267,7 @@ export default function Account() {
                             {t('Browse')} …
                         </Button>
                         {profileInfo.avatar_url && (
-                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
+                            <Button type="button" variant="destructive" disabled={isChangingAvatar} onClick={deleteAvatar}>
                                 {t('Delete')}
                             </Button>
                         )}
