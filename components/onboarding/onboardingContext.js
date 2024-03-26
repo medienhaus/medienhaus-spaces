@@ -112,7 +112,7 @@ function useOnboardingProvider() {
             }
 
             if (offset > 0 && route.isLastStep && !route.nextRoute) {
-                // Handle the last step
+                // Handle the very last step of the onboarding script
                 setRoute((draft) => updateRouteStepState(draft, tourInstance));
                 tourInstance.refresh();
 
@@ -120,8 +120,10 @@ function useOnboardingProvider() {
             }
 
             if ((offset > 0 && route.isLastStep) || (offset < 0 && route.isFirstStep)) {
+                // handle the last step of the route and jump to the next route
                 changeRoute(offset);
             } else {
+                // otherwise we just advance one step
                 setRoute((draft) => updateRouteStepState(draft, tourInstance));
                 tourInstance.refresh();
             }
