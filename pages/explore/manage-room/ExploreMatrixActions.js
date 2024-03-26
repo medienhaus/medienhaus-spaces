@@ -35,7 +35,7 @@ const ExploreMatrixActions = ({
 
     return (
         <>
-            <Tabs className="[&>[role=tabpanel]]:pt-6" onValueChange={setSettingsTabValue} value={settingsTabValue}>
+            <Tabs className="[&>[role=tabpanel]]:pt-6 [&>[id*=-content-]]:max-w-[55ch]" onValueChange={setSettingsTabValue} value={settingsTabValue}>
                 <TabsList>
                     <TabsTrigger
                         onClick={() => {
@@ -56,6 +56,9 @@ const ExploreMatrixActions = ({
                     </TabsTrigger>
                 </TabsList>
 
+                {/* @NOTE: example of dynamic grid with auto-fitting columns ...
+                <TabsContent className="grid grid-cols-[repeat(auto-fit,_minmax(calc(320px-2rem),_auto))] gap-8 pb-6" value="general">
+                */}
                 <TabsContent className="pb-6 [&>*+*]:mt-8" value="general">
                     <>
                         {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
