@@ -10,14 +10,14 @@ import KnockOnMatrixRoom from './KnockOnMatrixRoom';
 import AddFavourite from './favourites/AddFavourite';
 import Icon from '@/components/UI/Icon';
 
-const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, joinRule }) => {
+const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPadsObject, content, joinRule, roomName }) => {
     const { t } = useTranslation(['explore', 'etherpad']);
 
     return (
         <DefaultLayout.IframeHeader>
             <>{title}</>
             <DefaultLayout.IframeHeaderButtonWrapper>
-                {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
+                {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={roomName} />)}
 
                 <CopyToClipboard content={content} />
 
