@@ -13,6 +13,9 @@ import '../lib/Internationalization';
 import '../assets/_globalCss.css';
 import { Toaster } from '@/components/UI/shadcn/Sonner';
 
+import 'tldraw/tldraw.css';
+import '../assets/_tldrawOverrides.css';
+
 // Enable immer support for Map() and Set()
 enableMapSet();
 

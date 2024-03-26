@@ -24,6 +24,7 @@
     "@tanstack/react-table": "^8.13.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "@tldraw/assets": "^2.0.2",
     "i18next": "^23.8.2",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
@@ -40,6 +41,7 @@
     "sonner": "^1.4.3",
     "styled-components": "^6.1.8",
     "tailwindcss-animate": "^1.0.7",
+    "tldraw": "^2.1.0-canary.cd02d03d063b",
     "use-immer": "^0.9.0",
     "vaul": "^0.9.0"
   },
