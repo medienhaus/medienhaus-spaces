@@ -103,7 +103,7 @@ export default function Dashboard() {
             <h2>/dashboard</h2>
 
             {!_.isEmpty(invitations) && (
-                <>
+                <div>
                     <h3>{t('Invitations')}</h3>
                     <br />
                     {Array.from(invitations.values()).map((invitation, index) => {
@@ -123,7 +123,7 @@ export default function Dashboard() {
                             </div>
                         );
                     })}
-                </>
+                </div>
             )}
 
             {/* Add some space and a divider between pending invitations and knocks */}
@@ -136,7 +136,7 @@ export default function Dashboard() {
             )}
 
             {pendingKnocks.size > 0 && (
-                <>
+                <div>
                     <h3>{t('Asking To Join')}</h3>
                     <br />
                     {[...pendingKnocks].map(([key, knock], index) => (
@@ -151,7 +151,7 @@ export default function Dashboard() {
                             <KnockCard roomId={knock.roomId} roomName={knock.name} userId={knock.userId} reason={knock.reason} />
                         </div>
                     ))}
-                </>
+                </div>
             )}
             { !_.isEmpty(favourite) &&
                     <ServiceTable>
