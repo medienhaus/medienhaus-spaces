@@ -52,7 +52,7 @@ export default function Tldraw() {
     const roomSpecificMatrixClient = useMemo(() => {
         if (!roomId) return;
 
-        console.error('fnwbr Create new matrixclient');
+        logger.error('fnwbr Create new matrixclient');
 
         return createMatrixClient({
             baseUrl: matrixClient.getHomeserverUrl(),
@@ -99,7 +99,7 @@ export default function Tldraw() {
             // Updated
             for (const [from, to] of Object.values(change.changes.updated)) {
                 if (from.typeName === 'instance' && to.typeName === 'instance' && from.currentPageId !== to.currentPageId) {
-                    console.log(`fnwbr changed page (${from.currentPageId}, ${to.currentPageId})`);
+                    logger.log(`fnwbr changed page (${from.currentPageId}, ${to.currentPageId})`);
                     // @TODO Handle pages
                 } else if (from.id.startsWith('shape') && to.id.startsWith('shape')) {
                     if (roomSpecificMatrixClient.getRoom(roomId).findEventById(from.meta.eventId)) {
@@ -162,13 +162,13 @@ export default function Tldraw() {
         (event, room, oldEventId, oldStatus) => {
             if (event.isSending() || oldStatus !== 'sent') return;
             // If this is the new event ID for something inside a thread we do not care... we always store the root IDs
-            console.log({ ...event });
+            logger.log({ ...event });
             if (event.hasAssociation()) return;
 
             // We need to update the matrixEventId inside tldraw's store
             editor.store.mergeRemoteChanges(() => {
                 const x = JSON.parse(event.getContent().body);
-                console.log('now changing the metaEventId of shape', Object.keys(x)[0], {
+                logger.log('now changing the metaEventId of shape', Object.keys(x)[0], {
                     ...x[Object.keys(x)[0]],
                     ...{ meta: { eventId: event.getId() } },
                 });
@@ -337,7 +337,7 @@ export default function Tldraw() {
         if (!editor) return;
 
         const letsgo = async () => {
-            console.warn('fnwbr Initial population of store, async!');
+            logger.warn('fnwbr Initial population of store, async!');
 
             const stateStoreSchema = await roomSpecificMatrixClient.getStateEvent(roomId, 'dev.medienhaus.tldraw.store.schema', '');
             const stateStoreStore = await roomSpecificMatrixClient.getStateEvent(roomId, 'dev.medienhaus.tldraw.store.store', '');
@@ -391,7 +391,7 @@ export default function Tldraw() {
             if (!initialSyncDone) return;
             if (!roomSpecificMatrixClient.getRoom(roomId)) return;
 
-            console.warn('fnwbr matrix-client INITIAL SYNC DONE');
+            logger.warn('fnwbr matrix-client INITIAL SYNC DONE');
 
             const room = roomSpecificMatrixClient.getRoom(roomId);
 
@@ -404,14 +404,14 @@ export default function Tldraw() {
             const x = new TimelineWindow(roomSpecificMatrixClient, room.getUnfilteredTimelineSet());
             x.load();
 
-            console.log('fnwbr', x);
-            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
-            console.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
-            console.log('fnwbr', x);
-            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
-            console.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
-            console.log('fnwbr', x);
-            console.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            logger.log('fnwbr', x);
+            logger.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            logger.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
+            logger.log('fnwbr', x);
+            logger.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
+            logger.log('fnwbr paginate', await x.paginate(EventTimeline.BACKWARDS, 1000));
+            logger.log('fnwbr', x);
+            logger.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
             // @TODO Keep paginating until we don't need to anymore
         };
 
@@ -516,13 +516,15 @@ export default function Tldraw() {
                     <div className="h-full w-full !px-0">
                         <TldrawEditor onMount={setEditor} key={roomId}>
                             {/* Debugging */}
-                            <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
-                                <pre style={{ margin: '0 0 16px 0' }}>
-                                    {selectedShapeMeta
-                                        ? JSON.stringify(selectedShapeMeta, null, '\t')
-                                        : 'Select one shape to see its meta data.'}
-                                </pre>
-                            </div>
+                            {process.env.NODE_ENV !== 'production' && (
+                                <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
+                                    <pre style={{ margin: '0 0 16px 0' }}>
+                                        {selectedShapeMeta
+                                            ? JSON.stringify(selectedShapeMeta, null, '\t')
+                                            : 'Select one shape to see its meta data.'}
+                                    </pre>
+                                </div>
+                            )}
                         </TldrawEditor>
                     </div>
                 </DefaultLayout.IframeWrapper>
