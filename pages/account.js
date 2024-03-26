@@ -332,11 +332,6 @@ export default function Account() {
                         className="bg-accent-foreground text-white hover:bg-accent disabled:bg-muted"
                         onClick={() => {
                             onboarding.startTour();
-                            onboarding.writeOnboardStateToAccountData(matrixClient, {
-                                completed: false,
-                                active: true,
-                                currentRouteIndex: 0,
-                            });
                         }}
                     >
                         {t('Start Onboarding')}

@@ -1,161 +1,164 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RiSkipDownLine, RiSkipUpLine } from '@remixicon/react';
-
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
 import 'driver.js/dist/driver.css'; //import css
+import _ from 'lodash';
+import { toast } from 'sonner';
+import { useRouter } from 'next/router';
+
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
-import { useRouter } from 'next/router';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
+import onboardingScriptCustom from './onboardingScriptCustom.json';
 
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
     const auth = useAuth();
-    const router = useRouter();
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
-    const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
+    const { t } = useTranslation(onboardingScriptCustom.length > 0 ? 'onboardingCustom' : 'onboarding');
     const [side, setSide] = useState('floating');
     const [isOpen, setIsOpen] = useState(true);
-
-    //no clue why it is not possible to use the matrix.onboardingData object directly in the context file. therefore we have to use it here and pass it to the context – schade…
-    useEffect(() => {
-        if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active && onboarding.active === false) {
-            onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
-        } else if (matrix?.onboardingData?.hasOwnProperty('active') && matrix?.onboardingData?.active === false) {
-            onboarding.setActive(false);
-        }
-    }, [matrix.onboardingData, onboarding]);
+    const onboardingRoute = onboarding?.route;
+    const prevOnboardingDataRef = useRef(null);
+    const router = useRouter();
 
     useEffect(() => {
-        // If the user is logged in and the onboarding is not active, we need to check if this is the first time the user logs in. this is achieved by checking if the onboardingData stored in the matrix accountData object is empty
-        // we have to use a Effect to listen to the matrixData object, if the initialSync is done
+        let cancelled = false;
+
+        if (cancelled) return;
+
+        // we only want to start the tour if the onboarding data has actually changed
         if (
-            matrix.initialSyncDone &&
-            router.route !== '/intro' &&
-            auth.user &&
-            !onboarding.active &&
-            Object.keys(matrix.onboardingData).length === 0
+            matrix?.onboardingData?.active &&
+            onboarding.active === false &&
+            !_.isEqual(matrix.onboardingData, prevOnboardingDataRef.current)
         ) {
-            router.push('/intro');
+            onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
         }
-    }, [matrix, router, auth, onboarding]);
 
-    if (!auth?.user) return null;
+        prevOnboardingDataRef.current = matrix.onboardingData;
 
-    if (!onboarding) return null;
+        return () => (cancelled = true);
+    }, [matrix.onboardingData, onboarding, onboarding.active]);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        if (cancelled) return;
+
+        // check if the user has navigated away from the onboarding route and if so redirect them back
+        if (onboarding.active && onboardingRoute?.name && onboardingRoute?.name !== router.route) {
+            router.push(onboardingRoute.name);
+        }
+
+        return () => (cancelled = true);
+        // we want to purposefully ignore router changes, so users can still navigate away from the current onboarding route but are redirected once they engage with the onboarding again.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onboarding.active, onboardingRoute, onboardingRoute?.name]);
+
+    const closeOnboarding = async () => {
+        await writeOnboardingStateToAccountData(auth.getAuthenticationProvider('matrix').getMatrixClient(), false).catch(() => {
+            toast.error(t('Couldn’t save onboarding progress.'));
+        });
+        onboarding.exit();
+    };
+
+    const handleNavigationClick = async (direction) => {
+        if ((onboardingRoute.isLastStep && onboardingRoute.nextRoute) || (onboardingRoute.isFirstStep && onboardingRoute.prevRoute)) {
+            await writeOnboardingStateToAccountData(
+                auth.getAuthenticationProvider('matrix').getMatrixClient(),
+                true,
+                onboardingRoute.index + direction,
+            ).catch(() => {
+                toast.error(t('Couldn’t save onboarding progress.'));
+            });
+        }
+
+        onboarding.processStep(direction);
+    };
+
+    if (!auth?.user || !onboarding || !onboarding.active) return null;
 
     return (
         <>
-            {onboarding.active && (
-                <Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
-                    <SheetContent
-                        side={side}
-                        onInteractOutside={(e) => {
-                            e.preventDefault();
-                        }}
-                        onOpenAutoFocus={(e) => {
-                            e.preventDefault();
+            <Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
+                <SheetContent
+                    side={side}
+                    onInteractOutside={(e) => {
+                        e.preventDefault();
+                    }}
+                    onOpenAutoFocus={(e) => {
+                        e.preventDefault();
+                    }}
+                >
+                    <Button
+                        className="text-white hover:text-accent"
+                        variant="ghost"
+                        size="icon"
+                        onClick={(event) => {
+                            event.preventDefault;
+                            setSide((prevState) => (prevState === 'floating' ? 'minified' : 'floating'));
                         }}
                     >
+                        {side === 'floating' ? (
+                            <>
+                                <RiSkipDownLine />
+                                <span className="sr-only">{t('Minimise')}</span>
+                            </>
+                        ) : (
+                            <>
+                                <RiSkipUpLine />
+                                <span className="sr-only">{t('Maximise')}</span>
+                            </>
+                        )}
+                    </Button>
+
+                    <SheetHeader>
+                        <SheetTitle>
+                            {onboardingRoute.name} — {t(onboardingRoute.title)}
+                        </SheetTitle>
+                        <SheetDescription>{t(onboardingRoute.description)}</SheetDescription>
+                    </SheetHeader>
+
+                    <SheetFooter className="mt-6 grid grid-cols-2 gap-4 [&>button:only-child]:[grid-column:2]">
                         <Button
-                            className="text-white hover:text-accent"
-                            variant="ghost"
-                            size="icon"
-                            onClick={(event) => {
-                                event.preventDefault;
-                                setSide((prevState) => (prevState === 'floating' ? 'minified' : 'floating'));
+                            disabled={onboardingRoute.isFirstStep && !onboardingRoute.prevRoute}
+                            onClick={() => {
+                                handleNavigationClick(-1);
                             }}
                         >
-                            {side === 'floating' ? (
-                                <>
-                                    <RiSkipDownLine />
-                                    <span className="sr-only">{t('Minimise')}</span>
-                                </>
-                            ) : (
-                                <>
-                                    <RiSkipUpLine />
-                                    <span className="sr-only">{t('Maximise')}</span>
-                                </>
-                            )}
+                            {onboardingRoute.isFirstStep && onboardingRoute.prevRoute
+                                ? `\uE1D3 ${onboardingRoute.prevRoute}`
+                                : t('Previous')}
                         </Button>
-
-                        <SheetHeader>
-                            <SheetTitle>
-                                {onboarding.currentRoute} — {t(onboarding.currentStepTitle)}
-                            </SheetTitle>
-                            <SheetDescription>{t(onboarding.currentStepDescription)}</SheetDescription>
-                        </SheetHeader>
-
-                        <SheetFooter className="mt-6 grid grid-cols-2 gap-4 [&>button:only-child]:[grid-column:2]">
-                            {onboarding.active && onboarding.hasPrev && (
-                                <Button
-                                    disabled={!onboarding.hasPrev}
-                                    onClick={() => {
-                                        onboarding.processStep(-1);
-                                    }}
-                                >
-                                    {t('Prev')}
-                                </Button>
-                            )}
-
-                            {onboarding.active && !onboarding.hasPrev && onboarding.prevRouteName && (
-                                <Button
-                                    onClick={async () => {
-                                        await onboarding.writeOnboardStateToAccountData(matrixClient, {
-                                            currentRouteIndex: onboarding.currentRouteIndex - 1,
-                                        });
-                                        onboarding.prevRoute();
-                                    }}
-                                >
-                                    {'\uE1D3'} {onboarding.prevRouteName}
-                                </Button>
-                            )}
-
-                            {onboarding.active && onboarding.hasNext && (
-                                <Button
-                                    disabled={!onboarding.hasNext}
-                                    onClick={() => {
-                                        onboarding.processStep(1);
-                                    }}
-                                >
-                                    {t('Next')}
-                                </Button>
-                            )}
-
-                            {onboarding.active && !onboarding.hasNext && onboarding.nextRouteName.length > 0 && (
-                                <Button
-                                    onClick={async () => {
-                                        await onboarding.writeOnboardStateToAccountData(matrixClient, {
-                                            active: true,
-                                            currentRouteIndex: onboarding.currentRouteIndex + 1,
-                                        });
-                                        onboarding.nextRoute();
-                                    }}
-                                >
-                                    {'\uE1D8'} {onboarding.nextRouteName}
-                                </Button>
-                            )}
-
-                            {onboarding.active && !onboarding.hasNext && !onboarding.nextRouteName.length > 0 && (
-                                <Button
-                                    onClick={async () => {
-                                        onboarding.exit();
-                                        await onboarding.writeOnboardStateToAccountData(matrixClient, { active: false });
-                                    }}
-                                >
-                                    {t('Close')}
-                                </Button>
-                            )}
-                        </SheetFooter>
-                    </SheetContent>
-                </Sheet>
-            )}
+                        <Button
+                            onClick={
+                                onboardingRoute.isLastStep && !onboardingRoute.nextRoute ? closeOnboarding : () => handleNavigationClick(1)
+                            }
+                        >
+                            {onboardingRoute.isLastStep && !onboardingRoute.nextRoute
+                                ? t('Close')
+                                : onboardingRoute.isLastStep
+                                  ? `\uE1D8 ${onboardingRoute.nextRoute}`
+                                  : t('Next')}
+                        </Button>
+                    </SheetFooter>
+                </SheetContent>
+            </Sheet>
         </>
     );
 };
 
 export default OnboardingPilot;
+
+const writeOnboardingStateToAccountData = async (matrixClient, active, index) => {
+    const data = {
+        active: active,
+        currentRouteIndex: index,
+    };
+
+    return matrixClient.setAccountData('dev.medienhaus.spaces.onboarding', data);
+};
