@@ -112,7 +112,9 @@ const OnboardingPilot = () => {
                                 handleNavigationClick(-1);
                             }}
                         >
-                            {onboardingRoute.isFirstStep && onboardingRoute.prevRoute ? `\uE1D3 ${onboardingRoute.prevRoute}` : t('Prev')}
+                            {onboardingRoute.isFirstStep && onboardingRoute.prevRoute
+                                ? `\uE1D3 ${onboardingRoute.prevRoute}`
+                                : t('Previous')}
                         </Button>
                         <Button
                             onClick={

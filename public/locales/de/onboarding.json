@@ -1,7 +1,5 @@
 {
-    "Prev": "Zurück",
-    "Next": "Nächstes",
+    "Couldn’t save onboarding state.": "Einführungsstatus konnte nicht gespeichert werden.",
     "Onboarding": "Einführung",
-    "Close": "beenden",
     "This is the first step of the tour.": "Dies ist der erste Schritt der Tour."
 }
