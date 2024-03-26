@@ -173,6 +173,15 @@ export default function Explore() {
         return true;
     };
 
+    const getIcon = (template) => {
+        if (template === 'etherpad') return <RiEditLine />;
+        if (template === 'spacedeck') return <RiBrush2Line />;
+        if (template === 'tldraw') return <RiBrushLine />;
+        if (template === 'link') return <RiLink />;
+
+        return <RiFolderUnknowLine />;
+    };
+
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {
@@ -183,53 +192,10 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                if (row.original?.meta?.template === 'etherpad') {
-                    return (
-                        <Icon>
-                            <RiEditLine />
-                        </Icon>
-                    );
-                }
+                const template = row.original?.meta?.template;
+                const type = row.original?.meta?.type;
 
-                if (row.original?.meta?.template === 'spacedeck') {
-                    return (
-                        <Icon>
-                            <RiBrush2Line />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'tldraw') {
-                    return (
-                        <Icon>
-                            <RiBrushLine />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'link') {
-                    return (
-                        <Icon>
-                            <RiLink />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.type === 'context') {
-                    return (
-                        <Icon>
-                            <RiFolderLine />
-                        </Icon>
-                    );
-                }
-
-                if (!row.original?.meta) {
-                    return (
-                        <Icon>
-                            <RiChat1Line />
-                        </Icon>
-                    );
-                }
+                return <Icon>{type === 'context' ? <RiFolderLine /> : !row.original?.meta ? <RiChat1Line /> : getIcon(template)}</Icon>;
             },
         },
         {
