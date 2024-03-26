@@ -275,6 +275,7 @@ export default function Explore() {
                                         <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
                                     )
                                 }
+                                roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                 removingLink={false}
                                 roomId={roomId}
                                 activeContentView={activeContentView}
