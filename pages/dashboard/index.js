@@ -99,7 +99,7 @@ export default function Dashboard() {
     }, [matrixClient, matrix, invitations, setInvitations]);
 
     return (
-        <DefaultLayout.LameColumn>
+        <DefaultLayout.LameColumn className="[&>*+*]:mt-8">
             <h2>/dashboard</h2>
 
             {!_.isEmpty(invitations) && (
