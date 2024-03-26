@@ -103,6 +103,10 @@ export default function Explore() {
 
             return roomId === iframeRoomId;
         }).meta?.template;
+
+    const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
+    const canAddMoreContent = canManageSpace && !isFetchingSpaceChildren;
+
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -173,6 +177,15 @@ export default function Explore() {
         return true;
     };
 
+    const getIcon = (template) => {
+        if (template === 'etherpad') return <RiEditLine />;
+        if (template === 'spacedeck') return <RiBrush2Line />;
+        if (template === 'tldraw') return <RiBrushLine />;
+        if (template === 'link') return <RiLink />;
+
+        return <RiFolderUnknowLine />;
+    };
+
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {
@@ -183,53 +196,10 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                if (row.original?.meta?.template === 'etherpad') {
-                    return (
-                        <Icon>
-                            <RiEditLine />
-                        </Icon>
-                    );
-                }
+                const template = row.original?.meta?.template;
+                const type = row.original?.meta?.type;
 
-                if (row.original?.meta?.template === 'spacedeck') {
-                    return (
-                        <Icon>
-                            <RiBrush2Line />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'tldraw') {
-                    return (
-                        <Icon>
-                            <RiBrushLine />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'link') {
-                    return (
-                        <Icon>
-                            <RiLink />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.type === 'context') {
-                    return (
-                        <Icon>
-                            <RiFolderLine />
-                        </Icon>
-                    );
-                }
-
-                if (!row.original?.meta) {
-                    return (
-                        <Icon>
-                            <RiChat1Line />
-                        </Icon>
-                    );
-                }
+                return <Icon>{type === 'context' ? <RiFolderLine /> : !row.original?.meta ? <RiChat1Line /> : getIcon(template)}</Icon>;
             },
         },
         {
@@ -352,9 +322,7 @@ export default function Explore() {
                                         </Icon>
                                         {isDesktop && t('Members')}
                                     </TabsTrigger>
-                                    {matrixClient
-                                        .getRoom(roomId)
-                                        ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
+                                    {canManageSpace && (
                                         <TabsTrigger
                                             onClick={() => {
                                                 setActiveContentView('settings');
@@ -417,31 +385,28 @@ export default function Explore() {
                                             </Table>
                                         )}
 
-                                        {matrixClient
-                                            .getRoom(roomId)
-                                            ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
-                                            !isFetchingSpaceChildren && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                    <QuickAddExplore
-                                                        currentId={roomId}
-                                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                                                        getSpaceChildren={getSpaceChildren}
-                                                        allChatRooms={allChatRooms}
-                                                        trigger={
-                                                            <Button
-                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                variant="ghost"
-                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                            >
-                                                                {t('Add more …')}
-                                                                <Icon>
-                                                                    <RiAddLine />
-                                                                </Icon>
-                                                            </Button>
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
+                                        {canAddMoreContent && (
+                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                <QuickAddExplore
+                                                    currentId={roomId}
+                                                    roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                                    getSpaceChildren={getSpaceChildren}
+                                                    allChatRooms={allChatRooms}
+                                                    trigger={
+                                                        <Button
+                                                            className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                            variant="ghost"
+                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                        >
+                                                            {t('Add more …')}
+                                                            <Icon>
+                                                                <RiAddLine />
+                                                            </Icon>
+                                                        </Button>
+                                                    }
+                                                />
+                                            </div>
+                                        )}
 
                                         {/* @NOTE: pagination component which we are currently not using, but might in the future
                                             {table.getRowModel().rows?.length > 1 && (
