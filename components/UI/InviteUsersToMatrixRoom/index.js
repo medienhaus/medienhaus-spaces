@@ -67,7 +67,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger, promote }) => {
                     content: res,
                 });
 
-                return matrixClient.setPowerLevel(roomId, userId, powerLevel, powerEvent);
+                return await matrixClient.setPowerLevel(roomId, userId, powerLevel, powerEvent);
             });
         };
 
