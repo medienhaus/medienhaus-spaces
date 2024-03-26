@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
+import { MatrixEvent } from 'matrix-js-sdk';
 
 import ErrorMessage from '../ErrorMessage';
 import Datalist from '../DataList';
@@ -14,10 +15,11 @@ import { Button } from '@/components/UI/shadcn/Button';
  *
  * @param {string} roomId - The ID of the Matrix room to invite users to.
  * @param {React.ReactElement} trigger - Something like a button that will open the modal when clicked.
+ * @param {Boolean} promote - Whether to display a switch for granting write access to the invited users.
  *
  * @returns {React.ReactElement} - A React component representing the invitation UI.
  */
-export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
+export const InviteUserToMatrixRoom = ({ roomId, trigger, promote }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation('invitationModal');
@@ -58,9 +60,26 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
         setSearchResults([]);
     }
 
-    const handleInvite = async (selectedUsers) => {
+    const handleInvite = async (selectedUsers, powerLevel) => {
         setErrorFeedback([]);
         const errors = [];
+
+        const setPower = async (roomId, userId, powerLevel) => {
+            console.debug('changing power level for ' + userId);
+            matrixClient.getStateEvent(roomId, 'm.room.power_levels', '').then(async (res) => {
+                const powerEvent = new MatrixEvent({
+                    type: 'm.room.power_levels',
+                    content: res,
+                });
+
+                try {
+                    // something here is going wrong for collab > 2
+                    await matrixClient.setPowerLevel(roomId, userId, powerLevel, powerEvent);
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        };
 
         for (const user of selectedUsers) {
             await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
@@ -68,6 +87,12 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                 if (errors.includes(error.data.error)) return;
                 errors.push(error.data.error);
             });
+
+            if (powerLevel)
+                await setPower(roomId, user.user_id, powerLevel).catch((error) => {
+                    if (errors.includes(error.data.error)) return;
+                    errors.push(error.data.error);
+                });
         }
 
         if (errors.length !== 0) {
@@ -118,6 +143,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                                     onInputChange={handleChange}
                                     keysToDisplay={['display_name', 'user_id']}
                                     onSubmit={handleInvite}
+                                    promote={promote}
                                 />
                                 <div>
                                     {userFeedback && errorFeedback && userFeedback}
