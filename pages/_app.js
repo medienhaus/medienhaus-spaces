@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense } from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -12,9 +12,10 @@ import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
 import '../assets/driverJsCustom.css';
-import { useOnboardingProvider, OnboardingContext } from '@/components/onboarding/onboardingContext';
+import { OnboardingContext, useOnboardingProvider } from '@/components/onboarding/onboardingContext';
 import OnboardingPilot from '@/components/onboarding/onboardingPilot';
 import { Toaster } from '@/components/UI/shadcn/Sonner';
+import LoadingSpinner from '@/components/UI/LoadingSpinner';
 
 // Enable immer support for Map() and Set()
 enableMapSet();
@@ -36,6 +37,17 @@ export default function App({ Component, pageProps }) {
         return null;
     }
 
+    // if the user is logged in but has not started the onboarding process, redirect to /intro
+    if (
+        matrixData.initialSyncDone &&
+        router.route !== '/intro' &&
+        authData.user &&
+        !onboarding.active &&
+        Object.keys(matrixData.onboardingData).length === 0
+    ) {
+        router.push('/intro');
+    }
+
     return (
         <>
             <Head>
@@ -53,14 +65,16 @@ export default function App({ Component, pageProps }) {
                 <MatrixContext.Provider value={matrixData}>
                     {!matrixData.isConnectedToServer && <LostConnection />}
                     <OnboardingContext.Provider value={onboarding}>
-                        <DefaultLayout.Layout>
-                            {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
-                                <>
-                                    <OnboardingPilot />
-                                    <Component {...pageProps} />
-                                </>
-                            )}
-                        </DefaultLayout.Layout>
+                        <Suspense fallback={<LoadingSpinner />}>
+                            <DefaultLayout.Layout>
+                                {((authData.user && matrixData.initialSyncDone) || guestRoutes.includes(router.route)) && (
+                                    <>
+                                        <OnboardingPilot />
+                                        <Component {...pageProps} />
+                                    </>
+                                )}
+                            </DefaultLayout.Layout>
+                        </Suspense>
                     </OnboardingContext.Provider>
                     <Toaster
                         visibleToasts={10}
