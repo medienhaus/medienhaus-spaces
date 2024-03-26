@@ -513,7 +513,7 @@ export default function Tldraw() {
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    <div className="h-full w-full">
+                    <div className="h-full w-full !px-0">
                         <TldrawEditor onMount={setEditor} key={roomId}>
                             {/* Debugging */}
                             <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
