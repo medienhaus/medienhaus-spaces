@@ -31,8 +31,12 @@ const BreadcrumbPage = React.forwardRef(({ className, ...props }, ref) => (
 BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 const BreadcrumbSeparator = ({ children, className, ...props }) => (
-    <li role="presentation" aria-hidden="true" className={cn('[&>svg]:size-3.5', className)} {...props}>
-        {children ?? <RiArrowRightSLine />}
+    <li role="presentation" aria-hidden="true" className={cn('', className)} {...props}>
+        {children ?? (
+            <Icon>
+                <RiArrowRightSLine />
+            </Icon>
+        )}
     </li>
 );
 BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
