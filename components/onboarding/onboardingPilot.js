@@ -43,7 +43,7 @@ const OnboardingPilot = () => {
 
     const closeOnboarding = async () => {
         await writeOnboardingStateToAccountData(auth.getAuthenticationProvider('matrix').getMatrixClient(), false).catch(() => {
-            toast.error(t('Couldn’t save onboarding state'));
+            toast.error(t('Couldn’t save onboarding progress.'));
         });
         onboarding.exit();
     };
@@ -55,7 +55,7 @@ const OnboardingPilot = () => {
                 true,
                 onboardingRoute.index + direction,
             ).catch(() => {
-                toast.error(t('Couldn’t save onboarding state'));
+                toast.error(t('Couldn’t save onboarding progress.'));
             });
         }
 
