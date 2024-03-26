@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import { logger } from 'matrix-js-sdk/lib/logger';
 import { toast } from 'sonner';
+import { MatrixEvent } from 'matrix-js-sdk';
 
 import Datalist from '../DataList';
 import { useAuth } from '@/lib/Auth';
@@ -14,10 +15,11 @@ import { Button } from '@/components/UI/shadcn/Button';
  *
  * @param {string} roomId - The ID of the Matrix room to invite users to.
  * @param {React.ReactElement} trigger - Something like a button that will open the modal when clicked.
+ * @param {Boolean} promote - Whether to display a switch for granting write access to the invited users.
  *
  * @returns {React.ReactElement} - A React component representing the invitation UI.
  */
-export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
+export const InviteUserToMatrixRoom = ({ roomId, trigger, promote }) => {
     const auth = useAuth();
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const { t } = useTranslation('invitationModal');
@@ -55,8 +57,25 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
         setSearchResults([]);
     }
 
-    const handleInvite = async (selectedUsers) => {
+    const handleInvite = async (selectedUsers, powerLevel) => {
         const errors = [];
+
+        const setPower = async (roomId, userId, powerLevel) => {
+            console.debug('changing power level for ' + userId);
+            matrixClient.getStateEvent(roomId, 'm.room.power_levels', '').then(async (res) => {
+                const powerEvent = new MatrixEvent({
+                    type: 'm.room.power_levels',
+                    content: res,
+                });
+
+                try {
+                    // something here is going wrong for collab > 2
+                    await matrixClient.setPowerLevel(roomId, userId, powerLevel, powerEvent);
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        };
 
         for (const user of selectedUsers) {
             const invite = await matrixClient.invite(roomId, user.user_id).catch(async (error) => {
@@ -66,6 +85,13 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                 errors.push(error.data.error);
                 toast.error('The following error occurred: ' + error.data.error);
             });
+            if (powerLevel)
+                await setPower(roomId, user.user_id, powerLevel).catch((error) => {
+                    if (errors.includes(error.data.error)) return;
+                    // display errors in a toast
+                    errors.push(error.data.error);
+                    toast.error('The following error occurred: ' + error.data.error);
+                });
 
             if (!invite) continue;
             // if everything is okay, we let the user know and exit the view.
@@ -105,6 +131,7 @@ export const InviteUserToMatrixRoom = ({ roomId, trigger }) => {
                             onInputChange={handleChange}
                             keysToDisplay={['display_name', 'user_id']}
                             onSubmit={handleInvite}
+                            promote={promote}
                         />
                     </div>
                     <DialogFooter>
