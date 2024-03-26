@@ -29,6 +29,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
           ? `/explore/${parentId}/${roomId}`
           : `/explore/${roomId}`;
     row.roomId = roomId;
+    if (externalUrl) row.target = '_blank';
 
     useEffect(() => {
         const controller = new AbortController();

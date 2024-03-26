@@ -41,7 +41,7 @@ const Table = styled.table`
 
 const TableCaption = styled.caption`
     font-weight: bold;
-    line-height: calc(var(--margin) * 3);
+    line-height: calc(var(--margin) * 3 + 1px);
     text-align: left;
 `;
 
@@ -62,18 +62,18 @@ const TableRow = styled.tr`
 `;
 
 const TableHeader = styled.th`
-    line-height: calc(var(--margin) * 3);
+    line-height: calc(var(--margin) * 3 - 2px);
     text-align: ${(props) => props.align && props.align};
     white-space: nowrap;
 
     > * {
         display: inline-block;
-        line-height: calc(var(--margin) * 3);
+        line-height: calc(var(--margin) * 3 - 2px);
     }
 `;
 
 const TableCell = styled.td`
-    line-height: calc(var(--margin) * 3);
+    line-height: calc(var(--margin) * 3 - 2px);
     ${props => props.small && 'font-size: 75%; text-indent: var(--margin);'}
 
   white-space: nowrap;
