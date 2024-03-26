@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import DefaultLayout from '@/components/layouts/default';
@@ -11,8 +10,6 @@ export default function Intro() {
 
     const onboarding = useOnboarding();
     const auth = useAuth();
-
-    const [termsAccepted, setTermsAccepted] = useState(false);
 
     return (
         <>
@@ -64,14 +61,6 @@ export default function Intro() {
                             components={{ a: <a href /> }}
                         />
                     </p>
-
-                    <Button
-                        onClick={() => {
-                            setTermsAccepted(true);
-                        }}
-                    >
-                        {t('Accept')}
-                    </Button>
                 </div>
 
                 <hr />
@@ -88,7 +77,6 @@ export default function Intro() {
                     </p>
                     <Button
                         className="bg-accent-foreground text-white hover:bg-accent disabled:bg-muted"
-                        disabled={!termsAccepted}
                         onClick={() => {
                             onboarding.startTour();
                         }}
