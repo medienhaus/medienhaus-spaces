@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RiSkipDownLine, RiSkipUpLine } from '@remixicon/react';
 import 'driver.js/dist/driver.css'; //import css
-import { useRouter } from 'next/router';
+import _ from 'lodash'; // @TODO write to matrix.onbardingdata on initial start of onboarding and on previous Route.
+import { toast } from 'sonner';
 
 import { Button } from '@/components/UI/shadcn/Button';
 import { useOnboarding } from './onboardingContext';
@@ -10,74 +11,58 @@ import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
 
-// @TODO write to matrix.onbardingdata on initial start of onboarding and on previous Route.
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
     const auth = useAuth();
-    const router = useRouter();
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
-    const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding'); //choose the localisation file based on the condition if a custom one is present
+    const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding');
     const [side, setSide] = useState('floating');
     const [isOpen, setIsOpen] = useState(true);
     const onboardingRoute = onboarding?.route;
+    const prevOnboardingDataRef = useRef(null);
 
     useEffect(() => {
         let cancelled = false;
 
         if (cancelled) return;
 
-        if (matrix?.onboardingData?.active && onboarding.active === false) {
+        // we only want to start the tour if the onboarding data has actually changed
+        if (
+            matrix?.onboardingData?.active &&
+            onboarding.active === false &&
+            !_.isEqual(matrix.onboardingData, prevOnboardingDataRef.current)
+        ) {
             onboarding.startTour(matrix?.onboardingData?.currentRouteIndex);
         }
 
-        return () => (cancelled = true);
-    }, [matrix.onboardingData, onboarding]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        if (cancelled) return;
-
-        // If the user is logged in and the onboarding is not active, we need to check if this is the first time the user logs in. this is achieved by checking if the onboardingData stored in the matrix accountData object is empty
-        // we have to use a Effect to listen to the matrixData object, if the initialSync is done
-        if (
-            matrix.initialSyncDone &&
-            router.route !== '/intro' &&
-            auth.user &&
-            !onboarding.active &&
-            Object.keys(matrix.onboardingData).length === 0
-        ) {
-            router.push('/intro');
-        }
+        prevOnboardingDataRef.current = matrix.onboardingData;
 
         return () => (cancelled = true);
-    }, [matrix, router, auth, onboarding]);
-
-    const writeOnboardStateToAccountData = async (active, index) => {
-        const data = {
-            active: active,
-            currentRouteIndex: index,
-        };
-
-        await matrixClient.setAccountData('dev.medienhaus.spaces.onboarding', data);
-    };
+    }, [matrix.onboardingData, onboarding, onboarding.active]);
 
     const closeOnboarding = async () => {
+        await writeOnboardingStateToAccountData(auth.getAuthenticationProvider('matrix').getMatrixClient(), false).catch(() => {
+            toast.error(t('Couldn’t save onboarding state'));
+        });
         onboarding.exit();
-        await writeOnboardStateToAccountData(false);
     };
 
-    const nextStep = async () => {
-        if (onboardingRoute.isLastStep && onboardingRoute.nextRoute) {
-            await writeOnboardStateToAccountData(true, onboardingRoute.index + 1);
+    const handleNavigationClick = async (direction) => {
+        if ((onboardingRoute.isLastStep && onboardingRoute.nextRoute) || (onboardingRoute.isFirstStep && onboardingRoute.prevRoute)) {
+            await writeOnboardingStateToAccountData(
+                auth.getAuthenticationProvider('matrix').getMatrixClient(),
+                true,
+                onboardingRoute.index + direction,
+            ).catch(() => {
+                toast.error(t('Couldn’t save onboarding state'));
+            });
         }
 
-        onboarding.processStep(1);
+        onboarding.processStep(direction);
     };
 
-    if (!auth?.user || !onboarding || !onboarding.active) return;
+    if (!auth?.user || !onboarding || !onboarding.active) return null;
 
     return (
         <>
@@ -124,12 +109,16 @@ const OnboardingPilot = () => {
                         <Button
                             disabled={onboardingRoute.isFirstStep && !onboardingRoute.prevRoute}
                             onClick={() => {
-                                onboarding.processStep(-1);
+                                handleNavigationClick(-1);
                             }}
                         >
                             {onboardingRoute.isFirstStep && onboardingRoute.prevRoute ? `\uE1D3 ${onboardingRoute.prevRoute}` : t('Prev')}
                         </Button>
-                        <Button onClick={onboardingRoute.isLastStep && !onboardingRoute.nextRoute ? closeOnboarding : nextStep}>
+                        <Button
+                            onClick={
+                                onboardingRoute.isLastStep && !onboardingRoute.nextRoute ? closeOnboarding : () => handleNavigationClick(1)
+                            }
+                        >
                             {onboardingRoute.isLastStep && !onboardingRoute.nextRoute
                                 ? t('Close')
                                 : onboardingRoute.isLastStep
@@ -144,3 +133,12 @@ const OnboardingPilot = () => {
 };
 
 export default OnboardingPilot;
+
+const writeOnboardingStateToAccountData = async (matrixClient, active, index) => {
+    const data = {
+        active: active,
+        currentRouteIndex: index,
+    };
+
+    return matrixClient.setAccountData('dev.medienhaus.spaces.onboarding', data);
+};
