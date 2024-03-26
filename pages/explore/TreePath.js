@@ -16,32 +16,9 @@ const TreePath = ({ selectedSpaceChildren }) => {
         <>
             <Breadcrumb className="overflow-hidden">
                 <BreadcrumbList>
-                    {/*
-                    {selectedSpaceChildren.map((path, index) => {
-                        if (!path[0]) return null;
-                        const roomId = path[0].id || path[0].room_id || path[0].roomId;
-
-                        if (index === 0) {
-                            return (
-                                <BreadcrumbItem key={index}>
-                                    <BreadcrumbLink asChild>
-                                        <Link disabled href={`/explore/${roomId}`}>
-                                            {path[0].name}
-                                            {isFetchingContent === roomId && <LoadingSpinnerInline />}
-                                        </Link>
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                            );
-                        }
-                    })}
-                    */}
-
                     {selectedSpaceChildren.length > 1 && (
                         <>
-                            {/*
-                            <BreadcrumbSeparator />
-                            */}
-                            <BreadcrumbItem className="inline overflow-hidden text-ellipsis whitespace-nowrap">
+                            <BreadcrumbItem className="inline text-ellipsis whitespace-nowrap">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex items-center gap-1">
                                         <BreadcrumbEllipsis />
