@@ -12,6 +12,7 @@ import {
 } from 'tldraw';
 import { getAssetUrls } from '@tldraw/assets/selfHosted';
 import React from 'react';
+const assetUrls = getAssetUrls({ baseUrl: '/assets/tldraw' }); //we have to place this outside the component to not trigger this function each time the content of the editor changes
 
 /**
  * Make sure to use NextJS' `dynamic()` helper to import this component.
@@ -20,8 +21,6 @@ import React from 'react';
  * @returns {React.ReactElement}
  */
 const TldrawEditor = (props) => {
-    const assetUrls = getAssetUrls({ baseUrl: '/assets/tldraw' });
-
     return (
         <Tldraw
             inferDarkMode
