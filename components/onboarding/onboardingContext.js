@@ -36,9 +36,7 @@ function useOnboardingProvider() {
 
     const [tourInstance, setTourInstance] = useState(null);
 
-    const onboardingScript = onboardingScriptCustom?.length > 0 ? onboardingScriptCustom : onboardingScriptGeneric;
-
-    const isScriptCustom = onboardingScriptCustom?.length > 0;
+    const onboardingScript = onboardingScriptCustom.length > 0 ? onboardingScriptCustom : onboardingScriptGeneric;
 
     const startTour = useCallback(
         (position = 0) => {
@@ -143,7 +141,6 @@ function useOnboardingProvider() {
         processStep,
         route,
         exit,
-        isScriptCustom,
     };
 }
 

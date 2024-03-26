@@ -11,13 +11,14 @@ import { useOnboarding } from './onboardingContext';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/UI/shadcn/Sheet';
+import onboardingScriptCustom from './onboardingScriptCustom.json';
 
 const OnboardingPilot = () => {
     const onboarding = useOnboarding();
     const auth = useAuth();
     const matrix = useMatrix();
 
-    const { t } = useTranslation(onboarding?.isScriptCustom ? 'onboardingCustom' : 'onboarding');
+    const { t } = useTranslation(onboardingScriptCustom.length > 0 ? 'onboardingCustom' : 'onboarding');
     const [side, setSide] = useState('floating');
     const [isOpen, setIsOpen] = useState(true);
     const onboardingRoute = onboarding?.route;
@@ -44,10 +45,16 @@ const OnboardingPilot = () => {
     }, [matrix.onboardingData, onboarding, onboarding.active]);
 
     useEffect(() => {
+        let cancelled = false;
+
+        if (cancelled) return;
+
         // check if the user has navigated away from the onboarding route and if so redirect them back
         if (onboarding.active && onboardingRoute?.name && onboardingRoute?.name !== router.route) {
             router.push(onboardingRoute.name);
         }
+
+        return () => (cancelled = true);
         // we want to purposefully ignore router changes, so users can still navigate away from the current onboarding route but are redirected once they engage with the onboarding again.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onboarding.active, onboardingRoute, onboardingRoute?.name]);
