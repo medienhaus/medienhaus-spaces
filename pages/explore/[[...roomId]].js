@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import getConfig from 'next/config';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -13,18 +14,18 @@ import {
     RiFolderLine,
     RiFolderSettingsLine,
     RiFolderUnknowLine,
+    RiGroupLine,
     RiLink,
+    RiListSettingsLine,
     RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import Link from 'next/link';
 
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
-// import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import TreePath from './TreePath';
 import ExploreIframeViews from './ExploreIframeViews';
 import logger from '../../lib/Logging';
@@ -39,6 +40,9 @@ import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
 import { useGetSpaceChildren } from './useGetSpaceChildren';
 import { Progress } from '@/components/UI/shadcn/Progress';
+import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
+import { useMediaQuery } from '@/lib/utils';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -46,7 +50,9 @@ import { Progress } from '@/components/UI/shadcn/Progress';
  * @component
  * @returns {JSX.Element} The rendered Explore component.
  */
+
 //@TODO cached spaces do not update after editing
+
 export default function Explore() {
     const router = useRouter();
     const { t } = useTranslation('explore');
@@ -55,7 +61,9 @@ export default function Explore() {
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const matrix = useMatrix();
 
-    const [manageContextActionToggle, setManageContextActionToggle] = useState(false);
+    const [activeContentView, setActiveContentView] = useState('content');
+
+    const isDesktop = useMediaQuery('(min-width: 768px)');
 
     // Extract roomId and iframeRoomId from the query parameters
     /** @type {string|undefined} */
@@ -95,6 +103,10 @@ export default function Explore() {
 
             return roomId === iframeRoomId;
         }).meta?.template;
+
+    const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
+    const canAddMoreContent = canManageSpace && !isFetchingSpaceChildren;
+
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -123,7 +135,8 @@ export default function Explore() {
         let cancelled = false;
 
         const onRouterChange = async () => {
-            !myPowerLevel && setManageContextActionToggle(false);
+            setActiveContentView('content');
+            // !myPowerLevel && setActiveContentView('content');
             await getSpaceChildren(null, roomId);
         };
 
@@ -164,6 +177,15 @@ export default function Explore() {
         return true;
     };
 
+    const getIcon = (template) => {
+        if (template === 'etherpad') return <RiEditLine />;
+        if (template === 'spacedeck') return <RiBrush2Line />;
+        if (template === 'tldraw') return <RiBrushLine />;
+        if (template === 'link') return <RiLink />;
+
+        return <RiFolderUnknowLine />;
+    };
+
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {
@@ -174,53 +196,10 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                if (row.original?.meta?.template === 'etherpad') {
-                    return (
-                        <Icon>
-                            <RiEditLine />
-                        </Icon>
-                    );
-                }
+                const template = row.original?.meta?.template;
+                const type = row.original?.meta?.type;
 
-                if (row.original?.meta?.template === 'spacedeck') {
-                    return (
-                        <Icon>
-                            <RiBrush2Line />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'tldraw') {
-                    return (
-                        <Icon>
-                            <RiBrushLine />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'link') {
-                    return (
-                        <Icon>
-                            <RiLink />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.type === 'context') {
-                    return (
-                        <Icon>
-                            <RiFolderLine />
-                        </Icon>
-                    );
-                }
-
-                if (!row.original?.meta) {
-                    return (
-                        <Icon>
-                            <RiChat1Line />
-                        </Icon>
-                    );
-                }
+                return <Icon>{type === 'context' ? <RiFolderLine /> : !row.original?.meta ? <RiChat1Line /> : getIcon(template)}</Icon>;
             },
         },
         {
@@ -271,28 +250,19 @@ export default function Explore() {
                     <Progress value={progress} />
                 </div>
             )}
-            <DefaultLayout.Sidebar>
-                <h2>/explore</h2>
-                <div className="w-full overflow-auto">
-                    {!_.isEmpty(selectedSpaceChildren) && (
-                        <TreePath
-                            selectedSpaceChildren={selectedSpaceChildren}
-                            isFetchingContent={isFetchingSpaceChildren}
-                            iframeRoomId={iframeRoomId}
-                        />
-                    )}
-                </div>
-            </DefaultLayout.Sidebar>
-
             {iframeRoomId ? (
                 <ExploreIframeViews
+                    selectedSpaceChildren={selectedSpaceChildren}
+                    allChatRooms={allChatRooms}
+                    getSpaceChildren={getSpaceChildren}
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
-                    title={
-                        matrix.spaces.get(router.query.roomId[0])?.name ||
-                        matrix.rooms.get(router.query.roomId[0])?.name ||
-                        selectedSpaceChildren[selectedSpaceChildren.length - 1].filter((child) => child.room_id === iframeRoomId)[0]?.name
+                    breadcrumbs={
+                        !_.isEmpty(selectedSpaceChildren) && (
+                            <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                        )
                     }
+                    title={name}
                 />
             ) : (
                 !_.isEmpty(selectedSpaceChildren) && (
@@ -300,25 +270,77 @@ export default function Explore() {
                         <DefaultLayout.Wrapper>
                             <ServiceIframeHeader
                                 content={window.location.href}
-                                title={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                title={
+                                    !_.isEmpty(selectedSpaceChildren) && (
+                                        <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                                    )
+                                }
                                 removingLink={false}
                                 roomId={roomId}
-                                manageContextActionToggle={manageContextActionToggle}
+                                activeContentView={activeContentView}
                                 myPowerLevel={myPowerLevel}
-                                setManageContextActionToggle={setManageContextActionToggle}
+                                setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                         service="/explore"
                             />
-                            <div className="flex h-full w-full flex-col overflow-auto">
-                                {manageContextActionToggle ? (
-                                    <UserManagement roomId={roomId} roomName={matrix.spaces.get(roomId).name} myPowerLevel={myPowerLevel}>
-                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+
+                            {/*
+                                      @TODO: check this condition; is it really the same as for settings?
+                                      @NOTE: also see further below
+                                    */}
+                            <Tabs
+                                className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
+                                onValueChange={setActiveContentView}
+                                value={activeContentView}
+                            >
+                                <TabsList className="[&>[role=tab]]:gap-2">
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('content');
+                                        }}
+                                        title={t('Show contexts and items of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="content"
+                                    >
+                                        <Icon>
+                                            <RiFolderLine />
+                                        </Icon>
+                                        {isDesktop && t('Content')}
+                                    </TabsTrigger>
+
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('members');
+                                        }}
+                                        title={t('Show members of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="members"
+                                    >
+                                        <Icon>
+                                            <RiGroupLine />
+                                        </Icon>
+                                        {isDesktop && t('Members')}
+                                    </TabsTrigger>
+                                    {canManageSpace && (
+                                        <TabsTrigger
+                                            onClick={() => {
+                                                setActiveContentView('settings');
+                                            }}
+                                            title={t('Show settings of {{name}}', {
+                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                            })}
+                                            value="settings"
+                                        >
                                             <Icon>
-                                                <RiUserLine />
+                                                <RiListSettingsLine />
                                             </Icon>
-                                        </TextButton>
-                                    </UserManagement>
-                                ) : (
+                                            {isDesktop && t('Settings')}
+                                        </TabsTrigger>
+                                    )}
+                                </TabsList>
+                                <TabsContent value="content">
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
@@ -345,6 +367,7 @@ export default function Explore() {
                                                         </TableRow>
                                                     ))}
                                                 </TableHeader>
+
                                                 <TableBody>
                                                     {table.getRowModel().rows?.length ? (
                                                         table.getRowModel().rows.map((row, index) => {
@@ -362,63 +385,78 @@ export default function Explore() {
                                                 </TableBody>
                                             </Table>
                                         )}
-                                        {!manageContextActionToggle &&
-                                            matrixClient
-                                                .getRoom(roomId)
-                                                ?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) &&
-                                            !isFetchingSpaceChildren && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
-                                                    <QuickAddExplore
-                                                        currentId={roomId}
-                                                        roomName={matrix.spaces.get(roomId).name}
-                                                        getSpaceChildren={getSpaceChildren}
-                                                        allChatRooms={allChatRooms}
-                                                        trigger={
-                                                            <Button
-                                                                className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
-                                                                variant="ghost"
-                                                                // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
-                                                            >
-                                                                {t('Add more …')}
-                                                                <Icon>
-                                                                    <RiAddLine />
-                                                                </Icon>
-                                                            </Button>
-                                                        }
-                                                    />
-                                                </div>
-                                            )}
 
-                                        {/* @NOTE: pagination component which we are currently not using, but might in the future
-                                        {table.getRowModel().rows?.length > 1 && (
-                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
-                                                <div className="flex-1 text-sm text-muted-foreground">
-                                                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                                                </div>
-                                                <div className="space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.previousPage()}
-                                                        disabled={!table.getCanPreviousPage()}
-                                                    >
-                                                        Previous
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => table.nextPage()}
-                                                        disabled={!table.getCanNextPage()}
-                                                    >
-                                                        Next
-                                                    </Button>
-                                                </div>
+                                        {canAddMoreContent && (
+                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
+                                                <QuickAddExplore
+                                                    currentId={roomId}
+                                                    roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                                    getSpaceChildren={getSpaceChildren}
+                                                    allChatRooms={allChatRooms}
+                                                    trigger={
+                                                        <Button
+                                                            className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
+                                                            variant="ghost"
+                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
+                                                        >
+                                                            {t('Add more …')}
+                                                            <Icon>
+                                                                <RiAddLine />
+                                                            </Icon>
+                                                        </Button>
+                                                    }
+                                                />
                                             </div>
                                         )}
-                                        */}
+
+                                        {/* @NOTE: pagination component which we are currently not using, but might in the future
+                                            {table.getRowModel().rows?.length > 1 && (
+                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
+                                                    <div className="flex-1 text-sm text-muted-foreground">
+                                                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                                                    </div>
+                                                    <div className="space-x-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.previousPage()}
+                                                            disabled={!table.getCanPreviousPage()}
+                                                        >
+                                                            Previous
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.nextPage()}
+                                                            disabled={!table.getCanNextPage()}
+                                                        >
+                                                            Next
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            */}
                                     </>
-                                )}
-                            </div>
+                                </TabsContent>
+
+                                <TabsContent value="members">
+                                    <UserManagement
+                                        roomId={roomId}
+                                        roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                        myPowerLevel={myPowerLevel}
+                                    >
+                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
+                                            <Icon>
+                                                <RiUserLine />
+                                            </Icon>
+                                        </TextButton>
+                                    </UserManagement>
+                                </TabsContent>
+
+                                <TabsContent value="settings">
+                                    <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
+                                </TabsContent>
+                            </Tabs>
                         </DefaultLayout.Wrapper>
                     </>
                 )

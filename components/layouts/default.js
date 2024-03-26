@@ -57,27 +57,26 @@ const Wrapper = styled.div`
     flex: 1 0;
     flex-direction: column;
     align-items: center;
-  height: 100%;
+    height: 100%;
 
     > div {
-    padding: 0 var(--margin);
+        padding: 0 var(--margin);
 
-    // On bigger viewports ...
-    @media ${breakpoints.tabletAndAbove} {
-      padding: 0 calc(var(--margin) * 1.5);
+        // On bigger viewports ...
+        @media ${breakpoints.tabletAndAbove} {
+            padding: 0 calc(var(--margin) * 1.5);
+        }
     }
-  }
-
 `;
 
 const IframeWrapper = styled(Wrapper)`
-  padding: 0;
+    padding: 0;
 
-  iframe {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    border: none;
+    iframe {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: none;
 
         @media ${breakpoints.phoneOnly} {
             border-top: 1px solid var(--color-foreground-alpha);
@@ -88,10 +87,12 @@ const IframeWrapper = styled(Wrapper)`
 const IframeHeader = styled.header`
     display: grid;
     grid-template-columns: 1fr auto;
+    grid-gap: var(--margin);
     width: 100%;
     padding: var(--margin);
 
     @media ${breakpoints.tabletAndAbove} {
+    grid-template-columns: 1fr auto;
         padding: calc(var(--margin) * 2) calc(var(--margin) * 1.5);
     }
 
@@ -106,6 +107,22 @@ const IframeHeaderButtonWrapper = styled.div`
     grid-auto-flow: column;
     grid-gap: calc(var(--margin));
     height: 100%;
+`;
+
+const ExploreWrapper = styled(Wrapper)`
+    flex-direction: row;
+    width: 100%;
+    padding: unset;
+    iframe {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: none;
+
+        @media ${breakpoints.phoneOnly} {
+            border-top: 1px solid var(--color-foreground-alpha);
+        }
+    }
 `;
 
 const Layout = ({ children }) => {
@@ -132,6 +149,7 @@ const DefaultLayout = {
     IframeWrapper: memo(IframeWrapper),
     IframeHeader: memo(IframeHeader),
     IframeHeaderButtonWrapper: memo(IframeHeaderButtonWrapper),
+    ExploreWrapper: memo(ExploreWrapper),
 };
 
 export default DefaultLayout;

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import ImageUpload from '../../../components/UI/ImageUpload';
 import ErrorMessage from '../../../components/UI/ErrorMessage';
 
-const ChangeAvatar = ({ roomId, onPreviousAction }) => {
+const ChangeAvatar = ({ roomId }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const { t } = useTranslation('explore');
 
