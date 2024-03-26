@@ -15,7 +15,7 @@ const ServiceIframeHeader = ({ isDeletingPad, deleteContent, title, roomId, myPa
 
     return (
         <DefaultLayout.IframeHeader>
-            <h2>{title}</h2>
+            <>{title}</>
             <DefaultLayout.IframeHeaderButtonWrapper>
                 {joinRule === 'knock' || (joinRule === 'knock_restricted' && <KnockOnMatrixRoom roomId={roomId} roomName={title} />)}
 

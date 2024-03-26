@@ -280,28 +280,19 @@ export default function Explore() {
                     <Progress value={progress} />
                 </div>
             )}
-            <DefaultLayout.Sidebar>
-                <h2>/explore</h2>
-                <div className="w-full overflow-auto">
-                    {!_.isEmpty(selectedSpaceChildren) && (
-                        <TreePath
-                            selectedSpaceChildren={selectedSpaceChildren}
-                            isFetchingContent={isFetchingSpaceChildren}
-                            iframeRoomId={iframeRoomId}
-                        />
-                    )}
-                </div>
-            </DefaultLayout.Sidebar>
-
             {iframeRoomId ? (
                 <ExploreIframeViews
+                    selectedSpaceChildren={selectedSpaceChildren}
+                    allChatRooms={allChatRooms}
+                    getSpaceChildren={getSpaceChildren}
                     currentTemplate={currentTemplate}
                     iframeRoomId={iframeRoomId}
-                    title={
-                        matrix.spaces.get(router.query.roomId[0])?.name ||
-                        matrix.rooms.get(router.query.roomId[0])?.name ||
-                        selectedSpaceChildren[selectedSpaceChildren.length - 1].filter((child) => child.room_id === iframeRoomId)[0]?.name
+                    breadcrumbs={
+                        !_.isEmpty(selectedSpaceChildren) && (
+                            <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                        )
                     }
+                    title={name}
                 />
             ) : (
                 !_.isEmpty(selectedSpaceChildren) && (
@@ -309,7 +300,11 @@ export default function Explore() {
                         <DefaultLayout.Wrapper>
                             <ServiceIframeHeader
                                 content={window.location.href}
-                                title={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                title={
+                                    !_.isEmpty(selectedSpaceChildren) && (
+                                        <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                                    )
+                                }
                                 removingLink={false}
                                 roomId={roomId}
                                 activeContentView={activeContentView}
