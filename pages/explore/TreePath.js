@@ -45,7 +45,7 @@ const TreePath = ({ selectedSpaceChildren, isFetchingContent }) => {
                             <BreadcrumbItem className="inline overflow-hidden text-ellipsis whitespace-nowrap">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex items-center gap-1">
-                                        <BreadcrumbEllipsis className="h-4 w-4" />
+                                        <BreadcrumbEllipsis />
                                         <span className="sr-only">Toggle menu</span>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="start">

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { RiArrowRightSLine, RiMoreLine } from '@remixicon/react';
+import { RiArrowRightSLine, RiFoldersLine } from '@remixicon/react';
 
 import { cn } from '@/lib/utils';
+import Icon from '../Icon';
 
 const Breadcrumb = React.forwardRef(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
 Breadcrumb.displayName = 'Breadcrumb';
@@ -37,8 +38,10 @@ const BreadcrumbSeparator = ({ children, className, ...props }) => (
 BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
 
 const BreadcrumbEllipsis = ({ className, ...props }) => (
-    <span role="presentation" aria-hidden="true" className={cn('flex h-9 w-9 items-center justify-center', className)} {...props}>
-        <RiMoreLine className="h-4 w-4" />
+    <span role="presentation" aria-hidden="true" className={cn('flex w-fit items-center justify-center', className)} {...props}>
+        <Icon>
+            <RiFoldersLine />
+        </Icon>
         <span className="sr-only">More</span>
     </span>
 );
