@@ -65,9 +65,11 @@ export default function Navigation({ closeNavigation }) {
                 <li>
                     <Link href="/account">/account</Link>
                 </li>
-                { getConfig().publicRuntimeConfig.contextRootSpaceRoomId && <li>
-                    <Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
-                </li> }
+                {getConfig().publicRuntimeConfig.contextRootSpaceRoomId && (
+                    <li>
+                        <Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
+                    </li>
+                )}
             </List>
             <List>
                 <li>
@@ -79,12 +81,12 @@ export default function Navigation({ closeNavigation }) {
                     if (authProvider === 'matrix') return null;
                     const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
 
-                    return <li key={path}>
-                        <Link href={path}>
-                            {path}
-                        </Link>
-                    </li>;
-                }) }
+                    return (
+                        <li key={path}>
+                            <Link href={path}>{path}</Link>
+                        </li>
+                    );
+                })}
             </List>
             <List>
                 <li>
