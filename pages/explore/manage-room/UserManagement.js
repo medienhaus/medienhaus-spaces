@@ -57,39 +57,47 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
 
     return (
         <>
-            <ServiceTable>
-                <ServiceTable.Caption>{t('All members of {{room}}', { room: roomName })}</ServiceTable.Caption>
-                <ServiceTable.Head>
-                    <ServiceTable.Row>
-                        <ServiceTable.Header align="left">{t('Name')}</ServiceTable.Header>
-                        <ServiceTable.Header align="left">{t('User ID')}</ServiceTable.Header>
-                        <ServiceTable.Header align="left">{t('Role')}</ServiceTable.Header>
-                        <ServiceTable.Header>{t('Kick')}</ServiceTable.Header>
-                    </ServiceTable.Row>
-                </ServiceTable.Head>
-                <ServiceTable.Body>
-                    {currentMembers.map((member) => {
-                        // users who once joined the room but left the room already are still listed in the members object
-                        // therefore we need to filter them
-                        if (member.membership === 'leave') return null;
-                        // we don't want to display the currently logged in user
-                        // if (member.userId === selfObject.userId) return null;
+            {/* @NOTE: using h3 here instead of ServiceTable.Caption due to horizontal scrolling skill issues */}
+            <h3 className="flex h-[calc(3rem+1px)] items-center border-t border-muted-foreground/20 font-medium text-muted-foreground">
+                {t('All members of {{room}}', { room: roomName })}
+            </h3>
+            <div className="overflow-auto">
+                <ServiceTable>
+                    {/*
+                    <ServiceTable.Caption>{t('All members of {{room}}', { room: roomName })}</ServiceTable.Caption>
+                    */}
+                    <ServiceTable.Head>
+                        <ServiceTable.Row>
+                            <ServiceTable.Header align="left">{t('Name')}</ServiceTable.Header>
+                            <ServiceTable.Header align="left">{t('User ID')}</ServiceTable.Header>
+                            <ServiceTable.Header align="left">{t('Role')}</ServiceTable.Header>
+                            <ServiceTable.Header>{t('Kick')}</ServiceTable.Header>
+                        </ServiceTable.Row>
+                    </ServiceTable.Head>
+                    <ServiceTable.Body>
+                        {currentMembers.map((member) => {
+                            // users who once joined the room but left the room already are still listed in the members object
+                            // therefore we need to filter them
+                            if (member.membership === 'leave') return null;
+                            // we don't want to display the currently logged in user
+                            // if (member.userId === selfObject.userId) return null;
 
-                        return (
-                            <UserTableRow
-                                key={member.userId}
-                                displayName={member.name}
-                                userId={member.userId}
-                                roomName={roomName}
-                                powerLevel={member.powerLevel}
-                                selfPowerLevel={selfObject.powerLevel}
-                                handleKick={handleKick}
-                                changePowerLevel={changePowerLevel}
-                            />
-                        );
-                    })}
-                </ServiceTable.Body>
-            </ServiceTable>
+                            return (
+                                <UserTableRow
+                                    key={member.userId}
+                                    displayName={member.name}
+                                    userId={member.userId}
+                                    roomName={roomName}
+                                    powerLevel={member.powerLevel}
+                                    selfPowerLevel={selfObject.powerLevel}
+                                    handleKick={handleKick}
+                                    changePowerLevel={changePowerLevel}
+                                />
+                            );
+                        })}
+                    </ServiceTable.Body>
+                </ServiceTable>
+            </div>
             {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
                 <>
                     <InviteUserToMatrixRoom
