@@ -57,10 +57,6 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
 
     return (
         <>
-            {/*
-            @TODO: first line of tab content are not on same height;
-            @TODO: remove caption? negative margin for caption/table?
-            */}
             <ServiceTable>
                 <ServiceTable.Caption>{t('All members of {{room}}', { room: roomName })}</ServiceTable.Caption>
                 <ServiceTable.Head>
