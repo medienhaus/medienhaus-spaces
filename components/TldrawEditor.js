@@ -25,6 +25,7 @@ const TldrawEditor = (props) => {
         <Tldraw
             inferDarkMode
             assetUrls={assetUrls}
+            autoFocus={false}
             components={{
                 MainMenu: null,
                 PageMenu: null,
