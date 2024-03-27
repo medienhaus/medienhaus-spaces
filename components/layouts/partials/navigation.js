@@ -1,11 +1,11 @@
 import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
+import { RiCircleFill } from '@remixicon/react';
 
-import { breakpoints } from '../../_breakpoints';
-import NotificationBubble from '../../UI/NotificationBubble';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import { breakpoints } from '../../_breakpoints';
 
 const List = styled.ul`
     padding: 0;
@@ -56,7 +56,10 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li>
                     <Link href="/dashboard">
-                        /dashboard{(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble />}
+                        /dashboard
+                        {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
+                            <RiCircleFill className="inline !h-[0.7rem] !w-[0.7rem] translate-y-[calc(var(--icon-size)*-0.3)] border-[1px] border-[var(--color-background-beta)] text-accent" />
+                        )}
                     </Link>
                 </li>
                 <li>
