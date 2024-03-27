@@ -155,41 +155,43 @@ export default function Dashboard() {
             )}
 
             {!_.isEmpty(favourite) && (
-                <ServiceTable>
-                    <ServiceTable.Caption>{t('Favourites')}</ServiceTable.Caption>
-                    <ServiceTable.Head>
-                        <ServiceTable.Row>
-                            <ServiceTable.Header align="left" width="20%">
-                                {t('App')}
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="left" width="60%">
-                                {t('Item')}
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="center" width="10%">
-                                {t('Copy Link')}
-                            </ServiceTable.Header>
-                            <ServiceTable.Header align="center" width="10%">
-                                {t('Remove')}
-                            </ServiceTable.Header>
-                        </ServiceTable.Row>
-                    </ServiceTable.Head>
-                    <ServiceTable.Body>
-                        {favourite.map((favouriteSpace) => {
-                            const favouriteObject = matrix.rooms.get(favouriteSpace) || matrix.spaces.get(favouriteSpace);
+                <div className="overflow-auto">
+                    <ServiceTable>
+                        <ServiceTable.Caption>{t('Favourites')}</ServiceTable.Caption>
+                        <ServiceTable.Head>
+                            <ServiceTable.Row>
+                                <ServiceTable.Header align="left" width="20%">
+                                    {t('App')}
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="left" width="60%">
+                                    {t('Item')}
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    {t('Copy Link')}
+                                </ServiceTable.Header>
+                                <ServiceTable.Header align="center" width="10%">
+                                    {t('Remove')}
+                                </ServiceTable.Header>
+                            </ServiceTable.Row>
+                        </ServiceTable.Head>
+                        <ServiceTable.Body>
+                            {favourite.map((favouriteSpace) => {
+                                const favouriteObject = matrix.rooms.get(favouriteSpace) || matrix.spaces.get(favouriteSpace);
 
-                            if (!favouriteObject) return;
+                                if (!favouriteObject) return;
 
-                            return (
-                                <Favourite
-                                    key={favouriteSpace}
-                                    metaEvent={favouriteObject.meta}
-                                    roomId={favouriteSpace}
-                                    name={favouriteObject.name}
-                                />
-                            );
-                        })}
-                    </ServiceTable.Body>
-                </ServiceTable>
+                                return (
+                                    <Favourite
+                                        key={favouriteSpace}
+                                        metaEvent={favouriteObject.meta}
+                                        roomId={favouriteSpace}
+                                        name={favouriteObject.name}
+                                    />
+                                );
+                            })}
+                        </ServiceTable.Body>
+                    </ServiceTable>
+                </div>
             )}
         </DefaultLayout.LameColumn>
     );
