@@ -14,8 +14,10 @@ const AvatarSection = styled.div`
 
 const Avatar = styled.img`
     &.placeholder {
+        -webkit-backdrop-filter: invert(100%);
         backdrop-filter: invert(100%);
         height: 6rem;
+        width: 6rem;
     }
 `;
 
