@@ -10,6 +10,7 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
     const [selectedSpaceChildren, setSelectedSpaceChildren] = useState([]);
     const [isFetchingSpaceChildren, setIsFetchingSpaceChildren] = useState('');
     const [progress, setProgress] = useState(0);
+    const [numberOfSpaces, setNumberOfSpaces] = useState(0);
     const { t } = useTranslation('explore');
     // Call API to fetch and add room hierarchy to selectedSpaceChildren
     const getSpaceChildren = useCallback(
@@ -52,6 +53,7 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
                 });
                 if (!roomHierarchyFromServer) return;
                 const parent = roomHierarchyFromServer[0];
+                setNumberOfSpaces(roomHierarchyFromServer.length);
 
                 const getMetaEvent = async (obj) => {
                     logger.debug('Getting meta event for ' + (obj.state_key || obj.room_id));
@@ -152,11 +154,12 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
             });
             setProgress(100);
             setIsFetchingSpaceChildren('');
+            setNumberOfSpaces(0);
             // actually give the progress bar some time to animate then reset
             _.delay(() => setProgress(0), 100);
         },
         [auth, matrix, matrixClient, selectedSpaceChildren, t, cachedSpace],
     );
 
-    return { isFetchingSpaceChildren, progress, selectedSpaceChildren, getSpaceChildren };
+    return { isFetchingSpaceChildren, progress, selectedSpaceChildren, getSpaceChildren, numberOfSpaces };
 };

@@ -43,6 +43,7 @@ import { Progress } from '@/components/UI/shadcn/Progress';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import { useMediaQuery } from '@/lib/utils';
+import { Skeleton } from '@/components/UI/shadcn/Skeleton';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -90,12 +91,13 @@ export default function Explore() {
         .filter((room) => !room.meta)
         .filter((room) => !matrix.directMessages.has(room.roomId));
 
-    const { isFetchingSpaceChildren, progress, getSpaceChildren, selectedSpaceChildren } = useGetSpaceChildren(
+    const { isFetchingSpaceChildren, progress, getSpaceChildren, selectedSpaceChildren, numberOfSpaces } = useGetSpaceChildren(
         auth,
         matrix,
         matrixClient,
         cachedSpace,
     );
+
     const currentTemplate =
         iframeRoomId &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
@@ -369,7 +371,24 @@ export default function Explore() {
                                                 </TableHeader>
 
                                                 <TableBody>
-                                                    {table.getRowModel().rows?.length ? (
+                                                    {isFetchingSpaceChildren ? (
+                                                        Array.from({ length: numberOfSpaces - 1 }).map((_, i) => {
+                                                            // @TODO numberOfSpaces always updates for each api call inside of the hook, this is not a problem atm but should be fixed.
+                                                            return (
+                                                                <TableRow key={i} className="h-12 ">
+                                                                    <TableCell className="w-[1px] whitespace-nowrap">
+                                                                        <Skeleton className="h-4 w-[20.8px]" />
+                                                                    </TableCell>
+                                                                    <TableCell className="flex items-center">
+                                                                        <Skeleton className="h-4 w-full" />
+                                                                    </TableCell>
+                                                                    <TableCell className="w-[1px] whitespace-nowrap">
+                                                                        <Skeleton className="h-4 w-[20.8px]" />
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })
+                                                    ) : table.getRowModel().rows?.length ? (
                                                         table.getRowModel().rows.map((row, index) => {
                                                             if (index === 0) return null;
 
