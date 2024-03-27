@@ -37,7 +37,7 @@ import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
-import EllipsisMenu from './manage-room/EllipsisMenu';
+import { CopyToClipboard, EllipsisMenu, RemoveItem } from './manage-room/EllipsisMenu';
 import { useGetSpaceChildren } from '@/components/hooks/useGetSpaceChildren';
 import { Progress } from '@/components/UI/shadcn/Progress';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
@@ -221,14 +221,17 @@ export default function Explore() {
             cell: ({ row }) => {
                 return (
                     <div className="grid justify-end">
-                        <EllipsisMenu
-                            parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
-                            onRemove={() => removeChildFromParent(row.roomId)}
-                            myPowerLevel={myPowerLevel}
-                            parentRoomId={roomId}
-                            name={row.name}
-                            href={row.href}
-                        />
+                        <EllipsisMenu>
+                            <CopyToClipboard href={row.href} />
+                            <RemoveItem
+                                parentName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                onRemove={() => removeChildFromParent(row.roomId)}
+                                myPowerLevel={myPowerLevel}
+                                parentRoomId={roomId}
+                                name={row.name}
+                            />
+                            {/* Additional children */}
+                        </EllipsisMenu>
                     </div>
                 );
             },
