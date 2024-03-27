@@ -386,7 +386,7 @@ export default function Explore() {
                                             </Table>
                                         )}
 
-                                        {canAddMoreContent && (
+                                        {canAddMoreContent && progress === 0 && (
                                             <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                 <QuickAddExplore
                                                     currentId={roomId}
