@@ -142,7 +142,7 @@ export default function BaseLayout({ children }) {
                             <Icon>
                                 <RiMenuLine />
                                 {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
-                                    <RiCircleFill className="!h-[55%] !w-[55%] translate-x-[calc(var(--icon-size)*0.55)] translate-y-[calc(var(--icon-size)*-1.1)] border-[1px] border-[var(--color-background-beta)] bg-[var(--color-background-beta)] text-accent" />
+                                    <RiCircleFill className="!h-[0.7rem] !w-[0.7rem] translate-x-[calc(var(--icon-size)*0.55)] translate-y-[calc(var(--icon-size)*-1.1)] border-[1px] border-[var(--color-background-beta)] bg-[var(--color-background-beta)] text-accent" />
                                 )}
                             </Icon>
                         </ToggleButton>
