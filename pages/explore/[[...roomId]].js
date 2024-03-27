@@ -17,7 +17,6 @@ import {
     RiGroupLine,
     RiLink,
     RiListSettingsLine,
-    RiUserLine,
 } from '@remixicon/react';
 import { toast } from 'sonner';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
@@ -32,7 +31,6 @@ import logger from '../../lib/Logging';
 import DefaultLayout from '../../components/layouts/default';
 import QuickAddExplore from './manage-room/QuickAddExplore';
 import { Button } from '@/components/UI/shadcn/Button';
-import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
@@ -444,13 +442,7 @@ export default function Explore() {
                                         roomId={roomId}
                                         roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
                                         myPowerLevel={myPowerLevel}
-                                    >
-                                        <TextButton className="w-full justify-between px-0 hover:text-accent" variant="ghost">
-                                            <Icon>
-                                                <RiUserLine />
-                                            </Icon>
-                                        </TextButton>
-                                    </UserManagement>
+                                    />
                                 </TabsContent>
 
                                 <TabsContent value="settings">
