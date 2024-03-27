@@ -413,6 +413,7 @@ export default function Tldraw() {
             logger.log('fnwbr', x);
             logger.log('fnwbr can paginate?', x.canPaginate(EventTimeline.BACKWARDS));
             // @TODO Keep paginating until we don't need to anymore
+            editor.updateInstanceState({ isFocused: true });
         };
 
         getAllEvents();
