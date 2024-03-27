@@ -99,7 +99,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                 </ServiceTable>
             </div>
             {matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel) && (
-                <>
+                <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                     <InviteUserToMatrixRoom
                         roomId={roomId}
                         trigger={
@@ -111,7 +111,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
                             </Button>
                         }
                     />
-                </>
+                </div>
             )}
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </>
