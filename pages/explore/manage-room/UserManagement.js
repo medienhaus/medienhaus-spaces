@@ -57,16 +57,9 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
 
     return (
         <>
-            {/* @NOTE: using h3 here instead of ServiceTable.Caption due to horizontal scrolling skill issues */}
-            <h3 className="flex h-[calc(3rem+1px)] items-center border-t border-muted-foreground/20 font-medium text-muted-foreground">
-                {t('All members of {{room}}', { room: roomName })}
-            </h3>
             <div className="overflow-auto">
                 <ServiceTable>
-                    {/*
-                    <ServiceTable.Caption>{t('All members of {{room}}', { room: roomName })}</ServiceTable.Caption>
-                    */}
-                    <ServiceTable.Head>
+                    <ServiceTable.Head className="[&_th]:font-medium text-muted-foreground">
                         <ServiceTable.Row>
                             <ServiceTable.Header align="left">{t('Name')}</ServiceTable.Header>
                             <ServiceTable.Header align="left">{t('User ID')}</ServiceTable.Header>
