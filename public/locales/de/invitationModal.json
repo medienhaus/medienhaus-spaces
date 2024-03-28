@@ -1,7 +1,7 @@
 {
+    "Give users permission to edit": "Benutzer*innen Berechtigung zum Bearbeiten geben",
     "Invite users to {{name}}": "Benutzer*innen zu {{name}} einladen",
-    "invitedUser_one": "{{ count }} Benutzer*in wurde eingeladen und muss die Einladung annehmen",
-    "invitedUser_other": "{{ count }} Benutzer*innen wurden eingeladen und müssen die Einladung annehmen",
+    "{{selectedUser}} was invited and needs to accept your invitation.": "{{selectedUser}} wurde eingeladen und muss Ihre Einladung annehmen.",
     "Invite users": "Benutzer*innen einladen",
     "Invite": "Einladen"
 }

@@ -5,7 +5,6 @@ const Icon = styled.span`
         display: block;
         width: var(--icon-size);
         height: var(--icon-size);
-        fill: var(--color-foreground);
     }
 `;
 

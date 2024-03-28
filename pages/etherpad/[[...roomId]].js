@@ -3,30 +3,36 @@ import { useTranslation } from 'react-i18next';
 import getConfig from 'next/config';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
+import { RiCloseLine, RiMenuAddLine } from '@remixicon/react';
+import { styled } from 'styled-components';
+import Error from 'next/error';
 
-import CreateAnonymousPad from './actions/CreateAnonymousPad';
-import AddExistingPad from './actions/AddExistingPad';
-import CreateAuthoredPad from './actions/CreateAuthoredPad';
-import CreatePasswordPad from './actions/CreatePasswordPad';
-import ErrorMessage from '@/components/UI/ErrorMessage';
 import Icon from '@/components/UI/Icon';
 import DefaultLayout from '@/components/layouts/default';
-import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
 import TextButton from '@/components/UI/TextButton';
 import { ServiceTable } from '@/components/UI/ServiceTable';
-import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import ServiceLink from '@/components/UI/ServiceLink';
-import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import LoginPrompt from '@/components/UI/LoginPrompt';
 import logger from '@/lib/Logging';
 import { isMyPadsApiEnabled, path as etherpadPath } from '@/lib/Etherpad';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
+import ServiceIframeHeader from '@/components/UI/ServiceIframeHeader';
+import CreateNewPad from './actions/CreateNewPad';
+import ErrorMessage from '@/components/UI/ErrorMessage';
 
-const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, ref, selected }) => {
+const Header = styled.header`
+    display: grid;
+    grid-template-columns: 1fr auto;
+`;
+
+const ToggleButton = styled(TextButton)`
+    height: calc(var(--margin) * var(--line-height));
+`;
+
+const EtherpadListEntry = memo(({ isPasswordProtected, writeRoomId, name, href, etherpadId, ref, selected, path }) => {
     const etherpad = useAuth().getAuthenticationProvider('etherpad');
 
     const [showLock, setShowLock] = useState(isPasswordProtected);
@@ -52,7 +58,18 @@ const EtherpadListEntry = memo(({ isPasswordProtected, name, href, etherpadId, r
         }
     }, [checkIfPadHasPassword, etherpadId, isPasswordProtected]);
 
-    return <ServiceLink key={etherpadId} name={name} href={href} passwordProtected={showLock} selected={selected} ref={ref} />;
+    return (
+        <ServiceLink
+            key={etherpadId}
+            roomId={writeRoomId}
+            path={path}
+            name={name}
+            href={href}
+            passwordProtected={showLock}
+            selected={selected}
+            ref={ref}
+        />
+    );
 });
 
 EtherpadListEntry.displayName = 'EtherpadListEntry';
@@ -64,11 +81,13 @@ export default function Etherpad() {
     const auth = useAuth();
     const matrix = useMatrix();
 
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
 
-    const [serverPads, setServerPads] = useState(null);
+    const [serverPads, setServerPads] = useState([]);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [isInviteUsersOpen, setIsInviteUsersOpen] = useState(false);
+    const [displayCreatePad, setDisplayCreatePad] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -137,17 +156,24 @@ export default function Etherpad() {
             if (!link || !name) return;
 
             logger.debug('Creating new Matrix room for pad', { link, name });
+            const room = await matrix
+                .createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad)
+                .catch((error) => setErrorMessage(error.message));
 
-            const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad);
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
-            await matrixClient.sendMessage(room, {
-                msgtype: 'm.text',
-                body: link,
-            });
+            await matrix.addSpaceChild(matrix.serviceSpaces.etherpad, room).catch((error) => setErrorMessage(error.message));
+
+            await matrix.sendMessage(room, link).catch((error) => setErrorMessage(error.message));
+
+            if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
+                await etherpad.syncAllPads();
+                setServerPads(etherpad.getAllPads());
+            }
+
+            setErrorMessage('');
 
             return room;
         },
-        [auth, matrix, matrixClient],
+        [matrix, etherpad],
     );
 
     /**
@@ -160,11 +186,13 @@ export default function Etherpad() {
      */
 
     const createPadAndOpen = async (name, visibility, password) => {
-        const padObject = await etherpad.createPad(name, visibility, password);
+        // truncate the name to a maximum of 40 characters to avoid errors
+        const padObject = await etherpad.createPad(name.substring(0, 40), visibility, password);
         if (!padObject || !padObject.success) throw new Error('The following error occurred', { cause: padObject });
 
         const link = getConfig().publicRuntimeConfig.authProviders.etherpad.baseUrl + '/' + padObject.key;
         const roomId = await createWriteRoom(link, name);
+        setDisplayCreatePad(false);
 
         return router.push(`${etherpadPath}/${roomId}`);
     };
@@ -245,43 +273,23 @@ export default function Etherpad() {
         setIsDeletingPad(false);
     };
 
-    const submenuItems = _.filter([
-        {
-            value: 'existingPad',
-            actionComponentToRender: <AddExistingPad createWriteRoom={createWriteRoom} />,
-            label: t('Add existing pad'),
-        },
-        {
-            value: 'anonymousPad',
-            actionComponentToRender: <CreateAnonymousPad createWriteRoom={createWriteRoom} />,
-            label: t('Create new anonymous pad'),
-        },
-        isMyPadsApiEnabled && {
-            value: 'authoredPad',
-            actionComponentToRender: <CreateAuthoredPad createPadAndOpen={createPadAndOpen} />,
-            label: t('Create new authored pad'),
-        },
-        isMyPadsApiEnabled && {
-            value: 'passwordPad',
-            actionComponentToRender: <CreatePasswordPad createPadAndOpen={createPadAndOpen} />,
-            label: t('Create password protected pad'),
-        },
-    ]);
-
     const listEntries = useMemo(() => {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map((writeRoomId) => {
+            if (!matrix.roomContents?.get(writeRoomId)) return;
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
-            const etherpadId = matrix.roomContents
-                .get(writeRoomId)
-                ?.body.substring(matrix.roomContents.get(writeRoomId)?.body.lastIndexOf('/') + 1);
-
             // if the room name is undefined we don't want to display it
             if (!name) return;
+
+            const etherpadId = matrix.roomContents
+                ?.get(writeRoomId)
+                .body.substring(matrix.roomContents.get(writeRoomId).body.lastIndexOf('/') + 1);
 
             return (
                 <EtherpadListEntry
                     key={writeRoomId}
+                    writeRoomId={writeRoomId}
                     name={name}
+                    path={etherpadPath}
                     href={`${etherpadPath}/${writeRoomId}`}
                     isPasswordProtected={
                         _.has(serverPads, etherpadId) ? _.get(serverPads, [etherpadId, 'visibility']) === 'private' : undefined
@@ -295,8 +303,9 @@ export default function Etherpad() {
     }, [matrix.roomContents, matrix.rooms, matrix.serviceSpaces.etherpad, matrix.spaces, roomId, serverPads]);
 
     // Add the following parameters to the iframe URL:
-    // - user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // - user's Matrix display name as parameter so that it shows up in Etherpad as username
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
+    // Add the user's Matrix display name as parameter so that it shows up in Etherpad as username
     let iframeUrl;
 
     if (roomId && matrix.roomContents.get(roomId)?.body) {
@@ -305,12 +314,13 @@ export default function Etherpad() {
         iframeUrl.searchParams.set('auth_token', etherpad.getToken());
     }
 
-    if (isMyPadsApiEnabled && !auth.connectionStatus.etherpad)
+    if (!auth.connectionStatus.etherpad) {
         return (
             <DefaultLayout.LameColumn>
                 <LoginPrompt service={etherpadPath} />
             </DefaultLayout.LameColumn>
         );
+    }
 
     return (
         <>
@@ -322,50 +332,41 @@ export default function Etherpad() {
                     </>
                 ) : (
                     <>
-                        <ServiceSubmenu
-                            title={<h2>{etherpadPath}</h2>}
-                            subheadline={t('What would you like to do?')}
-                            items={submenuItems}
-                        />
-                        {getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api && !serverPads && (
-                            <ErrorMessage>
-                                {t("Can't connect to the provided {{path}} server. Please try again later.", { path: etherpadPath })}
-                            </ErrorMessage>
-                        )}
+                        <Header>
+                            <h2>{etherpadPath}</h2>
+                            <ToggleButton onClick={() => setDisplayCreatePad((prevState) => !prevState)}>
+                                <Icon>{displayCreatePad ? <RiCloseLine /> : <RiMenuAddLine />}</Icon>
+                            </ToggleButton>
+                        </Header>
+                        {displayCreatePad && <CreateNewPad createPadAndOpen={createPadAndOpen} isMyPadsApiEnabled={isMyPadsApiEnabled} />}
                         <ServiceTable>
                             <ServiceTable.Body>{listEntries}</ServiceTable.Body>
                         </ServiceTable>
+                        {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
                     </>
                 )}
             </DefaultLayout.Sidebar>
             {roomId && matrix.roomContents.get(roomId) && (
                 <DefaultLayout.IframeWrapper>
-                    <DefaultLayout.IframeHeader>
-                        <h2>{matrix.rooms.get(roomId).name}</h2>
-                        <DefaultLayout.IframeHeaderButtonWrapper>
-                            <InviteUserToMatrixRoom
-                                roomId={roomId}
-                                trigger={
-                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
-                                        <Icon>
-                                            <RiUserAddLine />
-                                        </Icon>
-                                    </TextButton>
-                                }
-                            />
-                            <CopyToClipboard title={t('Copy pad link to clipboard')} content={matrix.roomContents.get(roomId)?.body} />
-                            <TextButton title={t(myPadsObject ? 'Delete pad' : 'Remove pad from my library')} onClick={deletePad}>
-                                {isDeletingPad ? (
-                                    <LoadingSpinnerInline />
-                                ) : (
-                                    <Icon>
-                                        <RiDeleteBinLine />
-                                    </Icon>
-                                )}
-                            </TextButton>
-                        </DefaultLayout.IframeHeaderButtonWrapper>
-                    </DefaultLayout.IframeHeader>
-                    <iframe title={etherpadPath} src={iframeUrl.toString()} />
+                    <ServiceIframeHeader
+                        content={matrix.roomContents.get(roomId)?.body}
+                        title={matrix.rooms.get(roomId).name}
+                        roomId={roomId}
+                        deleteContent={deletePad}
+                        isDeletingPad={isDeletingPad}
+                        myPadsObject={myPadsObject}
+                        isInviteUsersOpen={isInviteUsersOpen}
+                        setIsInviteUsersOpen={() => setIsInviteUsersOpen((prevState) => !prevState)}
+                    />
+                    {isInviteUsersOpen ? (
+                        <InviteUserToMatrixRoom
+                            roomId={roomId}
+                            roomName={matrix.rooms.get(roomId).name}
+                            onSuccess={() => setIsInviteUsersOpen(false)}
+                        />
+                    ) : (
+                        <iframe title={etherpadPath} src={iframeUrl.toString()} />
+                    )}
                 </DefaultLayout.IframeWrapper>
             )}
         </>

@@ -25,7 +25,7 @@ const DrawerDialog = React.forwardRef(({ className, children, isOpen, ...props }
     return (
         <Drawer open={isOpen} className={className} ref={ref} {...props}>
             <DrawerContent>
-                <div className="px-4">{children}</div>
+                <div className="px-4 pb-4">{children}</div>
             </DrawerContent>
         </Drawer>
     );
