@@ -134,7 +134,7 @@
                 }
             },
             {
-                "element": "main form:first-of-type",
+                "element": "main h3:has(+form)",
                 "popover": {
                     "title": "whats your name?",
                     "description": "you can change your display name to anything you want to. but be aware, that your official name will still be visible to others."

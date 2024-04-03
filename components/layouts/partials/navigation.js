@@ -1,7 +1,6 @@
 import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
-import { useRouter } from 'next/router';
 
 import { breakpoints } from '../../_breakpoints';
 import NotificationBubble from '../../UI/NotificationBubble';
@@ -30,12 +29,11 @@ const List = styled.ul`
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
     const matrix = useMatrix();
-    const router = useRouter();
     const onboarding = useOnboarding();
 
     const Link = ({ href, children, active }) => (
         <NextLink
-            className={active && router.asPath === href && 'driver-active-element [&:before]:!animate-none'}
+            className={active && href.includes(onboarding.route.name) && 'driver-active-element [&:before]:!animate-none'}
             href={href}
             onClick={closeNavigation}
         >

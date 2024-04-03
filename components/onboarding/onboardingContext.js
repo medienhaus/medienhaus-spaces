@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { driver } from 'driver.js'; // import driver.js
-
 import 'driver.js/dist/driver.css'; //import css
+import { useImmer } from 'use-immer';
+
 import onboardingScriptGeneric from './onboardingScriptGeneric.json';
 import onboardingScriptCustom from './onboardingScriptCustom.json';
 
@@ -11,188 +12,135 @@ const OnboardingContext = createContext(undefined);
 function useOnboardingProvider() {
     const router = useRouter();
     const [active, setActive] = useState(false);
+    const [route, setRoute] = useImmer({
+        name: '',
+        index: 0,
+        steps: [],
+        hasNext: false,
+        hasPrev: false,
+        description: '',
+        title: '',
+    });
 
-    const [currentRoute, setCurrentRoute] = useState('');
-    const [nextRouteName, setNextRouteName] = useState('');
-
-    const [prevRouteName, setPrevRouteName] = useState('');
-
-    const [currentRouteIndex, setCurrentRouteIndex] = useState(0);
-
-    const [currentSteps, setCurrentSteps] = useState([]);
-
-    const [currentStep, setCurrentStep] = useState(0);
-    const [hasPrev, setHasPrev] = useState(false);
-    const [hasNext, setHasNext] = useState(false);
-    const [currentStepDescription, setCurrentStepDescription] = useState('');
-    const [currentStepTitle, setCurrentStepTitle] = useState('');
-
-    const [driverJsConfig, setDriverJsConfig] = useState(null);
+    const [driverJsConfig, setDriverJsConfig] = useImmer({
+        allowClose: false,
+        showProgress: false,
+        overlayColor: 'black',
+        overlayOpacity: 0.0,
+        animate: false,
+        popoverClass: 'driverJsPopOver',
+        disableButtons: ['next', 'previous', 'close'],
+        showButtons: [],
+        steps: [],
+    });
 
     const [tourInstance, setTourInstance] = useState(null);
 
-    const onboardingScript = onboardingScriptCustom?.length > 0 ? onboardingScriptCustom : onboardingScriptGeneric;
+    const onboardingScript = onboardingScriptCustom.length > 0 ? onboardingScriptCustom : onboardingScriptGeneric;
 
-    const isScriptCustom = onboardingScriptCustom?.length > 0;
+    const startTour = useCallback(
+        (position = 0) => {
+            if (!onboardingScript[position]) return;
 
-    const startTour = (position = 0) => {
-        if (position > onboardingScript.length - 1) {
-            position = 0;
-        }
+            if (position > onboardingScript.length - 1) {
+                position = 0;
+            }
 
-        // start the tour with the first route and its steps. reset everything to the initial state
-        setCurrentRoute(onboardingScript[position].route);
-        setCurrentSteps(onboardingScript[position].steps);
-        setCurrentRouteIndex(position);
-        setCurrentStep(0);
-        setActive(true);
-
-        if (position > 0) {
-            setPrevRouteName(onboardingScript[position - 1].route);
-        }
-
-        if (onboardingScript[position].route) router.push(onboardingScript[position].route);
-    };
+            setRoute((draft) => updateRouteState(draft, onboardingScript, position));
+            setActive(true);
+            if (onboardingScript[position].route) router.push(onboardingScript[position].route);
+        },
+        [onboardingScript, router, setRoute],
+    );
 
     useEffect(() => {
-        // set the config for driver.js with the current steps of the active route
-        setDriverJsConfig({
-            allowClose: false,
-            showProgress: false,
-            overlayColor: 'black',
-            overlayOpacity: 0.0,
-            animate: false,
-            popoverClass: 'driverJsPopOver',
-            disableButtons: ['next', 'previous', 'close'],
-            showButtons: [],
-            steps: currentSteps,
+        let cancelled = false;
+        if (cancelled) return;
+
+        setDriverJsConfig((draft) => {
+            if (draft.steps === route.steps) return;
+            draft.steps = route.steps;
         });
-    }, [currentSteps]);
+
+        return () => (cancelled = true);
+    }, [route.steps, setDriverJsConfig]);
 
     useEffect(() => {
+        let cancelled = false;
+        if (cancelled) return;
         // create tour instance with the driver.js config if populated
-        if (currentSteps.length > 0) {
-            setTourInstance(driver(driverJsConfig));
-        }
-    }, [driverJsConfig, currentSteps]);
+        if (!driverJsConfig.steps.length) return;
+
+        setTourInstance(driver(driverJsConfig));
+
+        return () => (cancelled = true);
+    }, [driverJsConfig]);
 
     useEffect(() => {
-        // start the tour if the instance is created, which is the case after a route change
+        let cancelled = false;
+        if (cancelled) return;
+
         if (tourInstance) {
             tourInstance.drive();
-            setCurrentStepDescription(tourInstance.getActiveStep()?.popover?.description);
-            setCurrentStepTitle(tourInstance.getActiveStep()?.popover?.title);
+            setRoute((draft) => updateRouteTitle(draft, tourInstance));
             tourInstance.refresh();
-            setHasPrev(!tourInstance.isFirstStep());
-            setHasNext(!tourInstance.isLastStep());
         }
-    }, [tourInstance]);
 
-    useEffect(() => {
-        // set the next route name if there are more routes in the onboarding script. the nextRoutName is used in the onboarding Pilot component to display the next route name if the last step of the current route is reached
-        if (!hasNext && currentRouteIndex + 1 < onboardingScript.length) {
-            setNextRouteName(onboardingScript[currentRouteIndex + 1].route);
-        } else {
-            setNextRouteName('');
-        }
-    }, [currentRouteIndex, hasNext, onboardingScript]);
+        return () => (cancelled = true);
+    }, [tourInstance, setRoute]);
 
-    const nextRoute = () => {
-        // if there are more routes in the onboarding script, move to the next route
-        if (currentRouteIndex + 1 < onboardingScript.length) {
-            setPrevRouteName(currentRoute);
-            const newIndex = currentRouteIndex + 1;
-            setCurrentRouteIndex(newIndex);
-            setCurrentRoute(onboardingScript[newIndex].route);
-            setCurrentSteps(onboardingScript[newIndex].steps);
-            if (onboardingScript[newIndex].route) router.push(onboardingScript[newIndex].route);
-        }
-    };
+    const changeRoute = useCallback(
+        (direction) => {
+            setRoute((draft) => updateRouteOnChange(draft, onboardingScript, direction, router));
+        },
+        [onboardingScript, router, setRoute],
+    );
 
-    const prevRoute = () => {
-        if (currentRouteIndex - 1 >= 0) {
-            const newIndex = currentRouteIndex - 1;
-            setCurrentRouteIndex(newIndex);
-            setCurrentRoute(onboardingScript[newIndex].route);
-            setCurrentSteps(onboardingScript[newIndex].steps);
-            if (onboardingScript[newIndex].route) router.push(onboardingScript[newIndex].route);
+    const processStep = useCallback(
+        (offset) => {
+            if (!tourInstance.isActive()) {
+                tourInstance.drive();
+                setRoute((draft) => updateRouteTitle(draft, tourInstance));
 
-            if (newIndex > 0) {
-                setPrevRouteName(onboardingScript[newIndex - 1].route);
-            } else {
-                setPrevRouteName('');
+                return;
             }
-        }
-    };
 
-    const processStep = (offset) => {
-        if (!tourInstance.isActive()) {
-            // just to make sure, if the tour instance is not active, start the tour
-            tourInstance.drive();
-            setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-            setCurrentStepTitle(tourInstance.getActiveStep().popover.title);
+            if ((offset > 0 && !tourInstance.isLastStep()) || (offset < 0 && !tourInstance.isFirstStep())) {
+                offset > 0 ? tourInstance.moveNext() : tourInstance.movePrevious();
+            }
 
-            return;
-        }
+            if (offset > 0 && route.isLastStep && !route.nextRoute) {
+                // Handle the very last step of the onboarding script
+                setRoute((draft) => updateRouteStepState(draft, tourInstance));
+                tourInstance.refresh();
 
-        if (offset > 0 && !tourInstance.isLastStep()) {
-            tourInstance.moveNext();
-            setCurrentStep(tourInstance.getActiveIndex() + 1);
-        } else if (offset < 0 && !tourInstance.isFirstStep()) {
-            tourInstance.movePrevious();
-            setCurrentStep(tourInstance.getActiveIndex() - 1);
-        }
+                return;
+            }
 
-        setCurrentStepDescription(tourInstance.getActiveStep().popover.description);
-        setCurrentStepTitle(tourInstance.getActiveStep().popover.title);
+            if ((offset > 0 && route.isLastStep) || (offset < 0 && route.isFirstStep)) {
+                // handle the last step of the route and jump to the next route
+                changeRoute(offset);
+            } else {
+                // otherwise we just advance one step
+                setRoute((draft) => updateRouteStepState(draft, tourInstance));
+                tourInstance.refresh();
+            }
+        },
+        [changeRoute, route.isFirstStep, route.isLastStep, route.nextRoute, setRoute, tourInstance],
+    );
 
-        tourInstance.refresh();
-        setHasPrev(!tourInstance.isFirstStep());
-        setHasNext(!tourInstance.isLastStep());
-    };
-
-    const exit = () => {
+    const exit = useCallback(() => {
         setActive(false);
         tourInstance?.destroy();
-        setCurrentRouteIndex(0);
-        setCurrentSteps([]);
-    };
-
-    const writeOnboardStateToAccountData = async (matrixClient, overwrittenData) => {
-        const data = {
-            active: active,
-            currentRouteIndex: currentRouteIndex,
-        };
-
-        Object.keys(overwrittenData).forEach((key) => {
-            data[key] = overwrittenData[key];
-        });
-
-        await matrixClient.setAccountData('dev.medienhaus.spaces.onboarding', data);
-    };
+    }, [tourInstance]);
 
     return {
         active,
-        setActive,
-        setCurrentRoute,
-        currentRoute,
-        currentSteps,
-        currentRouteIndex,
-        currentStep,
-        hasPrev,
-        hasNext,
-        currentStepDescription,
-        currentStepTitle,
         tourInstance,
         startTour,
         processStep,
-        prevRoute,
-        nextRoute,
-        prevRouteName,
-        nextRouteName,
+        route,
         exit,
-        isScriptCustom,
-        writeOnboardStateToAccountData,
     };
 }
 
@@ -201,3 +149,42 @@ function useOnboarding() {
 }
 
 export { OnboardingContext, useOnboardingProvider, useOnboarding };
+
+// Helper functions
+const updateRouteState = (draft, onboardingScript, position) => {
+    draft.index = position;
+    draft.name = onboardingScript[position].route;
+    draft.steps = onboardingScript[position].steps;
+    draft.prevRoute = position > 0 && onboardingScript[position - 1].route;
+    draft.nextRoute = onboardingScript[draft.index + 1]?.route;
+    draft.isLastStep = onboardingScript[position].length > 1;
+    draft.isFirstStep = true;
+};
+
+const updateRouteTitle = (draft, tourInstance) => {
+    draft.title = tourInstance.getActiveStep().popover.title;
+    draft.description = tourInstance.getActiveStep().popover.description;
+};
+
+const updateRouteOnChange = (draft, onboardingScript, direction, router) => {
+    const newIndex = draft.index + direction;
+
+    if (newIndex >= 0 && newIndex < onboardingScript.length) {
+        draft.index = newIndex;
+        draft.name = onboardingScript[newIndex].route;
+        draft.steps = onboardingScript[newIndex].steps;
+        draft.isLastStep = onboardingScript[newIndex].length > 1;
+        draft.isFirstStep = true;
+        draft.nextRoute = onboardingScript[newIndex + 1]?.route;
+        draft.prevRoute = onboardingScript[newIndex - 1]?.route;
+
+        if (onboardingScript[newIndex].route) router.push(onboardingScript[newIndex].route);
+    }
+};
+
+const updateRouteStepState = (draft, tourInstance) => {
+    draft.title = tourInstance.getActiveStep().popover.title;
+    draft.description = tourInstance.getActiveStep().popover.description;
+    draft.isLastStep = tourInstance.isLastStep();
+    draft.isFirstStep = tourInstance.isFirstStep();
+};
