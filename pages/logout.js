@@ -11,7 +11,7 @@ export default function Logout() {
 
     useEffect(() => {
         const logoutAndForward = async () => {
-            onboarding.tourInstance.destroy(); // destroy the driverJS instance so that tab will work again on the /login route
+            onboarding?.tourInstance?.destroy(); // destroy the driverJS instance so that tab will work again on the /login route
             await auth.signout();
             router.push('/login');
         };
