@@ -99,11 +99,11 @@ export default function Dashboard() {
     }, [matrixClient, matrix, invitations, setInvitations]);
 
     return (
-        <DefaultLayout.LameColumn>
+        <DefaultLayout.LameColumn className="[&>*+*]:mt-8">
             <h2>/dashboard</h2>
 
             {!_.isEmpty(invitations) && (
-                <>
+                <div>
                     <h3>{t('Invitations')}</h3>
                     <br />
                     {Array.from(invitations.values()).map((invitation, index) => {
@@ -123,7 +123,7 @@ export default function Dashboard() {
                             </div>
                         );
                     })}
-                </>
+                </div>
             )}
 
             {/* Add some space and a divider between pending invitations and knocks */}
@@ -136,7 +136,7 @@ export default function Dashboard() {
             )}
 
             {pendingKnocks.size > 0 && (
-                <>
+                <div>
                     <h3>{t('Asking To Join')}</h3>
                     <br />
                     {[...pendingKnocks].map(([key, knock], index) => (
@@ -151,46 +151,48 @@ export default function Dashboard() {
                             <KnockCard roomId={knock.roomId} roomName={knock.name} userId={knock.userId} reason={knock.reason} />
                         </div>
                     ))}
-                </>
+                </div>
             )}
-            { !_.isEmpty(favourite) &&
+
+            {!_.isEmpty(favourite) && (
+                <div className="overflow-auto">
                     <ServiceTable>
-                        <ServiceTable.Caption>
-                            { t('Favourites') }
-                        </ServiceTable.Caption>
+                        <ServiceTable.Caption>{t('Favourites')}</ServiceTable.Caption>
                         <ServiceTable.Head>
                             <ServiceTable.Row>
                                 <ServiceTable.Header align="left" width="20%">
-                                    { t('App') }
+                                    {t('App')}
                                 </ServiceTable.Header>
                                 <ServiceTable.Header align="left" width="60%">
-                                    { t('Item') }
+                                    {t('Item')}
                                 </ServiceTable.Header>
                                 <ServiceTable.Header align="center" width="10%">
-                                    { t('Copy Link') }
+                                    {t('Copy Link')}
                                 </ServiceTable.Header>
                                 <ServiceTable.Header align="center" width="10%">
-                                    { t('Remove') }
+                                    {t('Remove')}
                                 </ServiceTable.Header>
                             </ServiceTable.Row>
                         </ServiceTable.Head>
                         <ServiceTable.Body>
-                            { favourite.map(favouriteSpace => {
+                            {favourite.map((favouriteSpace) => {
                                 const favouriteObject = matrix.rooms.get(favouriteSpace) || matrix.spaces.get(favouriteSpace);
 
                                 if (!favouriteObject) return;
 
-                                return <Favourite
-                                    key={favouriteSpace}
-                                    metaEvent={favouriteObject.meta}
-                                    roomId={favouriteSpace}
-                                    name={favouriteObject.name}
-                                />;
-                            }) }
+                                return (
+                                    <Favourite
+                                        key={favouriteSpace}
+                                        metaEvent={favouriteObject.meta}
+                                        roomId={favouriteSpace}
+                                        name={favouriteObject.name}
+                                    />
+                                );
+                            })}
                         </ServiceTable.Body>
                     </ServiceTable>
-
-            }
+                </div>
+            )}
         </DefaultLayout.LameColumn>
     );
 }

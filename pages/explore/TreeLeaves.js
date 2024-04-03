@@ -29,6 +29,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
           ? `/explore/${parentId}/${roomId}`
           : `/explore/${roomId}`;
     row.roomId = roomId;
+    if (externalUrl) row.target = '_blank';
 
     useEffect(() => {
         const controller = new AbortController();
@@ -95,7 +96,7 @@ const TreeLeaves = ({ row, parentName, selectedRoomId, isFetchingContent, small,
 
                 return (
                     <TableCell className="flex items-center justify-between gap-2" key={cell.id}>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             {isPasswordProtected && (
                                 <Icon className="text-muted-foreground">

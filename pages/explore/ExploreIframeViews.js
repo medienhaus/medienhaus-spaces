@@ -7,8 +7,17 @@ import ProjectView from './ProjectView';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
+import IframeSidebar from './IframeSidebar';
 
-const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle }) => {
+const ExploreIframeViews = ({
+    currentTemplate,
+    iframeRoomId,
+    title: parsedTitle,
+    breadcrumbs,
+    selectedSpaceChildren,
+    allChatRooms,
+    getSpaceChildren,
+}) => {
     const auth = useAuth();
     const matrix = useMatrix(auth.getAuthenticationProvider('matrix'));
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
@@ -40,57 +49,59 @@ const ExploreIframeViews = ({ currentTemplate, iframeRoomId, title: parsedTitle 
     }, [iframeRoomId, matrixClient, parsedTitle]);
 
     return (
-        <DefaultLayout.IframeWrapper>
-            {(() => {
-                switch (currentTemplate) {
-                    case 'studentproject':
-                        return <ProjectView content={iframeUrl} />;
-                    case 'etherpad':
-                        return (
-                            <>
-                                <ServiceIframeHeader
-                                    content={matrix.roomContents.get(iframeRoomId)?.body}
-                                    title={title}
-                                    removeLink={() => console.log('removing pad from parent')}
-                                    removingLink={false}
-                                />
-                                <iframe title="etherpad" src={iframeUrl} />
-                            </>
-                        );
-                    case 'spacedeck':
-                        return (
-                            <>
-                                <ServiceIframeHeader
-                                    content={matrix.roomContents.get(iframeRoomId)?.body}
-                                    title={title}
-                                    removeLink={() => console.log('removing sketch from parent')}
-                                    removingLink={false}
-                                />
-                                <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
-                            </>
-                        );
-                    case 'link':
-                        return (
-                            <>
-                                <ServiceIframeHeader
-                                    content={matrix.roomContents.get(iframeRoomId)?.body}
-                                    title={title}
-                                    removingLink={false}
-                                />
-                                <iframe title="sketch" src={iframeUrl} />
-                            </>
-                        );
-                    default:
-                        return (
-                            <ChatIframeView
-                                title={title}
-                                src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
-                                roomId={iframeRoomId}
+        <>
+            {currentTemplate && (
+                <>
+                    <DefaultLayout.Sidebar>
+                        {iframeRoomId && (
+                            <IframeSidebar
+                                breadcrumbs={breadcrumbs}
+                                selectedSpaceChildren={selectedSpaceChildren}
+                                allChatRooms={allChatRooms}
+                                getSpaceChildren={getSpaceChildren}
                             />
-                        );
-                }
-            })()}
-        </DefaultLayout.IframeWrapper>
+                        )}
+                    </DefaultLayout.Sidebar>
+                    <DefaultLayout.IframeWrapper>
+                        <ServiceIframeHeader content={matrix.roomContents.get(iframeRoomId)?.body} title={title} removingLink={false} />
+
+                        {(() => {
+                            switch (currentTemplate) {
+                                case 'studentproject':
+                                    return <ProjectView content={iframeUrl} />;
+                                case 'etherpad':
+                                    return (
+                                        <>
+                                            <iframe title="etherpad" src={iframeUrl} />
+                                        </>
+                                    );
+                                case 'spacedeck':
+                                    return (
+                                        <>
+                                            <iframe title="sketch" src={matrix.roomContents.get(iframeRoomId)?.body} />
+                                        </>
+                                    );
+                                case 'link':
+                                    return (
+                                        <>
+                                            <iframe title="sketch" src={iframeUrl} />
+                                        </>
+                                    );
+                            }
+                        })()}
+                    </DefaultLayout.IframeWrapper>
+                </>
+            )}
+            {!currentTemplate && (
+                <ChatIframeView
+                    breadcrumbs={breadcrumbs}
+                    title={title}
+                    src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
+                    roomId={iframeRoomId}
+                    selectedSpaceChildren={selectedSpaceChildren}
+                />
+            )}
+        </>
     );
 };
 

@@ -17,6 +17,9 @@ import OnboardingPilot from '@/components/onboarding/onboardingPilot';
 import { Toaster } from '@/components/UI/shadcn/Sonner';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 
+import 'tldraw/tldraw.css';
+import '../assets/_tldrawOverrides.css';
+
 // Enable immer support for Map() and Set()
 enableMapSet();
 

@@ -7,6 +7,7 @@ import { ServiceTable } from './ServiceTable';
 import Form from './Form';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Button } from '@/components/UI/shadcn/Button';
+import { Switch } from '@/components/UI/shadcn/Switch';
 
 /**
  * Datalist component that functions as an input with a datalist and supports keyboard navigation and mouse interaction.
@@ -44,7 +45,7 @@ const TableWrapper = styled.section`
     overflow-x: auto;
 `;
 
-export default function DataList({ options, onInputChange, keysToDisplay, onSubmit, onCancel }) {
+export default function DataList({ options, onInputChange, keysToDisplay, onSubmit, onCancel, promote }) {
     const [value, setValue] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -52,6 +53,7 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
     const [checked, setChecked] = useState([]);
     const [filteredOptions, setFilteredOptions] = useState([]);
     const inputRef = useRef(null);
+    const [promoteUsers, setPromoteUsers] = useState(promote);
 
     const { t } = useTranslation('invitationModal');
 
@@ -140,7 +142,8 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
         setChecked([]);
         setSelected([]);
         setIsOpen(false);
-        await onSubmit(checked.concat(selected));
+
+        await onSubmit(checked.concat(selected), promoteUsers && 50);
     };
 
     return (
@@ -188,6 +191,12 @@ export default function DataList({ options, onInputChange, keysToDisplay, onSubm
                     </ServiceTable.Body>
                 </ServiceTable>
             </TableWrapper>
+            {promote && (
+                <div className="flex justify-between">
+                    <label htmlFor="promote">{t('Give users permission to edit')}</label>
+                    <Switch id="promote" checked={promoteUsers} onCheckedChange={setPromoteUsers} />
+                </div>
+            )}
             <Button disabled={selected.length === 0 && checked.length === 0}>{t('Invite')}</Button>
         </InviteUserForm>
     );
