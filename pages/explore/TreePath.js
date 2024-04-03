@@ -31,7 +31,11 @@ const TreePath = ({ selectedSpaceChildren }) => {
 
                                             if (index < selectedSpaceChildren.length - 1) {
                                                 return (
-                                                    <DropdownMenuItem key={index} className="grid w-full grid-flow-col justify-start gap-2">
+                                                    <DropdownMenuItem
+                                                        key={index}
+                                                        asChild
+                                                        className="grid w-full grid-flow-col justify-start gap-2"
+                                                    >
                                                         <Link href={`/explore/${roomId}`}>{path[0].name}</Link>
                                                     </DropdownMenuItem>
                                                 );

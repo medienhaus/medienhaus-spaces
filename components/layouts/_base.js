@@ -1,13 +1,14 @@
-import { styled } from 'styled-components';
 import getConfig from 'next/config';
 import { useState } from 'react';
-import { RiCloseLine, RiMenuLine } from '@remixicon/react';
+import { styled } from 'styled-components';
+import { RiCircleFill, RiCloseLine, RiMenuLine } from '@remixicon/react';
 
 import { useAuth } from '@/lib/Auth';
+import { useMatrix } from '@/lib/Matrix';
+import { breakpoints } from '../_breakpoints';
 import Icon from '../UI/Icon';
 import NavigationMenu from './partials/navigation';
 import LanguageChooser from './partials/languageChooser';
-import { breakpoints } from '../_breakpoints';
 
 const Wrapper = styled.div`
     display: flex;
@@ -116,6 +117,7 @@ const Copyleft = styled.span`
 
 export default function BaseLayout({ children }) {
     const auth = useAuth();
+    const matrix = useMatrix();
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
     if (auth.user === null) {
@@ -159,6 +161,9 @@ export default function BaseLayout({ children }) {
                         >
                             <Icon>
                                 <RiMenuLine />
+                                {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
+                                    <RiCircleFill className="!h-[0.7rem] !w-[0.7rem] translate-x-[calc(var(--icon-size)*0.55)] translate-y-[calc(var(--icon-size)*-1.1)] border-[1px] border-[var(--color-background-beta)] bg-[var(--color-background-beta)] text-accent" />
+                                )}
                             </Icon>
                         </ToggleButton>
                     )}

@@ -9,8 +9,9 @@ import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom'
 import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
+import IframeSidebar from '../explore/IframeSidebar';
 
-const ChatIframeView = ({ src, roomId, title }) => {
+const ChatIframeView = ({ src, roomId, title, selectedSpaceChildren, breadcrumbs }) => {
     const iframe = useRef();
     const matrix = useMatrix();
     const router = useRouter();
@@ -139,47 +140,50 @@ const ChatIframeView = ({ src, roomId, title }) => {
 
     return (
         <>
-            <DefaultLayout.IframeHeader>
-                {title}
-                <DefaultLayout.IframeHeaderButtonWrapper>
-                    {matrix?.rooms?.get(roomId) && (
-                        <>
-                            <InviteUserToMatrixRoom
-                                roomId={roomId}
-                                trigger={
-                                    <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
-                                        <Icon>
-                                            <RiUserAddLine />
-                                        </Icon>
-                                    </TextButton>
-                                }
-                            />
-                            <CopyToClipboard
-                                title={t('Copy chat link to clipboard')}
-                                content={window.location.origin + '/chat/' + roomId}
-                            />
-                            <TextButton title={t('Leave chat')} onClick={leaveRoom}>
-                                <Icon>
-                                    <RiDoorOpenLine />
-                                </Icon>
-                            </TextButton>
-                            <TextButton title={t('Call')} onClick={toggleCall}>
-                                <Icon>
-                                    <RiPhoneLine />
-                                </Icon>
-                            </TextButton>
-                            <TextButton title={t('Threads')} onClick={toggleThreads}>
-                                <Icon>
-                                    <RiSidebarFoldLine />
-                                </Icon>
-                            </TextButton>
-                        </>
-                    )}
-                </DefaultLayout.IframeHeaderButtonWrapper>
-            </DefaultLayout.IframeHeader>
-            <DefaultLayout.ExploreWrapper>
+            <DefaultLayout.Sidebar>
+                <IframeSidebar breadcrumbs={breadcrumbs} selectedSpaceChildren={selectedSpaceChildren} />
+            </DefaultLayout.Sidebar>
+            <DefaultLayout.IframeWrapper>
+                <DefaultLayout.IframeHeader>
+                    <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">{title}</h3>
+                    <DefaultLayout.IframeHeaderButtonWrapper>
+                        {matrix?.rooms?.get(roomId) && (
+                            <>
+                                <InviteUserToMatrixRoom
+                                    roomId={roomId}
+                                    trigger={
+                                        <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
+                                            <Icon>
+                                                <RiUserAddLine />
+                                            </Icon>
+                                        </TextButton>
+                                    }
+                                />
+                                <CopyToClipboard
+                                    title={t('Copy chat link to clipboard')}
+                                    content={window.location.origin + '/chat/' + roomId}
+                                />
+                                <TextButton title={t('Leave chat')} onClick={leaveRoom}>
+                                    <Icon>
+                                        <RiDoorOpenLine />
+                                    </Icon>
+                                </TextButton>
+                                <TextButton title={t('Call')} onClick={toggleCall}>
+                                    <Icon>
+                                        <RiPhoneLine />
+                                    </Icon>
+                                </TextButton>
+                                <TextButton title={t('Threads')} onClick={toggleThreads}>
+                                    <Icon>
+                                        <RiSidebarFoldLine />
+                                    </Icon>
+                                </TextButton>
+                            </>
+                        )}
+                    </DefaultLayout.IframeHeaderButtonWrapper>
+                </DefaultLayout.IframeHeader>
                 <iframe ref={iframe} title="/chat" src={src} />
-            </DefaultLayout.ExploreWrapper>
+            </DefaultLayout.IframeWrapper>
         </>
     );
 };
