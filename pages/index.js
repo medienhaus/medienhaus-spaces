@@ -19,7 +19,7 @@ export default function UdkTmp() {
                             /classroom
                         </a>
                     </h3>
-                    <p>predecessor to ukd/spaces (chat, audio/video calls, polls)</p>
+                    <p>predecessor to udk/spaces (chat, audio/video calls, polls)</p>
                 </section>
                 <section>
                     <h3>
