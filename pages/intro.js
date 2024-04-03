@@ -22,16 +22,17 @@ export default function Intro() {
                     <p>
                         <Trans
                             t={t}
-                            i18nKey="intro"
-                            defaults="This is an introduction to the app. <bold>It's a great app!</bold>"
+                            i18nKey="intro-p-1"
+                            defaults="Welcome to the <bold>udk/spaces</bold> beta version. The application shall provide a rather seamless and enjoyable experience around several embedded services/tools (see features below)."
                             components={{ bold: <strong /> }}
                         />
                     </p>
-
                     <p>
-                        {t(
-                            "Welcome to our amazing app! This app is designed to provide you with a seamless and enjoyable experience. With its user-friendly interface and powerful features, you'll be able to accomplish your tasks efficiently and effortlessly. Whether you're a beginner or an expert, this app is perfect for you. Start exploring and discover the endless possibilities it offers. ",
-                        )}
+                        <Trans
+                            t={t}
+                            i18nKey="intro-p-2"
+                            defaults="With its rather simplified interface and feature set, you’ll hopefully be able to accomplish your communication- and collaboration-related tasks rather efficiently and effortlessly, all in one place."
+                        />
                     </p>
                 </div>
 
@@ -39,25 +40,31 @@ export default function Intro() {
 
                 <div>
                     <h3>{t('Features')}</h3>
-                    <ul>
-                        <li>{t('Real-time messaging')}</li>
-                        <li>{t('Video conferencing')}</li>
-                        <li>{t('File sharing')}</li>
-                        <li>{t('Screen sharing')}</li>
-                        <li>{t('Group chats')}</li>
-                        <li>{t('Emojis and reactions')}</li>
+                    {/*
+                    <ul className="list-disc list-inside">
+                    */}
+                    <ul className="list-['\2013\0020'] list-inside">
+                        <li>{t('real-time messaging')}</li>
+                        <li>{t('private and group chats')}</li>
+                        <li>{t('sending and receiving files')}</li>
+                        <li>{t('audio/video conferencing')}</li>
+                        <li>{t('screen sharing and spectating')}</li>
+                        <li>{t('collaborative writing/editing')}</li>
+                        <li>{t('collaborative drawing/sketching')}</li>
+                        <li>{t('exploring structures and content')}</li>
                     </ul>
                 </div>
 
                 <hr />
 
                 <div>
-                    <h3>{t('Terms & Conditions / Community Guidlines')}</h3>
+                    <h3>{t('Terms & Conditions / Community Guidelines')}</h3>
                     <p>
                         <Trans
                             t={t}
-                            i18nKey="intro"
-                            defaults='By using this app, you agree to the <a href="/terms">Terms & Conditions</a> and <a href="/guidelines">Community Guidelines</a>.'
+                            i18nKey="terms-and-guidelines"
+                            /* @NOTE: not sure if <a href="..." /> works inside <Trans /> ? */
+                            defaults='By using this app, you agree to the <a href="/terms">Terms & Conditions</a> and <a href="/community-guidelines">Community Guidelines</a>.'
                             components={{ a: <a href /> }}
                         />
                     </p>
@@ -66,12 +73,12 @@ export default function Intro() {
                 <hr />
 
                 <div>
-                    <h3>{t('How to start')}</h3>
+                    <h3>{t('Onboarding')}</h3>
                     <p>
                         <Trans
                             t={t}
-                            i18nKey="intro"
-                            defaults="To get started, simply click on the <strong>Start Onboarding</strong> button below. You'll be guided through the setup process, and you'll be ready to use the app in no time."
+                            i18nKey="onboarding-p-1"
+                            defaults="To get started, simply click the <strong>Start Onboarding</strong> button below. You’ll be guided through the setup process, and you’ll be ready to use the app in no time."
                             components={{ bold: <strong /> }}
                         />
                     </p>
@@ -88,13 +95,14 @@ export default function Intro() {
                 <hr />
 
                 <div>
-                    <h3>{t('Learn')}</h3>
+                    <h3>{t('Learn more')}</h3>
                     <p>
                         <Trans
                             t={t}
-                            i18nKey="intro"
-                            defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
-                            components={{ a: <a href /> }}
+                            i18nKey="learn-more"
+                            /* @NOTE: not sure if <a href="..." /> works inside <Trans /> ? */
+                            defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will, rather sooner than later, find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
+                            components={{ a: <a href />, bold: <strong /> }}
                         />
                     </p>
                 </div>
