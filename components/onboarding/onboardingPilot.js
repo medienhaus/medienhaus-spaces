@@ -50,7 +50,7 @@ const OnboardingPilot = () => {
         if (cancelled) return;
 
         // check if the user has navigated away from the onboarding route and if so redirect them back
-        if (onboarding.active && onboardingRoute?.name && onboardingRoute?.name !== router.route) {
+        if (auth.user && onboarding.active && onboardingRoute?.name && onboardingRoute?.name !== router.route) {
             router.push(onboardingRoute.name);
         }
 
