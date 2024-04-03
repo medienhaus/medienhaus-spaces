@@ -2,7 +2,7 @@ import getConfig from 'next/config';
 import React, { useEffect, useState } from 'react';
 
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
-import ChatIframeView from '../chat/ChatIframeView';
+import ExploreChatView from './ExploreChatView';
 import ProjectView from './ProjectView';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
@@ -93,7 +93,7 @@ const ExploreIframeViews = ({
                 </>
             )}
             {!currentTemplate && (
-                <ChatIframeView
+                <ExploreChatView
                     breadcrumbs={breadcrumbs}
                     title={title}
                     src={`${getConfig().publicRuntimeConfig.chat.pathToElement}/#/room/${iframeRoomId}`}
