@@ -32,8 +32,32 @@
         "steps": [
             {
                 "popover": {
-                    "title": "abc",
-                    "description": "asbx"
+                    "title": "your personal inbox",
+                    "description": "the dashboard functions as your personal inbox. Here you can see all kind of invites or notifications or your faviorites."
+                }
+            },
+            {
+                "popover": {
+                    "title": "your inbox",
+                    "description": "for now it is quite empty here but if any other users want to /chat with you. or wants to work collaborativly on a /write document, you can find your notification here."
+                }
+            },
+            {
+                "popover": {
+                    "title": "your inbox",
+                    "description": "if there are things to catch up for you, a small dot will appear next to the /dashboard link in the main navigation."
+                }
+            },
+            {
+                "popover": {
+                    "title": "your inbox",
+                    "description": "maybe you got already invited to some spaces. if thats the case you can accept those. with the click on the underlined name you will be redirected to the space."
+                }
+            },
+            {
+                "popover": {
+                    "title": "your inbox",
+                    "description": "but lets lets see first whats going on in this application. lets go to the /explore page next…"
                 }
             }
         ]
@@ -67,8 +91,58 @@
         "steps": [
             {
                 "popover": {
-                    "title": "lore",
-                    "description": "ipsum"
+                    "title": "communicate.",
+                    "description": "on of the mayor functionallities is the chat. here you can communicate with others in real time. as one to one or in groups."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate.",
+                    "element": "main details:first-of-type",
+                    "description": "all your chats will be listed here. it will be seperated in private chats and groups."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate.",
+                    "element": "main h2 > button",
+                    "description": "if you want to create a new chat just clikc on the button on the top."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate.",
+                    "description": "you can select between a direct message or to create a group chat."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate.",
+                    "description": "especially with groups chats you can change the visibility of the chat. if you want to make it public to all members or just to the invited ones."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate – encrypted",
+                    "description": "be aware of the the end to end encryption. if you choose the option all participants would need to have their encryption key stored."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate – encrypted",
+                    "description": "so you can use the e2ee functionallity but only if you know what you are doing."
+                }
+            },
+            {
+                "popover": {
+                    "title": "communicate – contextualize",
+                    "description": "anyway, after creating a groupchat, you can later assign it in /expore to a specific context. just like an file or a document."
+                }
+            },
+            {
+                "popover": {
+                    "title": "going on",
+                    "description": "speaking of documents, lets go to the /write tool next…"
                 }
             }
         ]
