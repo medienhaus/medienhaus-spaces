@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }) {
         return null;
     }
 
-    // if the user is logged in but has not started the onboarding process, redirect to /intro
+    // If the user is logged in but has not started the onboarding process, redirect to /intro
     if (
         matrixData.initialSyncDone &&
         router.route !== '/intro' &&
