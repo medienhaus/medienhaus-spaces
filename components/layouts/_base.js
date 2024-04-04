@@ -2,7 +2,6 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { styled } from 'styled-components';
 import { RiCircleFill, RiCloseLine, RiMenuLine } from '@remixicon/react';
-import { useRouter } from 'next/router';
 
 import { useMatrix } from '@/lib/Matrix';
 import { breakpoints } from '../_breakpoints';
@@ -118,21 +117,6 @@ const Copyleft = styled.span`
 export default function BaseLayout({ children }) {
     const matrix = useMatrix();
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-    const router = useRouter();
-
-    if (router.pathname === '/intro') {
-        return (
-            <>
-                <Wrapper>
-                    <Header>
-                        <h1>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</h1>
-                    </Header>
-                    <Sidebar />
-                    {children}
-                </Wrapper>
-            </>
-        );
-    }
 
     return (
         <>

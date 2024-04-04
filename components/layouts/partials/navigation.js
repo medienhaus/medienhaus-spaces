@@ -1,4 +1,5 @@
 import getConfig from 'next/config';
+import { useRouter } from 'next/router';
 import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
 import { RiCircleFill } from '@remixicon/react';
@@ -30,6 +31,7 @@ export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
     const matrix = useMatrix();
     const onboarding = useOnboarding();
+    const router = useRouter();
 
     const Link = ({ href, children, active }) => (
         <NextLink
@@ -52,6 +54,17 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li>
                     <Link href="/login">/login</Link>
+                </li>
+            </List>
+        );
+    }
+
+    // If the user is logged in but has not started the onboarding process, hide navigation items to all routes but /logout
+    if (auth.user && router.pathname === '/intro') {
+        return (
+            <List>
+                <li>
+                    <Link href="/logout">/logout</Link>
                 </li>
             </List>
         );
