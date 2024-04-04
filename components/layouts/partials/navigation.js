@@ -8,7 +8,6 @@ import { useMatrix } from '@/lib/Matrix';
 import { breakpoints } from '../../_breakpoints';
 import { useOnboarding } from '../../onboarding/onboardingContext';
 
-
 const List = styled.ul`
     padding: 0;
     margin: 0 0 calc(var(--margin) * 3);
@@ -76,7 +75,9 @@ export default function Navigation({ closeNavigation }) {
                 </li>
                 {getConfig().publicRuntimeConfig.contextRootSpaceRoomId && (
                     <li>
-                        <Link active={onboarding?.active} href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
+                        <Link active={onboarding?.active} href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>
+                            /explore
+                        </Link>
                     </li>
                 )}
             </List>
@@ -94,7 +95,9 @@ export default function Navigation({ closeNavigation }) {
 
                     return (
                         <li key={path}>
-                            <Link active={onboarding?.active} href={path}>{path}</Link>
+                            <Link active={onboarding?.active} href={path}>
+                                {path}
+                            </Link>
                         </li>
                     );
                 })}
