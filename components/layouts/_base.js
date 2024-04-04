@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { styled } from 'styled-components';
 import { RiCircleFill, RiCloseLine, RiMenuLine } from '@remixicon/react';
 
+import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import { breakpoints } from '../_breakpoints';
 import Icon from '../UI/Icon';
@@ -115,8 +116,27 @@ const Copyleft = styled.span`
 `;
 
 export default function BaseLayout({ children }) {
+    const auth = useAuth();
     const matrix = useMatrix();
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+
+    if (auth.user === null) {
+        return null;
+    }
+
+    if (auth.user === false) {
+        return (
+            <>
+                <Wrapper>
+                    <Header>
+                        <h1>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</h1>
+                    </Header>
+                    <Sidebar />
+                    {children}
+                </Wrapper>
+            </>
+        );
+    }
 
     return (
         <>

@@ -23,7 +23,8 @@ import '../assets/_tldrawOverrides.css';
 // Enable immer support for Map() and Set()
 enableMapSet();
 
-const guestRoutes = ['/login'];
+// const guestRoutes = ['/login'];
+const guestRoutes = ['/', '/login'];
 
 export default function App({ Component, pageProps }) {
     const router = useRouter();
@@ -35,7 +36,8 @@ export default function App({ Component, pageProps }) {
 
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {
-        router.push('/login');
+        // router.push('/login');
+        router.push('/');
 
         return null;
     }
