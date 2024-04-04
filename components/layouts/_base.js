@@ -2,6 +2,7 @@ import getConfig from 'next/config';
 import { useState } from 'react';
 import { styled } from 'styled-components';
 import { RiCircleFill, RiCloseLine, RiMenuLine } from '@remixicon/react';
+import { useRouter } from 'next/router';
 
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
@@ -119,6 +120,21 @@ export default function BaseLayout({ children }) {
     const auth = useAuth();
     const matrix = useMatrix();
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+    const router = useRouter();
+
+    if (router.pathname === '/intro') {
+        return (
+            <>
+                <Wrapper>
+                    <Header>
+                        <h1>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</h1>
+                    </Header>
+                    <Sidebar />
+                    {children}
+                </Wrapper>
+            </>
+        );
+    }
 
     if (auth.user === null) {
         return null;
