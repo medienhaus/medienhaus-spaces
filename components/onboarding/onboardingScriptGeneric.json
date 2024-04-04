@@ -10,13 +10,13 @@
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "This should not get too tiering, so we will keep it short with just a rough overview of some main functions."
+                    "description": "This should not get too tiring, so we will keep it short with just a rough overview of some main functions."
                 }
             },
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "If a blinking arrow shows up, it is needed to excecute a click or touch from your side."
+                    "description": "If a blinking arrow shows up, it is needed to execute a click or touch from your side."
                 }
             },
             {
@@ -39,7 +39,7 @@
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "For now it is quite empty here but if any other users want to /chat with you or wants to work collaboratively on a /write document, you can find your notification here."
+                    "description": "For now it is quite empty here but when any other users want to /chat with you or want to work collaboratively on a /write document, you can find your notification here."
                 }
             },
             {
@@ -51,7 +51,7 @@
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "Maybe you got already invited to some spaces. If thats the case you can accept those. With the click on the underlined name you will be redirected to the space."
+                    "description": "Maybe you got already invited to some spaces. If that’s the case you can accept those. With the click on the underlined name you will be redirected to the space."
                 }
             },
             {
@@ -99,7 +99,7 @@
                 "popover": {
                     "title": "Communicate",
                     "element": "main details:first-of-type",
-                    "description": "All your chats will be listed here. It will be seperated in private chats and group chats."
+                    "description": "All your chats will be listed here. It will be separated in private chats and group chats."
                 }
             },
             {
