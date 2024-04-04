@@ -5,7 +5,6 @@ import { RiCircleFill } from '@remixicon/react';
 
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
-
 import { breakpoints } from '../../_breakpoints';
 import { useOnboarding } from '../../onboarding/onboardingContext';
 
