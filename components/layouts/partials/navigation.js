@@ -5,7 +5,10 @@ import { RiCircleFill } from '@remixicon/react';
 
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+
 import { breakpoints } from '../../_breakpoints';
+import { useOnboarding } from '../../onboarding/onboardingContext';
+
 
 const List = styled.ul`
     padding: 0;
@@ -28,9 +31,14 @@ const List = styled.ul`
 export default function Navigation({ closeNavigation }) {
     const auth = useAuth();
     const matrix = useMatrix();
+    const onboarding = useOnboarding();
 
-    const Link = ({ href, children }) => (
-        <NextLink href={href} onClick={closeNavigation}>
+    const Link = ({ href, children, active }) => (
+        <NextLink
+            className={active && href.includes(onboarding.route.name) && 'driver-active-element [&:before]:!animate-none'}
+            href={href}
+            onClick={closeNavigation}
+        >
             {children}
         </NextLink>
     );
@@ -55,7 +63,7 @@ export default function Navigation({ closeNavigation }) {
         <>
             <List>
                 <li>
-                    <Link href="/dashboard">
+                    <Link active={onboarding?.active} href="/dashboard">
                         /dashboard
                         {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
                             <RiCircleFill className="inline !h-[0.7rem] !w-[0.7rem] translate-y-[calc(var(--icon-size)*-0.3)] border-[1px] border-[var(--color-background-beta)] text-accent" />
@@ -63,17 +71,21 @@ export default function Navigation({ closeNavigation }) {
                     </Link>
                 </li>
                 <li>
-                    <Link href="/account">/account</Link>
+                    <Link active={onboarding?.active} href="/account">
+                        /account
+                    </Link>
                 </li>
                 {getConfig().publicRuntimeConfig.contextRootSpaceRoomId && (
                     <li>
-                        <Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
+                        <Link active={onboarding?.active} href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
                     </li>
                 )}
             </List>
             <List>
                 <li>
-                    <Link href="/chat">/chat</Link>
+                    <Link active={onboarding?.active} href="/chat">
+                        /chat
+                    </Link>
                 </li>
                 {Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
                     // we skip the matrix config since it's already displayed in chat
@@ -83,7 +95,7 @@ export default function Navigation({ closeNavigation }) {
 
                     return (
                         <li key={path}>
-                            <Link href={path}>{path}</Link>
+                            <Link active={onboarding?.active} href={path}>{path}</Link>
                         </li>
                     );
                 })}

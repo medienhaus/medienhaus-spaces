@@ -1,0 +1,19 @@
+{
+    "Hello": "Hallo",
+    "intro-p-1": "Willkommen zur <bold>udk/spaces</bold> Beta-Version. Die App bringt eine möglichst komfortable Nutzung einiger eingebetteter Services und Werkzeuge mit sich – siehe Features weiter unten.",
+    "intro-p-2": "Mit einem möglichst vereinfachten Interface und Funktionsumfang wird es dir hoffentlich ermöglicht, mühelos deine kommunikations- und kollaborationsbedingten Aufgaben zu bewältigen – alles an einem (digital) Ort.",
+    "real-time messaging": "Echtzeit-Messaging",
+    "private and group chats": "Private Nachrichten und Gruppen-Chats",
+    "sending and receiving files": "Dateien senden und empfangen",
+    "audio/video conferencing": "Audio-/Video-Konferenzen",
+    "screen sharing and spectating": "Bildschirm-Teilen und Zuschauen",
+    "collaborative writing/editing": "Kollaboratives Schreiben/Editieren",
+    "collaborative drawing/sketching": "Kollaboratives Skribbeln/Skizzieren",
+    "exploring structures and content": "Strukturen und Inhalte erkunden",
+    "Terms & Conditions / Community Guidelines": "Nutzungsvereinbarung / Community-Richtlinien",
+    "terms-and-guidelines": "Durch das Benutzen dieser Applikation, stimmen Sie den Nutzungsvereinbarungen und Community-Richtlinien zu.",
+    "Onboarding": "Einführung",
+    "onboarding-p-1": "Um die Einführungstour zu starten, klicke einfach auf den folgenden Button. Du wirst anschließend durch einige Bereiche der Applikation geführt.",
+    "Start Onboarding": "Einführung starten",
+    "learn-more": "Um mehr über <bold>udk/spaces</bold> zu erfahren/lernen, schau’ gerne mal auf unseren Hilfe-Seiten vorbei. Dort finden, nach und nach, weitere Anleitungen, Tutorials und Tips zur Problembehebung, um eine möglichst reibungslose Nutzung zu ermöglichen."
+}

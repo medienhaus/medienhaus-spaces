@@ -10,6 +10,7 @@ import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Button } from '@/components/UI/shadcn/Button';
+import { useOnboarding } from '@/components/onboarding/onboardingContext';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to
@@ -82,6 +83,8 @@ export default function Account() {
     const [feedbackMessage, setFeedbackMessage] = useState(null);
 
     const avatarFileUploadInput = useRef(null);
+
+    const onboarding = useOnboarding();
 
     const fetchEmails = useCallback(async () => {
         setEmails(map(filter((await matrixClient.getThreePids()).threepids, { medium: 'email' }), 'address'));
@@ -315,6 +318,19 @@ export default function Account() {
                     {feedbackMessage && <p>❗️ {feedbackMessage}</p>}
                 </ProfileSection>
             </div>
+            {onboarding?.active === false && (
+                <div>
+                    <h3>{t('Onboarding')}</h3>
+                    <Button
+                        className="bg-accent-foreground text-white hover:bg-accent disabled:bg-muted"
+                        onClick={() => {
+                            onboarding.startTour();
+                        }}
+                    >
+                        {t('Start Onboarding')}
+                    </Button>
+                </div>
+            )}
         </AccountSection>
     );
 }

@@ -40,3 +40,8 @@ yarn-error.log*
 
 # JetBrains IDE related things
 /.idea/workspace.xml
+
+
+# custom onboarding files
+/components/onboarding/onboardingScriptCustom.json
+/public/locales/*/onboardingCustom.json
