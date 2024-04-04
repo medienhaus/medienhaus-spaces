@@ -48,15 +48,9 @@ export default function Navigation({ closeNavigation }) {
         return null;
     }
 
-    // Guests should only see the /login entry
+    // Guests should not see the /login entry on the temporary /index start page before launch
     if (auth.user === false) {
-        return (
-            <List>
-                <li>
-                    <Link href="/login">/login</Link>
-                </li>
-            </List>
-        );
+        return null;
     }
 
     // If the user is logged in but has not started the onboarding process, hide navigation items to all routes but /logout

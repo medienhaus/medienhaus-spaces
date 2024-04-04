@@ -124,20 +124,6 @@ export default function BaseLayout({ children }) {
         return null;
     }
 
-    if (auth.user === false) {
-        return (
-            <>
-                <Wrapper>
-                    <Header>
-                        <h1>{getConfig().publicRuntimeConfig.name ?? 'medienhaus/'}</h1>
-                    </Header>
-                    <Sidebar />
-                    {children}
-                </Wrapper>
-            </>
-        );
-    }
-
     return (
         <>
             <Wrapper $isNavigationOpen={isNavigationOpen}>
