@@ -10,10 +10,13 @@
     "collaborative writing/editing": "Kollaboratives Schreiben/Editieren",
     "collaborative drawing/sketching": "Kollaboratives Skribbeln/Skizzieren",
     "exploring structures and content": "Strukturen und Inhalte erkunden",
-    "Terms & Conditions / Community Guidelines": "Nutzungsvereinbarung / Community-Richtlinien",
-    "terms-and-guidelines": "Durch das Benutzen dieser Applikation, stimmen Sie den Nutzungsvereinbarungen und Community-Richtlinien zu.",
+    "Terms & Conditions": "Nutzungsvereinbarung",
+    "Community Guidelines": "Community-Richtlinien",
+    "terms-and-guidelines": "Durch das Benutzen dieser Applikation, stimmen Sie den folgend verlinkten Nutzungsvereinbarungen und Community-Richtlinien zu.",
     "Onboarding": "Einführung",
     "onboarding-p-1": "Um die Einführungstour zu starten, klicke einfach auf den folgenden Button. Du wirst anschließend durch einige Bereiche der Applikation geführt.",
     "Start Onboarding": "Einführung starten",
-    "learn-more": "Um mehr über <bold>udk/spaces</bold> zu erfahren/lernen, schau’ gerne mal auf unseren Hilfe-Seiten vorbei. Dort finden, nach und nach, weitere Anleitungen, Tutorials und Tips zur Problembehebung, um eine möglichst reibungslose Nutzung zu ermöglichen."
+    "learn-more-p-1": "Um mehr über <bold>udk/spaces</bold> zu erfahren/lernen, schau’ gerne mal auf unsere ",
+    "help pages": "Hilfeseiten",
+    "learn-more-p-2": "Dort finden, nach und nach, weitere Anleitungen, Tutorials und Tips zur Problembehebung, um eine möglichst reibungslose Nutzung zu ermöglichen."
 }

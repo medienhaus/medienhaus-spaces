@@ -40,10 +40,7 @@ export default function Intro() {
 
                 <div>
                     <h3>{t('Features')}</h3>
-                    {/*
-                    <ul className="list-disc list-inside">
-                    */}
-                    <ul className="list-['\2013\0020'] list-inside">
+                    <ul className="list-inside list-['\2013\0020']">
                         <li>{t('real-time messaging')}</li>
                         <li>{t('private and group chats')}</li>
                         <li>{t('sending and receiving files')}</li>
@@ -58,15 +55,29 @@ export default function Intro() {
                 <hr />
 
                 <div>
-                    <h3>{t('Terms & Conditions / Community Guidelines')}</h3>
+                    <h3>
+                        {t('Terms & Conditions')} / {t('Community Guidelines')}
+                    </h3>
                     <p>
                         <Trans
                             t={t}
                             i18nKey="terms-and-guidelines"
-                            /* @NOTE: not sure if <a href="..." /> works inside <Trans /> ? */
-                            defaults='By using this app, you agree to the <a href="/terms">Terms & Conditions</a> and <a href="/community-guidelines">Community Guidelines</a>.'
-                            components={{ a: <a href /> }}
+                            defaults="By using this app, you agree to the Terms & Conditions and Community Guidelines linked below."
                         />
+                        <ul className="mt-4 list-inside list-['\2013\0020']">
+                            <li>
+                                {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
+                                <a href="/terms-and-conditions" rel="external nofollow noreferrer">
+                                    {t('Terms & Conditions')}
+                                </a>
+                            </li>
+                            <li>
+                                {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
+                                <a href="/community-guidelines" rel="external nofollow noreferrer">
+                                    {t('Community Guidelines')}
+                                </a>
+                            </li>
+                        </ul>
                     </p>
                 </div>
 
@@ -99,10 +110,19 @@ export default function Intro() {
                     <p>
                         <Trans
                             t={t}
-                            i18nKey="learn-more"
-                            /* @NOTE: not sure if <a href="..." /> works inside <Trans /> ? */
-                            defaults='To learn more about the app, visit our <a href="/help">Help Center</a>. You will, rather sooner than later, find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app.'
-                            components={{ a: <a href />, bold: <strong /> }}
+                            i18nKey="learn-more-p-1"
+                            defaults="To learn more about the app, visit the "
+                            components={{ bold: <strong /> }}
+                        />
+                        {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
+                        <a href="/help" rel="external nofollow noreferrer">
+                            {t('help pages')}
+                        </a>
+                        .
+                        <Trans
+                            t={t}
+                            i18nKey="learn-more-p-2"
+                            defaults="You will, rather sooner than later, find detailed guides, tutorials, and troubleshooting tips to help you make the most of the app."
                         />
                     </p>
                 </div>
