@@ -177,14 +177,14 @@ export default function Explore() {
         return true;
     };
 
-    const getIcon = (template) => {
-        if (template === 'etherpad') return <RiEditLine />;
-        if (template === 'spacedeck') return <RiBrush2Line />;
-        if (template === 'tldraw') return <RiBrushLine />;
-        if (template === 'link') return <RiLink />;
-
-        return <RiFolderUnknowLine />;
-    };
+    // const getIcon = (template) => {
+    //     if (template === 'etherpad') return <RiEditLine />;
+    //     if (template === 'spacedeck') return <RiBrush2Line />;
+    //     if (template === 'tldraw') return <RiBrushLine />;
+    //     if (template === 'link') return <RiLink />;
+    //
+    //     return <RiFolderUnknowLine />;
+    // };
 
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
