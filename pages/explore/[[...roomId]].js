@@ -284,10 +284,6 @@ export default function Explore() {
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
                             />
 
-                            {/*
-                                      @TODO: check this condition; is it really the same as for settings?
-                                      @NOTE: also see further below
-                                    */}
                             <Tabs
                                 className="w-full min-[767px]:overflow-auto [&>[role=tabpanel]]:pt-2"
                                 onValueChange={setActiveContentView}
@@ -397,7 +393,6 @@ export default function Explore() {
                                                         <Button
                                                             className="grid h-12 w-full grid-flow-col justify-between px-0 hover:text-accent"
                                                             variant="ghost"
-                                                            // onClick={() => setIsQuickAddOpen((prevState) => !prevState)}
                                                         >
                                                             {t('Add more …')}
                                                             <Icon>
