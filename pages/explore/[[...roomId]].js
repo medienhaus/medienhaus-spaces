@@ -177,15 +177,6 @@ export default function Explore() {
         return true;
     };
 
-    // const getIcon = (template) => {
-    //     if (template === 'etherpad') return <RiEditLine />;
-    //     if (template === 'spacedeck') return <RiBrush2Line />;
-    //     if (template === 'tldraw') return <RiBrushLine />;
-    //     if (template === 'link') return <RiLink />;
-    //
-    //     return <RiFolderUnknowLine />;
-    // };
-
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
     const columns = [
         {
@@ -196,11 +187,6 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                // const template = row.original?.meta?.template;
-                // const type = row.original?.meta?.type;
-
-                // return <Icon>{type === 'context' ? <RiFolderLine /> : !row.original?.meta ? <RiChat1Line /> : getIcon(template)}</Icon>;
-
                 /* @NOTE: the following conditions are copy-pasted from pages/explore/IframeSidebar.js */
 
                 if (row.original?.meta?.template === 'etherpad') {
