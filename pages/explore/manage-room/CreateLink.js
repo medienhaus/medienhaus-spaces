@@ -37,7 +37,7 @@ const CreateLink = ({ currentId, onCancel, getSpaceChildren, onPreviousAction })
 
         // create the new context space
         const createNewLink = await matrix
-            .createRoom(name, false, '', 'public', 'context', 'link', currentId, 'public', 'world_readable')
+            .createRoom(name, false, '', 'public', 'item', 'link', currentId, 'public', 'world_readable')
             .catch(async (err) => {
                 setErrorMessage(err.message);
             });
