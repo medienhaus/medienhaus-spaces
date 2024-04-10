@@ -98,11 +98,12 @@ export default function Explore() {
     );
     const currentTemplate =
         iframeRoomId &&
+        selectedSpaceChildren &&
         selectedSpaceChildren[selectedSpaceChildren.length - 1]?.find((space) => {
             const roomId = space.id || space.room_id || space.roomId;
 
             return roomId === iframeRoomId;
-        }).meta?.template;
+        })?.meta?.template;
 
     const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
     const canAddMoreContent = canManageSpace && !isFetchingSpaceChildren;
@@ -318,7 +319,7 @@ export default function Explore() {
                                 myPowerLevel={myPowerLevel}
                                 setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                        service="/explore"
+                                service="/explore"
                             />
 
                             <Tabs
