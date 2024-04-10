@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
 import _ from 'lodash';
 import {
@@ -16,21 +14,14 @@ import pino from 'pino';
 import { useImmer } from 'use-immer';
 
 import { useAuth } from '@/lib/Auth';
-import { useMatrix } from '@/lib/Matrix';
 import logger from '@/lib/Logging';
 
 const TldrawEditor = dynamic(() => import('@/components/TldrawEditor'), { ssr: false });
 
 export default function TldrawEditorComponent({ roomId, selectedDrawRef }) {
     const auth = useAuth();
-    const matrix = useMatrix();
+
     const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
-
-    const { t } = useTranslation('tldraw');
-    const router = useRouter();
-
-    const serviceSpaceId = matrix.serviceSpaces.tldraw;
-    const spacedeckChildren = matrix.spaces.get(serviceSpaceId)?.children?.filter((child) => child !== 'undefined'); // Filter out any undefined values to ensure 'spacedeckChildren' only contains valid objects
 
     const [editor, setEditor] = useState();
     const [initialSyncDone, setInitialSyncDone] = useState(false);
@@ -64,6 +55,7 @@ export default function TldrawEditorComponent({ roomId, selectedDrawRef }) {
     useEffect(() => {
         setInitialSyncDone(false);
         selectedDrawRef.current?.focus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [roomId]);
 
     const handleChangeInTldrawEditor = useCallback(
