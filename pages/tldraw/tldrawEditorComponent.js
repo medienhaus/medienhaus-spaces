@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 import dynamic from 'next/dynamic';
@@ -12,23 +12,11 @@ import {
     RoomEvent,
     TimelineWindow,
 } from 'matrix-js-sdk';
-import { RiUserAddLine } from '@remixicon/react';
 import pino from 'pino';
 import { useImmer } from 'use-immer';
 
 import { useAuth } from '@/lib/Auth';
-import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import { useMatrix } from '@/lib/Matrix';
-import { ServiceSubmenu } from '@/components/UI/ServiceSubmenu';
-import DefaultLayout from '@/components/layouts/default';
-import { ServiceTable } from '@/components/UI/ServiceTable';
-import ServiceLink from '@/components/UI/ServiceLink';
-import { path as tldrawPath } from '@/lib/Tldraw';
-import CreateNewTldraw from './actions/CreateNewTldraw';
-import CopyToClipboard from '@/components/UI/CopyToClipboard';
-import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
-import TextButton from '@/components/UI/TextButton';
-import Icon from '@/components/UI/Icon';
 import logger from '@/lib/Logging';
 
 const TldrawEditor = dynamic(() => import('@/components/TldrawEditor'), { ssr: false });
@@ -422,13 +410,11 @@ export default function TldrawEditorComponent({ roomId, selectedDrawRef }) {
     return (
         <>
             <TldrawEditor onMount={setEditor} key={roomId}>
-               {/* Debugging */}
+                {/* Debugging */}
                 {process.env.NODE_ENV !== 'production' && (
                     <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
                         <pre style={{ margin: '0 0 16px 0' }}>
-                            {selectedShapeMeta
-                                ? JSON.stringify(selectedShapeMeta, null, '\t')
-                                : 'Select one shape to see its meta data.'}
+                            {selectedShapeMeta ? JSON.stringify(selectedShapeMeta, null, '\t') : 'Select one shape to see its meta data.'}
                         </pre>
                     </div>
                 )}
