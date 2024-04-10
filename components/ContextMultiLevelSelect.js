@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/lib/Auth';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
+import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 
 const ContextMultiLevelSelectSingleLevel = ({
     parentSpaceRoomId,
@@ -14,15 +15,15 @@ const ContextMultiLevelSelectSingleLevel = ({
     templatePrefixFilter,
     sortAlphabetically,
     showTopics,
+    setSelectedContextName,
 }) => {
-    const { t } = useTranslation();
-
     const auth = useAuth();
     const matrix = auth.getAuthenticationProvider('matrix');
     const matrixClient = matrix.getMatrixClient();
     const [isLoading, setIsLoading] = useState(true);
     const [parentSpaceMetaEvent, setParentSpaceMetaEvent] = useState();
     const [childContexts, setChildContexts] = useState();
+    const { t } = useTranslation();
 
     useEffect(() => {
         let isSubscribed = true;
@@ -45,7 +46,10 @@ const ContextMultiLevelSelectSingleLevel = ({
             );
             if (!roomHierarchy) roomHierarchy = { rooms: [] };
 
+            // return name of selected context
+            setSelectedContextName && setSelectedContextName(roomHierarchy.rooms[0].name);
             // Remove the first entry, which is the context we retrieved the children for
+
             roomHierarchy.rooms.shift();
 
             // Ensure we're looking at contexts, and not spaces/rooms of other types
@@ -54,7 +58,7 @@ const ContextMultiLevelSelectSingleLevel = ({
                 // If this space/room does not have a meta event we do not care about it
                 if (!metaEvent) continue;
                 // If this is not a context, ignore this space child
-                if (metaEvent && metaEvent.type !== 'context') continue;
+                // if (metaEvent && metaEvent.type !== 'context') continue;
                 // If we only want to show specific contexts, ignore this space child if its template doesn't have the given prefix
                 if (templatePrefixFilter && metaEvent && !_.startsWith(metaEvent.template, templatePrefixFilter)) continue;
                 // ... otherwise show this space child:
@@ -90,7 +94,7 @@ const ContextMultiLevelSelectSingleLevel = ({
         return (
             <Select key="loading" disabled>
                 <SelectTrigger>
-                    <SelectValue placeholder={t('loading...')} />
+                    <SelectValue placeholder={<LoadingSpinnerInline />} />
                 </SelectTrigger>
             </Select>
         );
@@ -113,7 +117,7 @@ const ContextMultiLevelSelectSingleLevel = ({
                     <SelectValue placeholder={templatePlaceholderMapping[parentSpaceMetaEvent.template]} />
                 ) : (
                     // ... otherwise just show an empty placeholder
-                    <SelectValue />
+                    <SelectValue placeholder={`-- ${t('select option')} --`} />
                 )}
             </SelectTrigger>
             <SelectContent>
@@ -138,6 +142,7 @@ const ContextMultiLevelSelectSingleLevel = ({
  * @param {boolean} sortAlphabetically - If entries should be ordered alphabetically
  * @param {Object} templatePlaceholderMapping - Optional object containing placeholders for each <select> based on the `dev.medienhaus.meta.template` of the parent context
  * @param {string} templatePrefixFilter - Optional prefix to filter contexts by their templates
+ * @param {React.setState} setSelectedContextName- Oprional setter function for parent name
  *
  * @return {React.ReactNode}
  */
@@ -148,12 +153,14 @@ const ContextMultiLevelSelect = ({
     sortAlphabetically,
     templatePlaceholderMapping,
     templatePrefixFilter,
+    setSelectedContextName,
 }) => {
     const onSelect = useCallback(
         (parentContextRoomId, selectedChildContextRoomId) => {
             const newActiveContexts = [
                 ...activeContexts.splice(0, activeContexts.findIndex((contextRoomId) => contextRoomId === parentContextRoomId) + 1),
             ];
+
             if (selectedChildContextRoomId) newActiveContexts.push(selectedChildContextRoomId);
             onChange(newActiveContexts, undefined);
         },
@@ -183,6 +190,7 @@ const ContextMultiLevelSelect = ({
                         sortAlphabetically={sortAlphabetically}
                         templatePlaceholderMapping={templatePlaceholderMapping}
                         templatePrefixFilter={templatePrefixFilter}
+                        setSelectedContextName={setSelectedContextName}
                     />
                 ))}
         </>

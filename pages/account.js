@@ -10,6 +10,7 @@ import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import DefaultLayout from '@/components/layouts/default';
 import { Input } from '@/components/UI/shadcn/Input';
 import { Button } from '@/components/UI/shadcn/Button';
+import { useOnboarding } from '@/components/onboarding/onboardingContext';
 
 const AccountSection = styled(DefaultLayout.LameColumn)`
     /* TODO: these kind of layout spacings probably need to
@@ -33,23 +34,16 @@ const AccountSection = styled(DefaultLayout.LameColumn)`
 
 const AvatarSection = styled.div`
     display: grid;
-    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
     grid-gap: var(--margin);
-
-    @media (min-width: 40em) {
-        grid-template-columns: 1fr 1fr;
-    }
 `;
 
 const Avatar = styled.img`
-    width: 50%;
-
     &.placeholder {
+        -webkit-backdrop-filter: invert(100%);
         backdrop-filter: invert(100%);
-    }
-
-    @media (min-width: 40em) {
-        width: 70%;
+        height: 6rem;
+        width: 6rem;
     }
 `;
 
@@ -89,6 +83,8 @@ export default function Account() {
     const [feedbackMessage, setFeedbackMessage] = useState(null);
 
     const avatarFileUploadInput = useRef(null);
+
+    const onboarding = useOnboarding();
 
     const fetchEmails = useCallback(async () => {
         setEmails(map(filter((await matrixClient.getThreePids()).threepids, { medium: 'email' }), 'address'));
@@ -276,7 +272,7 @@ export default function Account() {
                             {t('Browse')} …
                         </Button>
                         {profileInfo.avatar_url && (
-                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
+                            <Button type="button" variant="destructive" disabled={isChangingAvatar} onClick={deleteAvatar}>
                                 {t('Delete')}
                             </Button>
                         )}
@@ -304,7 +300,7 @@ export default function Account() {
                     {profileInfo.displayname !== inputDisplayname && (
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     )}
-                    {emails.map((email, index) => (
+                    {emails.map((email) => (
                         <Input key={email} type="email" value={email} disabled />
                     ))}
                     {!!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (
@@ -322,6 +318,19 @@ export default function Account() {
                     {feedbackMessage && <p>❗️ {feedbackMessage}</p>}
                 </ProfileSection>
             </div>
+            {onboarding?.active === false && (
+                <div>
+                    <h3>{t('Onboarding')}</h3>
+                    <Button
+                        className="bg-accent-foreground text-white hover:bg-accent disabled:bg-muted"
+                        onClick={() => {
+                            onboarding.startTour();
+                        }}
+                    >
+                        {t('Start Onboarding')}
+                    </Button>
+                </div>
+            )}
         </AccountSection>
     );
 }

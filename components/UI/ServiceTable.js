@@ -74,7 +74,9 @@ const TableHeader = styled.th`
 
 const TableCell = styled.td`
     line-height: calc(var(--margin) * 3 - 2px);
-    white-space: nowrap;
+    ${props => props.small && 'font-size: 75%; text-indent: var(--margin);'}
+
+  white-space: nowrap;
 
     > a {
         color: ${(props) => props.selected && 'var(--color-disabled)'};

@@ -35,7 +35,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+#vs code workspace files
 *.code-workspace
 
 # JetBrains IDE related things
 /.idea/workspace.xml
+
+
+# custom onboarding files
+/components/onboarding/onboardingScriptCustom.json
+/public/locales/*/onboardingCustom.json

@@ -131,6 +131,7 @@ export default function Tldraw() {
                         <DefaultLayout.IframeHeaderButtonWrapper>
                             <InviteUserToMatrixRoom
                                 roomId={roomId}
+                                promote
                                 trigger={
                                     <TextButton title={t('Invite users to {{name}}', { name: matrix.rooms.get(roomId).name })}>
                                         <Icon>

@@ -1,0 +1,261 @@
+[
+    {
+        "steps": [
+            {
+                "popover": {
+                    "title": "Welcome",
+                    "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Welcome",
+                    "description": "This should not get too tiering, so we will keep it short with just a rough overview of some main functions."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Welcome",
+                    "description": "If a blinking arrow shows up, it is needed to excecute a click or touch from your side."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Welcome",
+                    "description": "Let’s not waste any time and start with the first section …"
+                }
+            }
+        ]
+    },
+    {
+        "route": "/dashboard",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Your personal inbox",
+                    "description": "The dashboard functions as your personal inbox. Here you can see all kind of invites, your notifications, and your favourites."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Your inbox",
+                    "description": "For now it is quite empty here but if any other users want to /chat with you or wants to work collaboratively on a /write document, you can find your notification here."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Your inbox",
+                    "description": "If there are things to catch up for you, a small dot will appear next to the /dashboard link in the main navigation."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Your inbox",
+                    "description": "Maybe you got already invited to some spaces. If thats the case you can accept those. With the click on the underlined name you will be redirected to the space."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Your inbox",
+                    "description": "But first, let’s see what’s going on in this application. Let’s go to the /explore page next …"
+                }
+            }
+        ]
+    },
+    {
+        "route": "/explore",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Your spaces",
+                    "description": "First of all we will start with the /explore page. This is where you can find all the spaces structured by their context."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Your spaces",
+                    "description": "You can navigate from level to level and see what is going on in the different contexts."
+                }
+            },
+            {
+                "popover": {
+                    "element": "main table tr:first-of-type",
+                    "title": "Your spaces",
+                    "description": "Let’s click on the entry level and traverse down the tree."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/chat",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Communicate",
+                    "description": "One of the major functionalities is /chat. Here you can communicate with others in real time: in one-to-one chats, or in group chats."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Communicate",
+                    "element": "main details:first-of-type",
+                    "description": "All your chats will be listed here. It will be seperated in private chats and group chats."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Communicate",
+                    "element": "main h2 > button",
+                    "description": "If you want to create a new chat, just click the button at the top."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Communicate",
+                    "description": "You can select to create either a direct message, or a group chat."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Communicate",
+                    "description": "For group chats, you can set the visibility of the chat room. Do you want to make the room public to all udk accounts, or just to the invited ones."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Encrypted",
+                    "description": "Be aware of the the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Encrypted",
+                    "description": "Be aware of the the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Contextualize",
+                    "description": "Anyway, after creating a groupchat, you can later assign it to a specific context via /explore, … just like a file or a document in your operating system."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Going on",
+                    "description": "Speaking of documents, let’s go to the /write tool next …"
+                }
+            }
+        ]
+    },
+    {
+        "route": "/write",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Let’s create some items.",
+                    "description": "With the /write tool you can create some collaborative text documents."
+                }
+            },
+            {
+                "element": "main header button:first-of-type",
+                "popover": {
+                    "title": "Create it",
+                    "description": "Let’s create a new document, just as an example, as right now it looks quite empty here. Please press the add button at the top."
+                }
+            },
+            {
+                "element": "main form h3:first-of-type",
+                "popover": {
+                    "title": "Name it",
+                    "description": "First of all, give the document a name. It will be visible to others."
+                }
+            },
+            {
+                "element": "main form label:first-of-type",
+                "popover": {
+                    "title": "Protect it",
+                    "description": "If you want to protect it from being seen by others, who know or guess the document address, you can set a password."
+                }
+            },
+            {
+                "element": "main form button[type=submit]",
+                "popover": {
+                    "title": "Submit it",
+                    "description": "Press the button and *tada* you have created a document. You can now edit it and invite others to join."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Library",
+                    "description": "From now on you can find all the documents you created in /write. Quite handy, isn’t it?"
+                }
+            },
+            {
+                "popover": {
+                    "title": "Contextualize",
+                    "description": "Don’t forget that you can also add your documents to some context in /explore to make them visible to others in the specfic contexts."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/account",
+        "steps": [
+            {
+                "popover": {
+                    "title": "Show yourself",
+                    "description": "Next stop: your /account. This is where you can personalize your profile, how it will be seen by others."
+                }
+            },
+            {
+                "element": "main h3:has(+form)",
+                "popover": {
+                    "title": "What’s your name?",
+                    "description": "You can change your display name to anything you want to. But be aware, your official username, i.e. account address, will still be visible to others."
+                }
+            },
+            {
+                "element": "main h3:first-of-type",
+                "popover": {
+                    "title": "Profile picture",
+                    "description": "How about adding a photo? It will be visible to others for example in /chat."
+                }
+            }
+        ]
+    },
+    {
+        "route": "/explore",
+        "steps": [
+            {
+                "popover": {
+                    "title": "",
+                    "description": "We are heading towards the end of this onboarding tour. Let’s go back to /explore once more."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Browse and add",
+                    "description": "Browse around the structure, request access, or add further contexts or items, which you are interested in, to your own spaces."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Missing something?",
+                    "description": "If there isn’t that much content, yet, tell others in your institution to join udk/spaces and contribute."
+                }
+            },
+            {
+                "popover": {
+                    "title": "More?",
+                    "description": "There are many other functions to use. Just have a look around and try them out."
+                }
+            },
+            {
+                "popover": {
+                    "title": "Finished!",
+                    "description": "That’s all for now. You can restart the onboarding at any time via /account. Have fun!"
+                }
+            }
+        ]
+    }
+]
