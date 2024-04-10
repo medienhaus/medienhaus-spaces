@@ -422,11 +422,13 @@ export default function TldrawEditorComponent({ roomId, selectedDrawRef }) {
     return (
         <>
             <TldrawEditor onMount={setEditor} key={roomId}>
-                {/* Debugging */}
+               {/* Debugging */}
                 {process.env.NODE_ENV !== 'production' && (
                     <div style={{ position: 'absolute', zIndex: 300, top: 64, left: 12 }}>
                         <pre style={{ margin: '0 0 16px 0' }}>
-                            {selectedShapeMeta ? JSON.stringify(selectedShapeMeta, null, '\t') : 'Select one shape to see its meta data.'}
+                            {selectedShapeMeta
+                                ? JSON.stringify(selectedShapeMeta, null, '\t')
+                                : 'Select one shape to see its meta data.'}
                         </pre>
                     </div>
                 )}
