@@ -26,7 +26,6 @@ const ExploreIframeViews = ({
 
     const [title, setTitle] = useState(parsedTitle);
 
-    console.log('currentTemplate', currentTemplate);
     let iframeUrl;
 
     if (currentTemplate === 'tldraw') {
