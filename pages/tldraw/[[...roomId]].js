@@ -1,20 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import dynamic from 'next/dynamic';
 import _ from 'lodash';
-import {
-    ClientEvent,
-    createClient as createMatrixClient,
-    EventTimeline,
-    EventType,
-    Filter,
-    RoomEvent,
-    TimelineWindow,
-} from 'matrix-js-sdk';
 import { RiUserAddLine } from '@remixicon/react';
-import pino from 'pino';
-import { useImmer } from 'use-immer';
 
 import { useAuth } from '@/lib/Auth';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
@@ -29,10 +17,7 @@ import CopyToClipboard from '@/components/UI/CopyToClipboard';
 import { InviteUserToMatrixRoom } from '@/components/UI/InviteUsersToMatrixRoom';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
-import logger from '@/lib/Logging';
 import TldrawEditorComponent from './tldrawEditorComponent';
-
-const TldrawEditor = dynamic(() => import('@/components/TldrawEditor'), { ssr: false });
 
 export default function Tldraw() {
     const auth = useAuth();
