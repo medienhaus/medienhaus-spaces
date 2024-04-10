@@ -1,11 +1,3 @@
-.driver-active {
-    pointer-events: unset;
-}
-
-.driver-active * {
-    pointer-events: all !important;
-}
-
 .driver-overlay {
     display: none !important;
     z-index: 30 !important;
@@ -13,6 +5,11 @@
 
 .driverJsPopOver {
     display: none !important ;
+}
+
+.driver-active .driver-overlay,
+.driver-active * {
+    pointer-events: unset;
 }
 
 .driver-active-element::before {
