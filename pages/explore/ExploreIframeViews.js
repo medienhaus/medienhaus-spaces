@@ -1,5 +1,5 @@
 import getConfig from 'next/config';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import ServiceIframeHeader from '../../components/UI/ServiceIframeHeader';
 import ExploreChatView from './ExploreChatView';
@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
 import DefaultLayout from '../../components/layouts/default';
 import IframeSidebar from './IframeSidebar';
+import TldrawEditorComponent from '../tldraw/tldrawEditorComponent';
 
 const ExploreIframeViews = ({
     currentTemplate,
@@ -25,7 +26,15 @@ const ExploreIframeViews = ({
 
     const [title, setTitle] = useState(parsedTitle);
 
-    const iframeUrl = currentTemplate ? new URL(matrix.roomContents.get(iframeRoomId)?.body) : iframeRoomId;
+    console.log('currentTemplate', currentTemplate);
+    let iframeUrl;
+
+    if (currentTemplate === 'tldraw') {
+        iframeUrl = getConfig().publicRuntimeConfig.authProviders.tldraw.path + '/' + iframeRoomId;
+        // hacky for now, will need to be refactored later in case of more applications
+    } else {
+        iframeUrl = currentTemplate ? new URL(matrix.roomContents.get(iframeRoomId)?.body) : iframeRoomId;
+    }
 
     // add auth token to etherpad iframe, so authors of the pad don't have to input the password again
     if (currentTemplate === 'etherpad') {
@@ -47,6 +56,8 @@ const ExploreIframeViews = ({
 
         return () => (cancelled = true);
     }, [iframeRoomId, matrixClient, parsedTitle]);
+
+    const selectedDrawRef = useRef(null); // for tldraw editor
 
     return (
         <>
@@ -85,6 +96,12 @@ const ExploreIframeViews = ({
                                     return (
                                         <>
                                             <iframe title="sketch" src={iframeUrl} />
+                                        </>
+                                    );
+                                case 'tldraw':
+                                    return (
+                                        <>
+                                            <TldrawEditorComponent roomId={iframeRoomId} selectedDrawRef={selectedDrawRef} />
                                         </>
                                     );
                             }
