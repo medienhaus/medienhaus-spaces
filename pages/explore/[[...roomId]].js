@@ -278,7 +278,29 @@ export default function Explore() {
         getCoreRowModel: getCoreRowModel(),
     });
 
-    if (typeof window === 'undefined') return <LoadingSpinner />;
+    if (typeof window === 'undefined') {
+        return (
+            <DefaultLayout.LameColumn>
+                <LoadingSpinner className="!h-4 !w-4 !border-[2px]" />
+            </DefaultLayout.LameColumn>
+        );
+    }
+
+    if (isFetchingSpaceChildren) {
+        return (
+            <>
+                {progress !== 0 && (
+                    <div className="absolute left-0 top-0 w-full">
+                        <Progress value={progress} />
+                    </div>
+                )}
+
+                <DefaultLayout.LameColumn>
+                    <LoadingSpinner className="!h-[var(--icon-size)] !w-[var(--icon-size)] !border-[2px]" />
+                </DefaultLayout.LameColumn>
+            </>
+        );
+    }
 
     return (
         <>
