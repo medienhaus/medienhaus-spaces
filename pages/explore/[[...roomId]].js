@@ -105,7 +105,7 @@ export default function Explore() {
         }).meta?.template;
 
     const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
-    const canAddMoreContent = canManageSpace && !isFetchingSpaceChildren;
+    const canAddMoreContent = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
 
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
@@ -178,6 +178,7 @@ export default function Explore() {
     };
 
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
+
     const columns = [
         {
             accessorKey: 'icon',
@@ -286,6 +287,7 @@ export default function Explore() {
                     <Progress value={progress} />
                 </div>
             )}
+
             {iframeRoomId ? (
                 <ExploreIframeViews
                     selectedSpaceChildren={selectedSpaceChildren}
@@ -355,6 +357,7 @@ export default function Explore() {
                                         </Icon>
                                         {isDesktop && t('Members')}
                                     </TabsTrigger>
+
                                     {canManageSpace && (
                                         <TabsTrigger
                                             onClick={() => {
@@ -372,15 +375,16 @@ export default function Explore() {
                                         </TabsTrigger>
                                     )}
                                 </TabsList>
+
                                 <TabsContent value="content">
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
                                             <Table>
                                                 {/*
-                                                  @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
-                                                  fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
-                                                  from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
-                                                */}
+                                                      @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
+                                                      fortunately this does not apply to box-shadow, hence the madness below; we also increase the height
+                                                      from 48px (tailwind h-12 class in Table) to 50px, as the box-shadow is inset, else not shown on top
+                                                    */}
                                                 <TableHeader className="sticky top-0 h-[50px] bg-background shadow-[inset_0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2),inset_0px_1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                     {table.getHeaderGroups().map((headerGroup) => (
                                                         <TableRow key={headerGroup.id}>
@@ -418,7 +422,7 @@ export default function Explore() {
                                             </Table>
                                         )}
 
-                                        {canAddMoreContent && progress === 0 && (
+                                        {canAddMoreContent && (
                                             <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                 <QuickAddExplore
                                                     currentId={roomId}
