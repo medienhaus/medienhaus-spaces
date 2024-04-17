@@ -39,6 +39,7 @@
     "Show members of {{name}}" : "Zeige Mitglieder von {{name}}",
     "Show settings of {{name}}": "Zeige Einstellungen von {{name}}",
     "Successfully added to {{parentName}}": "Wurde erfolgreich zu {{parentName}} hinzugefügt",
+    "There’s no contexts or items here, yet.": "Hier wurden noch keine Kontexte oder Inhalte hinterlegt.",
     "Topic": "Thema",
     "topic": "Thema",
     "topic of the room": "Thema des Raums",
