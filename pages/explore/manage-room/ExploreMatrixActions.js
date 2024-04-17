@@ -19,23 +19,26 @@ import { useAuth } from '@/lib/Auth';
  * @returns {JSX.Element} - The rendered component.
  */
 
-const ExploreMatrixActions = ({
-    currentId,
-    parentId,
-    myPowerLevel,
-}) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel }) => {
     const { t } = useTranslation('explore');
+
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
 
     const [settingsTabValue, setSettingsTabValue] = useState('general');
 
-    if (!myPowerLevel) return t("You don't have the neccesarry permissions to manage this room");
+    if (!myPowerLevel) return t('You don’t have the necessary permissions to manage this room.');
+
     const room = matrixClient.getRoom(currentId);
+
     if (!room) return <LoadingSpinner />;
 
     return (
         <>
-            <Tabs className="[&>[role=tabpanel]]:pt-6 [&>[id*=-content-]]:max-w-[55ch]" onValueChange={setSettingsTabValue} value={settingsTabValue}>
+            <Tabs
+                className="[&>[id*=-content-]]:max-w-[55ch] [&>[role=tabpanel]]:pt-6"
+                onValueChange={setSettingsTabValue}
+                value={settingsTabValue}
+            >
                 <TabsList>
                     <TabsTrigger
                         onClick={() => {
@@ -71,9 +74,7 @@ const ExploreMatrixActions = ({
                         {room.currentState.hasSufficientPowerLevelFor('m.room.avatar', myPowerLevel) && (
                             <div className="[&>*+*]:mt-4">
                                 <h3>{t('Avatar')}</h3>
-                                <ChangeAvatar
-                                    roomId={currentId}
-                                />
+                                <ChangeAvatar roomId={currentId} />
                             </div>
                         )}
                     </>
@@ -82,10 +83,7 @@ const ExploreMatrixActions = ({
                 <TabsContent className="pb-6 [&>*+*]:mt-8" value="advanced">
                     {room.currentState.hasSufficientPowerLevelFor('m.room.join_rules', myPowerLevel) && (
                         <div>
-                            <ChangeJoinRule
-                                roomId={currentId}
-                                roomName={room.name}
-                            />
+                            <ChangeJoinRule roomId={currentId} roomName={room.name} />
                         </div>
                     )}
 
