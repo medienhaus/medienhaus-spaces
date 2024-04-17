@@ -128,7 +128,7 @@ export default function Tldraw() {
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={tldrawPath + '/' + roomId} />
                         </DefaultLayout.IframeHeaderButtonWrapper>
                     </DefaultLayout.IframeHeader>
-                    <div className="h-full w-full">
+                    <div className="h-full w-full !px-0">
                         <TldrawEditorComponent roomId={roomId} selectedDrawRef={selectedDrawRef} />
                     </div>
                 </DefaultLayout.IframeWrapper>
