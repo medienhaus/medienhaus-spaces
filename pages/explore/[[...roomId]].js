@@ -35,7 +35,7 @@ import { Button } from '@/components/UI/shadcn/Button';
 import TextButton from '@/components/UI/TextButton';
 import Icon from '@/components/UI/Icon';
 import UserManagement from './manage-room/UserManagement';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/UI/shadcn/Table';
 import TreeLeaves from './TreeLeaves';
 import EllipsisMenu from './manage-room/EllipsisMenu';
 import { useGetSpaceChildren } from '@/components/hooks/useGetSpaceChildren';
