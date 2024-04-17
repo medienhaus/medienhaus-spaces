@@ -104,7 +104,6 @@ export default function Explore() {
             return roomId === iframeRoomId;
         }).meta?.template;
 
-    const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
     const canAddMoreContent = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
 
     // Redirect to the default room if no roomId is provided
@@ -380,22 +379,20 @@ export default function Explore() {
                                         {isDesktop && t('Members')}
                                     </TabsTrigger>
 
-                                    {canManageSpace && (
-                                        <TabsTrigger
-                                            onClick={() => {
-                                                setActiveContentView('settings');
-                                            }}
-                                            title={t('Show settings of {{name}}', {
-                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
-                                            })}
-                                            value="settings"
-                                        >
-                                            <Icon>
-                                                <RiListSettingsLine />
-                                            </Icon>
-                                            {isDesktop && t('Settings')}
-                                        </TabsTrigger>
-                                    )}
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('settings');
+                                        }}
+                                        title={t('Show settings of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="settings"
+                                    >
+                                        <Icon>
+                                            <RiListSettingsLine />
+                                        </Icon>
+                                        {isDesktop && t('Settings')}
+                                    </TabsTrigger>
                                 </TabsList>
 
                                 <TabsContent value="content">
