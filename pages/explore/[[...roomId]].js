@@ -399,7 +399,7 @@ export default function Explore() {
 
                                 <TabsContent value="content">
                                     <>
-                                        {table.getRowModel().rows?.length > 1 && (
+                                        {table.getRowModel().rows?.length > 1 ? (
                                             <Table>
                                                 {/*
                                                   @NOTE: we cannot use border-top/-bottom for sticky thead (because borders scroll with the content);
@@ -426,21 +426,15 @@ export default function Explore() {
                                                 </TableHeader>
 
                                                 <TableBody>
-                                                    {table.getRowModel().rows?.length ? (
-                                                        table.getRowModel().rows.map((row, index) => {
-                                                            if (index === 0) return null;
+                                                    {table.getRowModel().rows.map((row, index) => {
+                                                        if (index === 0) return null;
 
-                                                            return <TreeLeaves key={row.id} row={row} />;
-                                                        })
-                                                    ) : (
-                                                        <TableRow>
-                                                            <TableCell colSpan={columns.length} className="h-24 text-center">
-                                                                Thank you, {auth.user.displayname}! But our item is in another context! 🍄
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
+                                                        return <TreeLeaves key={row.id} row={row} />;
+                                                    })}
                                                 </TableBody>
                                             </Table>
+                                        ) : (
+                                            t('There’s no contexts or items here, yet.')
                                         )}
 
                                         {canAddMoreContent && (
