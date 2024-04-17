@@ -6,9 +6,9 @@ import { RiStarFill, RiStarLine } from '@remixicon/react';
 import TextButton from '../TextButton';
 import { useMatrix } from '@/lib/Matrix';
 import { useAuth } from '@/lib/Auth';
-import LoadingSpinnerInline from '../LoadingSpinnerInline';
 import Icon from '../Icon';
 import logger from '@/lib/Logging';
+import LoadingSpinner from '../LoadingSpinner';
 
 /**
  * AddFavourite component for adding a favourite to the matrix account data.
@@ -59,7 +59,9 @@ const AddFavourite = ({ roomId }) => {
             onClick={isFavourite ? removeFavouriteFromMatrix : addFavouriteToMatrix}
         >
             {isHandlingFavourite ? (
-                <LoadingSpinnerInline />
+                <Icon>
+                    <LoadingSpinner className="mx-auto max-h-[16px] max-w-[16px] !border-[2px]" />
+                </Icon>
             ) : isFavourite ? (
                 <Icon>
                     <RiStarFill />
