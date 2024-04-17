@@ -27,7 +27,7 @@ const TemplateSelect = ({ setTemplate }) => {
         setTemplate(value);
     };
 
-    if (!contextTemplates) return <ErrorMessage>{t('No context templates defined, please contact the administrator.')}</ErrorMessage>;
+    if (!contextTemplates) return null;
 
     return (
         <Select defaultValue={contextTemplates?.[0] || '-'} onValueChange={onChangeTemplateSelect}>
