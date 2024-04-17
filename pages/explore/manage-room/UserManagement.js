@@ -35,7 +35,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     const { t } = useTranslation('explore');
 
     const handleKick = async (userId, name) => {
-        if (confirm(t('Are you sure you want to kick {{name}} from {{room}}', { name: name, room: roomName }))) {
+        if (confirm(t('Are you sure you want to kick {{name}} from {{room}}?', { name: name, room: roomName }))) {
             await matrixClient.kick(roomId, userId).catch((error) => setErrorMessage(error.data.error));
         }
     };
@@ -43,7 +43,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
     const changePowerLevel = async (userId, level, name) => {
         const label = presets.powerLevels.find((role) => role.level === level).label;
 
-        if (confirm(t('Are you sure you want to promote {{name}} to {{role}}', { name: name, role: label }))) {
+        if (confirm(t('Are you sure you want to promote {{name}} to {{role}}?', { name: name, role: label }))) {
             const currentStateEvent = await matrixClient.getStateEvent(roomId, 'm.room.power_levels', '');
             const newStateEvent = new MatrixEvent({
                 type: 'm.room.power_levels',
@@ -53,7 +53,7 @@ const UserManagement = ({ roomId, roomName, myPowerLevel }) => {
         }
     };
 
-    if (!room) return <p>Join the room to see or invite members</p>;
+    if (!room || room.selfMembership !== 'join') return t('Join the room to see or invite members.');
 
     return (
         <>
