@@ -18,7 +18,7 @@ const CreateContext = ({ currentId, onCancel, getSpaceChildren, onPreviousAction
     const [name, setName] = useState('');
     const [topic, setTopic] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [template, setTemplate] = useState('');
+    const [template, setTemplate] = useState('context');
     const [powerLevels, setPowerLevels] = useState();
     const [createNewContextErrorMessage, setCreateNewContextErrorMessage] = useState();
 
