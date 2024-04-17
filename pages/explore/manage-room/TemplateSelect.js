@@ -27,7 +27,7 @@ const TemplateSelect = ({ setTemplate }) => {
         setTemplate(value);
     };
 
-    if (!contextTemplates) return <></>;
+    if (!contextTemplates) return null;
 
     return (
         <Select defaultValue={contextTemplates?.[0] || '-'} onValueChange={onChangeTemplateSelect}>
