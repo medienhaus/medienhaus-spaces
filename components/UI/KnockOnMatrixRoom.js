@@ -5,9 +5,9 @@ import { RiCheckLine, RiDoorClosedLine } from '@remixicon/react';
 
 import Icon from './Icon';
 import TextButton from './TextButton';
-import LoadingSpinnerInline from './LoadingSpinnerInline';
 import { useAuth } from '@/lib/Auth';
 import logger from '../../lib/Logging';
+import LoadingSpinner from './LoadingSpinner';
 
 const KnockOnMatrixRoom = ({ roomName, roomId }) => {
     const [isKnocking, setIsKnocking] = useState(false);
@@ -72,7 +72,13 @@ const KnockOnMatrixRoom = ({ roomName, roomId }) => {
             onClick={requestAccess}
             disabled={membership === 'knock'}
         >
-            {isKnocking ? <LoadingSpinnerInline /> : <Icon>{wasSuccessful ? <RiCheckLine /> : <RiDoorClosedLine />}</Icon>}
+            {isKnocking ? (
+                <Icon>
+                    <LoadingSpinner className="mx-auto max-h-[16px] max-w-[16px] !border-[2px]" />
+                </Icon>
+            ) : (
+                <Icon>{wasSuccessful ? <RiCheckLine /> : <RiDoorClosedLine />}</Icon>
+            )}
         </TextButton>
     );
 };

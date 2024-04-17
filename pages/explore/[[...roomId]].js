@@ -104,8 +104,7 @@ export default function Explore() {
             return roomId === iframeRoomId;
         }).meta?.template;
 
-    const canManageSpace = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
-    const canAddMoreContent = canManageSpace && !isFetchingSpaceChildren;
+    const canAddMoreContent = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
 
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
@@ -178,6 +177,7 @@ export default function Explore() {
     };
 
     const data = selectedSpaceChildren[selectedSpaceChildren.length - 1];
+
     const columns = [
         {
             accessorKey: 'icon',
@@ -277,7 +277,29 @@ export default function Explore() {
         getCoreRowModel: getCoreRowModel(),
     });
 
-    if (typeof window === 'undefined') return <LoadingSpinner />;
+    if (typeof window === 'undefined') {
+        return (
+            <DefaultLayout.LameColumn>
+                <LoadingSpinner className="!h-4 !w-4 !border-[2px]" />
+            </DefaultLayout.LameColumn>
+        );
+    }
+
+    if (isFetchingSpaceChildren) {
+        return (
+            <>
+                {progress !== 0 && (
+                    <div className="absolute left-0 top-0 w-full">
+                        <Progress value={progress} />
+                    </div>
+                )}
+
+                <DefaultLayout.LameColumn>
+                    <LoadingSpinner className="!h-[var(--icon-size)] !w-[var(--icon-size)] !border-[2px]" />
+                </DefaultLayout.LameColumn>
+            </>
+        );
+    }
 
     return (
         <>
@@ -286,6 +308,7 @@ export default function Explore() {
                     <Progress value={progress} />
                 </div>
             )}
+
             {iframeRoomId ? (
                 <ExploreIframeViews
                     selectedSpaceChildren={selectedSpaceChildren}
@@ -356,23 +379,23 @@ export default function Explore() {
                                         </Icon>
                                         {isDesktop && t('Members')}
                                     </TabsTrigger>
-                                    {canManageSpace && (
-                                        <TabsTrigger
-                                            onClick={() => {
-                                                setActiveContentView('settings');
-                                            }}
-                                            title={t('Show settings of {{name}}', {
-                                                name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
-                                            })}
-                                            value="settings"
-                                        >
-                                            <Icon>
-                                                <RiListSettingsLine />
-                                            </Icon>
-                                            {isDesktop && t('Settings')}
-                                        </TabsTrigger>
-                                    )}
+
+                                    <TabsTrigger
+                                        onClick={() => {
+                                            setActiveContentView('settings');
+                                        }}
+                                        title={t('Show settings of {{name}}', {
+                                            name: selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name,
+                                        })}
+                                        value="settings"
+                                    >
+                                        <Icon>
+                                            <RiListSettingsLine />
+                                        </Icon>
+                                        {isDesktop && t('Settings')}
+                                    </TabsTrigger>
                                 </TabsList>
+
                                 <TabsContent value="content">
                                     <>
                                         {table.getRowModel().rows?.length > 1 && (
@@ -419,7 +442,7 @@ export default function Explore() {
                                             </Table>
                                         )}
 
-                                        {canAddMoreContent && progress === 0 && (
+                                        {canAddMoreContent && (
                                             <div className="sticky bottom-0 flex w-full items-center space-x-2 bg-background shadow-[0px_-1px_0px_0px_hsl(var(--muted-foreground)_/_0.2)]">
                                                 <QuickAddExplore
                                                     currentId={roomId}
@@ -442,32 +465,32 @@ export default function Explore() {
                                         )}
 
                                         {/* @NOTE: pagination component which we are currently not using, but might in the future
-                                            {table.getRowModel().rows?.length > 1 && (
-                                                <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
-                                                    <div className="flex-1 text-sm text-muted-foreground">
-                                                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                                                    </div>
-                                                    <div className="space-x-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => table.previousPage()}
-                                                            disabled={!table.getCanPreviousPage()}
-                                                        >
-                                                            Previous
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={() => table.nextPage()}
-                                                            disabled={!table.getCanNextPage()}
-                                                        >
-                                                            Next
-                                                        </Button>
-                                                    </div>
+                                        {table.getRowModel().rows?.length > 1 && (
+                                            <div className="sticky bottom-0 flex w-full items-center space-x-2 border-t border-muted-foreground/20 bg-background py-4">
+                                                <div className="flex-1 text-sm text-muted-foreground">
+                                                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                                                 </div>
-                                            )}
-                                            */}
+                                                <div className="space-x-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => table.previousPage()}
+                                                        disabled={!table.getCanPreviousPage()}
+                                                    >
+                                                        Previous
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => table.nextPage()}
+                                                        disabled={!table.getCanNextPage()}
+                                                    >
+                                                        Next
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        */}
                                     </>
                                 </TabsContent>
 
