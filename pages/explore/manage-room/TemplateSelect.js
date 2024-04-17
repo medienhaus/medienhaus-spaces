@@ -2,7 +2,6 @@ import React from 'react';
 import getConfig from 'next/config';
 import { useTranslation } from 'react-i18next';
 
-import ErrorMessage from '../../../components/UI/ErrorMessage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/shadcn/Select';
 
 /**
