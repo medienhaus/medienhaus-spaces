@@ -6,7 +6,7 @@ module.exports = {
             allowCustomHomeserver: true,
         },
         etherpad: {
-            // important: path has to start with "/"
+            /* @NOTE: path has to start with "/" */
             path: '/write',
             baseUrl: 'https://pad.riseup.net/p',
             // myPads: {
@@ -18,14 +18,32 @@ module.exports = {
         //     path: '/sketch',
         //     baseUrl: 'http://spacedeck.localhost',
         // },
-        tldraw: {
-        },
+        // tldraw: {
+        //     path: '/draw',
+        // },
     },
-    // contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
     account: {
         allowAddingNewEmails: true,
     },
     chat: {
         pathToElement: '//localhost/element',
+    },
+    // contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
+    /* @NOTE: clear(!) client-side localStorage if value defined in `versionToken` is */
+    /* *not_equal* to value stored in or does *not_exist* in client-side localStorage */
+    // localStorage: {
+    //   clearAfterUpgrade: true,
+    //   versionToken: "1",
+    // },
+    templates: {
+        // context: [
+        //   "context",
+        // ],
+        item: [
+            'etherpad',
+            // 'spacedeck',
+            // 'tldraw',
+            'link',
+        ],
     },
 };
