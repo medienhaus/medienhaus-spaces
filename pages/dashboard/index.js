@@ -126,15 +126,6 @@ export default function Dashboard() {
                 </div>
             )}
 
-            {/* Add some space and a divider between pending invitations and knocks */}
-            {invitations.size > 0 && pendingKnocks.size > 0 && (
-                <>
-                    <br />
-                    <br />
-                    <br />
-                </>
-            )}
-
             {pendingKnocks.size > 0 && (
                 <div>
                     <h3>{t('Asking to Join')}</h3>
