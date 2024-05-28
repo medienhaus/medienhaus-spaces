@@ -33,23 +33,16 @@ const AccountSection = styled(DefaultLayout.LameColumn)`
 
 const AvatarSection = styled.div`
     display: grid;
-    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
     grid-gap: var(--margin);
-
-    @media (min-width: 40em) {
-        grid-template-columns: 1fr 1fr;
-    }
 `;
 
 const Avatar = styled.img`
-    width: 50%;
-
     &.placeholder {
+        -webkit-backdrop-filter: invert(100%);
         backdrop-filter: invert(100%);
-    }
-
-    @media (min-width: 40em) {
-        width: 70%;
+        height: 6rem;
+        width: 6rem;
     }
 `;
 
@@ -276,7 +269,7 @@ export default function Account() {
                             {t('Browse')} …
                         </Button>
                         {profileInfo.avatar_url && (
-                            <Button type="button" disabled={isChangingAvatar} onClick={deleteAvatar}>
+                            <Button type="button" variant="destructive" disabled={isChangingAvatar} onClick={deleteAvatar}>
                                 {t('Delete')}
                             </Button>
                         )}
@@ -304,7 +297,7 @@ export default function Account() {
                     {profileInfo.displayname !== inputDisplayname && (
                         <ConfirmCancelButtons disabled={isSavingChanges} confirmLabel={t('Save')} />
                     )}
-                    {emails.map((email, index) => (
+                    {emails.map((email) => (
                         <Input key={email} type="email" value={email} disabled />
                     ))}
                     {!!getConfig().publicRuntimeConfig.account?.allowAddingNewEmails && (

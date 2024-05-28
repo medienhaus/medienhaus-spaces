@@ -1,10 +1,11 @@
 {
-    "invitationCard": "<bold>{{username}}</bold> hat dich zu <bold>{{service}}</bold> eingeladen.",
-    "invitationCardHandled": "Du kannst dir nun <2><strong>{{roomName}}</strong></2> ansehen.",
-    "knockCard": "<bold>{{username}}</bold> möchte <bold>{{roomName}}</bold> betreten.",
-    "You’ve declined the invitation.": "Du hast die Einladung abgelehnt.",
-    "Direct Message": "Direktnachricht",
-    "public": "öffentlich",
-    "private": "privat",
-    "Asking To Join": "Beitrittsanfragen"
+  "Asking to Join": "Beitrittsanfragen",
+  "Direct Message": "Direktnachricht",
+  "Favourites": "Favoriten",
+  "invitationCard": "<bold>{{username}}</bold> hat dich zu <bold>{{service}}</bold> eingeladen.",
+  "invitationCardHandled": "Du kannst dir nun <2><strong>{{roomName}}</strong></2> ansehen.",
+  "knockCard": "<bold>{{username}}</bold> möchte <bold>{{roomName}}</bold> betreten.",
+  "public": "öffentlich",
+  "private": "privat",
+  "You’ve declined the invitation.": "Du hast die Einladung abgelehnt."
 }

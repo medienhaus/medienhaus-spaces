@@ -3,6 +3,7 @@ import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
 import { enableMapSet } from 'immer';
+import { RiCheckboxCircleLine, RiErrorWarningLine } from '@remixicon/react';
 
 import DefaultLayout from '@/components/layouts/default';
 import LostConnection from '@/components/UI/LostConnection';
@@ -10,6 +11,7 @@ import { AuthContext, useAuthProvider } from '@/lib/Auth';
 import { MatrixContext, useMatrixProvider } from '@/lib/Matrix';
 import '../lib/Internationalization';
 import '../assets/_globalCss.css';
+import { Toaster } from '@/components/UI/shadcn/Sonner';
 
 // Enable immer support for Map() and Set()
 enableMapSet();
@@ -50,6 +52,16 @@ export default function App({ Component, pageProps }) {
                             <Component {...pageProps} />
                         )}
                     </DefaultLayout.Layout>
+                    <Toaster
+                        visibleToasts={10}
+                        toastOptions={{
+                            classNames: {
+                                toast: '[&>div>svg]:w-5',
+                                error: '!border-destructive !text-destructive-foreground',
+                            },
+                        }}
+                        icons={{ success: <RiCheckboxCircleLine />, error: <RiErrorWarningLine /> }}
+                    />
                 </MatrixContext.Provider>
             </AuthContext.Provider>
         </>
