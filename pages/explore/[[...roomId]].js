@@ -44,6 +44,21 @@ import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import { useMediaQuery } from '@/lib/utils';
 
+const getIcon = (template, type) => {
+    switch (template) {
+        case 'etherpad':
+            return <RiEditLine />;
+        case 'spacedeck':
+            return <RiBrush2Line />;
+        case 'tldraw':
+            return <RiBrushLine />;
+        case 'link':
+            return <RiLink />;
+        default:
+            return type === 'context' ? <RiFolderLine /> : <RiChat1Line />;
+    }
+};
+
 /**
  * Explore component for managing room hierarchies and content.
  *
@@ -187,55 +202,7 @@ export default function Explore() {
                 </Icon>
             ),
             cell: ({ row }) => {
-                /* @NOTE: the following conditions are copy-pasted from pages/explore/IframeSidebar.js */
-
-                if (row.original?.meta?.template === 'etherpad') {
-                    return (
-                        <Icon>
-                            <RiEditLine />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'spacedeck') {
-                    return (
-                        <Icon>
-                            <RiBrush2Line />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'tldraw') {
-                    return (
-                        <Icon>
-                            <RiBrushLine />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.template === 'link') {
-                    return (
-                        <Icon>
-                            <RiLink />
-                        </Icon>
-                    );
-                }
-
-                if (row.original?.meta?.type === 'context') {
-                    return (
-                        <Icon>
-                            <RiFolderLine />
-                        </Icon>
-                    );
-                }
-
-                if (!row.original?.meta) {
-                    return (
-                        <Icon>
-                            <RiChat1Line />
-                        </Icon>
-                    );
-                }
+                return <Icon>{getIcon(row.original?.meta?.template, row.original?.meta?.type)}</Icon>;
             },
         },
         {
@@ -341,7 +308,7 @@ export default function Explore() {
                                 myPowerLevel={myPowerLevel}
                                 setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                        service="/explore"
+                                service="/explore"
                             />
 
                             <Tabs
