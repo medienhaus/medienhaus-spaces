@@ -4,25 +4,25 @@
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "Hey there! Welcome to the intro tour. This is the Onboarding Pilot which will guide you through the application."
+                    "description": "Hello there! Welcome to the introductory tour. This is the Onboarding Pilot, which will guide you through the application."
                 }
             },
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "This should not get too tiering, so we will keep it short with just a rough overview of some main functions."
+                    "description": "We won't make this too tiring, so we'll keep it brief with just a rough overview of some main functions."
                 }
             },
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "If a blinking arrow shows up, it is needed to excecute a click or touch from your side."
+                    "description": "If a blinking arrow appears, you will need to click or tap on it."
                 }
             },
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "Let’s not waste any time and start with the first section …"
+                    "description": "Let’s not waste any time and start with the first section…"
                 }
             }
         ]
@@ -33,31 +33,31 @@
             {
                 "popover": {
                     "title": "Your personal inbox",
-                    "description": "The dashboard functions as your personal inbox. Here you can see all kind of invites, your notifications, and your favourites."
+                    "description": "The dashboard serves as your personal inbox. Here you can see all types of invites, your notifications, and your favourites."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "For now it is quite empty here but if any other users want to /chat with you or wants to work collaboratively on a /write document, you can find your notification here."
+                    "description": "It might be quite empty here for now, but if any other users want to chat with you or collaborate on a document, you will find your notifications here."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "If there are things to catch up for you, a small dot will appear next to the /dashboard link in the main navigation."
+                    "description": "If there are any updates for you, a small dot will appear next to the dashboard link in the main navigation."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "Maybe you got already invited to some spaces. If thats the case you can accept those. With the click on the underlined name you will be redirected to the space."
+                    "description": "You might have already been invited to some spaces. If that’s the case, you can accept those invitations. By clicking on the name, you will be redirected to the space."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "But first, let’s see what’s going on in this application. Let’s go to the /explore page next …"
+                    "description": "But first, let’s see what’s going on in this application. Let’s go to the /explore page next…"
                 }
             }
         ]
@@ -68,20 +68,20 @@
             {
                 "popover": {
                     "title": "Your spaces",
-                    "description": "First of all we will start with the /explore page. This is where you can find all the spaces structured by their context."
+                    "description": "First, we will start with the /explore page. This is where you can find all the spaces organised by their context."
                 }
             },
             {
                 "popover": {
                     "title": "Your spaces",
-                    "description": "You can navigate from level to level and see what is going on in the different contexts."
+                    "description": "You can navigate from level to level and see what is happening in the different contexts."
                 }
             },
             {
                 "popover": {
                     "element": "main table tr:first-of-type",
                     "title": "Your spaces",
-                    "description": "Let’s click on the entry level and traverse down the tree."
+                    "description": "Let’s click on the entry level and move down the tree."
                 }
             }
         ]
@@ -92,57 +92,51 @@
             {
                 "popover": {
                     "title": "Communicate",
-                    "description": "One of the major functionalities is /chat. Here you can communicate with others in real time: in one-to-one chats, or in group chats."
+                    "description": "One of the major functionalities is /chat. Here, you can communicate with others in real-time: in one-to-one chats or in group chats."
                 }
             },
             {
                 "popover": {
                     "title": "Communicate",
                     "element": "main details:first-of-type",
-                    "description": "All your chats will be listed here. It will be seperated in private chats and group chats."
+                    "description": "All your chats will be listed here, separated into private chats and group chats."
                 }
             },
             {
                 "popover": {
                     "title": "Communicate",
                     "element": "main h2 > button",
-                    "description": "If you want to create a new chat, just click the button at the top."
+                    "description": "If you want to create a new chat, just click or tap the button at the top."
                 }
             },
             {
                 "popover": {
                     "title": "Communicate",
-                    "description": "You can select to create either a direct message, or a group chat."
+                    "description": "You can choose to create either a direct message or a group chat."
                 }
             },
             {
                 "popover": {
                     "title": "Communicate",
-                    "description": "For group chats, you can set the visibility of the chat room. Do you want to make the room public to all udk accounts, or just to the invited ones."
+                    "description": "For group chats, you can control the visibility of the chat room. You can choose to make the room public to all accounts or limit access to invited participants only."
                 }
             },
             {
                 "popover": {
                     "title": "Encrypted",
-                    "description": "Be aware of the the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored."
+                    "description": "Be aware of the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored!"
                 }
             },
             {
                 "popover": {
-                    "title": "Encrypted",
-                    "description": "Be aware of the the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored."
-                }
-            },
-            {
-                "popover": {
-                    "title": "Contextualize",
-                    "description": "Anyway, after creating a groupchat, you can later assign it to a specific context via /explore, … just like a file or a document in your operating system."
+                    "title": "Contextualise",
+                    "description": "After creating a group chat, you can later assign it to a specific context via explore, just like a file or a document on your operating system."
                 }
             },
             {
                 "popover": {
                     "title": "Going on",
-                    "description": "Speaking of documents, let’s go to the /write tool next …"
+                    "description": "Speaking of documents, let’s move on to the /write tool next…"
                 }
             }
         ]
@@ -153,28 +147,28 @@
             {
                 "popover": {
                     "title": "Let’s create some items.",
-                    "description": "With the /write tool you can create some collaborative text documents."
+                    "description": "With /write, you can create collaborative text documents."
                 }
             },
             {
                 "element": "main header button:first-of-type",
                 "popover": {
                     "title": "Create it",
-                    "description": "Let’s create a new document, just as an example, as right now it looks quite empty here. Please press the add button at the top."
+                    "description": "Let’s create a new document as an example, since it's quite empty here at the moment. Please press the add button at the top."
                 }
             },
             {
                 "element": "main form h3:first-of-type",
                 "popover": {
                     "title": "Name it",
-                    "description": "First of all, give the document a name. It will be visible to others."
+                    "description": "First, give the document a name. It will be visible to others."
                 }
             },
             {
                 "element": "main form label:first-of-type",
                 "popover": {
                     "title": "Protect it",
-                    "description": "If you want to protect it from being seen by others, who know or guess the document address, you can set a password."
+                    "description": "If you want to prevent others from viewing the document, you can set a password."
                 }
             },
             {
@@ -187,13 +181,13 @@
             {
                 "popover": {
                     "title": "Library",
-                    "description": "From now on you can find all the documents you created in /write. Quite handy, isn’t it?"
+                    "description": "From now on, you can find all the documents you created in write. Quite handy, isn’t it?"
                 }
             },
             {
                 "popover": {
-                    "title": "Contextualize",
-                    "description": "Don’t forget that you can also add your documents to some context in /explore to make them visible to others in the specfic contexts."
+                    "title": "Contextualise",
+                    "description": "Don’t forget that you can also add your documents to contexts in /explore, making them visible to others within those contexts."
                 }
             }
         ]
@@ -204,21 +198,21 @@
             {
                 "popover": {
                     "title": "Show yourself",
-                    "description": "Next stop: your /account. This is where you can personalize your profile, how it will be seen by others."
+                    "description": "Next stop: /account. This is where you can personalise your profile and how it will be seen by others."
                 }
             },
             {
                 "element": "main h3:has(+form)",
                 "popover": {
                     "title": "What’s your name?",
-                    "description": "You can change your display name to anything you want to. But be aware, your official username, i.e. account address, will still be visible to others."
+                    "description": "You can change your display name to anything you like. However, your official username, i.e. account address, will remain the same and is still visible to others."
                 }
             },
             {
                 "element": "main h3:first-of-type",
                 "popover": {
                     "title": "Profile picture",
-                    "description": "How about adding a photo? It will be visible to others for example in /chat."
+                    "description": "Fancy adding a photo? It will be visible to others, for example in /chat"
                 }
             }
         ]
@@ -229,31 +223,31 @@
             {
                 "popover": {
                     "title": "",
-                    "description": "We are heading towards the end of this onboarding tour. Let’s go back to /explore once more."
+                    "description": "We are nearing the end of this onboarding tour. Let’s go back to explore once more."
                 }
             },
             {
                 "popover": {
                     "title": "Browse and add",
-                    "description": "Browse around the structure, request access, or add further contexts or items, which you are interested in, to your own spaces."
+                    "description": "Browse through the structure, request access, or add further contexts or items that interest you to your own spaces."
                 }
             },
             {
                 "popover": {
                     "title": "Missing something?",
-                    "description": "If there isn’t that much content, yet, tell others in your institution to join udk/spaces and contribute."
+                    "description": "If there isn’t much content yet, encourage others to join /spaces and contribute."
                 }
             },
             {
                 "popover": {
                     "title": "More?",
-                    "description": "There are many other functions to use. Just have a look around and try them out."
+                    "description": "There are many other functions to explore. Just have a look around and try them out."
                 }
             },
             {
                 "popover": {
                     "title": "Finished!",
-                    "description": "That’s all for now. You can restart the onboarding at any time via /account. Have fun!"
+                    "description": "That’s all for now. You can restart the onboarding at any time via account. Have fun!"
                 }
             }
         ]
