@@ -33,19 +33,19 @@
             {
                 "popover": {
                     "title": "Your personal inbox",
-                    "description": "The dashboard serves as your personal inbox. Here you can see all types of invites, your notifications, and your favourites."
+                    "description": "The dashboard is your personal inbox. Here, you can see all types of invites, notifications, and favourites."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "It might be quite empty here for now, but if any other users want to chat with you or collaborate on a document, you will find your notifications here."
+                    "description": "It might be a bit empty now, but if other users want to chat with you or collaborate on a document, you’ll find your notifications here."
                 }
             },
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "If there are any updates for you, a small dot will appear next to the dashboard link in the main navigation."
+                    "description": "If there are any updates, a small dot will appear next to the dashboard link in the main navigation."
                 }
             },
             {
@@ -57,7 +57,7 @@
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "But first, let’s see what’s going on in this application. Let’s go to the /explore page next…"
+                    "description": "But first, let’s see what’s happening in this application. Let’s head to the /explore page next…"
                 }
             }
         ]
@@ -68,13 +68,13 @@
             {
                 "popover": {
                     "title": "Your spaces",
-                    "description": "First, we will start with the /explore page. This is where you can find all the spaces organised by their context."
+                    "description": "First, let’s start with the /explore page. This is where you can find all the spaces organised by their context."
                 }
             },
             {
                 "popover": {
                     "title": "Your spaces",
-                    "description": "You can navigate from level to level and see what is happening in the different contexts."
+                    "description": "You can navigate from level to level and see what’s happening in the different contexts."
                 }
             },
             {
@@ -99,14 +99,14 @@
                 "popover": {
                     "title": "Communicate",
                     "element": "main details:first-of-type",
-                    "description": "All your chats will be listed here, separated into private chats and group chats."
+                    "description": "All your chats will be listed here, separated into private and group chats."
                 }
             },
             {
                 "popover": {
                     "title": "Communicate",
                     "element": "main h2 > button",
-                    "description": "If you want to create a new chat, just click or tap the button at the top."
+                    "description": "To create a new chat, just click or tap the button at the top."
                 }
             },
             {
@@ -124,7 +124,7 @@
             {
                 "popover": {
                     "title": "Encrypted",
-                    "description": "Be aware of the end-to-end encryption. If you choose to enable this option, all participants will need to have their encryption key stored!"
+                    "description": "Be aware of the end-to-end encryption. If you enable this option, all participants will need to store their encryption key securely!"
                 }
             },
             {
@@ -154,7 +154,7 @@
                 "element": "main header button:first-of-type",
                 "popover": {
                     "title": "Create it",
-                    "description": "Let’s create a new document as an example, since it's quite empty here at the moment. Please press the add button at the top."
+                    "description": "Let’s create a new document as an example, since it’s quite empty here at the moment. Please press the add button at the top."
                 }
             },
             {
@@ -181,13 +181,13 @@
             {
                 "popover": {
                     "title": "Library",
-                    "description": "From now on, you can find all the documents you created in write. Quite handy, isn’t it?"
+                    "description": "From now on, you can find all the documents you created in /write. Quite handy, isn’t it?"
                 }
             },
             {
                 "popover": {
                     "title": "Contextualise",
-                    "description": "Don’t forget that you can also add your documents to contexts in /explore, making them visible to others within those contexts."
+                    "description": "Don’t forget, you can also add your documents to contexts in /explore, making them visible to others within those contexts."
                 }
             }
         ]
@@ -198,14 +198,14 @@
             {
                 "popover": {
                     "title": "Show yourself",
-                    "description": "Next stop: /account. This is where you can personalise your profile and how it will be seen by others."
+                    "description": "Next stop: /account. This is where you can personalise your profile and how it appears to others."
                 }
             },
             {
                 "element": "main h3:has(+form)",
                 "popover": {
                     "title": "What’s your name?",
-                    "description": "You can change your display name to anything you like. However, your official username, i.e. account address, will remain the same and is still visible to others."
+                    "description": "You can change your display name to anything you like. However, your official username, i.e. account address, will remain the same and will still be visible to others."
                 }
             },
             {
@@ -247,7 +247,7 @@
             {
                 "popover": {
                     "title": "Finished!",
-                    "description": "That’s all for now. You can restart the onboarding at any time via account. Have fun!"
+                    "description": "That’s all for now. You can restart the onboarding at any time via /account. Have fun!"
                 }
             }
         ]
