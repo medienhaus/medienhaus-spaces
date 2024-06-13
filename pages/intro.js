@@ -23,7 +23,7 @@ export default function Intro() {
                         <Trans
                             t={t}
                             i18nKey="intro-p-1"
-                            defaults="Welcome to the <bold>udk/spaces</bold> beta version. The application shall provide a rather seamless and enjoyable experience around several embedded services/tools (see features below)."
+                            defaults="Welcome to the <bold>/spaces</bold> beta version. The application shall provide a rather seamless and enjoyable experience around several embedded services/tools (see features below)."
                             components={{ bold: <strong /> }}
                         />
                     </p>

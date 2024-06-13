@@ -22,7 +22,7 @@
             {
                 "popover": {
                     "title": "Welcome",
-                    "description": "Let’s not waste any time and start with the first section…"
+                    "description": "Let’s not waste any time and start with the first section …"
                 }
             }
         ]
@@ -45,7 +45,7 @@
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "If there are any updates, a small dot will appear next to the dashboard link in the main navigation."
+                    "description": "If there are any updates, a small dot will appear next to /dashboard in the main navigation."
                 }
             },
             {
@@ -57,7 +57,7 @@
             {
                 "popover": {
                     "title": "Your inbox",
-                    "description": "But first, let’s see what’s happening in this application. Let’s head to the /explore page next…"
+                    "description": "But first, let’s see what’s happening in this application. Let’s head to the /explore page next …"
                 }
             }
         ]
@@ -68,7 +68,7 @@
             {
                 "popover": {
                     "title": "Your spaces",
-                    "description": "First, let’s start with the /explore page. This is where you can find all the spaces organised by their context."
+                    "description": "This is the /explore page. It’s where you can find all the spaces organised by their context."
                 }
             },
             {
@@ -136,7 +136,7 @@
             {
                 "popover": {
                     "title": "Going on",
-                    "description": "Speaking of documents, let’s move on to the /write tool next…"
+                    "description": "Speaking of documents, let’s move on to /write next …"
                 }
             }
         ]
@@ -223,7 +223,7 @@
             {
                 "popover": {
                     "title": "",
-                    "description": "We are nearing the end of this onboarding tour. Let’s go back to explore once more."
+                    "description": "We are nearing the end of this onboarding tour. Let’s go back to /explore once more."
                 }
             },
             {
