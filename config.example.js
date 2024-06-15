@@ -18,6 +18,8 @@ module.exports = {
         //     path: '/sketch',
         //     baseUrl: 'http://spacedeck.localhost',
         // },
+        tldraw: {
+        },
     },
     // contextRootSpaceRoomId: '!gB.....Ewlvdq:matrix.org',
     account: {

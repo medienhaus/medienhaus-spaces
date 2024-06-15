@@ -1,0 +1,12 @@
+.tl-container {
+    --layer-background: 20;
+    --layer-grid: 21;
+    --layer-canvas: 22;
+    --layer-shapes: 30;
+    --layer-panels: 30;
+    --layer-menus: 31;
+    --layer-overlays: 32;
+    --layer-toasts: 33;
+    --layer-cursor: 34;
+    --layer-following-indicator: 35;
+}
