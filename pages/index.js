@@ -42,7 +42,7 @@ export default function UdkTmp() {
                 <br />
                 <section>
                     <h3>
-                        <a href="https://goaccess.monitor.medienhaus.dev/" rel="nofollow noopener noreferrer" target="_blank">
+                        <a href="https://statistics.medienhaus.udk-berlin.de/" rel="nofollow noopener noreferrer" target="_blank">
                             /statistics
                         </a>
                     </h3>
@@ -50,7 +50,7 @@ export default function UdkTmp() {
                 </section>
                 <section>
                     <h3>
-                        <a href="https://status.medienhaus.dev/status/udk-berlin" rel="nofollow noopener noreferrer" target="_blank">
+                        <a href="https://status.medienhaus.udk-berlin.de/status/udk-berlin" rel="nofollow noopener noreferrer" target="_blank">
                             /status
                         </a>
                     </h3>
