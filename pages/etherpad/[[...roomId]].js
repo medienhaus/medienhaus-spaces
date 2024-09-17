@@ -64,11 +64,11 @@ export default function Etherpad() {
     const auth = useAuth();
     const matrix = useMatrix();
 
-    const matrixClient = auth.getAuthenticationProvider('matrix').getMatrixClient();
     const etherpad = auth.getAuthenticationProvider('etherpad');
 
     const [serverPads, setServerPads] = useState(null);
     const [isDeletingPad, setIsDeletingPad] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     /**
      * A roomId is set when the route is /etherpad/<roomId>, otherwise it's undefined
@@ -137,17 +137,24 @@ export default function Etherpad() {
             if (!link || !name) return;
 
             logger.debug('Creating new Matrix room for pad', { link, name });
+            const room = await matrix
+                .createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad)
+                .catch((error) => setErrorMessage(error.message));
 
-            const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'etherpad', matrix.serviceSpaces.etherpad);
-            await auth.getAuthenticationProvider('matrix').addSpaceChild(matrix.serviceSpaces.etherpad, room);
-            await matrixClient.sendMessage(room, {
-                msgtype: 'm.text',
-                body: link,
-            });
+            await matrix.addSpaceChild(matrix.serviceSpaces.etherpad, room).catch((error) => setErrorMessage(error.message));
+
+            await matrix.sendMessage(room, link).catch((error) => setErrorMessage(error.message));
+
+            if (getConfig().publicRuntimeConfig.authProviders.etherpad.myPads?.api) {
+                await etherpad.syncAllPads();
+                setServerPads(etherpad.getAllPads());
+            }
+
+            setErrorMessage('');
 
             return room;
         },
-        [auth, matrix, matrixClient],
+        [auth, matrix, etherpad],
     );
 
     /**
@@ -270,6 +277,7 @@ export default function Etherpad() {
 
     const listEntries = useMemo(() => {
         return matrix.spaces.get(matrix.serviceSpaces.etherpad)?.children?.map((writeRoomId) => {
+            if (!matrix.roomContents?.get(writeRoomId)) return;
             const name = _.get(matrix.rooms.get(writeRoomId), 'name');
             const etherpadId = matrix.roomContents
                 .get(writeRoomId)
@@ -295,7 +303,7 @@ export default function Etherpad() {
     }, [matrix.roomContents, matrix.rooms, matrix.serviceSpaces.etherpad, matrix.spaces, roomId, serverPads]);
 
     // Add the following parameters to the iframe URL:
-    // - user's Matrix displayname as parameter so that it shows up in Etherpad as username
+    // - user's Matrix display name as parameter so that it shows up in Etherpad as username
     // - user's MyPads auth token so that we skip having to enter a password for password protected pads owned by user
     let iframeUrl;
 
@@ -335,6 +343,7 @@ export default function Etherpad() {
                         <ServiceTable>
                             <ServiceTable.Body>{listEntries}</ServiceTable.Body>
                         </ServiceTable>
+                        {errorMessage && <ErrorMessage>{t(errorMessage)}</ErrorMessage>}
                     </>
                 )}
             </DefaultLayout.Sidebar>
