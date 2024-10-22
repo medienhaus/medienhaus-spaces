@@ -40,7 +40,7 @@ const JoinRuleChanger = ({ roomId, roomName }) => {
             <h3>
                 {t('Change Join Rule for')} {roomName}
             </h3>
-            <Select id="joinRule" defaultValue={joinRule} onValueChange={(e) => setJoinRule(e.target.value)}>
+            <Select id="joinRule" defaultValue={joinRule} onValueChange={(value) => setJoinRule(value)}>
                 <SelectTrigger>
                     <SelectValue placeholder={t('Join Rule')} />
                 </SelectTrigger>
