@@ -19,6 +19,7 @@ import LoadingSpinner from '@/components/UI/LoadingSpinner';
 
 import 'tldraw/tldraw.css';
 import '../assets/_tldrawOverrides.css';
+import '../assets/_userOverrides.css';
 
 // Enable immer support for Map() and Set()
 enableMapSet();

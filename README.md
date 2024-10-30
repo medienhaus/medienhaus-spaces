@@ -47,3 +47,9 @@ Builds a production-ready version of the application and exports it to the `out`
 ### Linting
 
 We use [`ESLint`](https://github.com/eslint/eslint) and [`Prettier`](https://github.com/prettier/prettier). The respective configuration files should be detected automatically.
+
+### Customisation
+
+You can add custom styles by defining them in `user.css`. This file will be loaded _after_ the default styles.
+
+_Don't forget to add `!important` to any rule overriding default styles._
