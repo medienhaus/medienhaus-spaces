@@ -45,3 +45,6 @@ yarn-error.log*
 # custom onboarding files
 /components/onboarding/onboardingScriptCustom.json
 /public/locales/*/onboardingCustom.json
+
+# user css
+/assets/_userOverrides.css
