@@ -39,3 +39,6 @@ yarn-error.log*
 
 # JetBrains IDE related things
 /.idea/workspace.xml
+
+# user css
+/assets/_userOverrides.css
