@@ -1,4 +1,4 @@
-<img src="./public/favicon.svg" width="70" />
+<img alt='medienhaus logo; consisting of a white dash and forward slash, displayed on a black background' src="./public/favicon.svg" width="70" />
 
 ### medienhaus/
 
