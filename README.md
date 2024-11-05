@@ -50,6 +50,5 @@ We use [`ESLint`](https://github.com/eslint/eslint) and [`Prettier`](https://git
 
 ### Customisation
 
-You can add custom styles by defining them in `user.css`. This file will be loaded _after_ the default styles.
+You can add custom styles or override existing ones in `_userOverrides.css`. This file will be loaded _after_ the default styles.
 
-_Don't forget to add `!important` to any rule overriding default styles._
