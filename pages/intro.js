@@ -1,4 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
+import getConfig from 'next/config';
 
 import DefaultLayout from '@/components/layouts/default';
 import { useAuth } from '@/lib/Auth';
@@ -23,7 +24,7 @@ export default function Intro() {
                         <Trans
                             t={t}
                             i18nKey="intro-p-1"
-                            defaults="Welcome to the <bold>udk/spaces</bold> beta version. The application shall provide a rather seamless and enjoyable experience around several embedded services/tools (see features below)."
+                            defaults="Welcome to the <bold>/spaces</bold> beta version. The application shall provide a rather seamless and enjoyable experience around several embedded services/tools (see features below)."
                             components={{ bold: <strong /> }}
                         />
                     </p>
@@ -54,34 +55,38 @@ export default function Intro() {
 
                 <hr />
 
-                <div>
-                    <h3>
-                        {t('Terms & Conditions')} / {t('Community Guidelines')}
-                    </h3>
-                    <p>
-                        <Trans
-                            t={t}
-                            i18nKey="terms-and-guidelines"
-                            defaults="By using this app, you agree to the Terms & Conditions and Community Guidelines linked below."
-                        />
-                        <ul className="mt-4 list-inside list-['\2013\0020']">
-                            <li>
-                                {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
-                                <a href="/terms-and-conditions" rel="external nofollow noreferrer">
-                                    {t('Terms & Conditions')}
-                                </a>
-                            </li>
-                            <li>
-                                {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
-                                <a href="/community-guidelines" rel="external nofollow noreferrer">
-                                    {t('Community Guidelines')}
-                                </a>
-                            </li>
-                        </ul>
-                    </p>
-                </div>
+                {getConfig().publicRuntimeConfig.intro && (
+                    <>
+                        <div>
+                            <h3>
+                                {t('Terms & Conditions')} / {t('Community Guidelines')}
+                            </h3>
+                            <p>
+                                <Trans
+                                    t={t}
+                                    i18nKey="terms-and-guidelines"
+                                    defaults="By using this app, you agree to the Terms & Conditions and Community Guidelines linked below."
+                                />
+                                <ul className="mt-4 list-inside list-['\2013\0020']">
+                                    <li>
+                                        {/* @NOTE: this shall be an external link to the terms and conditions website, hence using <a href="..." /> */}
+                                        <a href="/terms-and-conditions" rel="external nofollow noreferrer">
+                                            {t('Terms & Conditions')}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        {/* @NOTE: this shall be an external link to the community guidelines, hence using <a href="..." /> */}
+                                        <a href="/community-guidelines" rel="external nofollow noreferrer">
+                                            {t('Community Guidelines')}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </p>
+                        </div>
 
-                <hr />
+                        <hr />
+                    </>
+                )}
 
                 <div>
                     <h3>{t('Onboarding')}</h3>
@@ -114,7 +119,7 @@ export default function Intro() {
                             defaults="To learn more about the app, visit the "
                             components={{ bold: <strong /> }}
                         />
-                        {/* @NOTE: this shall be an external link to the udk website, hence using <a href="..." /> */}
+                        {/* @NOTE: this shall be an external link to the help website, hence using <a href="..." /> */}
                         <a href="/help" rel="external nofollow noreferrer">
                             {t('help pages')}
                         </a>

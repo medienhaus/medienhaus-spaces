@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import Head from 'next/head';
 import getConfig from 'next/config';
 import { useRouter } from 'next/router';
@@ -33,6 +33,13 @@ export default function App({ Component, pageProps }) {
 
     const authData = useAuthProvider();
     const matrixData = useMatrixProvider(authData);
+
+    // load custom css overrides if enabled in config.js
+    useEffect(() => {
+        if (getConfig().publicRuntimeConfig.enableUserCssOverrides) {
+            import(getConfig().publicRuntimeConfig.customCssPath || '../assets/_userOverrides.css');
+        }
+    }, []);
 
     // Guests should be forwarded to /login, unless they're accessing one of the public routes
     if (authData.user === false && !guestRoutes.includes(router.route)) {

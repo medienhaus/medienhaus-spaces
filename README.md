@@ -1,8 +1,8 @@
-<img src="./public/favicon.svg" width="70" />
+<img alt='medienhaus logo; consisting of a white dash and forward slash, displayed on a black background' src="./public/favicon.svg" width="70" />
 
 ### medienhaus/
 
-Customizable modular free and open-source environment for decentralized, distributed communication and collaboration.
+Customizable, modular, free and open-source environment for decentralized, distributed communication and collaboration without third-party dependencies.
 
 [Website](https://medienhaus.dev/) — [Fediverse](https://chaos.social/@medienhaus)
 
@@ -47,3 +47,10 @@ Builds a production-ready version of the application and exports it to the `out`
 ### Linting
 
 We use [`ESLint`](https://github.com/eslint/eslint) and [`Prettier`](https://github.com/prettier/prettier). The respective configuration files should be detected automatically.
+
+### Customisation
+
+You can add custom styles or override existing ones by adding `enableUserCssOverrides = true` to `config.js` and adding `_userOverrides.css` to `/assets`. This file will be loaded _after_ the default styles.
+
+You can also define a custom path to a css file by adding `customCssPath = 'path/to/your/css'` to `config.js`, which will be loaded _instead_ of `_userOverrides.css`.
+
