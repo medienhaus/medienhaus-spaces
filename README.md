@@ -50,7 +50,7 @@ We use [`ESLint`](https://github.com/eslint/eslint) and [`Prettier`](https://git
 
 ### Customisation
 
-You can add custom styles or override existing ones by adding `enableUserCssOverrides = true` to `config.js` and adding `_userOverrides.css` to `/assets`. This file will be loaded _after_ the default styles.
+You can add custom styles or override existing ones by adding `enableUserCssOverrides : true` to `config.js` and adding `_userOverrides.css` to `/assets`. This file will be loaded _after_ the default styles.
 
-You can also define a custom path to a css file by adding `customCssPath = 'path/to/your/css'` to `config.js`, which will be loaded _instead_ of `_userOverrides.css`.
+You can also define a custom path to a css file by adding `customCssPath : 'path/to/your/css'` to `config.js`, which will be loaded _instead_ of `_userOverrides.css`.
 
