@@ -39,6 +39,19 @@ module.exports = {
             );
         }
 
+        if (SpacesConfig.authProviders.tldraw) {
+            rewriteConfig.push(
+                {
+                    source: SpacesConfig.authProviders.tldraw.path,
+                    destination: '/tldraw',
+                },
+                {
+                    source: SpacesConfig.authProviders.tldraw.path + '/:roomId',
+                    destination: '/tldraw/:roomId',
+                },
+            );
+        }
+
         return rewriteConfig;
     },
 };
