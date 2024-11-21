@@ -8,6 +8,7 @@ import { RiDeleteBinLine, RiUserAddLine } from '@remixicon/react';
 
 import AddExistingSketch from './actions/AddExistingSketch';
 import CreateNewSketch from './actions/CreateNewSketch';
+import AddBookmark from '@/components/UI/favourites/AddFavourite';
 import LoadingSpinner from '@/components/UI/LoadingSpinner';
 import LoadingSpinnerInline from '@/components/UI/LoadingSpinnerInline';
 import ErrorMessage from '@/components/UI/ErrorMessage';
@@ -43,7 +44,7 @@ export default function Spacedeck() {
     const spacedeck = auth.getAuthenticationProvider('spacedeck');
 
     // Whenever the roomId changes (e.g. after a new sketch was created), automatically focus that element.
-    // This makes the sidebar scroll to the element if it is outside of the current viewport.
+    // This makes the sidebar scroll to the element if it is outside the current viewport.
     const selectedSketchRef = useRef(null);
     useEffect(() => {
         selectedSketchRef.current?.focus();
@@ -150,25 +151,23 @@ export default function Spacedeck() {
     }, [spacedeck]);
 
     async function createSketchRoom(link, name, parent = serviceSpaceId) {
-        // eslint-disable-next-line no-undef
-        logger.debug('creating room for ' + name);
-        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck', parent).catch(() => {
-            setErrorMessage(t('Something went wrong when trying to create a new room'));
-        });
-        await auth
-            .getAuthenticationProvider('matrix')
-            .addSpaceChild(parent, room)
-            .catch(() => {
-                setErrorMessage(t("Couldn't add the new room to your sketch folder"));
-            });
-        await matrixClient
-            .sendMessage(room, {
-                msgtype: 'm.text',
-                body: link,
-            })
-            .catch(() => {
-                setErrorMessage(t('Something went wrong when trying to save the new sketch link'));
-            });
+        // Create the room with retry handling
+        const room = await matrix.createRoom(name, false, '', 'invite', 'content', 'spacedeck', parent)
+            .catch(error => setErrorMessage(error));
+
+        // Log debug information about current progress
+        logger.debug(`Created room for ${name} with id ${room}`);
+
+        // Add the room as a child to the parent space
+        await matrix.addSpaceChild(parent, room)
+            .catch(error => setErrorMessage(error));
+
+        // Log debug information about current progress
+        logger.debug('Added %s to parent %s', name, parent);
+
+        // Send the message to the room with retry handling
+        await matrix.sendMessage(room, link)
+            .catch(error => setErrorMessage(error));
 
         return room;
     }
@@ -238,10 +237,12 @@ export default function Spacedeck() {
                                         <ServiceLink
                                             key={spacedeckRoomId}
                                             name={room.name}
-                                            href={`${spacedeckPath}/${spacedeckRoomId}`}
-                                            selected={roomId === spacedeckRoomId}
-                                            ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
-                                        />
+                                            roomId={spacedeckRoomId}
+                                        path={spacedeckPath}
+                                        href={`${spacedeckPath}/${spacedeckRoomId}`}
+                                        selected={roomId === spacedeckRoomId}
+                                        ref={spacedeckRoomId === roomId ? selectedSketchRef : null}
+                                    />
                                     );
                                 })}
                             </ServiceTable.Body>
@@ -267,6 +268,7 @@ export default function Spacedeck() {
                                     </TextButton>
                                 }
                             />
+                            <AddBookmark roomId={roomId} />
                             <CopyToClipboard title={t('Copy sketch link to clipboard')} content={content.body} />
                             <TextButton title={t('Delete sketch')} onClick={removeSketch}>
                                 {isDeletingSketch ? (

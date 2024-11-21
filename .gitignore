@@ -35,6 +35,7 @@ yarn-error.log*
 # vercel
 .vercel
 
+#vs code workspace files
 *.code-workspace
 
 # JetBrains IDE related things

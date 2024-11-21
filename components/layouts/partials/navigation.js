@@ -1,12 +1,11 @@
+import getConfig from 'next/config';
 import { default as NextLink } from 'next/link';
 import { styled } from 'styled-components';
-import getConfig from 'next/config';
-import _ from 'lodash';
+import { RiCircleFill } from '@remixicon/react';
 
-import { breakpoints } from '../../_breakpoints';
-import NotificationBubble from '../../UI/NotificationBubble';
 import { useAuth } from '@/lib/Auth';
 import { useMatrix } from '@/lib/Matrix';
+import { breakpoints } from '../../_breakpoints';
 
 const List = styled.ul`
     padding: 0;
@@ -57,34 +56,37 @@ export default function Navigation({ closeNavigation }) {
             <List>
                 <li>
                     <Link href="/dashboard">
-                        /dashboard{(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && <NotificationBubble />}
+                        /dashboard
+                        {(matrix.invites.size > 0 || matrix.knockingMembers.size > 0) && (
+                            <RiCircleFill className="inline !h-[0.7rem] !w-[0.7rem] translate-y-[calc(var(--icon-size)*-0.3)] border-[1px] border-[var(--color-background-beta)] text-accent" />
+                        )}
                     </Link>
                 </li>
                 <li>
                     <Link href="/account">/account</Link>
                 </li>
-                <li>
-                    <Link href="/explore">/explore</Link>
-                </li>
+                {getConfig().publicRuntimeConfig.contextRootSpaceRoomId && (
+                    <li>
+                        <Link href={`/explore/${getConfig().publicRuntimeConfig.contextRootSpaceRoomId}`}>/explore</Link>
+                    </li>
+                )}
             </List>
             <List>
                 <li>
                     <Link href="/chat">/chat</Link>
                 </li>
-                {_.get(getConfig(), 'publicRuntimeConfig.authProviders.etherpad.path') && (
-                    <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders.etherpad.path}>
-                            {getConfig().publicRuntimeConfig.authProviders.etherpad.path}
-                        </Link>
-                    </li>
-                )}
-                {_.get(getConfig(), 'publicRuntimeConfig.authProviders.spacedeck.path') && (
-                    <li>
-                        <Link href={getConfig().publicRuntimeConfig.authProviders.spacedeck.path}>
-                            {getConfig().publicRuntimeConfig.authProviders.spacedeck.path}
-                        </Link>
-                    </li>
-                )}
+                {Object.keys(getConfig().publicRuntimeConfig.authProviders).map((authProvider) => {
+                    // we skip the matrix config since it's already displayed in chat
+                    // @TODO enable custom path name for chat
+                    if (authProvider === 'matrix') return null;
+                    const path = getConfig().publicRuntimeConfig.authProviders[authProvider].path || authProvider;
+
+                    return (
+                        <li key={path}>
+                            <Link href={path}>{path}</Link>
+                        </li>
+                    );
+                })}
             </List>
             <List>
                 <li>

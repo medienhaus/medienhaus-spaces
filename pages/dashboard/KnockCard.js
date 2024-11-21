@@ -41,7 +41,8 @@ export default function KnockCard({ roomId, roomName, userId, reason }) {
         <form onSubmit={handleAccept} onReset={handleDecline}>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-4">
+                    {/* @NOTE: we are setting font-medium here for this <h3> because of the bold username/roomName components */}
+                    <CardTitle className="flex items-center gap-4 font-medium">
                         {/* wrap in span to not apply flex gap */}
                         <span>
                             <Trans
