@@ -147,7 +147,9 @@ export const useGetSpaceChildren = (auth, matrix, matrixClient, cachedSpace) => 
                 // Otherwise, delete all entries starting with the found index
                 if (indexOfParent) prevState.splice(indexOfParent);
 
-                // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array
+                // If indexOfParent is still null, simply add the new spaceHierarchy to the end of the array if it isn't undefined (this is an error I have run into when testing federation, I am not sure where it occurs above, so I am filtering here until I find the source of the error)
+                if (!spaceHierarchy) return [...prevState];
+
                 return [...prevState, spaceHierarchy];
             });
             setProgress(100);
