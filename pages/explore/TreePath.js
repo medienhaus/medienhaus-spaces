@@ -11,7 +11,7 @@ import {
     BreadcrumbSeparator,
 } from '@/components/UI/shadcn/Breadcrumb';
 
-const TreePath = ({ selectedSpaceChildren }) => {
+const TreePath = ({ selectedSpaceChildren, federated }) => {
     return (
         <>
             <Breadcrumb className="overflow-hidden">
@@ -36,7 +36,14 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                                         asChild
                                                         className="grid w-full grid-flow-col justify-start gap-2"
                                                     >
-                                                        <Link href={`/explore/${roomId}`}>{path[0].name}</Link>
+                                                        <Link href={`/explore/${roomId}`}>
+                                                            {path[0].name}
+                                                            {federated && (
+                                                                <span className="ml-2 overflow-hidden text-ellipsis text-muted">
+                                                                    {federated}
+                                                                </span>
+                                                            )}
+                                                        </Link>
                                                     </DropdownMenuItem>
                                                 );
                                             }
@@ -59,6 +66,9 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
                                                 {path[0].name}
+                                                {federated && (
+                                                    <span className="ml-2 overflow-hidden text-ellipsis text-muted">{federated}</span>
+                                                )}
                                             </Link>
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>
