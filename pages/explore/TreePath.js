@@ -10,6 +10,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from '@/components/UI/shadcn/Breadcrumb';
+import DisplayFederatedHomeserverDomain from './DisplayFederatedHomeserverDomain';
 
 const TreePath = ({ selectedSpaceChildren, federated }) => {
     return (
@@ -39,9 +40,9 @@ const TreePath = ({ selectedSpaceChildren, federated }) => {
                                                         <Link href={`/explore/${roomId}`}>
                                                             {path[0].name}
                                                             {federated && (
-                                                                <span className="ml-2 overflow-hidden text-ellipsis text-muted">
+                                                                <DisplayFederatedHomeserverDomain>
                                                                     {federated}
-                                                                </span>
+                                                                </DisplayFederatedHomeserverDomain>
                                                             )}
                                                         </Link>
                                                     </DropdownMenuItem>
@@ -67,7 +68,7 @@ const TreePath = ({ selectedSpaceChildren, federated }) => {
                                             <Link disabled href={`/explore/${roomId}`}>
                                                 {path[0].name}
                                                 {federated && (
-                                                    <span className="ml-2 overflow-hidden text-ellipsis text-muted">{federated}</span>
+                                                    <DisplayFederatedHomeserverDomain>{federated}</DisplayFederatedHomeserverDomain>
                                                 )}
                                             </Link>
                                         </BreadcrumbLink>

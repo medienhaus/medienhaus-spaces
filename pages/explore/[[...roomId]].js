@@ -43,6 +43,7 @@ import { Progress } from '@/components/UI/shadcn/Progress';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import { useMediaQuery } from '@/lib/utils';
+import DisplayFederatedHomeserverDomain from './DisplayFederatedHomeserverDomain';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -254,7 +255,7 @@ export default function Explore() {
                     <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
                         {row.getValue('name')}
                         {homeserver !== matrixClient.getDomain() && (
-                            <span className="ml-2 overflow-hidden text-ellipsis text-muted">{homeserver}</span>
+                            <DisplayFederatedHomeserverDomain>{homeserver}</DisplayFederatedHomeserverDomain>
                         )}
                     </Link>
                 );
