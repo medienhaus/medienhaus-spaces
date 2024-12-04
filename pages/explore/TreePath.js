@@ -10,8 +10,9 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from '@/components/UI/shadcn/Breadcrumb';
+import DisplayFederatedHomeserverDomain from './DisplayFederatedHomeserverDomain';
 
-const TreePath = ({ selectedSpaceChildren }) => {
+const TreePath = ({ selectedSpaceChildren, federated }) => {
     return (
         <>
             <Breadcrumb className="overflow-hidden">
@@ -36,7 +37,14 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                                         asChild
                                                         className="grid w-full grid-flow-col justify-start gap-2"
                                                     >
-                                                        <Link href={`/explore/${roomId}`}>{path[0].name}</Link>
+                                                        <Link href={`/explore/${roomId}`}>
+                                                            {path[0].name}
+                                                            {federated && (
+                                                                <DisplayFederatedHomeserverDomain>
+                                                                    {federated}
+                                                                </DisplayFederatedHomeserverDomain>
+                                                            )}
+                                                        </Link>
                                                     </DropdownMenuItem>
                                                 );
                                             }
@@ -59,6 +67,9 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
                                                 {path[0].name}
+                                                {federated && (
+                                                    <DisplayFederatedHomeserverDomain>{federated}</DisplayFederatedHomeserverDomain>
+                                                )}
                                             </Link>
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>

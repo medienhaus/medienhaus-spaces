@@ -43,6 +43,7 @@ import { Progress } from '@/components/UI/shadcn/Progress';
 import ExploreMatrixActions from './manage-room/ExploreMatrixActions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import { useMediaQuery } from '@/lib/utils';
+import DisplayFederatedHomeserverDomain from './DisplayFederatedHomeserverDomain';
 
 /**
  * Explore component for managing room hierarchies and content.
@@ -150,6 +151,12 @@ export default function Explore() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router.query?.roomId, matrix.initialSyncDone, cachedSpace]);
 
+    const extractHomeserverFromRoomId = (roomId) => {
+        const parts = roomId.split(':');
+
+        return parts[1];
+    };
+
     const removeChildFromParent = async (idToRemove) => {
         if (idToRemove === roomId) {
             toast.error('You cannot remove the parent room from itself');
@@ -241,11 +248,18 @@ export default function Explore() {
         {
             accessorKey: 'name',
             header: 'Name',
-            cell: ({ row }) => (
-                <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
-                    {row.getValue('name')}
-                </Link>
-            ),
+            cell: ({ row }) => {
+                const homeserver = extractHomeserverFromRoomId(row.roomId);
+
+                return (
+                    <Link target={row.target} href={row.href} rel="noopener noreferrer" className="flex items-center justify-between">
+                        {row.getValue('name')}
+                        {homeserver !== matrixClient.getDomain() && (
+                            <DisplayFederatedHomeserverDomain>{homeserver}</DisplayFederatedHomeserverDomain>
+                        )}
+                    </Link>
+                );
+            },
         },
         {
             id: 'actions',
@@ -331,7 +345,14 @@ export default function Explore() {
                                 content={window.location.href}
                                 title={
                                     !_.isEmpty(selectedSpaceChildren) && (
-                                        <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                                        <TreePath
+                                            selectedSpaceChildren={selectedSpaceChildren}
+                                            iframeRoomId={iframeRoomId}
+                                            federated={
+                                                extractHomeserverFromRoomId(roomId) !== matrixClient.getDomain() &&
+                                                extractHomeserverFromRoomId(roomId)
+                                            }
+                                        />
                                     )
                                 }
                                 roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
@@ -341,7 +362,7 @@ export default function Explore() {
                                 myPowerLevel={myPowerLevel}
                                 setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                        service="/explore"
+                                service="/explore"
                             />
 
                             <Tabs
