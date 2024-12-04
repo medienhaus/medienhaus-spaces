@@ -8,6 +8,7 @@ import ChangeAvatar from './ChangeAvatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/shadcn/Tabs';
 import ChangeJoinRule from './ChangeJoinRule';
 import { useAuth } from '@/lib/Auth';
+import ChangeRoomName from './ChangeRoomName';
 
 /**
  * This component provides actions for managing contexts and items within a matrix room.
@@ -75,6 +76,13 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel }) => {
                             <div className="[&>*+*]:mt-4">
                                 <h3>{t('Avatar')}</h3>
                                 <ChangeAvatar roomId={currentId} />
+                            </div>
+                        )}
+
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.title', myPowerLevel) && (
+                            <div className="[&>*+*]:mt-4">
+                                <h3>{t('Name')}</h3>
+                                <ChangeRoomName roomId={currentId} roomName={room.name} />
                             </div>
                         )}
                     </>
