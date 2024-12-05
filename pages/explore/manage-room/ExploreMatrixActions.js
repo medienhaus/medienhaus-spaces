@@ -16,7 +16,7 @@ import ChangeRoomName from './ChangeRoomName';
  * @param {String} currentId - The ID of the current room.
  * @param {String} parentId - The ID of the parent of the currently observed room.
  * @param {Number} myPowerLevel - Number between 0 and 100.
- * @callback getSpaceChildren - A callback function.
+ * @param {Function} setRoomName - Function to set the room name.
  * @returns {JSX.Element} - The rendered component.
  */
 
@@ -65,6 +65,13 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setRoomName }
                 */}
                 <TabsContent className="pb-6 [&>*+*]:mt-8" value="general">
                     <>
+                        {room.currentState.hasSufficientPowerLevelFor('m.room.title', myPowerLevel) && (
+                            <div className="[&>*+*]:mt-4">
+                                <h3>{t('Name')}</h3>
+                                <ChangeRoomName roomId={currentId} roomName={room.name} setRoomName={setRoomName} />
+                            </div>
+                        )}
+
                         {room.currentState.hasSufficientPowerLevelFor('m.room.topic', myPowerLevel) && (
                             <div className="[&>*+*]:mt-4">
                                 <h3>{t('Topic')}</h3>
@@ -76,13 +83,6 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setRoomName }
                             <div className="[&>*+*]:mt-4">
                                 <h3>{t('Avatar')}</h3>
                                 <ChangeAvatar roomId={currentId} />
-                            </div>
-                        )}
-
-                        {room.currentState.hasSufficientPowerLevelFor('m.room.title', myPowerLevel) && (
-                            <div className="[&>*+*]:mt-4">
-                                <h3>{t('Name')}</h3>
-                                <ChangeRoomName roomId={currentId} roomName={room.name} setRoomName={setRoomName} />
                             </div>
                         )}
                     </>
