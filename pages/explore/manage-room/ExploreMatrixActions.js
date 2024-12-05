@@ -20,7 +20,7 @@ import ChangeRoomName from './ChangeRoomName';
  * @returns {JSX.Element} - The rendered component.
  */
 
-const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel }) => {
+const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel, setRoomName }) => {
     const { t } = useTranslation('explore');
 
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
@@ -82,7 +82,7 @@ const ExploreMatrixActions = ({ currentId, parentId, myPowerLevel }) => {
                         {room.currentState.hasSufficientPowerLevelFor('m.room.title', myPowerLevel) && (
                             <div className="[&>*+*]:mt-4">
                                 <h3>{t('Name')}</h3>
-                                <ChangeRoomName roomId={currentId} roomName={room.name} />
+                                <ChangeRoomName roomId={currentId} roomName={room.name} setRoomName={setRoomName} />
                             </div>
                         )}
                     </>

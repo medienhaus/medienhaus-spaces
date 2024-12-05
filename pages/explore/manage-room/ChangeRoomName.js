@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/Auth';
 import ConfirmCancelButtons from '@/components/UI/ConfirmCancelButtons';
 import { Input } from '@/components/UI/shadcn/Input';
 
-const ChangeRoomName = ({ roomName, roomId }) => {
+const ChangeRoomName = ({ roomName, roomId, setRoomName }) => {
     const matrixClient = useAuth().getAuthenticationProvider('matrix').getMatrixClient();
     const [newRoomName, setNewRoomName] = useState('');
     const [isChangingName, setIsChangingName] = useState(false);
@@ -18,6 +18,7 @@ const ChangeRoomName = ({ roomName, roomId }) => {
 
         try {
             await matrixClient.setRoomName(roomId, newRoomName);
+            setRoomName(newRoomName);
             toast.success(
                 t('room name successfully changed to {{newRoomName}}. Please reload the page to see the changes.', { newRoomName }),
             );

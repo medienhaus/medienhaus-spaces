@@ -11,7 +11,7 @@ import {
     BreadcrumbSeparator,
 } from '@/components/UI/shadcn/Breadcrumb';
 
-const TreePath = ({ selectedSpaceChildren }) => {
+const TreePath = ({ selectedSpaceChildren, roomName }) => {
     return (
         <>
             <Breadcrumb className="overflow-hidden">
@@ -36,7 +36,7 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                                         asChild
                                                         className="grid w-full grid-flow-col justify-start gap-2"
                                                     >
-                                                        <Link href={`/explore/${roomId}`}>{path[0].name}</Link>
+                                                        <Link href={`/explore/${roomId}`}>{roomName || path[0].name}</Link>
                                                     </DropdownMenuItem>
                                                 );
                                             }
@@ -58,7 +58,7 @@ const TreePath = ({ selectedSpaceChildren }) => {
                                     <BreadcrumbItem className="inline overflow-hidden text-ellipsis whitespace-nowrap">
                                         <BreadcrumbLink asChild>
                                             <Link disabled href={`/explore/${roomId}`}>
-                                                {path[0].name}
+                                                {roomName || path[0].name}
                                             </Link>
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>

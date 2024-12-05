@@ -106,6 +106,8 @@ export default function Explore() {
 
     const canAddMoreContent = matrixClient.getRoom(roomId)?.currentState.hasSufficientPowerLevelFor('m.space.child', myPowerLevel);
 
+    const [roomName, setRoomName] = useState(selectedSpaceChildren?.[selectedSpaceChildren.length - 1]?.[0]?.name);
+
     // Redirect to the default room if no roomId is provided
     useEffect(() => {
         if (!roomId) {
@@ -318,7 +320,7 @@ export default function Explore() {
                     iframeRoomId={iframeRoomId}
                     breadcrumbs={
                         !_.isEmpty(selectedSpaceChildren) && (
-                            <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                            <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} roomName={roomName} />
                         )
                     }
                     title={name}
@@ -331,17 +333,21 @@ export default function Explore() {
                                 content={window.location.href}
                                 title={
                                     !_.isEmpty(selectedSpaceChildren) && (
-                                        <TreePath selectedSpaceChildren={selectedSpaceChildren} iframeRoomId={iframeRoomId} />
+                                        <TreePath
+                                            selectedSpaceChildren={selectedSpaceChildren}
+                                            iframeRoomId={iframeRoomId}
+                                            roomName={roomName}
+                                        />
                                     )
                                 }
-                                roomName={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].name}
+                                roomName={roomName}
                                 removingLink={false}
                                 roomId={roomId}
                                 activeContentView={activeContentView}
                                 myPowerLevel={myPowerLevel}
                                 setActiveContentView={setActiveContentView}
                                 joinRule={selectedSpaceChildren[selectedSpaceChildren.length - 1][0].join_rule}
-                        service="/explore"
+                                service="/explore"
                             />
 
                             <Tabs
@@ -503,7 +509,7 @@ export default function Explore() {
                                 </TabsContent>
 
                                 <TabsContent value="settings">
-                                    <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} />
+                                    <ExploreMatrixActions currentId={roomId} myPowerLevel={myPowerLevel} setRoomName={setRoomName} />
                                 </TabsContent>
                             </Tabs>
                         </DefaultLayout.Wrapper>
